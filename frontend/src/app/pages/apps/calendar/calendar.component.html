@@ -1,0 +1,52 @@
+<div class="page" fxLayout="column">
+  <div class="toolbar" fxFlex="none" fxLayout="row" fxLayoutAlign="start end">
+    <div fxFlex="grow" fxLayout="column" fxLayout.gt-xs="row" fxLayoutAlign="space-between center">
+      <div class="title">{{ viewDate | calendarDate:(view + 'ViewTitle'):'en' }}</div>
+
+      <div class="actions" fxLayout="column" fxLayout.gt-xs="row" fxLayoutAlign="end center">
+        <div class="chevrons">
+          <button [(viewDate)]="viewDate" [view]="view" mat-icon-button mwlCalendarPreviousView>
+            <mat-icon>chevron_left</mat-icon>
+          </button>
+          <button [(viewDate)]="viewDate" [view]="view" mat-icon-button mwlCalendarNextView>
+            <mat-icon>chevron_right</mat-icon>
+          </button>
+        </div>
+        <div fxLayout="row">
+          <button (click)="view = 'month'" mat-button>MONTH</button>
+          <button (click)="view = 'week'" mat-button>WEEK</button>
+          <button (click)="view = 'day'" mat-button>DAY</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <fury-scrollbar [ngSwitch]="view" class="background" fxFlex="auto">
+    <mwl-calendar-month-view
+      (dayClicked)="dayClicked($event.day)"
+      (eventClicked)="handleEvent('Clicked', $event.event)"
+      (eventTimesChanged)="eventTimesChanged($event)"
+      *ngSwitchCase="'month'"
+      [activeDayIsOpen]="activeDayIsOpen"
+      [events]="events"
+      [refresh]="refresh"
+      [viewDate]="viewDate">
+    </mwl-calendar-month-view>
+    <mwl-calendar-week-view
+      (eventClicked)="handleEvent('Clicked', $event.event)"
+      (eventTimesChanged)="eventTimesChanged($event)"
+      *ngSwitchCase="'week'"
+      [events]="events"
+      [refresh]="refresh"
+      [viewDate]="viewDate">
+    </mwl-calendar-week-view>
+    <mwl-calendar-day-view
+      (eventClicked)="handleEvent('Clicked', $event.event)"
+      (eventTimesChanged)="eventTimesChanged($event)"
+      *ngSwitchCase="'day'"
+      [events]="events"
+      [refresh]="refresh"
+      [viewDate]="viewDate">
+    </mwl-calendar-day-view>
+  </fury-scrollbar>
+</div>

@@ -1,0 +1,43 @@
+<fury-page [fxLayoutGap]="gap" class="dashboard" fxLayout="column">
+   <div fxFlex="noshrink" fxLayout="column" [fxLayoutGap]="gap" fxLayout.gt-lg="row">
+      <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="24px" class="form-group">
+         <div *ngIf="nomUnite =='DCH'">
+         <mat-form-field fxflex>
+            <mat-label>Choisir une direction</mat-label>
+            <input matInput [matAutocomplete]="auto">
+            <mat-autocomplete #auto="matAutocomplete">
+               <mat-option *ngFor="let uniteSup of filteredUniteOrgNiveauSup | async" [value]="uniteSup.description"
+                  (click)=setUniteOrgNiveauSup(uniteSup)>
+                  <span>{{ uniteSup.nom }}</span> |
+                  <small>{{ uniteSup.description}}</small>
+               </mat-option>
+            </mat-autocomplete>
+            <button *ngIf="uniteOrgNiveauSupCtrl.value" type="button" mat-icon-button
+               (click)="uniteOrgNiveauSupCtrl.reset()" matSuffix>
+               <mat-icon>close</mat-icon>
+            </button>
+            <button *ngIf="!uniteOrgNiveauSupCtrl.value" type="button" mat-icon-button matSuffix>
+               <mat-icon>arrow_drop_down</mat-icon>
+            </button>
+         </mat-form-field>
+         </div>
+         <div>
+            <mat-form-field appearance="fill">
+               <input matInput [matDatepicker]="picker" placeholder="choisir une date" [formControl]="date">
+               <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+               <mat-datepicker #picker (yearSelected)="yearSelected($event)" startView="multi-year"></mat-datepicker>
+            </mat-form-field>
+         </div>
+         <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="24px" class="right">
+            <div class="card-body right" class="p-3 mb-2 bg-success text-white">
+               <h4 class="card-text text-center">{{congeStructure.length}}</h4>
+            </div>
+         </div>      
+      </div>
+   </div>
+   <div>
+      <canvas baseChart [datasets]="barChartData" [labels]="barChartLabels" [options]="barChartOptions" height="30"
+         width="95" [legend]="barChartLegend" [chartType]="barChartType">
+      </canvas>
+   </div>
+</fury-page>

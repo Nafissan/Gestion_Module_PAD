@@ -1,0 +1,46 @@
+<mat-drawer-container class="drawer-container">
+
+    <mat-drawer #drawer mode="over">
+        <div class="drawer-navigation">
+            <fury-inbox-navigation></fury-inbox-navigation>
+        </div>
+    </mat-drawer>
+
+    <mat-drawer-content class="drawer-content" gdRows="auto 1fr">
+        <div class="header elevation" gdColumns="250px 1fr" gdColumns.lt-md="116px 1fr" gdColumns.lt-sm="1fr">
+            <div class="logo" fxLayout="row" fxLayoutAlign="start center" fxLayoutAlign.lt-md="center center" fxLayoutAlign.lt-sm="start center">
+                <button (click)="drawer.open()" fxHide.gt-xs mat-icon-button type="button">
+          <mat-icon>menu</mat-icon>
+        </button>
+                <mat-icon fxHide fxShow.gt-xs>mail</mat-icon>
+                <span fxHide.sm>Inbox</span>
+            </div>
+
+            <div class="search-bar card elevation" fxLayout="row" fxLayoutAlign="start center">
+                <mat-icon class="icon">search</mat-icon>
+                <input class="search card text" fxFlex placeholder="Recherche..." type="search">
+            </div>
+        </div>
+
+        <div class="page-container" gdColumns="250px 1fr" gdColumns.lt-md="116px 1fr" gdColumns.lt-sm="1fr">
+            <div class="navigation-container" fxHide fxLayout="column" fxShow.gt-xs>
+                <div class="compose" fxFlex="0 0 auto" fxLayout="row" fxLayoutAlign="center center">
+                    <button (click)="openCompose()" color="primary" fxFlex fxHide fxShow.gt-sm mat-raised-button type="button">
+            <mat-icon class="icon">edit</mat-icon>
+            Compose
+          </button>
+                    <button color="primary" fxHide.gt-sm mat-mini-fab type="button">
+            <mat-icon>edit</mat-icon>
+          </button>
+                </div>
+
+                <fury-inbox-navigation [responsive]="true"></fury-inbox-navigation>
+            </div>
+
+            <div class="content card elevation">
+                <router-outlet></router-outlet>
+            </div>
+        </div>
+
+    </mat-drawer-content>
+</mat-drawer-container>

@@ -1,0 +1,97 @@
+<fury-page-layout mode="card">
+    <fury-page-layout-header>
+        <fury-breadcrumbs [@fadeInRight] [crumbs]="['Gestion-Personnel']" current="Agents"></fury-breadcrumbs>
+    </fury-page-layout-header>
+
+    <fury-page-layout-content [@fadeInUp]>
+        <fury-list name="Agents" [columns]="columns" (filterChange)="onFilterChange($event)">
+            <div class="actions">
+                <button class="create" (click)="createAgent()" type="button" mat-mini-fab color="primary">
+                    <mat-icon>add</mat-icon>
+                </button>
+                <button class="create" (click)="importAgent()" type="button" mat-mini-fab color="primary">
+                        <mat-icon>cloud_upload</mat-icon>
+                </button>
+                <button mat-button (click)="exporter.exportTable('xlsx',{fileName:'liste_des_agents'})" type="button" mat-mini-fab color="primary">
+                    <mat-icon>table_view</mat-icon>
+                </button>
+                <button class="create" (click)="downloadTemplate()" type="button" mat-mini-fab color="primary">
+                    <mat-icon>cloud_download</mat-icon>
+                </button>
+            </div>
+            <table matTableExporter #exporter="matTableExporter" [dataSource]="dataSource" mat-table matSort>
+                <!--- Note that these columns can be defined in any order.
+                    The actual rendered columns are set as a property on the row definition" -->
+
+                <!-- Checkbox Column -->
+                <ng-container matColumnDef="checkbox">
+                    <th *matHeaderCellDef class="actions-cell" mat-header-cell>
+                        <mat-checkbox color="primary" (click)="$event.stopPropagation()"></mat-checkbox>
+                    </th>
+                    <td *matCellDef="let row" class="actions-cell" mat-cell>
+                        <mat-checkbox color="primary" (click)="$event.stopPropagation()"></mat-checkbox>
+                    </td>
+                </ng-container>
+                <!-- fullName Column -->
+                <ng-container *ngFor="let column of columns">
+                    <ng-container *ngIf="column.isModelProperty" [matColumnDef]="column.property">
+                        <th *matHeaderCellDef mat-header-cell mat-sort-header> {{ column.name }}</th>
+                        <td *matCellDef="let row" mat-cell>
+                            <span *ngIf="column.property === 'sexe' 
+                                && column.property     !== 'dateEngagement'
+                                && column.property     !== 'datePriseService'
+                                && column.property !== 'fonction'  ">  
+                                <p *ngIf="row.sexe==='m' ">                                   
+                                    <mat-icon color="primary">male</mat-icon>                                 
+                                </p>
+                                <span *ngIf="row.sexe==='f' ">     
+                                    <mat-icon color="warn">female</mat-icon>          
+                                </span>
+
+                            </span>
+
+                            <span *ngIf="column.property === 'dateNaissance' 
+                                || column.property     === 'dateEngagement'
+                                || column.property     === 'datePriseService'
+                                && column.property !== 'fonction'  
+                                && column.property !== 'sexe' ">  {{ row[column.property] | date}}
+                            </span>
+                            <span *ngIf="column.property !== 'dateNaissance' 
+                                && column.property     !== 'dateEngagement'
+                                && column.property     !== 'datePriseService' 
+                                && column.property !== 'fonction'
+                                && column.property !== 'sexe' ">  {{ row[column.property]}}
+                            </span>
+                            <span *ngIf="column.property === 'fonction' 
+                            && column.property !== 'sexe'">  {{row[column.property].nom}}
+                            </span>
+                        </td>
+                    </ng-container>
+                </ng-container>
+                <!-- actions Column -->
+                <ng-container matColumnDef="actions">
+                    <th *matHeaderCellDef class="actions-cell" mat-header-cell mat-sort-header></th>
+                    <td *matCellDef="let row" class="actions-cell" mat-cell>
+                        <button type="button" mat-icon-button [matMenuTriggerFor]="actionsMenu" (click)="$event.stopPropagation()">
+                                <mat-icon>more_horiz</mat-icon>
+                            </button>
+                        <mat-menu #actionsMenu="matMenu" yPosition="below" xPosition="after">
+                            <button (click)="updateAgent(row)" mat-menu-item>
+                                    <mat-icon>edit</mat-icon>
+                                    <span>Modifier</span>
+                                </button>
+                            <button (click)="deleteAgent(row)" mat-menu-item>
+                                    <mat-icon>delete_sweep</mat-icon>
+                                    <span>Supprimer</span>
+                                </button>
+                        </mat-menu>
+                    </td>
+                </ng-container>
+                <tr *matHeaderRowDef="visibleColumns" mat-header-row></tr>
+                <tr *matRowDef="let row; columns: visibleColumns;" class="clickable route-animations-elements" mat-row></tr>
+            </table>
+            <mat-paginator class="paginator" [pageSize]="pageSize"></mat-paginator>
+        </fury-list>
+        <mat-progress-bar *ngIf="showProgressBar === false" mode="query" color="primary"></mat-progress-bar>
+    </fury-page-layout-content>
+</fury-page-layout>

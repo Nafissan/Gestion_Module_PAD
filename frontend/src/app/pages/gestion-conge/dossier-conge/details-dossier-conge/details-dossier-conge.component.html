@@ -1,0 +1,77 @@
+<div mat-dialog-title class="h1-responsive text-align titre_modal_add">DETAILS DOSSIER CONGE</div>
+<mat-dialog-content>
+    <mat-accordion class="example-headers-align" multi>
+        <div class="example-action-buttons">
+            <button *ngIf="showIcon === true" mat-raised-button color="primary" (click)="accordion.openAll(); showIcon = !showIcon">
+                       <mat-icon>expand_more</mat-icon> Afficher
+                    </button>
+            <button *ngIf="showIcon === false" mat-raised-button color="warn" (click)="accordion.closeAll(); showIcon = !showIcon">
+                      <mat-icon>expand_less</mat-icon> Fermer
+                    </button>
+        </div>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon>folder_open</mat-icon>
+                    <span> Dossier Conge</span>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-panel-description>
+                <span>Code: </span>{{dossierConge.code}}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Année : </span>{{dossierConge.annee}}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Commentaire : </span>{{dossierConge.description}}
+            </mat-panel-description>
+            <mat-panel-description>
+                <div *ngIf="dossierConge.etat === saisi"><span> Etat : </span> <span class="badge badge-warning">{{dossierConge.etat}}</span></div>
+                <div *ngIf="dossierConge.etat === ouvrir"><span>Etat : </span> <span class="badge badge-info">{{ dossierConge.etat}}</span></div>
+                <div *ngIf="dossierConge.etat === fermer"><span>Etat : </span> <span class="badge badge-success">{{dossierConge.etat}}</span></div>
+            </mat-panel-description>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon>supervisor_account</mat-icon>
+                    <span>Agent Responsable</span>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-panel-description>
+                <span>Matricule : </span>{{dossierConge.matricule}}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Nom : </span>{{dossierConge.nom.toUpperCase()}}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Prénom : </span>{{dossierConge.prenom}}
+            </mat-panel-description>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon>perm_identity</mat-icon>
+                    <span>Fonction</span>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-panel-description>
+                <span>Nom : </span>{{dossierConge.fonction}}
+            </mat-panel-description>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon>category</mat-icon>
+                    <span>Unite Organisationelle</span>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-panel-description>
+                <span>Nom : </span>{{dossierConge.nomDirection}}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Decription : </span>{{dossierConge.descriptionDirection.toUpperCase()}}
+            </mat-panel-description>
+        </mat-expansion-panel>
+    </mat-accordion>
+</mat-dialog-content>

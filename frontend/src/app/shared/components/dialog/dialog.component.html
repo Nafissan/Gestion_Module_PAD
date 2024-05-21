@@ -1,0 +1,13 @@
+<div mat-dialog-title fxLayoutAlign="center">
+    <div> <span>CONFIRMATION</span> </div>
+</div>
+<div>
+    <div class="content1" fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="24px" fxLayoutAlign="center">
+        <img style="vertical-align:middle; margin-right: 4px;" src="assets/img/question.png" height="64" />
+    </div>
+    <div class="content2" fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="24px" fxLayoutAlign="center"><span>Voulez-vous confimer cette action ?</span></div>
+</div>
+<mat-dialog-actions class="actions" fxLayout="row" fxLayoutAlign="center bottom">
+    <button style="width: 5%;" fxFlex mat-raised-button color="primary" (click)="close(confirmer)">Confirmer</button>
+    <button style="width: 5%;" fxFlex mat-raised-button color="warn" (click)="close(annuler)">Annuler</button>
+</mat-dialog-actions>

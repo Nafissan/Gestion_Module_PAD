@@ -1,0 +1,57 @@
+<div class="background-pattern page" fxLayout="column" fxLayoutAlign="center center">
+    <div [@fadeInUp] class="card border-radius elevation">
+        <div class="header padding background-primary" fxLayout="column" fxLayoutAlign="center center">
+            <div class="sidenav-toolbar-icon">
+                <img style="width: 54px; height: 54px;" src="assets/img/logo_port.png" alt="">
+            </div>
+        </div>
+        <div class="padding" fxLayout="column" fxLayoutGap="16px" [formGroup]="form">
+            <div fxFlex="auto" fxLayout="column">
+                <mat-form-field fxFlex="grow">
+                    <mat-label>Ancien mot de passe</mat-label>
+                    <input matInput [type]="inputType" formControlName="oldPassword" required>
+                    <button type="button" mat-icon-button matSuffix (click)="toggleVisibility()" matTooltip="Toggle Visibility">
+                      <mat-icon *ngIf="visible">visibility</mat-icon>
+                      <mat-icon *ngIf="!visible">visibility_off</mat-icon>
+                     </button>
+                    <!-- <mat-hint>Click the eye to toggle visibility</mat-hint> -->
+                </mat-form-field>
+
+                <mat-form-field fxFlex="grow">
+                    <mat-label>Nouveau mot de passe</mat-label>
+                    <input matInput [type]="inputType" formControlName="newPassword" required>
+                    <!-- <mat-error *ngIf="hasError('newPassword','required')">Password is required</mat-error> -->
+                    <mat-error *ngIf="form.controls['newPassword'].invalid">Password is required</mat-error>
+                    <button type="button" mat-icon-button matSuffix (click)="toggleVisibility()" matTooltip="Toggle Visibility">
+            <mat-icon *ngIf="visible">visibility</mat-icon>
+            <mat-icon *ngIf="!visible">visibility_off</mat-icon>
+          </button>
+                    <!-- <mat-hint>Click the eye to toggle visibility</mat-hint> -->
+                </mat-form-field>
+
+                <mat-form-field fxFlex="grow">
+                    <mat-label>Nouveau mot de passe (Confirm)</mat-label>
+                    <input matInput [type]="inputType" formControlName="passwordConfirm" required>
+                    <!-- <mat-error *ngIf="password2.invalid && !password2.hasError('required')">Passwords don't match</mat-error> -->
+                    <mat-error *ngIf="form.controls['passwordConfirm'].pristine || form.controls['passwordConfirm'].errors?.MatchPassword">Password does not match</mat-error>
+                    <button type="button" mat-icon-button matSuffix (click)="toggleVisibility()" matTooltip="Toggle Visibility">
+            <mat-icon *ngIf="visible">visibility</mat-icon>
+            <mat-icon *ngIf="!visible">visibility_off</mat-icon>
+          </button>
+                    <!-- <mat-hint>Please repeat your newPassword from above</mat-hint> -->
+                </mat-form-field>
+            </div>
+
+            <!-- <div fxLayout="row" fxLayoutAlign="center center">
+                <mat-checkbox class="caption">I accept the <a href="#">terms and conditions.</a></mat-checkbox>
+            </div> -->
+            <button type="button" color="primary" mat-raised-button [disabled]="!form.valid" (click)="send()">
+        UPDATE ACCOUNT
+      </button>
+            <!-- <p class="secondary-text text-center">
+                Already have an account?<br/>
+                <a [routerLink]="['/login']">Sign in here</a>
+            </p> -->
+        </div>
+    </div>
+</div>

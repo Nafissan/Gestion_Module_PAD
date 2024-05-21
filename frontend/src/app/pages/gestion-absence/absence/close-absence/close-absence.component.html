@@ -1,0 +1,30 @@
+<div><mat-icon class="monIcon" mat-button mat-dialog-close>close</mat-icon></div>
+<div class="pupup"  mat-dialog-title>Clôture Absence</div>
+<form [formGroup]="form" (ngSubmit)="createEtapeAbsence()">
+    <mat-dialog-content>
+        <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
+            <mat-form-field fxFlex>
+              <mat-label>Date Retour Effective</mat-label>
+              <input  [matDatepicker]="picker3" placeholder="Date Retour Effective" formControlName="dateRetourEffective"
+                matInput>
+              <mat-datepicker-toggle matSuffix [for]="picker3">
+                <mat-icon matDatepickerToggleIcon>date_range</mat-icon>
+              </mat-datepicker-toggle>
+              <mat-datepicker #picker3></mat-datepicker>
+            </mat-form-field>
+          </div>
+
+        <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
+            <mat-form-field fxFlex>
+                <mat-label>Commentaire</mat-label>
+                <textarea formControlName="commentaire" matInput></textarea>
+            </mat-form-field>
+        </div>
+    
+ 
+    </mat-dialog-content>
+    <mat-dialog-actions fxLayout="row" fxLayoutAlign="end center">
+        <button  mat-button [disabled]="!form.valid">VALIDER</button>
+        <!-- <button *ngIf="isUpdateMode()" mat-button [disabled]="!form.valid">MODIFIER ETAPE INTERIM</button> -->
+    </mat-dialog-actions>
+</form>

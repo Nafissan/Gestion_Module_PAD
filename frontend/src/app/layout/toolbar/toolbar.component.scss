@@ -1,0 +1,35 @@
+@import "var";
+
+:host {
+  top: 0;
+  z-index: $toolbar-z-index;
+}
+
+.toolbar {
+  padding-right: 0;
+  height: $toolbar-height;
+  padding-left: $spacing;
+  max-width: 100%;
+
+  .toolbar-button {
+    border-left-width: 1px;
+    border-left-style: solid;
+    display: flex;
+  }
+
+  .toolbar-logo {
+    cursor: pointer;
+    outline: none;
+    margin-bottom: -5px;
+    margin-left: $spacing;
+    margin-right: $spacing;
+
+    svg {
+      height: 35px;
+    }
+  }
+
+  @include media-xs {
+    padding-left: $spacing/3;
+  }
+}

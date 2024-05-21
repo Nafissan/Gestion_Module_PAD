@@ -1,0 +1,66 @@
+<div><mat-icon class="close" mat-button mat-dialog-close>close</mat-icon></div>
+
+<div mat-dialog-title class="titre_modal_add">DETAILS PLANNING CONGE</div>
+<mat-dialog-content>
+    <mat-accordion class="example-headers-align" multi>
+        <div class="example-action-buttons">
+            <button *ngIf="showIcon === true" mat-raised-button color="primary" (click)="accordion.openAll(); showIcon = !showIcon">
+                       <mat-icon>expand_more</mat-icon> Afficher
+                    </button>
+            <button *ngIf="showIcon === false" mat-raised-button color="warn" (click)="accordion.closeAll(); showIcon = !showIcon">
+                      <mat-icon>expand_less</mat-icon> Fermer
+                    </button>
+        </div>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon>center_focus_weak</mat-icon>
+                    <span> Planning Conge</span>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-panel-description>
+                <span>Code: </span>{{planningConge.code}}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Date Création : </span>{{planningConge.dateCreation | date: 'dd-MM-yyyy' }}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Description : </span>{{planningConge.description}}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Etat : </span>{{planningConge.etat}}
+            </mat-panel-description>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon>category</mat-icon>
+                    <span>Unite Organisationnelle</span>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-panel-description>
+                <span>Code : </span>{{planningConge.uniteOrganisationnelle.code}}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Description : </span>{{planningConge.uniteOrganisationnelle.description}}
+            </mat-panel-description>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon>folder_open</mat-icon>
+                    <span>Planning Direction</span>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-panel-description>
+                <span>Code: </span>{{planningConge.planningDirection.code}}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Etat : </span>{{planningConge.planningDirection.etat}}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Description : </span>{{planningConge.planningDirection.description}}
+            </mat-panel-description>
+        </mat-expansion-panel>
+    </mat-accordion>
+</mat-dialog-content>

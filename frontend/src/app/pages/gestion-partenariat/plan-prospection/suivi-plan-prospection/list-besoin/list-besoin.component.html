@@ -1,0 +1,93 @@
+<fury-page-layout mode="card">
+    <fury-page-layout-header>
+        <fury-breadcrumbs routerLink="../" [@fadeInRight] [crumbs]="['Plan Prospection']" current="Besoins"></fury-breadcrumbs>
+    </fury-page-layout-header>
+
+    <fury-page-layout-content [@fadeInUp]>
+        <fury-list *ngIf="besoins.length !== 0 && showProgressBar === true" name="besoin" [columns]="columns" (filterChange)="onFilterChange($event)">
+            <div class="actions">
+                <button class="create" (click)="createBesoin()" type="button" mat-mini-fab color="primary">
+                    <mat-icon>add</mat-icon>
+                </button>
+                <button class="create" [routerLink]="'../../suivi-prospect/' + idPlanProspection" type="button" mat-mini-fab color="primary">
+                    <mat-icon>group</mat-icon>
+                </button>
+            </div>
+            <table [dataSource]="dataSource" mat-table matSort>
+
+                <ng-container matColumnDef="checkbox">
+                    <th *matHeaderCellDef class="actions-cell" mat-header-cell>
+                        <mat-checkbox color="primary" (click)="$event.stopPropagation()"></mat-checkbox>
+                    </th>
+                    <td *matCellDef="let row" class="actions-cell" mat-cell>
+                        <mat-checkbox color="primary" (click)="$event.stopPropagation()"></mat-checkbox>
+                    </td>
+                </ng-container>
+
+                <!-- fullName Column -->
+                <ng-container *ngFor="let column of columns">
+                    <ng-container *ngIf="column.isModelProperty" [matColumnDef]="column.property">
+                        <th *matHeaderCellDef mat-header-cell mat-sort-header> {{ column.name }}</th>
+                        <td *matCellDef="let row" mat-cell>
+                            <p *ngIf="column.name !== 'Code' && column.name !== 'Active' && column.name !== 'Structure'">
+                                {{ row[column.property] }}</p>
+                            <p *ngIf="column.name === 'Active'">
+                                <span *ngIf="row[column.property] === true" class="des badge badge-success">OUI</span>
+                                <span *ngIf="row[column.property] === false" class="des badge badge-danger">NON</span>
+                            </p>
+                            <p *ngIf="column.property === 'structure'">{{ row.unite.description }}</p>
+                        </td>
+                    </ng-container>
+                </ng-container>
+
+                <!-- actions Column -->
+                <ng-container matColumnDef="actions">
+                    <th *matHeaderCellDef class="actions-cell" mat-header-cell mat-sort-header></th>
+                    <td *matCellDef="let row" class="actions-cell" mat-cell>
+                        <button type="button" mat-icon-button [matMenuTriggerFor]="actionsMenu" (click)="$event.stopPropagation()">
+                            <mat-icon>more_horiz</mat-icon>
+                        </button>
+                        <mat-menu #actionsMenu="matMenu" yPosition="below" xPosition="after">
+                            <button (click)="updateBesoin(row)" mat-menu-item>
+                                <mat-icon>edit</mat-icon>
+                                <span>Modifier</span>
+                            </button>
+                            <button (click)="detailsBesoin(row)" mat-menu-item>
+                                <mat-icon>more</mat-icon>
+                                <span>DETAILS</span>
+                            </button>
+                            <button (click)="deleteBesoin(row)" mat-menu-item>
+                                <mat-icon>delete_sweep</mat-icon>
+                                <span>SUPPRIMER</span>
+                            </button>
+                        </mat-menu>
+                    </td>
+                </ng-container>
+
+                <tr *matHeaderRowDef="visibleColumns" mat-header-row></tr>
+                <tr (click)="detailsBesoin(row)" *matRowDef="let row; columns: visibleColumns;" class="clickable route-animations-elements" mat-row></tr>
+            </table>
+
+
+            <mat-paginator class="paginator" [pageSize]="pageSize"></mat-paginator>
+        </fury-list>
+        <div *ngIf="besoins.length === 0 && showProgressBar === true" class="card text-center">
+            <div class="card-header">
+                <span class="badge badge-info">
+                    INFORMATION
+                </span>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">Liste Besoin vide</h5>
+                <p class="card-text">Ajouter une nouveau besoin</p>
+                <button type="button" mat-mini-fab color="primary" (click)="createBesoin()">
+                    <mat-icon>add</mat-icon>
+                </button>
+            </div>
+            <div class="card-footer text-muted">
+                {{date | date : 'dd/MMM/yyyy HH:mm:ss'}}
+            </div>
+        </div>
+        <mat-progress-bar *ngIf="showProgressBar === false" mode="query" color="primary"></mat-progress-bar>
+    </fury-page-layout-content>
+</fury-page-layout>

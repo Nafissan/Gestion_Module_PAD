@@ -1,0 +1,45 @@
+<div>
+    <mat-icon class="close" mat-button mat-dialog-close>close</mat-icon>
+</div>
+<div mat-dialog-title class="titre_modal_add" *ngIf="isCreateMode()">Nouveau Dossier</div>
+<div mat-dialog-title class="titre_modal_add" *ngIf="isUpdateMode()">Mise à jour Dossier</div>
+<form [formGroup]="form" (ngSubmit)="save()">
+    <mat-dialog-content>
+
+        <!-- Description -->
+        <mat-form-field>
+            <mat-label>Description</mat-label>
+            <input matInput formControlName="description">
+        </mat-form-field>
+
+        <!-- Code -->
+        <mat-form-field>
+            <mat-label>Code</mat-label>
+            <input matInput formControlName="code" [disabled]="isUpdateMode()">
+        </mat-form-field>
+
+        <!-- Champ pour télécharger la note du ministère -->
+        <mat-form-field>
+            <mat-label>Note du ministère</mat-label>
+            <input type="file" (change)="handleNoteMinistereFileInput($event.target.files)">
+        </mat-form-field>
+
+        <!-- Champ pour télécharger la demande de prospection -->
+        <mat-form-field>
+            <mat-label>Demande de prospection</mat-label>
+            <input type="file" (change)="handleDemandeProspectionFileInput($event.target.files)">
+        </mat-form-field>
+
+    </mat-dialog-content>
+
+    <mat-dialog-actions fxLayout="row" fxLayoutAlign="end center">
+        <button *ngIf="isCreateMode()" mat-button [disabled]="!form.valid || !stateCtrl.value || form.get('enfantFormGroup').get('enfants').value.length === 0"
+            [ngClass]="{
+                'sm:text-sm md:text-md text-white bg-blue-100': !form.valid || !stateCtrl.value
+                    || (form.get('enfantFormGroup').get('enfants').value.length === 0),
+                'sm:text-sm md:text-md text-white bg-blue-400': form.valid && stateCtrl.value &&
+                    (form.get('enfantFormGroup').get('enfants').value.length > 0)
+            }">VALIDER</button>
+        <button *ngIf="isUpdateMode()" mat-button [disabled]="!form.valid">MODIFIER</button>
+    </mat-dialog-actions>
+</form>

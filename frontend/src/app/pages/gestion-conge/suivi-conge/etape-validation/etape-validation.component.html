@@ -1,0 +1,80 @@
+<div *ngIf="motif === 'rejeter-conge' || motif === 'valider-conge'" mat-dialog-titre class="badge badge-info" style="text-align: center;"><span>Suivi Conge</span></div>
+<div *ngIf="motif === 'transmettre-planning' || motif === 'imputer-planning' || motif === 'valider-planning' || motif === 'cloturer-planning' " mat-dialog-titre class="badge badge-info" style="text-align: center;"><span>Traitement Planning Direction</span></div>
+<div *ngIf="motif === 'historique-planning' || motif === 'historique-conge' " mat-dialog-titre class="badge badge-info" style="text-align: center;"><span>Historique Traitement</span></div>
+
+<form [formGroup]="form" (ngSubmit)="save()">
+    <form [formGroup]="form" (ngSubmit)="save()">
+        <mat-dialog-content *ngIf="motif === 'rejeter-conge' || motif === 'valider-conge' || motif === 'transmettre-planning' || motif === 'imputer-planning' || motif === 'cloturer-planning' || motif === 'valider-planning'">
+            <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="32px">
+                <mat-form-field fxFlex>
+                    <mat-label *ngIf="motif === 'rejeter-conge'">Motif Rejet</mat-label>
+                    <mat-label *ngIf="motif === 'valider-conge'">Motif Validation</mat-label>
+                    <mat-label *ngIf="motif === 'transmettre-planning' || motif === 'imputer-planning' || motif === 'cloturer-planning' || motif === 'valider-planning'">Commentaire</mat-label>
+                    <textarea formControlName="description" matInput></textarea>
+                </mat-form-field>
+            </div>
+        </mat-dialog-content>
+        <mat-dialog-content *ngIf="motif === 'historique-planning'">
+            <mat-vertical-stepper [linear]="true" #steppePlanning>
+                <mat-step *ngFor="let etape of etapePlanningDirections">
+                    <ng-template matStepLabel>{{etape.structure}}</ng-template>
+                    <mat-divider></mat-divider>
+                    <div class="text-monospace " *ngIf="etape.description !== ''"><span class="font-weight-bold">Description:</span> <span>{{etape.description}}</span></div>
+                    <div class="text-monospace " *ngIf="etape.description !== ''"><span class="font-weight-bold">Date:</span> {{etape.date | date: "dd/MM/yyyy"}}</div>
+                    <mat-divider></mat-divider>
+                    <div class="badge badge-primary">Agent Traitant</div>
+                    <div class="text-monospace "><span class="font-weight-bold">Matricule:</span> {{etape.matricule}}</div>
+                    <div class="text-monospace "><span class="font-weight-bold">Prenom:</span> {{etape.prenom}}</div>
+                    <div class="text-monospace "><span class="font-weight-bold">Nom:</span> {{etape.nom}}</div>
+                    <div class="text-monospace "><span class="font-weight-bold">Fonction:</span> {{etape.fonction}}</div>
+                    <div class="text-monospace "><span class="font-weight-bold">Unite Organisationnelle:</span> {{etape.structure}}</div>
+                    <mat-divider></mat-divider>
+                    <div class="badge badge-primary">Planning Direction</div>
+                    <div class="text-monospace "><span class="font-weight-bold">Code:</span> {{etape.planningDirection.code}}</div>
+                    <div class="text-monospace "><span class="font-weight-bold">Code:</span> {{etape.planningDirection.code}}</div>
+                    <div class="text-monospace "><span class="font-weight-bold">Description:</span> {{etape.planningDirection.description}}</div>
+                    <div class="text-monospace "><span class="font-weight-bold">Unite Organisationnelle:</span> {{etape.planningDirection.descriptionDirection}}</div>
+                    <div class="text-monospace "><span class="font-weight-bold">Etat:</span> {{etape.etat}}</div>
+                </mat-step>
+            </mat-vertical-stepper>
+        </mat-dialog-content>
+
+        <mat-dialog-content *ngIf="motif === 'historique-conge'">
+            <mat-vertical-stepper [linear]="true" #stepperConge>
+                <mat-step *ngFor="let historique of historiqueConges">
+                    <ng-template matStepLabel>{{historique.structure}}</ng-template>
+                    <mat-divider></mat-divider>
+                    <div class="text-monospace " *ngIf="historique.description !== ''"><span class="font-weight-bold">Statut:</span> {{historique.description}}</div>
+                    <div class="text-monospace " *ngIf="historique.description !== ''"><span class="font-weight-bold">Date:</span> {{historique.date | date: "dd/MM/yyyy"}}</div>
+                    <mat-divider></mat-divider>
+                    <div class="text-monospace " class="badge badge-primary">Agent Traitant</div>
+                    <div class="text-monospace "><span class="font-weight-bold">Matricule:</span> {{historique.matricule}}</div>
+                    <div class="text-monospace "><span class="font-weight-bold">Prenom:</span> {{historique.prenom}}</div>
+                    <div class="text-monospace "><span class="font-weight-bold">Nom:</span> {{historique.nom}}</div>
+                    <div class="text-monospace "><span class="font-weight-bold">Fonction:</span> {{historique.fonction}}</div>
+                    <div class="text-monospace "><span class="font-weight-bold">Unite Organisationnelle:</span> {{historique.structure}}</div>
+                    <mat-divider></mat-divider>
+                    <div class="badge badge-primary">Conge</div>
+                    <div class="text-monospace "><span class="font-weight-bold">Code:</span> {{historique.conge.code}}</div>
+                    <div class="text-monospace "><span class="font-weight-bold">Description:</span> {{historique.conge.description}}</div>
+                    <div class="text-monospace "><span class="font-weight-bold">Date Depart:</span> {{historique.conge.dateDepart | date: "dd/MM/yyyy"}}</div>
+                    <div class="text-monospace "><span class="font-weight-bold">Date Retour:</span> {{historique.conge.dateRetourPrevisionnelle | date: "dd/MM/yyyy"}}</div>
+                    <mat-divider></mat-divider>
+                    <div class="badge badge-primary">Demandeur</div>
+                    <div class="text-monospace "><span class="font-weight-bold">Matricule:</span> {{historique.conge.agent.matricule}}</div>
+                    <div class="text-monospace "><span class="font-weight-bold">Prenom:</span> {{historique.conge.agent.prenom}}</div>
+                    <div class="text-monospace "><span class="font-weight-bold">Nom:</span> {{historique.conge.agent.nom.toUpperCase()}}</div>
+                </mat-step>
+            </mat-vertical-stepper>
+        </mat-dialog-content>
+
+        <mat-dialog-actions fxLayout="row" fxLayoutAlign="end center">
+            <button mat-button *ngIf="motif === 'rejeter-conge' || motif === 'valider-conge'|| motif === 'transmettre-planning' || motif === 'imputer-planning' || motif === 'cloturer-planning' || motif === 'valider-planning'" [mat-dialog-close]="">ANNULER</button>
+            <button mat-button *ngIf="motif === 'rejeter-conge'" [disabled]="!form.valid">REJETER</button>
+            <button mat-button *ngIf="motif === 'valider-conge'">VALIDER</button>
+            <button mat-button *ngIf="motif === 'transmettre-planning'">TRANSMETTRE</button>
+            <button mat-button *ngIf="motif === 'imputer-planning'">IMPUTER</button>
+            <button mat-button *ngIf="motif === 'cloturer-planning'">CLOTURER</button>
+            <button mat-button *ngIf="motif === 'valider-planning'">VALIDER</button>
+        </mat-dialog-actions>
+    </form>

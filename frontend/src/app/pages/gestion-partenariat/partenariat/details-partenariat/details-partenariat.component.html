@@ -1,0 +1,63 @@
+<mat-icon class="close" mat-button mat-dialog-close>close</mat-icon>
+<div mat-dialog-title class="h1-responsive text-align titre_modal_add">DETAILS PARTENAIRE</div>
+<mat-dialog-content>
+    <mat-accordion class="example-headers-align" multi>
+        
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <img style="width: 5%; border-radius: 5px; margin-right: 5px;" src="assets/img/partenaire-logo.jpg">
+                    <span style="margin-top: 2px;">{{partenaire.nom}}</span>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-panel-description>
+                <span class="lib">Email:</span>
+                <span class="des">{{partenaire.email}}</span>
+            </mat-panel-description>
+            <mat-panel-description>
+                <span class="lib">Téléphone: </span><span class="des">{{partenaire.telephone}}</span>
+            </mat-panel-description>
+            <mat-panel-description>
+                <span class="lib">Site Web: </span><span class="des">{{partenaire.siteWeb}}</span>
+            </mat-panel-description>
+            <mat-panel-description>
+                <span class="lib">Fax: </span><span class="des">{{partenaire.fax}}</span>
+            </mat-panel-description>
+            <mat-panel-description>
+                <span class="lib">Ville : </span><span class="des">{{partenaire.ville.nom}}</span>
+            </mat-panel-description>
+            <mat-panel-description>
+                <span class="lib">Prenom Representant: </span><span class="des">{{partenaire.representantPrenom}}</span>
+            </mat-panel-description>
+            <mat-panel-description>
+                <span class="lib">Nom Representant: </span><span class="des">{{partenaire.representantNom}}</span>
+            </mat-panel-description>
+            <mat-panel-description>
+                <span class="lib">Email Representant: </span><span class="des">{{partenaire.representantEmail}}</span>
+            </mat-panel-description>
+            <mat-panel-description>
+                <span class="lib">Telephone Representant: </span><span class="des">{{partenaire.representantTelephone}}</span>
+            </mat-panel-description>
+            <mat-panel-description>
+                <span class="lib">Active: </span>
+                <span *ngIf="partenaire.active === true" class="des badge badge-success">OUI</span>
+                <span *ngIf="partenaire.active === false" class="des badge badge-danger">NON</span>
+            </mat-panel-description>
+           
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon style="width: 5%; border-radius: 5px; margin-right: 5px;">place</mat-icon>
+                    <span style="margin-top: 2px;">{{partenaire.adresse}}</span>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-panel-description>
+                <span class="lib">Latitude: </span><span class="des">{{partenaire.latitude}}</span>
+            </mat-panel-description>
+            <mat-panel-description>
+                <span class="lib">Longitude: </span><span class="des">{{partenaire.longitude}}</span>
+            </mat-panel-description>
+        </mat-expansion-panel>
+    </mat-accordion>
+</mat-dialog-content>

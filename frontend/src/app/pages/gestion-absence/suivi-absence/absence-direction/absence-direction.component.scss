@@ -1,0 +1,256 @@
+//mat-list-option[aria-selected="true"] {
+
+/* .folder_content [aria-selected="true"]  {
+    background-color: aliceblue !important;
+} */
+
+/*  .mat-list-option[aria-selected="true"] {
+    background-color: aliceblue !important;
+}  */
+.font {
+    font-family: monospace;
+}
+
+span {
+    font-family: monospace;
+    font-weight: bold;
+    text-align: center;
+}
+
+.mat-divider {
+    border-top-width: 2px;
+    border-top-style: dashed;
+}
+
+
+
+mat-selection-list {
+    background-color: white;
+}
+
+mat-expansion-panel {
+    background-color: lightgray;
+}
+
+mat-hint {
+    color: red !important;
+}
+
+
+
+
+.mat-divider {
+    border-top-width: 2px;
+    border-top-style: dashed;
+}
+
+.mat-card {
+    max-width: 70%;
+}
+
+button {
+    text-align: center;
+    text-size-adjust: auto;
+}
+
+/* mat-selection-list {
+    max-height: 220px;
+    overflow: auto;
+} */
+// .taille{
+//     margin-right: 250px;
+// }
+.direct{
+    margin-right: 100px;
+}
+
+.mat-list-icon {
+    color: rgba(0, 0, 0, 0.54);
+}
+
+.cs_content_princ{
+    border: 2px solid #7fb6e0; 
+    border-radius: 5px; 
+    padding-left: 5px; 
+    padding-top: 5px; 
+    background-color: white;
+}
+
+.cs_block_titre {
+    display:flex; 
+    border: 0px solid green; 
+    background-color: white;
+}
+
+.cs_block_titre_gauche{
+    width: 75%; 
+    border: 0px solid yellow; 
+    font-family:cursive;
+    color: #7bb8e4;
+    padding-top:2%; 
+    background-color: white;
+}
+
+.cs_block_titre_gauche font{
+    font-family:cursive;
+}
+
+.cs_block_titre_gauche span{
+    font-family:cursive;
+    //text-transform: uppercase;
+}
+.cs_titre .span{
+    font-family:cursive;
+}
+
+
+.cs_block_titre_droit{
+    border: 0px solid yellowgreen; 
+    background-color: white;
+}
+
+
+.cs_content_sec{
+    margin-top:15px; 
+    border: 0px solid greenyellow; 
+    padding-left: 5%; 
+    background-color: white; 
+    padding-bottom: 8%;
+    height: 500px;
+    overflow: auto;
+}
+.cs_content_ter{
+    margin-top:15px; 
+    border: 0px solid greenyellow; 
+    padding-left: 5%; 
+    background-color: white; 
+    padding-bottom: 8%;
+    height: 500px;
+    
+}
+
+.cs_content_ter .cs_block_titre_gauche{
+    width: 75%; 
+    border: 0px solid yellow; 
+    color: #7bb8e4;
+    padding-top:2%; 
+    background-color: white;
+}
+
+
+.cs_content_ter .cs_block_titre_droit{
+    border: 0px solid yellowgreen; 
+    background-color: white;
+}
+
+.cs_titre{
+    color:#7db8e4 ; 
+    border: 0px solid yellowgreen; 
+}
+.cs_content_ter_titre{
+    display:flex;
+}
+.bouton{
+    color:#7db8e4 !important;
+    border: 0px solid yellowgreen  !important; 
+    background-color: transparent !important;
+}
+
+.ppp{
+    display:flex;
+}
+
+.dossier_miniature{
+    width: 40%;
+    border-right: 2px solid #e0e0e0  !important; 
+    border-right-style: dashed  !important;
+    height:450px;
+    overflow: auto;
+    overflow-x:none;
+    //height: ;
+}
+.dossier_miniature_agrandi{
+    width: 100%;
+    border-right: 2px solid #e0e0e0  !important; 
+    border-right-style: dashed  !important;
+    height:450px;
+    overflow: auto;
+    overflow-x:none;
+    //height: ;
+}
+.dossier_miniature_retreci{
+    width: 40%;
+    border-right: 2px solid #e0e0e0  !important; 
+    border-right-style: dashed  !important;
+    height:450px;
+    overflow: auto;
+    overflow-x:none;
+    //height: ;
+}
+
+
+.ppp .mat-list-option[aria-selected="true"] {
+    background-color: aliceblue !important;
+}
+
+
+
+.dossier_miniature .folder_content{
+    width: 100%;
+}
+
+.fichier{
+    width: 60%;
+    height:500px;
+    border: 0px solid yellowgreen  !important; 
+    height:450px;
+    overflow: auto;
+}
+
+.mat-selection-list{
+    display: flex; 
+    flex-wrap: wrap; 
+    border: 0px solid purple;
+}
+
+.mat-list-option{
+    border: 0px solid orange; 
+    width: 50%; 
+    height: auto !important; 
+    padding-bottom: 8% !important;
+}
+
+.folder{
+    width: 100px !important;
+    height: 68px !important;
+    font-size: 63px !important;
+    color: #7bb8e4;
+    border: 1px solid #7db8e4;
+    border-radius: 10% !important;
+}
+.folder_content .mat-line {
+    white-space: normal !important;
+}
+
+.file{
+    width: 100px !important;
+    height: 68px !important;
+    font-size: 63px !important;
+    color: #ffe4b5;
+    border: 1px solid #ffe4b5;
+    border-radius: 10% !important;
+}
+
+
+.folder_content:hover {
+    background-color: aliceblue;
+}
+.folder_content:target {
+    background-color: aliceblue;
+}
+
+.agrandi{
+    width:100% !important;
+}
+
+

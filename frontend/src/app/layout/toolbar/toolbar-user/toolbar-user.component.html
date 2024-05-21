@@ -1,0 +1,33 @@
+<div class="toolbar-user" (furyClickOutside)="onClickOutside()" fxFlex="grow">
+    <button class="button" mat-button (click)="toggleDropdown()" [class.open]="isOpen" fxFlex="grow">
+    <span fxLayout="row" fxLayoutAlign="start center">
+      <img class="avatar" src="assets/img/avatars/default.jpg">
+      <span class="name" fxHide fxShow.gt-sm *ngIf="compte">{{compte.agent.prenom + ' ' +compte.agent.nom}}</span>
+      <mat-icon class="icon" fxHide fxShow.gt-sm>keyboard_arrow_down</mat-icon>
+    </span>
+  </button>
+
+    <div class="dropdown" [class.open]="isOpen">
+        <div class="content">
+            <div class="list">
+                <div class="list-item" matRipple>
+                    <mat-icon class="list-item-icon">account_circle</mat-icon>
+                    <span>Profil</span>
+                </div>
+                <div class="list-item" matRipple>
+                    <mat-icon class="list-item-icon">settings</mat-icon>
+                    <span>Paramètres</span>
+                </div>
+                <div class="list-item" matRipple (click)="changePassword()">
+                    <mat-icon class="list-item-icon">refresh</mat-icon>
+                    <span>Changer mot de passe</span>
+                </div>
+                <mat-divider></mat-divider>
+                <div class="list-item" matRipple (click)="logOut()">
+                    <mat-icon class="list-item-icon">exit_to_app</mat-icon>
+                    <span>Déconnexion</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

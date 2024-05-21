@@ -1,0 +1,36 @@
+<div>
+    <mat-icon class="close" mat-button mat-dialog-close>close</mat-icon>
+</div>
+<div mat-dialog-title class="popup titre_modal_add">AJOUTER CATEGORIE LAIT</div>
+
+<form [formGroup]="form" (ngSubmit)="save()">
+    <mat-dialog-content>
+
+        <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
+            <mat-form-field fxFlex>
+                <mat-label>Libelle</mat-label>
+                <textarea formControlName="libelle" matInput></textarea>
+            </mat-form-field>
+        </div>
+
+        <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
+            <mat-form-field fxFlex>
+                <mat-label>Libelle</mat-label>
+                <textarea formControlName="description" matInput></textarea>
+            </mat-form-field>
+        </div>
+
+        <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
+            <mat-form-field fxFlex>
+                <mat-label>Seuil</mat-label>
+                <input formControlName="seuil" matInput type="number" min="0" max="100"
+                    placeholder="Saisir le seuil minimal">
+            </mat-form-field>
+        </div>
+
+    </mat-dialog-content>
+    <mat-dialog-actions fxLayout="row" fxLayoutAlign="end center">
+        <button *ngIf="isCreateMode()" mat-button [disabled]="!form.valid">ENREGISTRER </button>
+        <button *ngIf="isUpdateMode()" mat-button [disabled]="!form.valid">MODIFIER</button>
+    </mat-dialog-actions>
+</form>

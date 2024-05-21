@@ -1,0 +1,477 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import "./@fury/styles/core";
+@import "./app/app.theme";
+
+/* Notification */
+
+snack-bar-container.success {
+    background-color: lightblue;
+    color: black;
+}
+snack-bar-container.successlight {
+    background-color: lightblue;
+    color: black;
+}
+snack-bar-container.warn {
+    background-color: red;
+    color: white;
+}
+
+snack-bar-container.notification simple-snack-bar {
+    font-size: 18px !important;
+    font-family: monospace;
+}
+
+snack-bar-container.login {
+    background-color: rgb(0, 174, 255);
+    color: white;
+}
+
+.hide {
+    display: none;
+}
+
+/********************************************************* * PERSONNALISATION THEME *  **********************************************************/
+
+/**************************************************************** * GENERAL * *******************************************************************/
+
+
+.page {
+   
+ //  background-image: none;
+    //background-image: url(background_login.png);  
+    //background-image: url('background_login_2.jpeg);
+}
+
+.icon_list{
+
+    color:#0d3556;
+    font-size: 30px;
+}
+
+.titre_liste{
+    //border: 1px red solid;
+    padding-bottom: 2px;
+}
+
+*{
+    box-sizing: content-box;
+}
+
+/*.titre_modal_add{
+
+    border: 1px #e5e5e5 solid;
+    padding: 10px;
+    text-align: center;
+    letter-spacing: 3px;
+    color: #588bbd;
+    text-transform: uppercase;
+    font-size: 16px;
+    font-weight: bold;
+
+}*/
+
+.mat-dialog-title {
+    font-family: cursive;
+    border-bottom: 1px #e5e5e5 solid;
+    padding: 10px;
+    margin-bottom: 20px;
+    text-align: center;
+    letter-spacing: 3px;
+    color: #0d5185;
+    text-transform: uppercase;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.w500{
+
+    width:500px;
+}
+
+.mat-dialog-container {
+
+    min-width: 400px;;
+}
+
+.material-icons-outlined{
+
+
+}
+
+/*.mat-dialog-container .close{
+   
+    position: relative;
+    cursor: pointer;
+    right: -28px;
+    height: -2px;
+    top: -23px;
+    height: auto;
+    font-size: 15px;
+     border: 2px #d8d5d5 solid; 
+    text-shadow: 0 1px 0 white;
+  
+    opacity: .2;
+    color: black;
+    text-align: center;
+    border-radius: 24%;
+    font-weight: 700;
+  
+
+}*/
+
+.mat-dialog-container .close{
+    position: relative;
+    cursor: pointer;
+    right: -22px;
+    height: -2px;
+    top: -23px;
+    height: auto;
+    font-size: 12px;
+    border: 2px grey solid;
+    /* background: darkred; */
+    text-shadow: 0 1px 0 white;
+    opacity: 0.8;
+    color: grey;
+    text-align: center;
+    border-radius: 24%;
+    font-weight: 700;
+
+}
+
+
+/*.mat-dialog-container .close:hover{
+    color:red;
+    opacity: 1;
+}*/
+
+.mat-dialog-container .close:hover{
+
+    color: white;
+    background: darkred;
+    border-color:darkred ;
+   
+}
+
+
+
+
+
+/***************************************************************** * TOOLBAR USER * ***********************************************************************************************/
+.toolbar-user .dropdown .list {  
+    background-color: #275c90;
+}
+.toolbar-user .dropdown .list .list-item {
+
+    background-color: #275c90;
+    border-bottom: 1px #1c4c73 solid;
+}
+
+.fury-default fury-toolbar-user .dropdown .list .list-item:hover {
+    background-color: #397dbf;
+}
+.fury-default fury-toolbar-user .dropdown .list-item-icon {
+    color: white;
+}
+/***************************************************************** * LOGIN * ***********************************************************************************************/
+.login_container{
+
+   // border: 2px #68b0de  solid;
+    border-radius: 5px;
+    position: relative;
+   // border: 2px #68b0de solid;
+    width: auto;
+}
+.login_container .card{
+
+    background-color: transparent;
+    position: relative;
+    left:48px;
+    left: 350px;
+    top: 90px;
+   // border: 2px #68b0de solid;
+    font-family: agency fb;
+}
+
+.card_login{
+   
+    background-color: transparent;
+   // border: 1px #87cbf8 solid;
+    
+}
+.card_login_titre{
+    
+    padding: 10px;
+    background-color: transparent;
+    margin-bottom: 2px;
+    width: 100%;
+    color: #226cb7;
+    letter-spacing: 5px;
+    font-size: 28px;
+    font-family: Agency fb;
+    font-weight: bold;
+    text-align: center;
+}
+.titre_logo {
+
+}
+.mat-dialog-container .close{
+    float: right;
+    padding: 0px;
+    line-height: 1;
+    transition: all 0.8s ease;
+}
+.fury-default .background-primary {
+    background-color:transparent;
+}
+
+.logo {
+    background-image:none;  
+}
+.logo2 {
+    width: 100%;
+    float: left;
+}
+.mat-dialog-container .close:hover{
+    opacity: 1;  
+    transform: scale3d(1.1, 1.1, 1.1);
+}
+.titre2{
+    //background-color:white;
+    width: 100%;
+    padding: 5px;
+    color: #226cb7;
+    letter-spacing: 5px;
+    font-size: 28px;
+    //font-weight: bold;
+    text-align: center;
+}
+
+
+.mat-form-field-appearance-fill .mat-form-field-flex {
+   // background-color: #fafafa;
+}
+
+
+.button_connexion{
+    background-color: #1c4c73;
+    color: white;
+    font-family: agency fb;
+    text-transform: uppercase;
+    font-size: 21px;
+}
+/********************************************************* * BLOC LOGO EN HAUT A GAUCHE* ***********************************************************************************************/
+.sidenav-toolbar .sidenav-toolbar-logo {
+    margin-left: 10px;
+    margin-bottom: 4px;
+}
+
+.t1{
+
+    margin-left: 10px;
+    margin-bottom: 4px;
+    cursor: pointer;
+}
+.fury-default fury-sidenav .sidenav-toolbar {//titre page logo
+    background-color: #1c4c73;
+    color:#fafafa;
+    border-bottom: 1px #3e5d7b solid;
+    font-family: Agency FB;
+    //text-transform: uppercase;
+    letter-spacing: 0px;
+    font-size: 27px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.login_container .mat-form-field-appearance-fill .mat-form-field-flex {//input formulaire
+    border-radius: 5px;
+    padding: .75em .75em 0 .75em;
+    border: 2px #68b0de  solid;
+   // background-color: #fafafa;
+    background-color: #fafafa42;
+    color: #156296;
+}
+
+/******************************************************** * * SIDENAV * * **********************************************************************************************/
+tr:nth-child(even) {background-color: #f2f2f2;}
+
+.fury-default fury-sidenav .sidenav{ //block gauche
+    //border: 1px #0d3556 solid;   
+}
+
+.simplebar-content-wrapper{//menu
+    background-color: #275c90;  
+
+}
+.fury-default fury-sidenav .sidenav-user{//user
+    background-color: #1c4c73;
+    //border-bottom: 1px #b5bfc9 solid;
+}
+
+.fury-default fury-sidenav .sidenav-toolbar{//entete logo
+
+    background-color: #1c4c73;
+   // border-bottom: 1px #e3e5e7 solid;
+}
+
+.fury-default fury-toolbar .toolbar{
+
+    background-color: #0d3556;
+    color:white;
+
+}
+
+.fury-default .fury-page-layout-header{//titre page
+    //background-color: #fafafa;
+    background-image: url('assets/img/banniere_haut_6.jpg');
+    color: #0d3556;
+    box-sizing: content-box;
+    width:100%;
+    background-size: 100% 100%;
+  //  border: 1px white solid;
+    //border-left: none;
+}
+
+.fury-default .fury-page-layout-header fury-breadcrumbs .crumb:hover, .fury-default .fury-page-layout-header fury-breadcrumbs .link:hover{
+
+    color: #021423;
+}
+
+.fury-default .fury-page-layout-header fury-breadcrumbs .crumb, .fury-default .fury-page-layout-header fury-breadcrumbs .link{
+
+    color: #0d3556;
+    font-family: cursive;
+
+}
+
+.fury-default .fury-page-layout-header fury-breadcrumbs .crumb.current, .fury-default .fury-page-layout-header fury-breadcrumbs .crumb.current .link{
+
+    color: #0d3556;
+
+}
+
+.fury-default fury-sidenav .sidenav-user .sidenav-user-name{//user name
+
+    font-family:cursive;
+}
+
+.fury-default fury-sidenav .sidenav-user .sidenav-user-email{//user mail
+    font-family:cursive;
+}
+
+.fury-list-table{//table
+
+    border: 1px #d1d8dd solid;
+}
+
+.fury-list-table .fury-list-header .fury-list-name{//titre table
+    color: #0d3556;
+}
+
+
+.fury-default .sidenav-item .sidenav-item-link{//Menu item
+
+    color: white;
+    //border-bottom: 1px #0d3556 solid ;
+    transition: all 1.4s ease;
+}
+
+
+.fury-default .sidenav-item.level-0.dropdown-open {//dropdown menu
+    background: #1c4c73; 
+    border-bottom: none;
+}
+
+.fury-default .sidenav-item .sidenav-item-link:hover { //item menu hover
+    background: #397dbf;
+    color: white;
+    transform: scaleX(1.2);
+}
+
+.fury-default .mat-icon:hover { //icon menu hover
+   
+}
+.fury-default .sidenav-item .sidenav-item-link:hover{
+    color: red($color: #000000);
+}
+.fury-default .sidenav-item.level-1{ //item when menu dropdown
+    background:#1c4c73;
+    color: #0d3556;
+}
+.fury-default .sidenav-item.level-1 .sidenav-item-link {
+    padding-left: 30px;
+}
+
+.fury-default .sidenav-item.level-2 .sidenav-item-link{
+    padding-left: 40px;
+}
+
+.fury-default .sidenav-item.level-2 {
+    background: #0d3556;
+}
+
+.fury-default .sidenav-item .sidenav-item-link.active {
+    background: #1c4c73;
+    color: white;
+
+}
+
+.fury-default .sidenav-item .sidenav-item-link .text-icon {
+    color: #fafafa;
+}
+.mat-flat-button.mat-primary, .mat-raised-button.mat-primary, .mat-fab.mat-primary, .mat-mini-fab.mat-primary{
+    background-color: #1c4c73;
+    border-radius: 12px;
+    margin-right: 5px;
+}
+
+
+
+/******************************************************** * * CONTENU CENTRAL * * **********************************************************************************************/
+.fury-page-layout-card{
+
+    //background-image: url('background_login_9.png');
+    //background-image: url('../assets/img/background_login_9.jpg');
+    background-image: url('assets/img/banniere_bas.jpg');
+    height: 100%;  
+    width: 100%;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+
+}
+
+.mat-drawer-container{
+    background-color: white;
+}
+
+.title { //titre page
+    /*font-weight: 400 !important;
+    font-size: 25 !important;
+    font-size: 21px !important;
+    font-weight: bold !important;
+    text-transform: capitalize !important;
+    font-family: Bahnschrift Light !important;
+    padding-bottom: 19px !important;
+    padding-top: 9px !important;    
+    font-family: agency fb !important;*/
+
+
+    /* border-bottom: 1px #e5e5e5 solid; */
+    padding: 10px;
+    padding-left: 0px;
+   /*  margin-bottom: 20px; */
+    font-family:cursive !important;
+    /* font-weight: bold !important; */
+    font-size: 21px !important;
+    letter-spacing: 3px;
+    color: #0d5185;
+    /* text-transform: uppercase; */
+    font-size: 16px;
+    font-weight: bold;
+}
+
+
+/******************************************************** * * DASHBOARD * * **********************************************************************************************/
+

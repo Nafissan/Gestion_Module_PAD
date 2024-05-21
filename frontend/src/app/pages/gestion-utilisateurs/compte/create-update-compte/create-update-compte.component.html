@@ -1,0 +1,58 @@
+<div><mat-icon class="close" mat-button mat-dialog-close>close</mat-icon></div>
+<div mat-dialog-title class="titre_modal_add">Creer Compte</div>
+<form [formGroup]="form" (ngSubmit)="save()">
+    <mat-dialog-content>
+        <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
+            <mat-form-field fxFlex>
+                <mat-label>Username</mat-label>
+                <input type="text" formControlName="username" matInput>
+            </mat-form-field>
+            <mat-form-field *ngIf="isCreateMode()">
+                <mat-label>Password</mat-label>
+                <input [type]="inputType" matInput formControlName="password" value="Password!">
+                <button (click)="togglePassword()" mat-icon-button matSuffix type="button">
+                    <mat-icon *ngIf="visible">visibility</mat-icon>
+                    <mat-icon *ngIf="!visible">visibility_off</mat-icon>
+                </button>
+                <mat-hint>Try clicking the eye to toggle the visibility.</mat-hint>
+            </mat-form-field>
+        </div>
+        <div class="person" *ngIf="isCreateMode()">
+            <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
+                <mat-form-field fxFlex>
+                    <mat-label>Renseigner utilisateur compte</mat-label>
+                    <input matInput [matAutocomplete]="auto" [formControl]="stateCtrl">
+                    <mat-autocomplete #auto="matAutocomplete">
+                        <mat-option *ngFor="let agent of filteredStates | async" [value]="agent.prenom + ' ' + agent.nom" (click)="setAgent(agent)">
+                            <img style="vertical-align:middle; margin-right: 4px;" src="assets/img/users.png" height="16" />
+                            <span>{{ agent.matricule }}</span> |
+                            <span><small> {{ agent.prenom }} </small>
+                            <small> {{ agent.nom }}</small></span>
+                        </mat-option>
+                    </mat-autocomplete>
+                    <button *ngIf="stateCtrl.value" type="button" mat-icon-button (click)="stateCtrl.reset()" matSuffix>
+                    <mat-icon>close</mat-icon>
+                  </button>
+                    <button *ngIf="!stateCtrl.value" type="button" mat-icon-button matSuffix>
+                    <mat-icon>arrow_drop_down</mat-icon>
+                  </button>
+                </mat-form-field>
+            </div>
+        </div>
+        <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
+            <mat-form-field fxFlex>
+                <mat-label>Rôle</mat-label>
+                <mat-select formControlName="roles" multiple>
+                    <mat-option *ngFor="let role of roles" [value]="role">
+                        {{role.nomRole}}
+                    </mat-option>
+                </mat-select>
+                <mat-icon matSuffix>supervised_user_circle</mat-icon>
+            </mat-form-field>
+        </div>
+    </mat-dialog-content>
+    <mat-dialog-actions fxLayout="row" fxLayoutAlign="end center">
+        <button *ngIf="isCreateMode()" mat-button [disabled]="!form.valid || !stateCtrl.value">VALIDER</button>
+        <button *ngIf="isUpdateMode()" mat-button [disabled]="!form.valid">MODIFIER</button>
+    </mat-dialog-actions>
+</form>

@@ -1,0 +1,48 @@
+<div mat-dialog-title style="font-family: monospace; text-align: center;">DETAILS FONCTION</div>
+<mat-dialog-content>
+
+<mat-accordion class="example-headers-align" multi>
+        <div class="example-action-buttons">
+            <button *ngIf="showIcon === true" mat-raised-button color="primary" (click)="accordion.openAll(); showIcon = !showIcon">
+                           <mat-icon>expand_more</mat-icon> Afficher
+                        </button>
+            <button *ngIf="showIcon === false" mat-raised-button color="warn" (click)="accordion.closeAll(); showIcon = !showIcon">
+                          <mat-icon>expand_less</mat-icon> Fermer
+                        </button>
+        </div>
+        
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon>perm_identity</mat-icon>
+                 <span>Fonction</span>   
+                </mat-panel-title>       
+              
+            </mat-expansion-panel-header>
+            <mat-panel-description>
+                <span>Id : </span>{{fonction.id}}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Nom : </span>{{fonction.nom}}
+            </mat-panel-description>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon>category</mat-icon>
+                 <span>Unité Organisationelle</span>   
+                </mat-panel-title>
+  
+            </mat-expansion-panel-header>
+            <mat-panel-description>
+                <span>Code : </span>{{fonction.uniteOrganisationnelle[0].code}}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Nom : </span>{{fonction.uniteOrganisationnelle[0].nom.toUpperCase()}}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Description : </span>{{fonction.uniteOrganisationnelle[0].description}}
+            </mat-panel-description>
+        </mat-expansion-panel>
+    </mat-accordion>
+    </mat-dialog-content>

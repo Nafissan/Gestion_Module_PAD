@@ -1,0 +1,68 @@
+<div>
+    <mat-icon class="close" mat-button mat-dialog-close>close</mat-icon>
+</div>
+<div mat-dialog-title style="font-family: monospace; text-align: center;">DETAILS DEMANDE ATTESTATION</div>
+<mat-dialog-content>
+    <mat-accordion class="example-headers-align" multi>
+        <div class="example-action-buttons">
+            <button *ngIf="showIcon === true" mat-raised-button color="primary" (click)="accordion.openAll(); showIcon = !showIcon">
+                       <mat-icon>expand_more</mat-icon> Afficher
+                    </button>
+            <button *ngIf="showIcon === false" mat-raised-button color="warn" (click)="accordion.closeAll(); showIcon = !showIcon">
+                      <mat-icon>expand_less</mat-icon> Fermer
+                    </button>
+        </div>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon>folder_open</mat-icon>
+                    <span> Agent demandeur</span>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-panel-description>
+                <span>Matricule: </span>{{attestaion.agent.matricule}}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Prenom</span>{{attestaion.agent.prenom}}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Nom</span>{{attestaion.agent.nom}}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Telephone: </span>{{attestaion.agent.telephone}}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Commentaire: </span>{{attestaion.commentaire}}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Etat: </span>{{attestaion.etat}}
+            </mat-panel-description>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon>supervisor_account</mat-icon>
+                    <span>Agent traitrant</span>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-panel-description>
+                <span *ngIf="suiviAttestation !== undefined">Matricule : </span>{{suiviAttestation.matricule}}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span *ngIf="suiviAttestation !== undefined">Nom :</span> {{suiviAttestation.nom}}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span *ngIf="suiviAttestation !== undefined">Prénom : </span>{{suiviAttestation.prenom}}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span *ngIf="suiviAttestation !== undefined">Téléphone : </span>{{suiviAttestation.telephone}}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span *ngIf="suiviAttestation">Commentaire :</span> {{suiviAttestation.commentaire}}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span *ngIf="suiviAttestation !== undefined">Fonction :</span> {{suiviAttestation.fonction}}
+            </mat-panel-description>
+        </mat-expansion-panel>
+    </mat-accordion>
+</mat-dialog-content>

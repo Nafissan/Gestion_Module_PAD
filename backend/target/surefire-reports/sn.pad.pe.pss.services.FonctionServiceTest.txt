@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: sn.pad.pe.pss.services.FonctionServiceTest
+-------------------------------------------------------------------------------
+Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.019 s - in sn.pad.pe.pss.services.FonctionServiceTest

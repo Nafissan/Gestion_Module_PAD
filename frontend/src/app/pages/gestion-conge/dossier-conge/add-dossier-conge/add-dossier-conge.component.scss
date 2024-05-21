@@ -1,0 +1,40 @@
+.modal-body {
+    font-family: monospace;
+    color: darkblue;
+}
+
+.modal-title {
+    font-family: monospace;
+    color: white;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.modal-header {
+    background-color: darkblue;
+}
+
+.btn1 {
+    margin-right: 5px;
+}
+
+.btn2 {
+    margin-right: 60px;
+}
+
+.example-month-picker .mat-calendar-period-button {
+    pointer-events: none;
+}
+
+.example-month-picker .mat-calendar-arrow {
+    display: none;
+}
+
+.monIcon {
+    float: right;
+}
+
+.monIcon:hover {
+    cursor: pointer;
+    background-color: #808080;
+}

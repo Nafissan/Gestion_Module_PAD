@@ -1,0 +1,45 @@
+<div>
+    <mat-icon class="close" mat-button mat-dialog-close>close</mat-icon>
+</div>
+
+<div class="export-container">
+    <button class="btn btn-primary" *ngIf="isSetTable() && !isFailedToLoad" mat-raised-button color="primary" (click)="createConges()">Valider importation</button>
+</div>
+<div class="export-container">
+    <button class="btn btn-primary" *ngIf="isFailedToLoad" mat-raised-button color="primary" (click)="export()">Exporter et corriger</button>
+</div>
+<mat-dialog-content>
+    <fury-page-layout-content [@fadeInUp]>
+        <h3 class="text-monospace" *ngIf="isSetTable() && !isFailedToLoad">CONGES</h3>
+        <h3 class="text-monospace" *ngIf="isFailedToLoad">Liste des entrées incorrectes!</h3>
+        <div [@fadeInUp] class="card">
+            <input *ngIf="!isSetTable()" type="file" (change)="onFileChange($event)" multiple="false" />
+            <div class="card">
+                <h3 class="card-header text-center font-weigth-bold text-uppercase py-4" *ngIf="isSetTable() && !isFailedToLoad">Table editable</h3>
+                <div class="card-body">
+                    <div *ngIf="isSetTable() || isFailedToLoad" class="table-editable">
+                        <span *ngIf="!isFailedToLoad" class="table-add float-right">
+                            <a class="btn btn-success text-monospace text-center" (click)="add()">
+                              AJOUTER
+                            </a>
+                          </span>
+                        <table class="table table-bordered table-response-md table-striped text-center">
+                            <tbody>
+                                <tr *ngFor="let row of data; let l=index">
+                                    <td *ngFor="let val of row; let c=index">
+                                        <span [contentEditable]="l > 0" (keyup)="changeValue(l, c, $event)" (blur)="updateList(l, c, $event)" contenteditable="true">{{val}}</span>
+                                    </td>
+                                    <td *ngIf="l > 0 && !isFailedToLoad">
+                                        <span>
+                                          <button class="btn btn-danger text-monospace text-center" rounded="true"(click)="remove(l)">SUPPRIMER</button>
+                                        </span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fury-page-layout-content>
+</mat-dialog-content>

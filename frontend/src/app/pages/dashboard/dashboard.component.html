@@ -1,0 +1,95 @@
+<fury-page [fxLayoutGap]="gap" class="dashboard" fxLayout="column">
+  <!-- FIRST ROW -->
+  <div fxFlex="noshrink" fxLayout="column" [fxLayoutGap]="gap" fxLayout.gt-lg="row">
+    <div fxLayout="column" [fxLayoutGap]="gap" [fxFlex]="col(2)" fxLayout.gt-sm="row">
+      <div fxFlex="auto" [fxFlex.gt-sm]="col(4)">
+        <div class="card-body" class="p-3 mb-2 bg-success text-white">
+          <h5 class="card-title card-text text-center">CONGES</h5>
+          <h1 class="card-text text-center">{{congeStructure.length}}</h1>
+          <a [routerLink]="['/dashboad-conge/conge-bar-chart']" class="p-3 text-white">Détails</a>
+        </div>
+       
+      </div>
+
+      <div fxFlex="auto" [fxFlex.gt-sm]="col(4)">
+        <div class="card-body" class="p-3 mb-2 bg-danger text-white">
+          <h5 class="card-title card-text text-center">ABSENCES</h5>
+          <h1 class="card-text text-center">{{absenceStructure.length}}</h1>
+          <a [routerLink]="['/dashboad-absence/absence-bar-chart']" class="p-3 text-white">Détails</a>
+        </div>
+      </div>
+
+      <div fxFlex="auto" [fxFlex.gt-sm]="col(4)">
+        <div class="card-body" class="p-3 mb-2 bg-primary text-white">
+          <h5 class="card-title card-text text-center">INTERIMS</h5>
+          <h1 class="card-text text-center">{{interimStructure.length}}</h1>
+          <a [routerLink]="['/dashboad-interim/interim-bar-chart']" class="p-3 text-white">Détails</a>
+        </div>
+      </div>
+
+      <div fxFlex="auto" [fxFlex.gt-sm]="col(4)">
+        <div class="card-body" class="p-3 mb-2 bg-info text-white">
+          <h5 class="card-title card-text text-center">ATTESTATIONS</h5>
+          <h1 class="card-text text-center">{{attestationStructure.length}}</h1>
+          <a [routerLink]="['/dashboad-attestation/attestation-bar-chart']" class="p-3 text-white">Détails</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- <div class="centered" fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="24px">
+      <mat-form-field fxflex>
+        <mat-label>Direction</mat-label>
+        <input matInput [matAutocomplete]="auto1" [formControl]="uniteOrgCtrl">
+        <mat-autocomplete #auto1="matAutocomplete">
+          <mat-option *ngFor="let unite of filteredUniteOrg | async" [value]="unite.description" (click)=setUniteOrg(unite)>
+            <mat-icon>folder</mat-icon>
+            <span>{{ unite.nom }}</span> |
+            <small>{{ unite.description}}</small>
+          </mat-option>
+        </mat-autocomplete>
+        <button *ngIf="uniteOrgCtrl.value" type="button" mat-icon-button (click)="uniteOrgCtrl.reset()" matSuffix>
+          <mat-icon>close</mat-icon>
+        </button>
+        <button *ngIf="!uniteOrgCtrl.value" type="button" mat-icon-button matSuffix>
+          <mat-icon>arrow_drop_down</mat-icon>
+        </button>
+      </mat-form-field>
+      <p></p> -->
+
+      <!-- <mat-form-field appearance="fill">
+        <mat-date-range-input [rangePicker]="picker">
+          <input matStartDate formControlName="start" placeholder="Date debut">
+          <input matEndDate formControlName="end" placeholder="Date fin">
+        </mat-date-range-input>
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-date-range-picker #picker></mat-date-range-picker>
+        <mat-error *ngIf="range.controls.start.hasError('matStartDateInvalid')">Invalid start date</mat-error>
+        <mat-error *ngIf="range.controls.end.hasError('matEndDateInvalid')">Invalid end date</mat-error>
+      </mat-form-field> -->
+      <!-- <mat-form-field>
+        <input matInput [matDatepicker] = "picker" placeholder = "choisir une date">
+        <mat-datepicker-toggle matSuffix [for] = "picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+     </mat-form-field>     -->
+    <!-- </div> -->
+    
+    <!-- <div>
+      <canvas  baseChart [datasets]="barChartData" [labels]="barChartLabels" [options]="barChartOptions"
+         [legend]="barChartLegend" [chartType]="barChartType">
+      </canvas>
+     
+    </div> -->
+    <div class="chart-wrapper">
+      <canvas baseChart 
+          [datasets]="lineChartData" 
+          [labels]="lineChartLabels" 
+          [options]="lineChartOptions"
+          [colors]="lineChartColors" 
+          [legend]="lineChartLegend" 
+          [chartType]="lineChartType" 
+          [plugins]="lineChartPlugins">
+      </canvas>
+  </div>
+
+  </div>
+</fury-page>

@@ -1,0 +1,55 @@
+<div><mat-icon class="close" mat-button mat-dialog-close>close</mat-icon></div>
+
+<div mat-dialog-title>Role Utilisateur</div>
+<mat-dialog-content>
+
+    <div class="person">
+        <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
+            <mat-form-field fxFlex>
+                <mat-label>Nom</mat-label>
+                <input type="text" [(ngModel)]="role.nomRole" [formControl]="nomRoleCtrl" matInput>
+            </mat-form-field>
+        </div>
+        <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
+            <mat-form-field fxFlex>
+                <mat-label>Description</mat-label>
+                <input type="text" [(ngModel)]="role.description" matInput>
+            </mat-form-field>
+        </div>
+    </div>
+
+    <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
+        <section class="example-section">
+            <mat-checkbox [color]="checkboxColor" style="color: darkgreen; font-family: monospace;" (change)="setAll($event.checked)">
+                Tout cocher
+            </mat-checkbox>
+            <table class="table table-hover">
+                <tr *ngFor="let ressource of ressources">
+                    <td style="font-family: monospace;font-weight: bold;">
+                        {{ressource.name}}
+                    </td>
+                    <td>
+                        <span *ngFor="let privilege of ressource.privileges">
+                                <mat-checkbox class="example-margin" [(ngModel)]="privilege.checked" (ngModelChange)="updateCheckbox()" [color]="checkboxColor" style="color: black; font-family: monospace; font-size: 12px">
+                                    {{privilege.description}}
+                                </mat-checkbox>
+                            </span>
+                    </td>
+                    <td style="text-align: right;">
+                        <mat-checkbox [color]="checkboxColor" [(ngModel)]="ressource.checked" style="color: darkblue; font-family: monospace;" (change)="setLine(ressource, $event.checked)">
+                            Tout cocher
+                        </mat-checkbox>
+                    </td>
+                </tr>
+            </table>
+        </section>
+    </div>
+</mat-dialog-content>
+<mat-dialog-actions fxLayout="row" fxLayoutAlign="end center">
+    <button *ngIf="isCreateMode()" [disabled]="(!nomRoleCtrl.value)" mat-button (click)="save()">
+            CREER COMPTE
+        </button>
+    <button *ngIf="isUpdateMode()" mat-button (click)="save()">
+            MODIFIER COMPTE
+        </button>
+</mat-dialog-actions>

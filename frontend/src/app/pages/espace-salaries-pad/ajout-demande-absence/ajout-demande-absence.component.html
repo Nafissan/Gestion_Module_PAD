@@ -1,0 +1,59 @@
+<div><mat-icon class="close" mat-button mat-dialog-close>close</mat-icon></div>
+<div  mat-dialog-title class="popup titre_modal_add">DEMANDE D'AUTORISATION D'ABSENCE</div>
+<form [formGroup]="form" (ngSubmit)="save()">
+    <mat-dialog-content>          
+
+    <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
+      <mat-form-field fxFlex>
+          <mat-label>Date Depart</mat-label>
+          <input  [matDatepicker]="picker1" disabled [min]="mindate" formControlName="dateDepart" (ngModelChange)="controledate($event)" (ngModelChange)="onDateChange($event)" style="color: blue;" matInput>
+          <mat-datepicker-toggle matSuffix [for]="picker1">
+              <mat-icon matDatepickerToggleIcon>date_range</mat-icon>
+          </mat-datepicker-toggle>
+          <mat-datepicker #picker1 disabled="false"></mat-datepicker>
+      </mat-form-field> 
+  </div>
+
+<div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
+  <mat-form-field fxFlex>
+    <mat-label>Motif</mat-label>
+    <input matInput [matAutocomplete]="auto1" [formControl]="motiifCtrl" >
+    <mat-autocomplete #auto1="matAutocomplete">
+      <mat-option *ngFor="let motif of motifs" [value] = "motif.description" (click)="setMotif(motif)">
+        {{motif.description}}
+      </mat-option>
+    </mat-autocomplete>
+    <button *ngIf="motiifCtrl.value" type="button" mat-icon-button (click)="motiifCtrl.reset()" matSuffix>
+      <mat-icon>close</mat-icon>
+    </button>
+     <button *ngIf="!motiifCtrl.value" type="button" mat-icon-button matSuffix>
+      <mat-icon>arrow_drop_down</mat-icon>
+    </button>
+  </mat-form-field>
+</div>
+  <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
+      <mat-form-field fxFlex>
+          <mat-label>Date Retour Previsionnelle</mat-label>
+          <input [min]="minDatePrevisionnelle" (dateChange)="setDateRetour()" [disabled] = "isDisable" [matDatepicker]="picker2" formControlName="dateRetourPrevisionnelle" style="color: blue;"  matInput>
+          <mat-datepicker-toggle matSuffix [for]="picker2" >
+              <mat-icon matDatepickerToggleIcon>date_range</mat-icon>
+          </mat-datepicker-toggle>
+          <mat-datepicker #picker2></mat-datepicker>
+      </mat-form-field>
+  </div>
+
+    <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
+        <mat-form-field fxFlex>
+            <mat-label>Commentaire</mat-label>
+            <textarea formControlName="commentaire" matInput></textarea>
+        </mat-form-field>
+    </div>
+
+
+    </mat-dialog-content>
+    <mat-dialog-actions fxLayout="row" fxLayoutAlign="end center">
+        <button *ngIf="isCreateMode()" mat-button [disabled]="!form.valid">ENREGISTRER </button>
+        <button *ngIf="isUpdateMode()" mat-button [disabled]="!form.valid">MODIFIER</button>
+    </mat-dialog-actions>
+</form>
+

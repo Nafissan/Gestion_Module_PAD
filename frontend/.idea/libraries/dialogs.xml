@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="dialogs">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/src/app/pages/components/dialogs.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

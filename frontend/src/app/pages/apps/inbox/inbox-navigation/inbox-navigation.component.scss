@@ -1,0 +1,23 @@
+@import "var";
+
+.navigation {
+  margin-top: $spacing;
+
+  .mat-list-item {
+    cursor: pointer;
+    margin-top: $spacing/3;
+    margin-bottom: $spacing/3;
+    position: relative;
+    outline: none;
+    border-radius: $border-radius;
+
+    .mat-line {
+      font-weight: 500;
+    }
+  }
+
+  .mat-divider {
+    margin-top: $spacing/3;
+    margin-bottom: $spacing/3;
+  }
+}

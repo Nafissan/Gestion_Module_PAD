@@ -1,0 +1,131 @@
+<div class="mail-list" fxLayout="column">
+  <div class="header border-bottom" fxFlex="none" fxLayout="row" fxLayoutAlign="start center">
+    <mat-checkbox></mat-checkbox>
+    <button [matMenuTriggerFor]="menu" class="icon" mat-icon-button type="button">
+      <mat-icon>arrow_drop_down</mat-icon>
+    </button>
+  </div>
+
+  <fury-scrollbar class="content" fxFlex="auto">
+    <div *ngFor="let mail of mails$ | async"
+         [class.background-hover]="mail.read"
+         [routerLink]="['../mail', mail.id]"
+         class="mail border-bottom"
+         gdColumns="68px 1fr 140px" gdColumns.lt-md="68px 1fr auto" gdColumns.lt-sm="auto 1fr auto" gdGap="8px">
+      <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="6px" fxHide fxShow.gt-xs>
+        <mat-checkbox (click)="$event.stopPropagation()" class="checkbox"></mat-checkbox>
+        <fury-inbox-mail-star (click)="$event.stopPropagation()" (starred)="toggleStarred(mail)"
+                              [isStarred]="mail.starred"></fury-inbox-mail-star>
+      </div>
+
+      <div class="content-container" gdColumns.gt-sm="150px 1fr" gdRows.lt-md="auto 1fr">
+        <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="16px">
+          <img class="picture" fxFlex="noshrink" fxHide fxShow.gt-sm
+               src="http://i.pravatar.cc/30?u={{ mail.from.name }}">
+          <div class="from text" fxFlex="grow" fxLayout="row" fxLayoutAlign="space-between center">
+            {{ mail.from.name }}
+            <div class="when secondary-text" fxHide.gt-sm>{{ mail.when.fromNow() }}</div>
+          </div>
+        </div>
+
+        <div class="content-wrapper"
+             fxLayout="column"
+             fxLayout.gt-sm="row"
+             fxLayoutAlign.gt-sm="start center"
+             fxLayoutGap="8px">
+          <div fxLayout="row" fxLayoutGap="8px">
+            <fury-inbox-mail-label *ngFor="let label of mail.labels" [color]="label.color">{{ label.name }}
+            </fury-inbox-mail-label>
+          </div>
+
+          <div class="subject text" fxFlex="noshrink">{{ mail.subject }}</div>
+          <div class="middot text" fxHide fxShow.gt-sm>&middot;</div>
+          <div class="content text">{{ mail.content }}</div>
+        </div>
+      </div>
+
+      <div fxLayout="row" fxLayoutAlign="end center">
+        <span class="when secondary-text" fxHide fxShow.gt-sm>{{ mail.when.fromNow() }}</span>
+        <button (click)="$event.stopPropagation()" [matMenuTriggerFor]="mailOptions" class="icon" mat-icon-button>
+          <mat-icon>more_vert</mat-icon>
+        </button>
+      </div>
+    </div>
+  </fury-scrollbar>
+
+</div>
+
+<!--<div class="content">
+  <div *ngFor="let mail of mails$ | async"
+       [class.read]="mail.read"
+       [routerLink]="['../mail', mail.id]"
+       class="mail"
+       fxLayout="row"
+       fxLayoutAlign="start center"
+       fxLayoutGap="8px"
+       matRipple>
+    <div fxFlex="68px" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="8px">
+      <mat-checkbox (click)="$event.stopPropagation()" class="checkbox"></mat-checkbox>
+      <fury-inbox-mail-star (click)="$event.stopPropagation()" (starred)="toggleStarred(mail)"
+                            [isStarred]="mail.starred"></fury-inbox-mail-star>
+    </div>
+
+    <div class="content-container" fxFlex="auto" fxLayout="column" fxLayout.gt-sm="row">
+      <div fxFlex="auto" fxFlex.gt-sm="210px" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="16px">
+        <img class="picture" fxFlex="noshrink" fxHide fxShow.gt-sm
+             src="http://i.pravatar.cc/30?u={{ mail.from.name }}">
+        <div class="from" fxFlex="grow" fxLayout="row" fxLayoutAlign="space-between center">
+          {{ mail.from.name }}
+          <div class="when" fxHide.gt-sm>{{ mail.when.fromNow() }}</div>
+        </div>
+      </div>
+
+      <div class="content-wrapper" fxFlex="grow" fxLayout="column" fxLayout.gt-sm="row"
+           fxLayoutAlign.gt-sm="start center" fxLayoutGap="8px">
+        <div fxLayout="row" fxLayoutGap="8px">
+          <fury-inbox-mail-label *ngFor="let label of mail.labels" [color]="label.color">{{ label.name }}
+          </fury-inbox-mail-label>
+        </div>
+
+        <div class="subject" fxFlex="noshrink">{{ mail.subject }}</div>
+        <div class="middot" fxHide fxShow.gt-sm>&middot;</div>
+        <div class="content">{{ mail.content }}</div>
+      </div>
+    </div>
+
+    <div fxFlex="40px" fxFlex.gt-sm="100px" fxLayout="row" fxLayoutAlign="end center">
+      <span class="when" fxHide fxShow.gt-sm>{{ mail.when.fromNow() }}</span>
+      <button (click)="$event.stopPropagation()" [matMenuTriggerFor]="mailOptions" class="options" mat-icon-button>
+        <mat-icon>more_vert</mat-icon>
+      </button>
+    </div>
+  </div>
+</div>-->
+
+<mat-menu #menu="matMenu">
+  <button mat-menu-item>
+    <span> All </span>
+  </button>
+  <button mat-menu-item>
+    <span> Unread </span>
+  </button>
+  <button mat-menu-item>
+    <span> Read </span>
+  </button>
+</mat-menu>
+
+<mat-menu #mailOptions="matMenu">
+  <button mat-menu-item>
+    <mat-icon>markunread_mailbox</mat-icon>
+    Mark as unread
+  </button>
+  <button mat-menu-item>
+    <mat-icon>label</mat-icon>
+    Labels
+  </button>
+  <mat-divider></mat-divider>
+  <button mat-menu-item>
+    <mat-icon>delete</mat-icon>
+    Delete
+  </button>
+</mat-menu>

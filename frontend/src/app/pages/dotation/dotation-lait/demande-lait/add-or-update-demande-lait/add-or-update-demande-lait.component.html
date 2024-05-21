@@ -1,0 +1,164 @@
+<div><mat-icon class="close" mat-button mat-dialog-close>close</mat-icon></div>
+<div mat-dialog-title class="titre_modal_add" *ngIf="isCreateMode()">Nouveau Dossier</div>
+<div mat-dialog-title class="titre_modal_add" *ngIf="isUpdateMode()">Mise à jour Dossier</div>
+<form [formGroup]="form" (ngSubmit)="save()">
+    <mat-dialog-content>
+        <!-- Observation -->
+        <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
+            <mat-form-field fxFlex>
+                <mat-label>Observation</mat-label>
+                <input type="text" formControlName="observation" matInput>
+            </mat-form-field>
+        </div>
+        <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
+            <!-- Beneficiaire -->
+            <mat-form-field fxFlex>
+                <mat-label>Renseigner bénéficiare</mat-label>
+                <input matInput [matAutocomplete]="auto" [formControl]="stateCtrl">
+                <mat-autocomplete #auto="matAutocomplete" >
+                    <mat-option *ngFor="let agent of filteredStates | async" [value]="agent.prenom + ' ' + agent.nom" (click)="setAgent(agent)">
+                        <img style="vertical-align:middle; margin-right: 4px;" src="assets/img/users.png" height="16" />
+                        <span>{{ agent.matricule }}</span> |
+                        <span><small> {{ agent.prenom }} </small>
+                        <small> {{ agent.nom }}</small></span>
+                    </mat-option>
+                </mat-autocomplete>
+                <button *ngIf="stateCtrl.value" type="button" mat-icon-button (click)="stateCtrl.reset()" matSuffix>
+                <mat-icon>close</mat-icon>
+                </button>
+                <button *ngIf="!stateCtrl.value" type="button" mat-icon-button matSuffix>
+                <mat-icon>arrow_drop_down</mat-icon>
+                </button>
+            </mat-form-field>
+            <!-- Type Dotation -->
+            <mat-form-field fxFlex>
+                <mat-label>Type Dotation</mat-label>
+                <mat-select formControlName="typeDotation" [compareWith]="compareObjects">
+                    <mat-option *ngFor="let typeDotation of typeDotations" [value]="typeDotation">
+                        {{typeDotation.libelle}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
+            <!-- Date Debut -->
+            <mat-form-field fxFlex color="accent" appearance="fill">
+                <mat-label>Date Début</mat-label>
+                <input [matDatepicker]="picker1" formControlName="dateDebut" (ngModelChange)="onDateChange($event)" matInput>
+                <mat-datepicker-toggle matSuffix [for]="picker1">
+                </mat-datepicker-toggle>
+                <mat-datepicker #picker1></mat-datepicker>
+            </mat-form-field>
+            <!-- Date Fin -->
+            <mat-form-field fxFlex color="accent" appearance="fill">
+                <mat-label>Date Fin</mat-label>
+                <input [min]="minDateDebut"  [matDatepicker]="picker2" formControlName="dateFin" matInput>
+                <mat-datepicker-toggle matSuffix [for]="picker2">
+                </mat-datepicker-toggle>
+                <mat-datepicker #picker2></mat-datepicker>
+            </mat-form-field>
+        </div>
+            <fieldset >
+                <legend>Conjoint(e):</legend>
+                <div formGroupName="conjoint" fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="15px">
+                    <!-- Prénom Conjoint-->
+                    <mat-form-field fxFlex>
+                        <mat-label>Prénom</mat-label>
+                        <input type="text" [formControlName]="'prenom'" matInput>
+                    </mat-form-field>
+                    <!-- Nom Conjoint-->
+                    <mat-form-field fxFlex>
+                        <mat-label>Nom</mat-label>
+                        <input type="text" [formControlName]="'nom'" matInput>
+                    </mat-form-field>
+                    <!-- Sexe Conjoint-->
+                    <mat-form-field fxFlex>
+                        <mat-label>Sexe</mat-label>
+                        <mat-select [formControlName]="'sexe'">
+                            <mat-option [value]="'m'">Masculin</mat-option>
+                            <mat-option [value]="'f'">Féminin</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <!-- Portuaire -->
+                    <mat-form-field fxFlex>
+                        <mat-label>Portuaire</mat-label>
+                        <mat-select [formControlName]="'estPortuaire'">
+                            <mat-option [value]="true">Oui</mat-option>
+                            <mat-option [value]="false">Non</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+        </fieldset>
+            <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
+                <div >
+
+                    <div >
+                        <button style="margin: 2px;" class="create" (click)="addEnfantField()" type="button" mat-mini-fab color="primary">
+                            <mat-icon>add</mat-icon>
+                        </button>
+                        Ajouter enfant(s)
+                    </div>
+
+                    <div >
+                        <ng-container *ngFor="let enfant of  form.get('enfantFormGroup').get('enfants')['controls']; let i = index; let first = first; let last = last; ">
+                            <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="5px">
+                                <!-- Prénom -->
+                                <mat-form-field fxFlex>
+                                    <mat-label>Prénom</mat-label>
+                                    <input type="text" [formControl]="enfant.get('prenom')" matInput>
+                                </mat-form-field>
+                                <!-- Nom -->
+                                <mat-form-field fxFlex>
+                                    <mat-label>Nom</mat-label>
+                                    <input type="text" [formControl]="enfant.get('nom')" matInput>
+                                </mat-form-field>
+                                <!-- Sexe -->
+                                <mat-form-field fxFlex>
+                                    <mat-label>Sexe</mat-label>
+                                    <mat-select [formControl]="enfant.get('sexe')" [compareWith]="compareObjects">
+                                        <mat-option [value]="'m'">Masculin</mat-option>
+                                        <mat-option [value]="'f'">Féminin</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+
+                                <!-- date de naissance -->
+                                <mat-form-field fxFlex color="accent" appearance="fill">
+                                    <mat-label>Date de naissance</mat-label>
+                                    <input [matDatepicker]="picker3" [formControl]="enfant.get('dateNaissance')" matInput>
+                                    <mat-datepicker-toggle matSuffix [for]="picker3">
+                                    </mat-datepicker-toggle>
+                                    <mat-datepicker #picker3></mat-datepicker>
+                                </mat-form-field>
+
+                                <!-- Numéro extrait -->
+                                <mat-form-field fxFlex>
+                                    <mat-label>Numéro extrait</mat-label>
+                                    <input type="text" [formControl]="enfant.get('numeroExtrait')"  matInput>
+                                </mat-form-field>
+
+                                <!-- Remove enfant -->
+                                <ng-container>
+                                    <div class="flex flex-col items-center">
+                                        <button (click)="removeEnfantField(i)" type="button" mat-mini-fab color="warn">
+                                            <mat-icon>delete_sweep</mat-icon>
+                                        </button>
+                                    </div>
+                                </ng-container>
+                            </div>
+                        </ng-container>
+                    </div>
+
+                </div>
+            </div>
+    </mat-dialog-content>
+    <mat-dialog-actions fxLayout="row" fxLayoutAlign="end center">
+        <button *ngIf="isCreateMode()" mat-button [disabled]="!form.valid || !stateCtrl.value || form.get('enfantFormGroup').get('enfants').value.length === 0"
+        [ngClass]="{
+            'sm:text-sm md:text-md text-white bg-blue-100':!form.valid || !stateCtrl.value
+            || (form.get('enfantFormGroup').get('enfants').value.length === 0),
+            'sm:text-sm md:text-md text-white bg-blue-400':form.valid && stateCtrl.value &&
+            (form.get('enfantFormGroup').get('enfants').value.length > 0)
+          }">VALIDER</button>
+        <button *ngIf="isUpdateMode()" mat-button [disabled]="!form.valid">MODIFIER</button>
+    </mat-dialog-actions>
+</form>

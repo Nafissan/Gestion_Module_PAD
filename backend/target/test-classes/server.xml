@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<server description="Serveur embarqué PSS">
+	<!-- Enable features -->
+	<featureManager>
+		<feature>servlet-4.0</feature>
+	</featureManager>
+
+	<variable name="default.http.port" defaultValue="9080" />
+	<variable name="default.https.port" defaultValue="9443" />
+	<variable name="app.context.root" defaultValue="pss-backend" />
+
+	<httpEndpoint httpPort="${default.http.port}"
+		httpsPort="${default.https.port}" id="defaultHttpEndpoint" host="*" />
+	<webApplication id="pss-backend"
+		location="pss-backend.war" contextRoot="pss-backend" />
+		<serverCommands startServerTimeout="300" stopServerTimeout="300" />
+
+</server>

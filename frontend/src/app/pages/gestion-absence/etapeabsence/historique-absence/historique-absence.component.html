@@ -1,0 +1,31 @@
+<mat-icon class="close" mat-button mat-dialog-close>close</mat-icon>
+ <div mat-dialog-title  style="font-family: monospace; text-align: center;">HISTORIQUE ABSENCE</div>
+<!-- <div  mat-dialog-titre class="badge badge-info" style="text-align: center;"><span>Traitement Planning Direction</span></div>
+<div  mat-dialog-titre class="badge badge-info" style="text-align: center;"><span>Historique Traitement</span></div>  -->
+        <mat-dialog-content >
+            <mat-vertical-stepper  class="pupup" [linear]="true">
+                <mat-step  *ngFor="let etape of etapeAbsences">
+                    <ng-template matStepLabel>{{etape.structure}}</ng-template>
+                    <!-- <ng-template matStepLabel>{{etape.description}}</ng-template> -->
+                    <mat-divider></mat-divider>
+                    <div class="text-monospace "><span class="font-weight-bold" class="badge badge-primary">Action:</span> <span> {{etape.action}}</span></div>
+                    <div class="text-monospace "><span class="font-weight-bold">Commentaire:</span> <span> {{etape.commentaire}}</span></div>
+                    <div class="text-monospace "><span class="font-weight-bold">Date:</span> {{etape.date | date: "dd/MM/yyyy"}}</div>
+                    <mat-divider></mat-divider>
+                    <div class="badge badge-primary">Agent Traitant</div>
+                    <div class="text-monospace "><span class="font-weight-bold">Matricule:</span> {{etape.matricule}}</div>
+                    <div class="text-monospace "><span class="font-weight-bold">Prenom:</span> {{etape.prenom}}</div>
+                    <div class="text-monospace "><span class="font-weight-bold">Nom:</span> {{etape.nom}}</div>
+                    <div class="text-monospace "><span class="font-weight-bold">Fonction:</span> {{etape.fonction}}</div>
+                    <!-- <div class="text-monospace "><span class="font-weight-bold">Unite Organisationnelle:</span> {{etape.structure}}</div> -->
+                    <mat-divider></mat-divider>
+                    <!-- <div class="badge badge-primary">Planning Direction</div>
+                    <div class="text-monospace "><span class="font-weight-bold">Code:</span> {{etape.commentaire}}</div>
+                    <div class="text-monospace "><span class="font-weight-bold">Code:</span> {{etape.commentaire}}</div>
+                    <div class="text-monospace "><span class="font-weight-bold">Description:</span> {{etape.commentaire}}</div>
+                    <div class="text-monospace "><span class="font-weight-bold">Unite Organisationnelle:</span> {{etape.commentaire}}</div>
+                    <div class="text-monospace "><span class="font-weight-bold">Etat:</span> {{etape.commentaire}}</div> -->
+                </mat-step>
+            </mat-vertical-stepper>
+        </mat-dialog-content>
+

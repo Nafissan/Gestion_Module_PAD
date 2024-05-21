@@ -1,0 +1,66 @@
+<div mat-dialog-title class="titre_modal_add">DETAILS PLANNING DIRECTION</div>
+<mat-dialog-content>
+    <mat-accordion class="example-headers-align" multi>
+        <div class="example-action-buttons">
+            <button *ngIf="showIcon === true" mat-raised-button color="primary" (click)="accordion.openAll(); showIcon = !showIcon">
+                       <mat-icon>expand_more</mat-icon> Afficher
+                    </button>
+            <button *ngIf="showIcon === false" mat-raised-button color="warn" (click)="accordion.closeAll(); showIcon = !showIcon">
+                      <mat-icon>expand_less</mat-icon> Fermer
+                    </button>
+        </div>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon>center_focus_weak</mat-icon>
+                    <span> Planning Direction</span>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-panel-description>
+                <span>Code: </span>{{planningDirection.code}}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Description : </span>{{planningDirection.description}}
+            </mat-panel-description>
+            <mat-panel-description>
+                <div *ngIf="planningDirection.etat === saisi"><span> Etat : </span> <span class="badge badge-warning">{{planningDirection.etat}}</span></div>
+                <div *ngIf="planningDirection.etat === encours"><span>Etat : </span> <span class="badge badge-info">  {{ planningDirection.etat}}</span></div>
+                <div *ngIf="planningDirection.etat === valide"><span>Etat : </span> <span class="badge badge-success">{{planningDirection.etat}}</span></div>
+                <div *ngIf="planningDirection.etat === transmis"><span>Etat : </span> <span class="badge badge-secondary">{{planningDirection.etat}}</span></div>
+                <div *ngIf="planningDirection.etat === impute"><span>Etat : </span> <span class="badge badge-dark">{{planningDirection.etat}}</span></div>
+                <div *ngIf="planningDirection.etat === cloture"><span>Etat : </span> <span class="badge badge-success">{{planningDirection.etat}}</span></div>
+            </mat-panel-description>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon>category</mat-icon>
+                    <span>Unite Organisationnelle</span>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-panel-description>
+                <span>Nom : </span>{{planningDirection.nomDirection}}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Description : </span>{{planningDirection.descriptionDirection}}
+            </mat-panel-description>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon>folder_open</mat-icon>
+                    <span>Dossier Conge</span>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-panel-description>
+                <span>Code: </span>{{planningDirection.dossierConge.code}}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Annee : </span>{{planningDirection.dossierConge.annee}}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Description : </span>{{planningDirection.dossierConge.description}}
+            </mat-panel-description>
+        </mat-expansion-panel>
+    </mat-accordion>
+</mat-dialog-content>

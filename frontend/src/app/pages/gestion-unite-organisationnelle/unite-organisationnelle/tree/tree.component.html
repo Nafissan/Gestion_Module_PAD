@@ -1,0 +1,93 @@
+<fury-page-layout mode="card">
+    <fury-page-layout-header>
+        <fury-breadcrumbs [@fadeInRight] [crumbs]="['gestion-unite-organisationnelle']" current="unite-organisationnelle"></fury-breadcrumbs>
+    </fury-page-layout-header>
+
+    <fury-page-layout-content [@fadeInUp]>
+        <div class="control-section">
+            <ejs-treegrid 
+                 #treegrid
+                 [dataSource]='data' 
+                 allowPaging='true'
+                 height='350' 
+                 allowTextWrap='true'
+                 childMapping='uniteInferieurs' 
+                 [treeColumnIndex]='1' 
+                 [pageSettings]='pageSetting' 
+                 [toolbar]='toolbarOptions' 
+                 [editSettings]='editSettings' 
+                 [allowExcelExport]="true" 
+                 (actionBegin)="actionBegin($event)"
+                 (actionComplete)="actionComplete($event)" 
+                 (rowSelected)="rowSelected($event)" 
+                 (toolbarClick)="toolbarClick($event)">
+                <e-columns>
+                    <e-column field='id' headerText='ID' width='50'></e-column>
+                    <e-column field='code' headerText='CODE' width='70'></e-column>
+                    <!-- <e-column field='nom' headerText='NOM' width='70'></e-column> -->
+                    <e-column field='description' headerText='DESCRIPTION' width='150'></e-column>
+                    <e-column field='niveauHierarchique.position' headerText='NIVEAU' width='100'></e-column>
+                </e-columns>
+                <ng-template #editSettingsTemplate let-data>
+                    <div [formGroup]="treeForm">
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <div class="e-float-input e-control-wrapper" [ngClass]="{'e-error': id.invalid && (id.dirty || id.touched)}">
+                                    <input formControlName="id" data-msg-containerid='idError' id="id" name="id" type="text" [attr.disabled]="!data.isAdd ? '' : null">
+                                    <span class="e-float-line"></span>
+                                    <label class="e-float-text e-label-top" for="id">ID</label>
+                                </div>
+                                <div id="idError" [style.visibility]='((id.invalid && (id.dirty || id.touched)) || (id.invalid && submitClicked))? "visible": "hidden"'>
+                                    <label class="e-error" for="id" id="id-info" style="display: block;">*ID is required</label>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <div class="e-float-input e-control-wrapper" [ngClass]="{'e-error': code.invalid && (code.dirty || code.touched)}">
+                                    <input formControlName="code" data-msg-containerid='codeError' id="code" name="code" type="text">
+                                    <span class="e-float-line"></span>
+                                    <label class="e-float-text e-label-top" for="code">Code</label>
+                                </div>
+                                <div id="codeError" [style.visibility]='((code.invalid && (code.dirty || code.touched)) || (code.invalid && submitClicked))? "visible": "hidden"'>
+                                    <label class="e-error" for="code" id="code-info" style="display: block;">*Code Name is required</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <div class="e-float-input e-control-wrapper" [ngClass]="{'e-error': description.invalid && (description.dirty || description.touched)}">
+                                    <input formControlName="description" data-msg-containerid='descriptionError' id="code" name="description" type="text">
+                                    <span class="e-float-line"></span>
+                                    <label class="e-float-text e-label-top" for="description">Description</label>
+                                </div>
+                                <div id="codeError" [style.visibility]='((description.invalid && (description.dirty || description.touched)) || (description.invalid && submitClicked))? "visible": "hidden"'>
+                                    <label class="e-error" for="code" id="code-info" style="display: block;">*Description Name is required</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row" *ngIf="show === 'add'">
+                            <div class="form-group col-md-6">
+                                <div class="e-float-input e-control-wrapper">
+                                    <input name="superieure" type="text" *ngIf="rowSelectedSup" [value]="rowSelectedSup.description" disabled>
+                                    <span class="e-float-line"></span>
+                                    <label class="e-float-text e-label-top" for="superieure">Supérieure</label>
+                                </div>
+                                <div id="codeError" [style.visibility]='((description.invalid && (description.dirty || description.touched)) || (description.invalid && submitClicked))? "visible": "hidden"'>
+                                    <label class="e-error" for="code" id="code-info" style="display: block;">*Description Name is required</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row"  *ngIf="show === 'edit'">
+                            <div class="form-group col-md-6">
+                                <ejs-dropdownlist id="superieure" formControlName="superieure" [dataSource]='superieuresDistinct' [fields]="{text: 'description', value: 'description' }" placeholder="Superieure" popupHeight='300px' floatLabelType='Always'></ejs-dropdownlist>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+            </ejs-treegrid>
+        </div>
+    </fury-page-layout-content>
+</fury-page-layout>

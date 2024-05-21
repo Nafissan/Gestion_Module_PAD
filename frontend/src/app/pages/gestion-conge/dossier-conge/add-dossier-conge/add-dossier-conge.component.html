@@ -1,0 +1,32 @@
+<div>
+    <mat-icon class="close" mat-button mat-dialog-close>close</mat-icon>
+</div>
+<div mat-dialog-title class="titre_modal_add">AJOUTER DOSSIER CONGE</div>
+<form [formGroup]="form" (ngSubmit)="save()">
+    <mat-dialog-content>
+        <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="24px">
+            <mat-form-field fxFlex *ngIf="mode === 'update'">
+                <mat-label>Code</mat-label>
+                <input matInput formControlName="code">
+            </mat-form-field>
+            <mat-form-field fxFlex appearance="fill">
+                <mat-label>Month and Year</mat-label>
+                <input matInput [matDatepicker]="dp" [formControl]="dateCreation">
+                <!-- (monthSelected)="chosenMonthHandler($event, dp)"-->
+                <mat-datepicker-toggle matSuffix [for]="dp">date_range</mat-datepicker-toggle>
+                <mat-datepicker #dp startView="multi-year" (yearSelected)="chosenYearHandler($event)" panelClass="example-month-picker">
+                </mat-datepicker>
+            </mat-form-field>
+        </div>
+        <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="24px">
+            <mat-form-field fxFlex>
+                <mat-label>Commentaire</mat-label>
+                <textarea formControlName="description" matInput></textarea>
+            </mat-form-field>
+        </div>
+    </mat-dialog-content>
+    <mat-dialog-actions fxLayout="row" fxLayoutAlign="end center">
+        <button *ngIf="isCreateMode()" mat-button [disabled]="!form.valid || !dateCreation.value">AJOUTER</button>
+        <button *ngIf="isUpdateMode()" mat-button [disabled]="!form.valid || !dateCreation.value">MODIFIER</button>
+    </mat-dialog-actions>
+</form>

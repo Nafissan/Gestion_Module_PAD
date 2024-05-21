@@ -1,0 +1,33 @@
+<div>
+    <mat-icon class="close" mat-button mat-dialog-close>close</mat-icon>
+</div>
+<div mat-dialog-title class="titre_modal_add">AJOUTER UN NOUVEAU Fournisseur</div>
+<form [formGroup]="form" (ngSubmit)="save()">
+    <mat-dialog-content>
+        <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="24px">
+            <mat-form-field fxFlex>
+                <mat-label>Nom Entreprise</mat-label>
+                <input matInput formControlName="nomfournisseur" required>
+            </mat-form-field>
+            <mat-form-field fxFlex>
+                <mat-label>Reference</mat-label>
+                <input matInput matInput formControlName="reffournisseur" required>
+            </mat-form-field>
+        </div>
+        <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="24px">
+            <mat-form-field fxFlex>
+                <mat-label>commentaire</mat-label>
+                <input type="text" matInput formControlName="commentaire" required>
+            </mat-form-field>
+            <!-- <mat-form-field>
+                <input matInput [matDatepicker]="picker" placeholder="Choisir Une Année" [formControl]="annee" required>
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker (yearSelected)="yearSelected($event)" startView="multi-year"></mat-datepicker>
+            </mat-form-field> -->
+        </div>
+    </mat-dialog-content>
+    <mat-dialog-actions fxLayout="row" fxLayoutAlign="end center">
+        <button *ngIf="isCreateMode()" mat-button [disabled]="(!form.valid)">AJOUTER</button>
+        <button *ngIf="isUpdateMode()" mat-button [disabled]="(!form.valid)">MODIFIER</button>
+    </mat-dialog-actions>
+</form>

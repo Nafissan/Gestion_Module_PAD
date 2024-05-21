@@ -1,0 +1,72 @@
+<fury-page-layout mode="card">
+    <fury-page-layout-header>
+        <fury-breadcrumbs [@fadeInRight] [crumbs]="['Gestion Interim', 'Dossier Interim']" current="Interim"></fury-breadcrumbs>
+    </fury-page-layout-header>
+    <fury-page-layout-content [@fadeInUp]>
+
+
+        <div class="cs_content_princ">
+            <div class="cs_block_titre">
+                <div class="cs_block_titre_gauche">
+                    <span>Dossier Interims des Directions</span>
+                </div>
+                <div class="cs_block_titre_droit">
+                    <mat-form-field>
+                        <input matInput [matDatepicker]="picker" placeholder="Choisir Une Année" [formControl]="date">
+                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker #picker (yearSelected)="yearSelected($event)" startView="multi-year"></mat-datepicker>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <mat-divider></mat-divider>
+
+            <div class="cs_content_sec">
+                <div class="cs_titre" *ngIf="dossierInterims && dossierInterims.length != 0 ">
+                    <span>DOSSIER INTERIMS(S)</span>
+                </div>
+                <div class="cs_titre" *ngIf="dossierInterims && dossierInterims.length === 0 ">
+                    <span>AUCUN DOSSIER INTERIM... </span> <span> <mat-icon>warning</mat-icon> </span>
+                </div>
+                <div class="cs_titre">
+                    <mat-selection-list #PC [multiple]="false">
+                        <mat-list-option *ngFor="let dossierInterim of dossierInterims" class="folder_content" (click)="DetailsInterim(dossierInterim)">
+                            <mat-icon mat-list-icon class="folder">folder</mat-icon>
+                            <div class="font" mat-line> {{dossierInterim.code}}</div>
+                            <div class="font" mat-line> {{dossierInterim.nom}}</div>
+                            <div class="font" mat-line> {{dossierInterim.description}}</div>
+                        </mat-list-option>
+                    </mat-selection-list>
+                </div>
+            </div>
+
+            <div *ngIf="dossierInterims && dossierInterims.length === 0 " class="card text-center">
+                <div class="card-header"><span class="badge badge-info">Information</span></div>
+                <div class="font">
+                    <span>  IL N'EXISTE PAS DE DOSSIER INTERIM(S) POUR L'ANNÉE {{anneeSelected}} </span>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- 
+        <fury-page [fxLayoutGap]="gap" class="dashboard" fxLayout="column">
+      
+            <div fxFlex="noshrink" fxLayout="column" [fxLayoutGap]="gap" fxLayout.gt-lg="row">
+                <mat-card *ngFor="let dossierInterim of dossierInterims " fxFlex="auto" [fxFlex.gt-sm]="col(4)" class="example-card">
+                    <mat-card-header>
+                        <mat-icon mat-card-avatar>folder</mat-icon>
+                        <mat-card-title>Nom : {{dossierInterim.nom}}</mat-card-title>
+                        <mat-card-subtitle>Direction: {{dossierInterim.description}}</mat-card-subtitle>
+                        <mat-card-subtitle>Coe: {{dossierInterim.code}}</mat-card-subtitle>
+                        <mat-card-actions fxLayoutAlign="center">
+                            <button mat-raised-button style="background-color: burlywood;" (click)="DetailsInterim(dossierInterim)">DETAILS</button>
+                                                 </mat-card-actions>
+                    </mat-card-header>
+    
+                </mat-card>
+            </div>
+        </fury-page> -->
+    </fury-page-layout-content>
+</fury-page-layout>

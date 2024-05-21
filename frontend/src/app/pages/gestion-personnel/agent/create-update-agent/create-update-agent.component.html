@@ -1,0 +1,220 @@
+<div fxLayout="column" fxLayoutAlign="start center">
+
+    <div [@fadeInUp] class="card">
+        <mat-icon class="monIcon" mat-button mat-dialog-close>close</mat-icon>
+        <mat-horizontal-stepper #stepper="matHorizontalStepper" [linear]="true">
+            <mat-step [stepControl]="donneesPersoFormGroup">
+                <form [formGroup]="donneesPersoFormGroup">
+                    <ng-template matStepLabel>Données Personnelles</ng-template>
+
+                    <div class="subheading"><small>(*) Champs Obligatoires</small></div>
+                    <div class="content" fxLayout="column" fxLayoutGap="8px">
+                        <!--      <div fxLayout="column" fxLayout.gt-xs="row" fxLayoutGap="8px" fxLayoutGap.gt-xs="24px">
+                          
+                                <mat-radio-button color="primary" value ="m" >
+                                    Homme:
+                                </mat-radio-button>
+                                <mat-radio-button color="primary" value ="f" >
+                                    Femme:
+                                </mat-radio-button>                          
+                        </div> -->
+
+                        <mat-radio-group color="accent" fxLayout="row" fxLayoutGap="16px" formControlName="sexe">
+                            <mat-radio-button color="primary" value="m">Homme
+                            </mat-radio-button>
+                            <mat-radio-button color="accent" value="f">Femme</mat-radio-button>
+                        </mat-radio-group>
+
+                    </div>
+                    <div class="content" fxLayout="column" fxLayoutGap="8px">
+                        <div fxLayout="column" fxLayout.gt-xs="row" fxLayoutGap="8px" fxLayoutGap.gt-xs="24px">
+                            <mat-form-field fxFlex="auto">
+                                <mat-label>Prénom</mat-label>
+                                <input formControlName="prenom" matInput required/>
+                                <!-- <mat-hint>This will be your unique login name.</mat-hint> -->
+                            </mat-form-field>
+
+                            <mat-form-field fxFlex="auto">
+                                <mat-label>Nom</mat-label>
+                                <input formControlName="nom" matInput required />
+                                <!-- <mat-hint>How may we call you?</mat-hint> -->
+                            </mat-form-field>
+                        </div>
+                        <div fxLayout="column" fxLayout.gt-xs="row" fxLayoutGap="8px" fxLayoutGap.gt-xs="24px">
+                            <mat-form-field fxFlex="auto">
+                                <mat-label>Date de naissance</mat-label>
+                                <input [matDatepicker]="picker3" placeholder="mm/jj/aaaa" formControlName="dateNaissance" matInput />
+                                <mat-datepicker-toggle matSuffix [for]="picker3">
+                                    <mat-icon matDatepickerToggleIcon>date_range</mat-icon>
+                                </mat-datepicker-toggle>
+                                <mat-datepicker #picker3></mat-datepicker>
+                            </mat-form-field>
+
+                            <mat-form-field fxFlex="auto">
+                                <mat-label>Lieu de naissance</mat-label>
+                                <input formControlName="lieuNaissance" matInput />
+                                <!-- <mat-hint>How may we call you?</mat-hint> -->
+                            </mat-form-field>
+                        </div>
+                        <div fxLayout="column" fxLayout.gt-xs="row" fxLayoutGap="8px" fxLayoutGap.gt-xs="24px">
+                            <mat-form-field fxFlex="auto">
+                                <mat-label>E-Mail</mat-label>
+                                <input formControlName="email" matInput required [pattern]="validationChamps.email" />
+                                <mat-hint align="end">user@portdakar.sn</mat-hint>
+                            </mat-form-field>
+                            <mat-form-field fxFlex="auto">
+                                <mat-label>Téléphone</mat-label>
+                                <input formControlName="telephone" matInput/>
+                                <mat-hint align="end">(+221)</mat-hint>
+                            </mat-form-field>
+                        </div>
+                        <div fxLayout="column" fxLayout.gt-xs="row" fxLayoutGap="8px" fxLayoutGap.gt-xs="24px">
+                            <mat-form-field fxFlex="auto">
+                                <mat-label>Situation matrimoniale</mat-label>
+                                <mat-select formControlName="matrimoniale">
+                                    <mat-option *ngFor="let mat of matrimoniales" [value]="mat">{{ mat }}
+                                    </mat-option>
+                                </mat-select>
+                                <!-- <mat-hint>This will be your unique login name.</mat-hint> -->
+                            </mat-form-field>
+                            <mat-form-field fxFlex="auto">
+                                <mat-label>Adresse</mat-label>
+                                <input type="text" formControlName="adresse" matInput />
+                            </mat-form-field>
+                        </div>
+                    </div>
+
+                    <div class="actions" fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="8px">
+                        <button (click)="stepper.reset()" [disabled]="donneesPersoFormGroup.pristine" color="primary" mat-button type="button">
+              REINITIALISER
+            </button>
+                        <button [disabled]="donneesPersoFormGroup.invalid" color="primary" mat-raised-button matStepperNext>
+              SUIVANT
+            </button>
+                    </div>
+                </form>
+            </mat-step>
+
+            <mat-step [stepControl]="informationsPersoFormGroup">
+                <form [formGroup]="informationsPersoFormGroup">
+                    <ng-template matStepLabel>Informations Professionnelles</ng-template>
+
+                    <div class="subheading">
+                        <small>(*) Champs Obligatoires</small>
+                    </div>
+
+                    <div class="content" fxLayout="column" fxLayoutGap="8px">
+                        <div fxLayout="column" fxLayout.gt-xs="row" fxLayoutGap="8px" fxLayoutGap.gt-xs="24px">
+                            <mat-form-field fxFlex>
+                                <mat-label>Choisir une unite organisationnelle</mat-label>
+                                <input matInput [matAutocomplete]="auto" [formControl]="uniteOrganisationnelleCtrl" formControlName="uniteOrganisationnelle" />
+                                <mat-autocomplete #auto="matAutocomplete">
+                                    <mat-option *ngFor="let uniteOrg of filteredUniteOrganisationnelles | async" [value]="uniteOrg.nom" (click)="setUniteOrganisationnelle(uniteOrg)">
+                                        <small><span>
+                                        {{ uniteOrg.nom }}  |
+                      {{ uniteOrg.description }} 
+                      </span></small>
+
+
+                                    </mat-option>
+                                </mat-autocomplete>
+                                <button *ngIf="uniteOrganisationnelleCtrl.value" type="button" mat-icon-button matSuffix>
+               
+              </button>
+                                <mat-icon>arrow_drop_down</mat-icon>
+                            </mat-form-field>
+                        </div>
+
+                        <small>(*) Champs Obligatoires</small>
+                    </div>
+
+                    <div class="content" fxLayout="column" fxLayoutGap="8px">
+                        <div fxLayout="column" fxLayout.gt-xs="row" fxLayoutGap="8px" fxLayoutGap.gt-xs="24px">
+                            <mat-form-field fxFlex>
+                                <mat-label>Choisir une fonction</mat-label>
+                                <input matInput [matAutocomplete]="auto1" [formControl]="fonctionCtrl" />
+                                <mat-autocomplete #auto1="matAutocomplete">
+                                    <mat-option *ngFor="let fonction of filteredFonctions | async" [value]="fonction.nom" (click)="setFonction(fonction)">
+                                        <small><span>
+                                           {{ fonction.nom }}  
+                                        </span></small>
+                                    </mat-option>
+                                </mat-autocomplete>
+                                <button *ngIf="fonctionCtrl.value" type="button" mat-icon-button matSuffix>
+                  
+                                 </button>
+                                <mat-icon>arrow_drop_down</mat-icon>
+                            </mat-form-field>
+
+                        </div>
+                        <div class="content" fxLayout="column" fxLayoutGap="8px">
+                            <div fxLayout="column" fxLayout.gt-xs="row" fxLayoutGap="8px" fxLayoutGap.gt-xs="24px">
+                                <mat-radio-group color="primary" fxLayout="row" fxLayoutGap="16px" formControlName="profil">
+                                    <mat-radio-button color="primary" value="marin">Marin</mat-radio-button>
+                                    <mat-radio-button color="accent" value="terrestre">Terrestre</mat-radio-button>
+                                </mat-radio-group>
+                            </div>
+                        </div>
+                        <div fxLayout="column" fxLayout.gt-xs="row" fxLayoutGap="8px" fxLayoutGap.gt-xs="24px">
+                            <mat-form-field fxFlex="auto">
+                                <mat-label>Matricule</mat-label>
+                                <input formControlName="matricule" matInput required />
+                                <!-- <mat-hint>How may we call you?</mat-hint> -->
+                            </mat-form-field>
+                            <mat-form-field fxFlex="auto">
+                                <mat-label>Date d'engagement</mat-label>
+                                <input [matDatepicker]="picker2" placeholder="mm/jj/aaaa" formControlName="dateEngagement" matInput />
+                                <mat-datepicker-toggle matSuffix [for]="picker2">
+                                    <mat-icon matDatepickerToggleIcon>date_range</mat-icon>
+                                </mat-datepicker-toggle>
+                                <mat-datepicker #picker2></mat-datepicker>
+                            </mat-form-field>
+                            <mat-form-field fxFlex="auto">
+                                <mat-label>Date de la prise de service</mat-label>
+                                <input [matDatepicker]="picker1" placeholder="mm/jj/aaaa" formControlName="datePriseService" matInput />
+                                <mat-datepicker-toggle matSuffix [for]="picker1">
+                                    <mat-icon matDatepickerToggleIcon>date_range</mat-icon>
+                                </mat-datepicker-toggle>
+                                <mat-datepicker #picker1></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+                    </div>
+
+                    <div class="actions" fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="8px">
+                        <button color="primary" mat-button matStepperPrevious type="button">
+              PRECEDENT
+            </button>
+                        <button [disabled]="informationsPersoFormGroup.invalid" color="primary" mat-raised-button matStepperNext>
+              SUIVANT
+            </button>
+                    </div>
+                </form>
+            </mat-step>
+
+            <mat-step [stepControl]="confirmationFormGroup">
+                <form [formGroup]="confirmationFormGroup">
+                    <ng-template matStepLabel>Confirmation</ng-template>
+
+                    <div class="heading">
+                    </div>
+                    <div class="content" fxLayout="column" fxLayoutGap="8px">
+                        <mat-checkbox color="primary" class="checkbox" formControlName="estChef">
+                            Responsable de l'unité organisationnelle ({{ uniteOrganisationnelle ? uniteOrganisationnelle.description : '' }})
+                        </mat-checkbox>
+                    </div>
+                    <div class="actions" fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="8px">
+                        <button color="primary" mat-button matStepperPrevious type="button">
+              PRECEDENT
+            </button>
+                        <button *ngIf="isCreateMode()" (click)="submit()" [disabled]="confirmationFormGroup.invalid" color="primary" mat-raised-button matStepperNext>
+              ENREGISTRER
+            </button>
+                        <button *ngIf="isUpdateMode()" (click)="submit()" [disabled]="confirmationFormGroup.invalid" color="primary" mat-raised-button matStepperNext>
+              Mettre à jour
+            </button>
+                    </div>
+                </form>
+            </mat-step>
+        </mat-horizontal-stepper>
+    </div>
+</div>

@@ -1,0 +1,54 @@
+<div><mat-icon class="monIcon" mat-button mat-dialog-close>close</mat-icon></div>
+<div mat-dialog-title *ngIf="isCreateMode()">Nouvelle Unité Organisationnelle</div>
+<div mat-dialog-title *ngIf="isUpdateMode()" >Editer Unité Organisationnelle</div>
+<form [formGroup]="form" (ngSubmit)="save()">
+    <mat-dialog-content>
+        <div class="person">
+            <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
+                <mat-form-field fxFlex>
+                    <mat-label>Niveau Hiérarchique</mat-label>
+                    <mat-select formControlName="niveauHierarchique">
+                        <mat-option *ngFor="let niveauHier of niveauxHierarchiques" [value]="niveauHier" (click)="setNiveauHierarchique(niveauHier)">
+                            {{niveauHier.libelle}}
+                        </mat-option>      
+                    </mat-select>
+                </mat-form-field>   
+            </div>
+        </div>
+        <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
+                <mat-form-field fxFlex>
+                    <mat-label>Unité Supérieure</mat-label>
+                    <mat-select formControlName="uniteSuperieure">
+                        <mat-option *ngFor="let unitOrg of uniteOrganisationnelles" [value]="unitOrg" (click)="setUniteOrganisationnelle(unitOrg)">
+                            {{unitOrg.nom}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field fxFlex>
+                    <mat-label>Nom Unité</mat-label>
+                    <input type="text" formControlName="nom" matInput>
+                </mat-form-field>
+        </div>
+        <div class="person">
+            <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
+                <mat-form-field fxFlex>
+                    <mat-label>Code Unité</mat-label>
+                    <input type="text" formControlName="code" matInput>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="person">
+            <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
+                <mat-form-field fxFlex>
+                    <mat-label>Description</mat-label>
+                    <input type="text" formControlName="description" matInput>
+                </mat-form-field>
+            </div>
+        </div>
+    </mat-dialog-content>
+    <mat-dialog-actions fxLayout="row" fxLayoutAlign="end center">
+        <button *ngIf="isCreateMode()" mat-button [disabled]="!form.valid">Enregistrer</button>
+        <button *ngIf="isUpdateMode()" mat-button [disabled]="!form.valid">Sauvegarder</button>
+    </mat-dialog-actions>
+</form>
+

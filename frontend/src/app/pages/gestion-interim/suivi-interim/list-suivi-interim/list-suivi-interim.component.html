@@ -1,0 +1,110 @@
+<fury-page-layout mode="card">
+    <fury-page-layout-header>
+        <fury-breadcrumbs [@fadeInRight] [crumbs]="['Gestion Interim']" current="Différentes Etapes de Validation d'un Interim">
+        </fury-breadcrumbs>
+    </fury-page-layout-header>
+
+    <fury-page-layout-content [@fadeInUp]>
+        <fury-list *ngIf="etapeInterims && etapeInterims.length !== 0  && showProgressBar === true" name="Suivie Interims" [columns]="columns" (filterChange)="onFilterChange($event)">
+
+            <!-- <div class="actions">
+                <button class="create" (click)="createEtapeInterim()" type="button" mat-mini-fab color="primary">
+            <mat-icon>add</mat-icon>
+          </button>
+            </div> -->
+
+            <table [dataSource]="dataSource" mat-table matSort>
+
+                <!--- Note that these columns can be defined in any order.
+                The actual rendered columns are set as a property on the row definition" -->
+
+                <!-- Checkbox Column -->
+                <ng-container matColumnDef="checkbox">
+                    <th *matHeaderCellDef class="actions-cell" mat-header-cell>
+                        <mat-checkbox color="primary" (click)="$event.stopPropagation()"></mat-checkbox>
+                    </th>
+                    <td *matCellDef="let row" class="actions-cell" mat-cell>
+                        <mat-checkbox color="primary" (click)="$event.stopPropagation()"></mat-checkbox>
+                    </td>
+                </ng-container>
+
+                <!-- fullName Column -->
+                <ng-container *ngFor="let column of columns">
+                    <ng-container *ngIf="column.isModelProperty" [matColumnDef]="column.property">
+                        <th *matHeaderCellDef mat-header-cell mat-sort-header> {{ column.name }}</th>
+                        <td *matCellDef="let row" mat-cell>
+                            <p *ngIf="column.property === 'date'">
+                                {{ row[column.property] | date: 'dd-MM-yyyy' }}
+                            </p>
+
+                            <p *ngIf="column.name === 'Etat' && row.etat === 'VALIDER'">
+                                <span class="badge badge-success"> {{row.action}}</span>
+                            </p>
+                            <!-- <p *ngIf="column.name === 'Etat' && row.etat === 'En Attente'">
+                                <span class="badge badge-warning"> {{row.action}}</span>
+                            </p> -->
+                            <p *ngIf="column.name === 'Etat' && row.etat === 'REJETER'">
+                                <span class="badge badge-danger"> {{row.action}}</span>
+                            </p>
+                            <!-- <p *ngIf="column.name === 'Etat' && row.etat === 'SAISI'">
+                          
+                                <span class="badge badge-info">   {{row.action}}</span>
+                            </p> -->
+
+                            <p *ngIf="column.name === 'Etat' && row.etat === 'CLOSE'">
+                                <span class="badge badge-danger">  {{row.etat}}</span>
+                            </p>
+                            <p *ngIf="column.property !== 'date' && column.property !== 'action'">
+                                {{ row[column.property]}}
+                            </p>
+                        </td>
+                    </ng-container>
+                </ng-container>
+
+
+                <!-- actions Column -->
+                <ng-container matColumnDef="actions">
+                    <th *matHeaderCellDef class="actions-cell" mat-header-cell mat-sort-header></th>
+                    <td *matCellDef="let row" class="actions-cell" mat-cell>
+                        <button type="button" mat-icon-button [matMenuTriggerFor]="actionsMenu" (click)="$event.stopPropagation()">
+                            <mat-icon>more_horiz</mat-icon>
+                        </button>
+
+                        <mat-menu #actionsMenu="matMenu" yPosition="below" xPosition="before">
+
+                            <button (click)="detailsEtapeInterim(row)" mat-menu-item>
+                                <mat-icon>visibility</mat-icon>
+                                <span>Details</span>
+                            </button>
+                            <!-- <button *ngIf="row.action === 'VALIDER'" (click)="closeEtapeInterim(row)" mat-menu-item>
+                                <span>Cloturer</span>
+                            </button> -->
+
+                        </mat-menu>
+                    </td>
+                </ng-container>
+
+                <tr *matHeaderRowDef="visibleColumns" mat-header-row></tr>
+                <tr (click)="detailsEtapeInterim(row)" *matRowDef="let row; columns: visibleColumns;" class="clickable route-animations-elements" mat-row></tr>
+            </table>
+
+            <mat-paginator class="paginator" [pageSize]="pageSize"></mat-paginator>
+
+        </fury-list>
+
+        <div *ngIf="etapeInterims && etapeInterims.length === 0 && showProgressBar === true" class="card text-center">
+            <div class="card-header">
+                <span class="badge badge-info">
+                    INFORMATION
+                </span>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">ETAPE INTERIMS VIDE</h5>
+            </div>
+            <div class="card-footer text-muted">
+                {{date | date : 'dd/MMM/yyyy HH:mm:ss'}}
+            </div>
+        </div>
+        <mat-progress-bar *ngIf="showProgressBar === false" mode="query" color="primary"></mat-progress-bar>
+    </fury-page-layout-content>
+</fury-page-layout>

@@ -1,0 +1,58 @@
+<div><mat-icon class="close" mat-button mat-dialog-close>close</mat-icon></div>
+<div mat-dialog-title class="popup titre_modal_add">AJOUTER UNE VILLE</div>
+
+<form [formGroup]="form" (ngSubmit)="save()">
+    <mat-dialog-content>
+
+
+    <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
+        <mat-form-field fxFlex>
+            <mat-label>Code</mat-label>
+            <textarea formControlName="code" matInput></textarea>
+        </mat-form-field>
+    </div>
+
+    <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
+      <mat-form-field fxFlex>
+          <mat-label>Nom</mat-label>
+          <textarea formControlName="nom" matInput></textarea>
+      </mat-form-field>
+  </div>
+
+  <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
+    <mat-form-field fxFlex>
+      <mat-label>Pays</mat-label>
+      <input matInput [matAutocomplete]="auto"  [formControl]="paysCtrl" >
+      <mat-autocomplete #auto="matAutocomplete">
+        <mat-option *ngFor="let pays of filterePays | async" [value]="pays.nom" (click)="setPays(pays)">
+          <img style="vertical-align:middle; margin-right: 4px;" src="assets/img/drapeaux/{{pays.image}}" height="16" />
+                  <span>{{ pays.code  }}</span> |
+                  <span>
+                    <!-- <small> {{ pays.nom }} </small> -->
+                    <small> {{ pays.nomOfficiel }}</small>
+                  </span>
+        </mat-option>
+      </mat-autocomplete>
+      <button *ngIf="paysCtrl.value" type="button" mat-icon-button (click)="paysCtrl.reset()" matSuffix>
+        <mat-icon>close</mat-icon>
+      </button>
+       <button *ngIf="!paysCtrl.value" type="button" mat-icon-button matSuffix>
+        <mat-icon>arrow_drop_down</mat-icon>
+      </button>
+    </mat-form-field>
+  </div>
+
+  <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
+    <section fxFlex>
+        <mat-checkbox fxFlex formControlName="active">Active</mat-checkbox>
+    </section>
+  </div>
+
+    </mat-dialog-content>
+    <mat-dialog-actions fxLayout="row" fxLayoutAlign="end center">
+        <button *ngIf="isCreateMode()" mat-button [disabled]="!form.valid">ENREGISTRER </button>
+        <button *ngIf="isUpdateMode()" mat-button [disabled]="!form.valid">MODIFIER</button>
+    </mat-dialog-actions>
+</form>
+
+

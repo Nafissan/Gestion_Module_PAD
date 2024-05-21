@@ -1,0 +1,54 @@
+<div class="sidenav" fxLayout="column">
+    <div class="sidenav-toolbar" fxLayout="row" fxLayoutAlign="start center">
+        <div class="sidenav-toolbar-icon">
+            <!-- <svg viewBox="0 0 33.74 33.99" xmlns="http://www.w3.org/2000/svg"><title>icon</title>
+        <path d="M26.83,19.33c-.36.37-.73.71-1.09,1l.31,3.22a5.41,5.41,0,0,1-2.43,5.14L15.72,34l-.67-8.74a6.54,6.54,0,0,1-6.57-6.53L0,18.18l5-7.93a5.41,5.41,0,0,1,5.23-2.54l3.1.31q.49-.55,1.05-1.11C20.78.54,30.82-.62,33.48.26,34.37,2.93,33.2,13,26.83,19.33Zm-.45-12a3.77,3.77,0,1,0,0,5.33A3.77,3.77,0,0,0,26.38,7.36ZM2.82,23.72l3.24-3.24a8.24,8.24,0,0,0,7.11,7.1L10.5,30.25,7.74,33V29.46L2.41,31.23l1.78-5.32H.64Z"></path>
+      </svg> -->
+            <img style="width: 44px; height: 44px;" src="assets/img/logo_port.png" alt="">
+        </div>
+        <div [routerLink]="['/']" class="t1">
+            <span>   Portail d'entreprise </span>
+
+            <!--  <img style="width: 60px; height: 40px;" src="../../../assets/img/logo_dark.png" alt=""> -->
+            <!-- <svg viewBox="0 0 138.16 70.27" xmlns="http://www.w3.org/2000/svg"><title>Logo</title>
+            <polygon points="0 54.1 11.05 54.1 11.03 32 28.82 32 30.83 23.22 11.07 23.22 11.03 8.8 34.48 8.8 36.85 0 0 0 0 54.1"></polygon>
+            <path d="M44.34,34.92a8.78,8.78,0,0,0,.72,3.53A9.28,9.28,0,0,0,47,41.33a8.71,8.71,0,0,0,2.91,1.91,9.56,9.56,0,0,0,3.57.68,8.79,8.79,0,0,0,6.33-2.59,9.28,9.28,0,0,0,2-2.88,9,9,0,0,0,.72-3.53V15.77h10V34.92A19,19,0,0,1,71,42.37a19.43,19.43,0,0,1-4,6.09,18.7,18.7,0,0,1-6,4.06A18.37,18.37,0,0,1,53.63,54a19,19,0,0,1-7.52-1.48A19.36,19.36,0,0,1,40,48.46a19.05,19.05,0,0,1-4.14-6.05,18.47,18.47,0,0,1-1.52-7.49V15.77h10Z"></path>
+            <path d="M93.81,25.85a8.74,8.74,0,0,0-3.53.72,9.19,9.19,0,0,0-2.88,1.94,8.68,8.68,0,0,0-1.91,2.88,8.22,8.22,0,0,0-.61,3.53V54H74.65V34.92A19.1,19.1,0,0,1,80.2,21.38a19.57,19.57,0,0,1,6.08-4.1,18.51,18.51,0,0,1,7.45-1.51H96V25.85Z"></path>
+            <path d="M138.16,15.77v36a18.35,18.35,0,0,1-1.59,7.2,19.2,19.2,0,0,1-4.07,5.9,18.8,18.8,0,0,1-13.28,5.4V60.34a8.34,8.34,0,0,0,3.38-.69,8.84,8.84,0,0,0,2.78-1.87,9.41,9.41,0,0,0,1.9-2.77,9.06,9.06,0,0,0,.8-3.39,16.87,16.87,0,0,1-4.25,1.77,18.11,18.11,0,0,1-4.68.61,18.48,18.48,0,0,1-7.45-1.51,19.84,19.84,0,0,1-6.12-4.11,19.51,19.51,0,0,1-4.18-6,18,18,0,0,1-1.55-7.42V15.77h10V34.92a9.37,9.37,0,0,0,2.74,6.34,9,9,0,0,0,9.86,1.87,9.25,9.25,0,0,0,4.82-4.79,8.33,8.33,0,0,0,.72-3.42V15.77Z"></path>
+        </svg> -->
+        </div>
+
+
+        <span fxFlex><!-- fill space --></span>
+
+        <div fxFlexAlign="center" fxHide fxShow.gt-md>
+            <button (click)="toggleCollapsed()" class="sidenav-toolbar-collapse-toggle" mat-icon-button>
+        <mat-icon *ngIf="!collapsed" class="sidenav-toolbar-collapse-icon">radio_button_checked</mat-icon>
+        <mat-icon *ngIf="collapsed" class="sidenav-toolbar-collapse-icon">radio_button_unchecked</mat-icon>
+      </button>
+        </div>
+    </div>
+
+    <fury-scrollbar class="sidenav-items" fxFlex="auto">
+        <div *ngIf="sidenavUserVisible$ | async" class="sidenav-user">
+            <img class="sidenav-user-image" src="assets/img/avatars/default.jpg">
+            <h4 class="sidenav-user-name" *ngIf="compte">{{utilisateur}}</h4>
+            <h5 class="sidenav-user-email">{{email}}</h5>
+
+            <div class="sidenav-user-icons" fxLayout="row">
+                <a [routerLink]="['/tables/all-in-one-table']" mat-icon-button>
+                    <mat-icon>assignment</mat-icon>
+                </a>
+                <a [routerLink]="['/apps/calendar']" mat-icon-button>
+                    <mat-icon>date_range</mat-icon>
+                </a>
+                <a (click)="logOut()" mat-icon-button>
+                    <mat-icon>exit_to_app</mat-icon>
+                </a>
+            </div>
+        </div>
+
+        <fury-sidenav-item *ngFor="let item of items$ | async" [item]="item" [level]="0"></fury-sidenav-item>
+    </fury-scrollbar>
+
+</div>

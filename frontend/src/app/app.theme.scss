@@ -1,0 +1,42 @@
+@import '~@angular/material/theming';
+// Define the palettes for your theme using the Material Design palettes available in palette.scss
+// (imported above). For each palette, you can optionally specify a default, lighter, and darker hue.
+// $theme-primary: mat-palette($mat-teal);
+// $theme-accent:  mat-palette($mat-light-blue, 500, 200, 700);
+$theme-primary-hue: 700;
+$theme-accent-hue: 500;
+$theme-warn-hue: 500;
+$theme-primary: mat-palette($mat-blue, $theme-primary-hue);
+$theme-accent: mat-palette($mat-teal, $theme-accent-hue);
+$theme-warn: mat-palette($mat-red, $theme-warn-hue);
+$theme: mat-light-theme($theme-primary, $theme-accent, $theme-warn);
+$dark-theme: mat-dark-theme($theme-primary, $theme-accent, $theme-warn);
+@include angular-material-theme($theme);
+.fury-default {
+    @import "../@fury/styles/themes/default";
+    background: $theme-background;
+    color: $theme-text;
+    @import "./layout/config-panel/config-panel.component.theme";
+}
+
+.fury-light {
+    @import "../@fury/styles/themes/light";
+    background: $theme-background;
+    color: $theme-text;
+    @import "./layout/config-panel/config-panel.component.theme";
+}
+
+.fury-dark {
+    @include angular-material-color($dark-theme);
+    @import "../@fury/styles/themes/dark";
+    background: $theme-background;
+    color: $theme-text;
+    @import "./layout/config-panel/config-panel.component.theme";
+}
+
+.fury-flat {
+    @import "../@fury/styles/themes/flat";
+    background: $theme-background;
+    color: $theme-text;
+    @import "./layout/config-panel/config-panel.component.theme";
+}

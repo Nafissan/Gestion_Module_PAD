@@ -1,0 +1,43 @@
+<mat-icon class="close" mat-button mat-dialog-close>close</mat-icon>
+<div mat-dialog-title class="h1-responsive text-align titre_modal_add">DETAILS PAYS</div>
+<mat-dialog-content>
+    <mat-accordion class="example-headers-align" multi>
+        <div class="example-action-buttons">
+            <button *ngIf="showIcon === true" mat-raised-button color="primary" (click)="accordion.openAll(); showIcon = !showIcon">
+                       <mat-icon>expand_more</mat-icon> Afficher
+                    </button>
+            <button *ngIf="showIcon === false" mat-raised-button color="warn" (click)="accordion.closeAll(); showIcon = !showIcon">
+                      <mat-icon>expand_less</mat-icon> Fermer
+                    </button>
+        </div>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <img style="width: 5%; border-radius: 5px; margin-right: 5px;" src="assets/img/drapeaux/{{pays.image}}">
+                    <span style="margin-top: 2px;">{{pays.nomOfficiel}}</span>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-panel-description>
+                <span class="lib">Code:</span>
+                <span class="des">{{pays.code}}</span>
+            </mat-panel-description>
+            <mat-panel-description>
+                <span class="lib">Latitude: </span><span class="des">{{pays.latitude}}</span>
+            </mat-panel-description>
+            <mat-panel-description>
+                <span class="lib">Longitude: </span><span class="des">{{pays.longitude}}</span>
+            </mat-panel-description>
+            <mat-panel-description>
+                <span class="lib">Nom Officiel: </span><span class="des">{{pays.nomOfficiel}}</span>
+            </mat-panel-description>
+            <mat-panel-description>
+                <span class="lib">Zoom: </span><span class="des">{{pays.zoom}}</span>
+            </mat-panel-description>
+            <mat-panel-description>
+                <span class="lib">Active: </span>
+                <span *ngIf="pays.active === true" class="des badge badge-success">OUI</span>
+                <span *ngIf="pays.active === false" class="des badge badge-danger">NON</span>
+            </mat-panel-description>
+        </mat-expansion-panel>
+    </mat-accordion>
+</mat-dialog-content>

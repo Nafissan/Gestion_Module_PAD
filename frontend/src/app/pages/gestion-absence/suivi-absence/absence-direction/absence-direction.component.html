@@ -1,0 +1,86 @@
+<fury-page-layout mode="card">
+    <fury-page-layout-header>
+        <fury-breadcrumbs [@fadeInRight] [crumbs]="['dossier-absence']" current="Absence Direction"></fury-breadcrumbs>
+    </fury-page-layout-header>
+
+    <fury-page-layout-content [@fadeInUp]>
+        <div class="cs_content_princ" >
+            <div class="cs_block_titre" >
+                <div class="cs_block_titre_gauche" >
+                    <span>Dossier Absence des Directions</span>
+                </div>
+                <div class="cs_block_titre_droit" >
+                    <mat-form-field>
+                        <input matInput [matDatepicker]="picker" placeholder="Choisir Une Année" [formControl]="date">
+                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker #picker (yearSelected)="yearSelected($event)" startView="multi-year"></mat-datepicker>
+                    </mat-form-field>
+                </div>
+            </div>
+            
+            <mat-divider></mat-divider>
+          
+<!--              <div class="cs_content_sec" >
+                <div class="cs_titre" *ngIf="dossierAbsences && dossierAbsences.length != 0 " >
+                    <span>DOSSIER ABSENCE(S)</span>
+                </div>
+                <div class="cs_titre" *ngIf="dossierAbsences && dossierAbsences.length === 0 " >
+                    <span>AUCUN DOSSIER ABSENCE... </span>  <span> <mat-icon>warning</mat-icon> </span>
+                </div>
+                <div class="cs_titre">
+                    <mat-selection-list #PC [multiple]="false" >
+                        <mat-list-option *ngFor="let dossierAbsence of dossierAbsences" class="folder_content" (click)="DetailsPlanningAbsence(dossierAbsence)">
+                            <mat-icon mat-list-icon class="folder">folder</mat-icon>
+                            <div class="font" mat-line> {{dossierAbsence.code}}</div>
+                            <div class="font" mat-line> {{dossierAbsence.description}}</div>
+                        </mat-list-option>
+                    </mat-selection-list>
+                </div>             
+            </div>  -->          
+            <div class="cs_content_ter" >
+                <div class="cs_titre" *ngIf="dossierAbsences && dossierAbsences.length === 0 " >
+                    <span>AUCUN DOSSIER ABSENCE... </span>  <span> <mat-icon>warning</mat-icon> </span>
+                </div>
+
+                <!-- *ngIf="planningAbsences && dossierAbsences && dossierAbsences.length !== 0" a ajouter dans le div class ci dessous -->
+                <div class="text-dark" [fxFlex.gt-sm]="" >
+                    <div class="cs_block_titre">
+                        <div class="cs_block_titre_gauche">
+                            <span> <button (click)="afficherDossierAbsence()" class="bouton"> TOUS </button></span> 
+                        </div>
+                        <div class="cs_block_titre_droit">
+                           <span> FEUILLES ABSENCE(S)</span>
+                        </div>                    
+                    </div>                   
+                    <mat-divider></mat-divider>
+                    <div class="ppp">
+                        <!-- <div class="dossier_miniature"> -->
+                        <div [ngClass]="{'dossier_miniature_retreci' : affcherFichier, dossier_miniature_agrandi: afficherDossier}">
+                            <mat-selection-list #PC [multiple]="false" >
+                                <mat-list-option *ngFor="let dossierAbsence of dossierAbsences" class="folder_content" [ngClass]="{'agrandi' : affcherFichier, retreci: afficherDossier}" (click)="DetailsPlanningAbsence(dossierAbsence)">
+                                    <mat-icon mat-list-icon class="folder">folder</mat-icon>
+                                    <div class="font" mat-line> {{dossierAbsence.code}}</div>
+                                    <div class="font" mat-line> {{dossierAbsence.description}}</div>
+                                </mat-list-option>
+                            </mat-selection-list>
+                        </div>
+                        <div class="fichier" *ngIf="affcherFichier">
+                            <mat-selection-list #PC [multiple]="false">
+                                <mat-list-option *ngFor="let planningAbsence of planningAbsences" [value]="planningAbsence" (click)="setPlanningAbsence(planningAbsence)" class="folder_content">
+                                    <mat-icon mat-list-icon class="file">file_copy</mat-icon>                        
+                                    <div class="font" mat-line>{{planningAbsence.uniteOrganisationnelle.description}}</div>    
+                                </mat-list-option>
+                            </mat-selection-list>
+                        </div>
+                    </div>
+                </div>
+            </div>
+ <!--            <div *ngIf="dossierAbsences && dossierAbsences.length === 0 " class="card text-center">
+                <div class="card-header"><span class="badge badge-info">Information</span></div>
+                <div class="font">
+                    <span>  IL N'EXISTE PAS DE DOSSIER ABSENCE(S) POUR L'ANNÉE {{anneeSelected}} </span>
+                </div>
+            </div> -->
+        </div>      
+    </fury-page-layout-content>
+</fury-page-layout>

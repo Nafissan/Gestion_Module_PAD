@@ -1,0 +1,38 @@
+<div>
+    <mat-icon class="close" mat-button mat-dialog-close>close</mat-icon>
+</div>
+<div mat-dialog-title class="titre_modal_add">Ajouter Planning conge</div>
+<form [formGroup]="form" (ngSubmit)="save()">
+    <mat-dialog-content>
+        <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="24px">
+            <!-- <mat-form-field fxFlex>
+                <mat-label>N° Planning Direction</mat-label>
+                <input matInput formControlName="codePD">
+            </mat-form-field> -->
+            <mat-form-field fxFlex *ngIf="mode === 'update'">
+                <mat-label>Code Planning Conge</mat-label>
+                <input matInput formControlName="codePL">
+            </mat-form-field>
+        </div>
+        <!-- <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
+            <mat-form-field fxFlex>
+                <mat-label>Date création</mat-label>
+                <input [matDatepicker]="picker" formControlName="dateCreation" [min]="minDate" [max]="maxDate" matInput>
+                <mat-datepicker-toggle matSuffix [for]="picker">
+                    <mat-icon matDatepickerToggleIcon>date_range</mat-icon>
+                </mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+        </div> -->
+        <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="24px">
+            <mat-form-field fxFlex>
+                <mat-label>Description</mat-label>
+                <textarea formControlName="description" matInput></textarea>
+            </mat-form-field>
+        </div>
+    </mat-dialog-content>
+    <mat-dialog-actions fxLayout="row" fxLayoutAlign="end center">
+        <button *ngIf="isCreateMode()" mat-button [disabled]="!form.valid">AJOUTER</button>
+        <button *ngIf="isUpdateMode()" mat-button [disabled]="!form.valid">MODIFIER</button>
+    </mat-dialog-actions>
+</form>

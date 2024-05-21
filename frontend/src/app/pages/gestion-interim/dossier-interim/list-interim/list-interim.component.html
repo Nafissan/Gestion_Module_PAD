@@ -1,0 +1,142 @@
+<!-- <fury-page-layout mode="card"> -->
+    <!-- <fury-page-layout-header>
+        <fury-breadcrumbs [@fadeInRight] [crumbs]="['Gestion Interim']" current="Demande d'interim"></fury-breadcrumbs>
+    </fury-page-layout-header> -->
+
+    <!-- <fury-page-layout-content [@fadeInUp]> -->
+        <div  mat-dialog-titre class="badge badge-info" style="text-align: center;"><span>LISTE INTERIMS</span></div>
+
+        <fury-list name="Interim" [columns]="columns" (filterChange)="onFilterChange($event)">
+        
+
+            <table [dataSource]="dataSource" mat-table matSort>
+
+                <!--- Note that these columns can be defined in any order.
+                The actual rendered columns are set as a property on the row definition" -->
+
+                <!-- Checkbox Column -->
+                <ng-container matColumnDef="checkbox">
+                    <th *matHeaderCellDef class="actions-cell" mat-header-cell>
+                        <mat-checkbox color="primary" (click)="$event.stopPropagation()"></mat-checkbox>
+                    </th>
+                    <td *matCellDef="let row" class="actions-cell" mat-cell>
+                        <mat-checkbox color="primary" (click)="$event.stopPropagation()"></mat-checkbox>
+                    </td>
+                </ng-container>
+
+                <!-- fullName Column -->
+                <ng-container *ngFor="let column of columns">
+                    <ng-container *ngIf="column.isModelProperty" [matColumnDef]="column.property">
+                        <th *matHeaderCellDef mat-header-cell mat-sort-header> {{ column.name }}</th>
+
+                        <td *matCellDef="let row" mat-cell>
+                            <p *ngIf="row.agentDepart && column.name === 'Agent Demandeur'">
+                                {{ row.agentDepart.prenom && row.agentDepart.nom}}
+                            </p>
+                            <p *ngIf="row.agentArrive && column.name === 'Agent Interimaire'">
+                                {{ row.agentArrive.prenom && row.agentArrive.nom}}
+                            </p>
+                            <p *ngIf="column.name === 'Etat' && row.etat === 'VALIDER'">
+                                <span class="badge badge-success">{{row.etat}}</span>
+                            </p>
+                            <!-- <p *ngIf="column.name === 'Etat' && row.etat === 'En Attente'">
+                                <span class="badge badge-warning">{{row.etat}}</span>
+                            </p> -->
+                            <p *ngIf="column.name === 'Etat' && row.etat === 'REJETER'">
+                                <span class="badge badge-danger"> {{row.etat}}</span>
+                            </p>
+                            <p *ngIf="column.name === 'Etat' && row.etat === 'SAISI'">
+                          
+                                <span class="badge badge-warning">{{row.etat}}</span>
+                            </p>
+                            <p *ngIf="column.name === 'Etat' && row.etat === 'TRANSMIS'">
+                                <span class="badge badge-info">  {{row.etat}}</span>
+                            </p>
+                            <p *ngIf="column.name === 'Etat' && row.etat === 'CLOTURE'">
+                                <span class="badge badge-danger">  {{row.etat}}</span>
+                            </p>
+                            <p *ngIf="column.name !== 'Agent Interimaire' && column.name !== 'Agent Depart' && (column.property === 'dateDepart' 
+                            || column.property     === 'dateRetour'
+                            || column.property     === 'dateRetourEffective'
+                            || column.property     === 'dateSaisie' )">
+                                {{ row[column.property] | date: 'dd-MM-yyyy' }}
+                            </p>
+
+                            <p *ngIf="column.name !== 'Agent Interimaire' && column.name !== 'Agent Depart' && (column.property !== 'dateDepart' 
+                            && column.property     !== 'dateRetour'
+                            && column.property     !== 'dateRetourEffective'
+                            && column.property     !== 'dateSaisie'
+                            && column.property     !== 'etat' )"> {{ row[column.property]}}
+                            </p>
+
+                        </td>
+
+                    </ng-container>
+                </ng-container>
+
+
+                <!-- actions Column -->
+                <ng-container matColumnDef="actions">
+                    <th *matHeaderCellDef class="actions-cell" mat-header-cell mat-sort-header></th>
+                    <td *matCellDef="let row" class="actions-cell" mat-cell>
+                        <button type="button" mat-icon-button [matMenuTriggerFor]="actionsMenu"
+                            (click)="$event.stopPropagation()">
+                            <mat-icon>more_horiz</mat-icon>
+                        </button>
+
+                         <mat-menu #actionsMenu="matMenu" yPosition="below" xPosition="before">
+                            <!-- <button *ngIf="row.etat !== 'CLOSE' && row.etat !== 'VALIDER'" (click)="updateInterim(row)" mat-menu-item>
+                                <mat-icon>edit</mat-icon>
+                                <span>
+                                    Modifier
+                                </span>
+                            </button>
+                            <button *ngIf="row.etat !== 'CLOSE' && row.etat !== 'VALIDER'"  (click)="transmettreInterim(row)" (click)="deleteInterim(row)" mat-menu-item>
+                                <mat-icon>delete</mat-icon>
+                                <span>
+                                    Supprimer          
+                                </span>
+                            </button> -->
+                            <button (click)="DetailsInterim(row)" mat-menu-item>
+                                <mat-icon>visibility</mat-icon>
+                                <span>
+                                    Details
+                                </span>
+                            </button>
+                       
+                            <!-- <button *ngIf="row.etat === 'TRANSMIS' && (nomUniteOrgAgentConnect === 'DCH')" (click)="validationInterim(row)" mat-menu-item>
+                                <mat-icon>done_outline</mat-icon>
+                                <span>Valider</span>
+                            </button> -->
+                            <!-- <button *ngIf="row.etat === 'TRANSMIS' && (nomUniteOrgAgentConnect === 'DCH')" (click)="rejetInterim(row)" mat-menu-item>
+                                <mat-icon>clear</mat-icon>
+                                <span>Rejeter</span>
+                            </button>
+                            <button *ngIf="row.etat === 'SAISI' && (nomUniteOrgAgentConnect !== 'DCH')"  (click)="transmettreInterim(row)" mat-menu-item>
+                                <mat-icon>label_important</mat-icon>
+                                <span>transmettre</span>
+                            </button> -->
+                         
+                            <button  [routerLink]="['/gestion-interim/suivi-interim',row.id]"  mat-menu-item>
+                                <mat-icon>folder</mat-icon>
+                                <span>Historique Traitement</span>
+                            </button>
+                            <!-- <button *ngIf="row.etat === 'VALIDER' && (nomUniteOrgAgentConnect === 'DCH')" (click)="closeEtapeInterim(row)"  mat-menu-item>
+                                <mat-icon>folder</mat-icon>
+                                <span>Cloturer</span>
+                            </button> -->
+                        </mat-menu> 
+                    </td>
+                </ng-container>
+
+                <tr *matHeaderRowDef="visibleColumns" mat-header-row></tr>
+                <tr (click)="DetailsInterim(row)" *matRowDef="let row; columns: visibleColumns;"
+                    class="clickable route-animations-elements" mat-row></tr>
+            </table>
+
+            <mat-paginator class="paginator" [pageSize]="pageSize"></mat-paginator>
+
+        </fury-list>
+<!-- 
+    </fury-page-layout-content>
+</fury-page-layout> -->

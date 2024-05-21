@@ -1,0 +1,276 @@
+<div>
+    <mat-icon class="close" mat-button mat-dialog-close (click)="refreshList()">close</mat-icon>
+</div>
+<fury-page>
+    <fury-title class="title">
+        <mat-icon>description</mat-icon>
+        <span [@fadeInRight]>Démarches avec {{defaults.nom}}</span>
+    </fury-title>
+
+    <div [@fadeInUp]>
+        <mat-horizontal-stepper #stepper="matHorizontalStepper" [linear]="true">
+            <mat-step [stepControl]="pQVFormGroup">
+                <div fxLayout="column" fxLayoutGap="16px" class="w-100">
+                    <ng-template matStepLabel>Ciblage du prospect</ng-template>
+
+                    <form style="width: 100%; height: 600px;" [formGroup]="pCibleFormGroup" autocomplete="off">
+                        <div class="heading font-weight-bold">Enregistrer les objectifs</div>
+                        <div fxLayout="column">
+                            <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="16px">
+                                <mat-form-field fxFlex="auto">
+                                    <mat-label>Profil</mat-label>
+                                    <textarea formControlName="profil" matInput></textarea>
+                                </mat-form-field>
+
+                                <mat-form-field fxFlex="auto">
+                                    <mat-label>Nature</mat-label>
+                                    <textarea formControlName="nature" matInput></textarea>
+                                </mat-form-field>
+                            </div>
+                            <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="16px">
+                                <mat-form-field fxFlex="auto">
+                                    <mat-label>Objectif de l'accord</mat-label>
+                                    <textarea formControlName="objectifAccord" matInput></textarea>
+                                </mat-form-field>
+
+                                <mat-form-field fxFlex="auto">
+                                    <mat-label>Durée de l'accord (en mois)</mat-label>
+                                    <textarea formControlName="dureeAccord" matInput></textarea>
+                                </mat-form-field>
+                            </div>
+
+                            <mat-form-field fxFlex>
+                                <mat-label>Intérêt du PAD</mat-label>
+                                <textarea formControlName="interetPAD" matInput></textarea>
+                            </mat-form-field>
+
+                            <mat-form-field fxFlex>
+                                <mat-label>Intérêt Global du prospect</mat-label>
+                                <textarea formControlName="interetGobalProspect" matInput></textarea>
+                            </mat-form-field>
+                            <div>
+                                <button fxFlex="center" class="h-27 btn btn-primary" (click)="updateProspectCible()" [disabled]="pCibleFormGroup.pristine" mat-button>Valider
+                                    </button>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </mat-step>
+            <mat-step [stepControl]="pQVFormGroup">
+                <div fxLayout="row" fxLayoutGap="16px">
+                    <ng-template matStepLabel>Prospect Qualifié Veille</ng-template>
+
+                    <div *ngIf="defaults.statut === 0">
+                        <form style="width: 400px; height: 600px;" fxLayoutGap="8px" fxLayoutGap.gt-xs="24px" [formGroup]="pQVFormGroup" autocomplete="off">
+                            <div class="heading font-weight-bold">Enregistrer une nouvelle action</div>
+                            <div class="content" fxLayout="column">
+                                <mat-form-field appearance="fill">
+                                    <mat-label>Sélectionner une date</mat-label>
+                                    <input formControlName="date" matInput [matDatepicker]="picker">
+                                    <!-- <mat-hint>DD/MM/YYYY</mat-hint> -->
+                                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                    <mat-datepicker #picker></mat-datepicker>
+                                </mat-form-field>
+
+                                <mat-form-field fxFlex="auto">
+                                    <mat-label>Statut</mat-label>
+                                    <mat-select formControlName="statut" [compareWith]="compareObjects">
+                                        <mat-option *ngFor="let statut of statuts" [value]="statut.id">
+                                            {{statut?.libelle}}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+
+                                <mat-form-field fxFlex="auto">
+                                    <mat-label>Description de l'action</mat-label>
+                                    <textarea formControlName="action" matInput></textarea>
+                                </mat-form-field>
+                                <div>
+                                    <button fxFlex="center" class="h-27 btn btn-primary" (click)="createLigneActionPQV()" [disabled]="pQVFormGroup.pristine" mat-button>Enregistrer
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div>
+                        <div class="heading font-weight-bold">Liste des actions</div>
+                        <div class="content" fxLayout="column" fxLayoutGap="24px" style="width: 540px; height: 230px;" class="bodycontainer">
+                            <table *ngIf="suiviPQV?.length > 0" mat-table [dataSource]="dataSourceSuiviPQV" class="scrollable mat-elevation-z8">
+
+                                <!--- Note that these columns can be defined in any order.
+                                          The actual rendered columns are set as a property on the row definition" -->
+
+                                <!-- Position Column -->
+                                <ng-container matColumnDef="date">
+                                    <th mat-header-cell *matHeaderCellDef> Date </th>
+                                    <td mat-cell *matCellDef="let element"> {{element.date | date: 'dd-MM-yyy'}} </td>
+                                </ng-container>
+
+                                <!-- Action Column -->
+                                <ng-container matColumnDef="action">
+                                    <th mat-header-cell *matHeaderCellDef> Action </th>
+                                    <td mat-cell *matCellDef="let element"> {{element.action}} </td>
+                                </ng-container>
+
+                                <!-- Statut Column -->
+                                <ng-container matColumnDef="statut">
+                                    <th mat-header-cell *matHeaderCellDef> Statut </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        <span *ngIf="element.statut === 0" class="badge badge-primary">En cours</span>
+                                        <span *ngIf="element.statut === 1" class="badge badge-success">Effectué</span>
+                                        <span *ngIf="element.statut === 2" class="badge badge-danger">Annulé</span>
+                                        <span *ngIf="element.statut === 3" class="badge badge-info">Prévu</span>
+                                    </td>
+                                </ng-container>
+
+                                <!-- actions Column -->
+                                <ng-container matColumnDef="actions">
+                                    <th *matHeaderCellDef class="actions-cell" mat-header-cell mat-sort-header></th>
+                                    <td *matCellDef="let row" class="actions-cell" mat-cell>
+                                        <button type="button" mat-icon-button [matMenuTriggerFor]="actionsMenu" (click)="$event.stopPropagation()">
+                                            <mat-icon>more_horiz</mat-icon>
+                                        </button>
+                                        <mat-menu #actionsMenu="matMenu" yPosition="below" xPosition="after">
+                                            <button (click)="updateLignePQV(row)" mat-menu-item>
+                                                <mat-icon>edit</mat-icon>
+                                                <span>Modifier</span>
+                                            </button>
+                                            <button (click)="deletePQV(row)" mat-menu-item>
+                                                <mat-icon>delete_sweep</mat-icon>
+                                                <span>SUPPRIMER</span>
+                                            </button>
+                                        </mat-menu>
+                                    </td>
+                                </ng-container>
+
+                                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                            </table>
+
+                            <div *ngIf="suiviPQV?.length === 0" class="card text-center">
+                                <div class="card-header">
+                                    <span class="badge badge-info">
+                                        INFORMATION
+                                    </span>
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title">Aucune action menée</h5>
+                                </div>
+                                <div class="card-footer text-muted">
+                                    {{date | date : 'dd/MMM/yyyy HH:mm:ss'}}
+                                </div>
+                            </div>
+                        </div>
+                        <div style="margin-top:8px;">
+                            <button fxFlex="center" *ngIf="defaults.statut === 0" class="h-27 btn btn-success" (click)="qualifierProspectPotentiel()" mat-raised-button>Qualifier
+                                Potentiel
+                            </button>
+                            <button fxFlex="center" class="h-27 btn btn-secondary" matStepperNext>
+                                Suivant
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </mat-step>
+            <mat-step [stepControl]="pQPFormGroup">
+                <div fxLayout="row" fxLayoutGap="16px" class="w-100">
+                    <ng-template matStepLabel>Prospect Qualifié Potentiel</ng-template>
+                    <ng-container *ngIf="defaults.statut === 1">
+                        <div>
+                            <form style="width: 400px; height: 600px;" fxLayoutGap="8px" fxLayoutGap.gt-xs="24px" [formGroup]="pQPFormGroup" autocomplete="off">
+                                <div class="heading font-weight-bold">Enregistrer une nouvelle action</div>
+                                <div class="content" fxLayout="column">
+                                    <mat-form-field appearance="fill">
+                                        <mat-label>Sélectionner une date</mat-label>
+                                        <input formControlName="date" matInput [matDatepicker]="picker">
+                                        <!-- <mat-hint>DD/MM/YYYY</mat-hint> -->
+                                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                        <mat-datepicker #picker></mat-datepicker>
+                                    </mat-form-field>
+
+                                    <mat-form-field fxFlex="auto">
+                                        <mat-label>Statut</mat-label>
+                                        <mat-select formControlName="statut" [compareWith]="compareObjects">
+                                            <mat-option *ngFor="let statut of statuts" [value]="statut.id">
+                                                {{statut?.libelle}}</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+
+                                    <mat-form-field fxFlex="auto">
+                                        <mat-label>Description de l'action</mat-label>
+                                        <textarea formControlName="action" matInput></textarea>
+                                    </mat-form-field>
+                                    <div>
+                                        <button fxFlex="center" class="h-27 btn btn-primary" (click)="createLigneActionPQP()" [disabled]="pQPFormGroup.pristine" mat-button>Enregistrer
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </ng-container>
+                    <div>
+                        <div class="heading font-weight-bold">Liste des actions</div>
+                        <div class="content" fxLayout="column" style="width: 540px; height: 230px;" class="bodycontainer">
+                            <table *ngIf="suiviPQP?.length > 0" mat-table [dataSource]="dataSourceSuiviPQP" class="scrollable mat-elevation-z8">
+
+                                <!--- Note that these columns can be defined in any order.
+                                          The actual rendered columns are set as a property on the row definition" -->
+
+                                <!-- Position Column -->
+                                <ng-container matColumnDef="date">
+                                    <th mat-header-cell *matHeaderCellDef> Date </th>
+                                    <td mat-cell *matCellDef="let element"> {{element.date | date: 'dd-MM-yyy'}} </td>
+                                </ng-container>
+
+                                <!-- Name Column -->
+                                <ng-container matColumnDef="action">
+                                    <th mat-header-cell *matHeaderCellDef> Action </th>
+                                    <td mat-cell *matCellDef="let element"> {{element.action}} </td>
+                                </ng-container>
+
+                                <!-- Weight Column -->
+                                <ng-container matColumnDef="statut">
+                                    <th mat-header-cell *matHeaderCellDef> Statut </th>
+                                    <td mat-cell *matCellDef="let element">
+                                        <span *ngIf="element.statut === 0" class="badge badge-primary">En cours</span>
+                                        <span *ngIf="element.statut === 1" class="badge badge-success">Effectué</span>
+                                        <span *ngIf="element.statut === 2" class="badge badge-danger">Annulé</span>
+                                        <span *ngIf="element.statut === 3" class="badge badge-info">Prévu</span>
+                                    </td>
+                                </ng-container>
+
+                                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                            </table>
+
+                            <div *ngIf="suiviPQP?.length === 0" class="card text-center">
+                                <div class="card-header">
+                                    <span class="badge badge-info">
+                                        INFORMATION
+                                    </span>
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title">Aucune action menée</h5>
+                                </div>
+                                <div class="card-footer text-muted">
+                                    {{date | date : 'dd/MMM/yyyy HH:mm:ss'}}
+                                </div>
+                            </div>
+                        </div>
+                        <div style="margin-top:8px;">
+                            <button fxFlex="center" *ngIf="defaults.statut === 1" (click)="annulerEtape()" class="h-27 btn btn-danger">
+                                Annuler cette Etape
+                            </button>
+                            <button fxFlex="center" *ngIf="defaults.statut === 1" class="h-27 btn btn-success" (click)="qualifierPartenaire()" mat-raised-button>Qualifier
+                                Partenaire
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </mat-step>
+        </mat-horizontal-stepper>
+    </div>
+
+</fury-page>

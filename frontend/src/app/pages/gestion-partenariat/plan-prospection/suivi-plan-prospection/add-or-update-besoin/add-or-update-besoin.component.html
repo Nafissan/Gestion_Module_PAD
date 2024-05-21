@@ -1,0 +1,81 @@
+<div>
+    <mat-icon class="close" mat-button mat-dialog-close (click)="refreshList()">close</mat-icon>
+</div>
+<fury-page>
+    <fury-title class="title">
+        <mat-icon>description</mat-icon>
+        <span [@fadeInRight]>Spécification des besoins</span>
+    </fury-title>
+
+    <div fxLayout="column" fxLayoutAlign="start center">
+
+        <div [@fadeInUp] class="card">
+            <mat-horizontal-stepper #stepper="matHorizontalStepper" [linear]="true">
+                <mat-step [stepControl]="besoinFormGroup">
+                    <form [formGroup]="besoinFormGroup" style="width: 100%;" autocomplete="off">
+                        <ng-template matStepLabel>Besoins</ng-template>
+                        <div class="heading">Définir les caractéristiques du besoin</div>
+                        <div class="content" fxLayout="column">
+                            <mat-form-field appearance="fill">
+                                <mat-label>Structure Bénéficiaire</mat-label>
+                                <mat-select formControlName="unite" [compareWith]="compareObjects">
+                                    <mat-option *ngFor="let uniteOrg of filteredUniteOrganisationnelles | async" [value]="uniteOrg" (click)="setUniteOrganisationnelle(uniteOrg)">
+                                        <small>
+                                      <span>
+                                          {{ uniteOrg.nom }}  |  {{ uniteOrg.description }}
+                                      </span>
+                                    </small>
+                                    </mat-option>
+                                </mat-select>
+                                <!-- <mat-hint align="end">(*) Champs Obligatoires</mat-hint> -->
+                            </mat-form-field>
+
+                            <mat-form-field fxFlex="auto">
+                                <mat-label>Domaines</mat-label>
+                                <mat-select formControlName="domaines" [compareWith]="compareObjects" multiple>
+                                    <mat-option *ngFor="let domaine of domaines" [value]="domaine">{{domaine?.libelle}}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+
+                            <mat-form-field fxFlex="auto">
+                                <mat-label>Description du besoin</mat-label>
+                                <input formControlName="libelle" matInput required>
+                            </mat-form-field>
+
+                        </div>
+
+                        <div class="actions" fxLayout="row" fxLayoutAlign="end center">
+                            <button (click)="stepper.reset()" [disabled]="besoinFormGroup.pristine" color="primary" mat-button type="button">Annuler
+                            </button>
+                            <button (click)="createOrUpdate()" *ngIf="!isSavedBesoin" [disabled]="besoinFormGroup.pristine" color="primary" mat-button type="button">Enregistrer
+                            </button>
+                            <button *ngIf="isSavedBesoin" [disabled]="besoinFormGroup.invalid " color="primary" mat-raised-button matStepperNext>Suivant
+                            </button>
+                        </div>
+                    </form>
+                </mat-step>
+
+                <mat-step [stepControl]="prospectFormGroup">
+                    <form [formGroup]="prospectFormGroup" style="min-height: 270px;">
+                        <ng-template matStepLabel>Partenaire/Prospect</ng-template>
+                        <div class="heading">Selectionner de Partenaires/Prospects</div>
+                        <div class="content" fxLayout="column" fxLayoutGap="8px">
+                            <mat-form-field fxFlex="auto">
+                                <mat-label>Prospects / Partenaires</mat-label>
+                                <mat-select formControlName="partenaires" [compareWith]="compareObjects" multiple>
+                                    <mat-option *ngFor="let prospect of prospects" [value]="prospect">{{prospect?.nom}}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+
+                        <div class="actions" fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="8px">
+                            <button *ngIf="isSavedProspect" color="infos" mat-button matStepperPrevious type="button">PRECEDENT</button>
+                            <button (click)="createProspect()" [disabled]="prospectFormGroup.invalid" color="success" mat-raised-button matStepperNext>Enregistrer</button>
+                        </div>
+                    </form>
+                </mat-step>
+
+            </mat-horizontal-stepper>
+        </div>
+    </div>
+</fury-page>

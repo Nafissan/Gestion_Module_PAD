@@ -1,0 +1,23 @@
+@import "var";
+
+.card-content {
+  padding: 0;
+  height: 150px;
+}
+
+.header {
+  padding: $spacing/1.5 $spacing;
+
+  .subheading {
+    font: var(--font-caption);
+
+    .mat-icon {
+      width: 14px;
+      height: 14px;
+      font-size: 14px;
+      vertical-align: text-top;
+    }
+  }
+}
+
+

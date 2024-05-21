@@ -1,0 +1,126 @@
+<div>
+    <mat-icon class="close" mat-button mat-dialog-close>close</mat-icon>
+</div>
+<div mat-dialog-title class="titre_modal_add">AJOUTER PROSPECT/PARTENAIRE</div>
+<form [formGroup]="form" (ngSubmit)="save()" autocomplete="off">
+    <mat-dialog-content>
+        <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="24px">
+            <mat-form-field fxFlex>
+                <mat-label>Raison social</mat-label>
+                <input matInput formControlName="nom" required>
+            </mat-form-field>
+            <mat-form-field fxFlex>
+                <mat-label>Email Entreprise</mat-label>
+                <input type="email" matInput formControlName="email">
+            </mat-form-field>
+        </div>
+        <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="24px">
+            <mat-form-field fxFlex>
+                <mat-label>Adresse de l'entreprise</mat-label>
+                <input matInput formControlName="adresse" required>
+            </mat-form-field>
+            <mat-form-field fxFlex>
+                <mat-label>Site Web Entreprise</mat-label>
+                <input type="url" matInput formControlName="siteWeb" required>
+            </mat-form-field>
+        </div>
+        <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="24px">
+            <mat-form-field fxFlex>
+                <mat-label>Telephone Entreprise</mat-label>
+                <input type="tel" matInput formControlName="telephone" required>
+            </mat-form-field>
+            <mat-form-field fxFlex>
+                <mat-label>Fax Entreprise</mat-label>
+                <input matInput formControlName="fax" required>
+            </mat-form-field>
+        </div>
+        <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="24px">
+            <mat-form-field fxFlex>
+                <mat-label>Latitude</mat-label>
+                <input type="number" matInput formControlName="latitude" required>
+            </mat-form-field>
+            <mat-form-field fxFlex>
+                <mat-label>Longitude</mat-label>
+                <input type="number" matInput formControlName="longitude" required>
+            </mat-form-field>
+        </div>
+        <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="24px">
+            <mat-form-field fxFlex>
+                <mat-label>Ville</mat-label>
+                <input matInput [matAutocomplete]="auto" [formControl]="villeFctr" #autoCompleteInput>
+                <mat-autocomplete #auto="matAutocomplete">
+                    <mat-option *ngFor="let ville of filteredVilles | async" [value]="ville.nom" (click)="setVille(ville)">
+                        <mat-icon style="vertical-align:middle; margin-right: 4px;">place</mat-icon>
+                        <span>{{ ville.code }}</span> |
+                        <small>{{ ville.nom }}</small>
+                    </mat-option>
+                </mat-autocomplete>
+                <button *ngIf="villeFctr.value" type="button" mat-icon-button (click)="villeFctr.reset()" matSuffix>
+                    <mat-icon>close</mat-icon>
+              </button>
+                <mat-icon *ngIf="!villeFctr.value" matSuffix>place</mat-icon>
+            </mat-form-field>
+        </div>
+        <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="24px">
+            <mat-form-field fxFlex>
+                <mat-label>Zone</mat-label>
+                <input matInput [matAutocomplete]="auto1" [formControl]="zoneFctr" #autoCompleteInput>
+                <mat-autocomplete #auto1="matAutocomplete" formControlName="zone">
+                    <mat-option *ngFor="let zone of filteredZones | async" [value]="zone.nom" (click)="setZone(zone)">
+                        <img style="width: 5%; border-radius: 5px; margin-right: 5px;" src="assets/img/partenaire-logo.jpg">
+                        <span>{{ zone.nom }}</span>
+
+                    </mat-option>
+                </mat-autocomplete>
+                <button *ngIf="zoneFctr.value" type="button" mat-icon-button (click)="zoneFctr.reset()" matSuffix>
+                    <mat-icon>close</mat-icon>
+              </button>
+                <mat-icon *ngIf="!zoneFctr.value" matSuffix>search</mat-icon>
+            </mat-form-field>
+        </div>
+        <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="24px">
+            <mat-form-field fxFlex>
+                <mat-label>Prenom Representant</mat-label>
+                <input matInput formControlName="representantPrenom" required>
+            </mat-form-field>
+            <mat-form-field fxFlex>
+                <mat-label>Nom Representant</mat-label>
+                <input matInput formControlName="representantNom" required>
+            </mat-form-field>
+        </div>
+        <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="24px">
+            <mat-form-field fxFlex>
+                <mat-label>Email Representant</mat-label>
+                <input type="email" matInput formControlName="representantEmail" required>
+            </mat-form-field>
+            <mat-form-field fxFlex>
+                <mat-label>Telephone Representant</mat-label>
+                <input type="tel" matInput formControlName="representantTelephone" required>
+            </mat-form-field>
+        </div>
+
+
+        <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="24px" required>
+            <mat-form-field fxFlex>
+                <mat-label>Date Approbation</mat-label>
+                <input [matDatepicker]="picker1" formControlName="dateApprobation" matInput>
+                <mat-datepicker-toggle matSuffix [for]="picker1">
+                    <mat-icon matDatepickerToggleIcon>date_range</mat-icon>
+                </mat-datepicker-toggle>
+                <mat-datepicker #picker1></mat-datepicker>
+            </mat-form-field>
+            <section fxFlex>
+                <mat-checkbox fxFlex formControlName="active">Active</mat-checkbox>
+            </section>
+            <section fxFlex>
+                <mat-checkbox fxFlex formControlName="partenaire">Partenaire</mat-checkbox>
+            </section>
+        </div>
+
+    </mat-dialog-content>
+    <mat-dialog-actions fxLayout="row" fxLayoutAlign="end center">
+        <button *ngIf="isCreateMode()" mat-button [disabled]="(!form.valid || !villeFctr.value)">AJOUTER</button>
+        <button *ngIf="isUpdateMode()" mat-button [disabled]="(!form.valid || !villeFctr.value)">MODIFIER</button>
+    </mat-dialog-actions>
+
+</form>

@@ -1,0 +1,89 @@
+<mat-tab-group mat-align-tabs="center">
+    <mat-tab label="Tableau de bord">
+        <fury-page [fxLayoutGap]="gap" class="dashboard" fxLayout="column">
+            <div class="example-container">
+                <mat-form-field appearance="fill">
+                    <input matInput [matDatepicker]="picker" placeholder="Choisir une année" [formControl]="dateSelectedCtrl">
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker (yearSelected)="yearSelected($event)" startView="multi-year">
+                    </mat-datepicker>
+                </mat-form-field>
+
+                <!-- <mat-form-field appearance="fill">
+                    <mat-label>Partenaires</mat-label>
+                    <input matInput [matAutocomplete]="auto1" #autoCompleteInput>
+                    <mat-autocomplete #auto1="matAutocomplete">
+                        <mat-option *ngFor="let partenaire of filterePartenaire | async" [value]="partenaire.nom" (click)="setPartenaire(partenaire)">
+                            <span>{{ partenaire.nom }}</span>
+
+                        </mat-option>
+                    </mat-autocomplete>
+                    <button *ngIf="partenaireCtrl.value" type="button" mat-icon-button (click)="partenaireCtrl.reset()" matSuffix>
+                        <mat-icon>close</mat-icon>
+                    </button>
+                    <button *ngIf="!partenaireCtrl.value" type="button" mat-icon-button matSuffix>
+                        <mat-icon>arrow_drop_down</mat-icon>
+                    </button>
+                </mat-form-field>
+
+                <mat-form-field appearance="fill">
+                    <mat-label>Convention</mat-label>
+                    <input matInput [matAutocomplete]="auto" #autoCompleteInput>
+                    <mat-autocomplete #auto="matAutocomplete">
+                        <mat-option *ngFor="let convention of filtereConvention | async" [value]="convention.libelle" (click)="setConvention(convention)">
+                            <span>{{ convention.libelle }}</span>
+                        </mat-option>
+                    </mat-autocomplete>
+                    <button *ngIf="conventionCtrl.value" type="button" mat-icon-button (click)="conventionCtrl.reset()" matSuffix>
+                        <mat-icon>close</mat-icon>
+                    </button>
+                    <button *ngIf="!conventionCtrl.value" type="button" mat-icon-button matSuffix>
+                        <mat-icon>arrow_drop_down</mat-icon>
+                    </button>
+                </mat-form-field> -->
+
+            </div>
+            <div fxLayout="column" [fxLayoutGap]="gap" [fxFlex]="col(2)" fxLayout.gt-sm="row" style="height: 20%;">
+                <div fxFlex="auto" [fxFlex.gt-sm]="col(4)">
+                    <div class="card-body p-3 mb-2 bg-success text-white">
+                        <h6 class="card-title card-text text-center">Partenaires</h6>
+                        <h4 class="card-text text-center">{{ listpartenaire?.length}}</h4>
+                    </div>
+                </div>
+
+                <div fxFlex="auto" [fxFlex.gt-sm]="col(4)">
+                    <div class="card-body p-3 mb-2 bg-info text-white">
+                        <h6 class="card-title card-text text-center">Conventions</h6>
+                        <h4 class="card-text text-center">{{listconventions?.length}}</h4>
+                    </div>
+                </div>
+
+                <div fxFlex="auto" [fxFlex.gt-sm]="col(4)">
+                    <div class="card-body p-3 mb-2 bg-danger text-white">
+                        <h6 class="card-title card-text text-center">Prospects</h6>
+                        <h4 class="card-text text-center">{{ listprospect?.length}}</h4>
+                    </div>
+                </div>
+                <div fxFlex="auto" [fxFlex.gt-sm]="col(4)">
+                    <div class="card-body p-3 mb-2 bg-primary text-white">
+                        <h6 class="card-title card-text text-center">Activités</h6>
+                        <h4 class="card-text text-center">{{ listactivites?.length }}</h4>
+                    </div>
+                </div>
+            </div>
+
+            <div [fxLayoutGap]="gap" fxFlex="noshrink" fxLayout="row" fxLayout.gt-lg="row">
+                <div fxLayout="column" [fxLayoutGap]="gap" [fxFlex]="col(2)">
+                    <canvas baseChart [datasets]="lineChartData" [labels]="lineChartLabels" height="11" width="40" [colors]="lineChartColors" [legend]="lineChartLegend" [chartType]="lineChartType">
+                    </canvas>
+                </div>
+                <!-- <div fxLayout="column" [fxLayoutGap]="gap" [fxFlex]="col(2)">
+                    <fury-donut-chart-widget [data]="donutActionsData$ | async"
+                    [options]="donutOptions"
+                    [fxFlex]="col(2)"
+                    class="route-animations-elements"></fury-donut-chart-widget>
+                    </div>  -->
+            </div>
+        </fury-page>
+    </mat-tab>
+</mat-tab-group>

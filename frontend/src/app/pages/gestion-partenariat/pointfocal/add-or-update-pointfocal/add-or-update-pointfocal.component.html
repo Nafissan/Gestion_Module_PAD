@@ -1,0 +1,68 @@
+<div>
+    <mat-icon class="close" mat-button mat-dialog-close>close</mat-icon>
+</div>
+<div mat-dialog-title class="titre_modal_add">AJOUTER UN NOUVEAU POINT FOCAL</div>
+<form [formGroup]="form" (ngSubmit)="save()">
+   <mat-dialog-content> 
+        <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="24px">
+            
+          
+        
+       
+            <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
+                <mat-form-field fxFlex>
+                  <mat-label>Structure</mat-label>
+                  <input matInput [matAutocomplete]="auto"  [formControl]="uniteCtrl" #autoCompleteInput>
+                  <mat-autocomplete #auto="matAutocomplete">
+                    <mat-option *ngFor="let unite of filtereUnite | async" [value]="unite.description" (click)="setUnite(unite)">
+                              <span>{{ unite.code  }}</span> |
+                              <span>
+                                <small> {{ unite.description }}</small>
+                              </span>
+                    </mat-option>
+                  </mat-autocomplete>
+                  <button *ngIf="uniteCtrl.value" type="button" mat-icon-button (click)="uniteCtrl.reset()" matSuffix>
+                    <mat-icon>close</mat-icon>
+                  </button>
+                   <button *ngIf="!uniteCtrl.value" type="button" mat-icon-button matSuffix>
+                    <mat-icon>arrow_drop_down</mat-icon>
+                  </button>
+                </mat-form-field>
+              </div>
+              <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
+                <mat-form-field fxFlex>
+                  <mat-label>Agent</mat-label>
+                  <input matInput [matAutocomplete]="auto1"  [formControl]="agentCtrl" #autoCompleteInput>
+                  <mat-autocomplete #auto1="matAutocomplete">
+                    <mat-option *ngFor="let agent of filtereAgent | async" [value]="agent.nom" (click)="setAgent(agent)">
+                              <span>{{ agent.matricule  }}</span> |
+                              <span>
+                                <small> {{ agent.nom }}</small>
+                                <small> {{ agent.prenom }}</small>
+                              </span>
+                    </mat-option>
+                  </mat-autocomplete>
+                  <button *ngIf="agentCtrl.value" type="button" mat-icon-button (click)="agentCtrl.reset()" matSuffix>
+                    <mat-icon>close</mat-icon>
+                  </button>
+                   <button *ngIf="!agentCtrl.value" type="button" mat-icon-button matSuffix>
+                    <mat-icon>arrow_drop_down</mat-icon>
+                  </button>
+                </mat-form-field>
+              </div>
+            </div>
+        
+        
+      
+        <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="24px">
+            <section fxFlex>
+                <mat-checkbox fxFlex formControlName="active">Active</mat-checkbox>
+            </section>
+        </div>
+    </mat-dialog-content>
+    <mat-dialog-actions fxLayout="row" fxLayoutAlign="end center">
+        <button *ngIf="isCreateMode()" mat-button [disabled]="!form.valid">ENREGISTRER </button>
+        <button *ngIf="isUpdateMode()" mat-button [disabled]="!form.valid">MODIFIER</button>
+    </mat-dialog-actions>
+    
+</form>

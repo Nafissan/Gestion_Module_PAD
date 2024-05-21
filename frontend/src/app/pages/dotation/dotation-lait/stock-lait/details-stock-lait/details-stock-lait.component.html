@@ -1,0 +1,82 @@
+<div>
+    <mat-icon class="close" mat-button mat-dialog-close>close</mat-icon>
+</div>
+<div mat-dialog-title style="font-family: monospace; text-align: center;">Details Stock</div>
+<mat-dialog-content>
+    <mat-accordion class="example-headers-align" multi>
+        <div class="example-action-buttons">
+            <button *ngIf="showIcon === true" mat-raised-button color="primary"
+                (click)="accordion.openAll(); showIcon = !showIcon">
+                <mat-icon>expand_more</mat-icon> Afficher
+            </button>
+            <button *ngIf="showIcon === false" mat-raised-button color="warn"
+                (click)="accordion.closeAll(); showIcon = !showIcon">
+                <mat-icon>expand_less</mat-icon> Fermer
+            </button>
+        </div>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon>folder_open</mat-icon>
+                    <span>NAN 1</span>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-panel-description>
+                <!-- <span>Id: </span>{{interim.id}} -->
+            </mat-panel-description>
+
+            <mat-panel-description>
+                <span>Stock 1er Age: </span>
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Quantité : </span>{{this.quantiteTotalSock1}}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Seuil : </span>25%
+            </mat-panel-description>
+
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon>folder_open</mat-icon>
+                    <span>NAN 2</span>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-panel-description>
+                <!-- <span>Id: </span>{{interim.id}} -->
+            </mat-panel-description>
+
+            <mat-panel-description>
+                <span>Stock 2eme Age : </span>
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Quantité : </span>{{this.quantiteTotalSock2}}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Seuil : </span>25%
+            </mat-panel-description>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon>folder_open</mat-icon>
+                    <span>NAN 3</span>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-panel-description>
+                <!-- <span>Id: </span>{{interim.id}} -->
+            </mat-panel-description>
+
+            <mat-panel-description>
+                <span>Stock 3eme Age : </span>
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Quantité : </span>{{this.quantiteTotalSock3}}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Seuil : </span>25%
+            </mat-panel-description>
+        </mat-expansion-panel>
+    </mat-accordion>
+</mat-dialog-content>

@@ -1,0 +1,109 @@
+<div class="pupup" mat-dialog-title style="font-family: monospace; text-align: center;">DETAILS SUIVI ABSENCE</div>
+<mat-dialog-content>
+
+<mat-accordion class="example-headers-align" multi>
+    <div class="example-action-buttons">
+        <button *ngIf="showIcon === true" mat-raised-button color="primary" (click)="accordion.openAll(); showIcon = !showIcon">
+                       <mat-icon>expand_more</mat-icon> Afficher
+                    </button>
+        <button *ngIf="showIcon === false" mat-raised-button color="warn" (click)="accordion.closeAll(); showIcon = !showIcon">
+                      <mat-icon>expand_less</mat-icon> Fermer
+                    </button>
+    </div>
+    
+    <mat-expansion-panel>
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                <mat-icon>call_missed_outgoing</mat-icon>
+              <span>Absence</span>     
+            </mat-panel-title>    
+        </mat-expansion-panel-header>
+        <!-- <mat-panel-description>
+            <span>Id : </span>{{etapeAbsence.absence.id}}
+        </mat-panel-description> -->
+        <mat-panel-description>
+            <span>Date Depart : </span> {{etapeAbsence.absence.dateDepart | date: 'dd-MM-yyyy'}}
+        </mat-panel-description>
+        <mat-panel-description>
+            <span>Date Previsionnelle : </span> {{etapeAbsence.absence.dateRetourPrevisionnelle | date: 'dd-MM-yyyy'}}
+        </mat-panel-description>
+        <mat-panel-description>
+            <span>Motif : </span> {{etapeAbsence.absence.motif.description}}
+        </mat-panel-description>
+        <mat-panel-description>
+            <span>Jours d'absence : </span>{{etapeAbsence.absence.motif.jours}} jours
+        </mat-panel-description>
+        <mat-panel-description>
+            <span>Commentaire : </span> {{etapeAbsence.absence.commentaire}}
+        </mat-panel-description>
+        <mat-panel-description>
+            <span>Etat : </span>{{etapeAbsence.absence.etat}}
+        </mat-panel-description>
+        <mat-panel-description>
+            <span>Date Saisie : </span>{{etapeAbsence.absence.dateSaisie  | date: 'dd-MM-yyyy'}}
+        </mat-panel-description>
+    </mat-expansion-panel>
+    <mat-expansion-panel>
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+             <mat-icon>supervisor_account</mat-icon>
+             <span> Agent Demandeur</span>  
+            </mat-panel-title>     
+        </mat-expansion-panel-header>
+        <mat-panel-description>
+            <span>Matricule : </span>{{etapeAbsence.absence.agent.matricule}}
+        </mat-panel-description>
+        <mat-panel-description>
+            <span>Nom : </span>{{etapeAbsence.absence.agent.nom.toUpperCase()}}
+        </mat-panel-description>
+        <mat-panel-description>
+            <span>Prénom : </span>{{etapeAbsence.absence.agent.prenom}}
+        </mat-panel-description>
+        <mat-panel-description>
+            <span>Mail : </span>{{etapeAbsence.absence.agent.email}}
+        </mat-panel-description>
+    </mat-expansion-panel>
+    <mat-expansion-panel>
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                <mat-icon>supervisor_account</mat-icon>
+             <span> Agent Traitant</span>  
+            </mat-panel-title>
+        </mat-expansion-panel-header>
+        <mat-panel-description>
+            <span>Matricule : </span>{{etapeAbsence.matricule}}
+        </mat-panel-description>
+        <mat-panel-description>
+            <span>Nom : </span>{{etapeAbsence.nom.toUpperCase()}}
+        </mat-panel-description>
+        <mat-panel-description>
+            <span>Prénom : </span>{{etapeAbsence.prenom}}
+        </mat-panel-description>
+    </mat-expansion-panel>
+    <mat-expansion-panel>
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+             <mat-icon>perm_identity</mat-icon>
+             <span>Fonction</span>   
+            </mat-panel-title>
+        </mat-expansion-panel-header>
+        <mat-panel-description>
+            <span>Nom : </span>{{etapeAbsence.absence.agent.fonction.nom}}
+        </mat-panel-description>
+    </mat-expansion-panel>
+    <mat-expansion-panel>
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+            <mat-icon>category</mat-icon>
+            <span> Unite Organisationelle</span>   
+            </mat-panel-title>
+        </mat-expansion-panel-header>
+        <mat-panel-description>
+            <span>Code : </span>{{etapeAbsence.absence.agent.uniteOrganisationnelle.code.toUpperCase()}}
+        </mat-panel-description>
+        <mat-panel-description>
+            <span>Description : </span>{{etapeAbsence.absence.agent.uniteOrganisationnelle.description}}
+        </mat-panel-description>
+    </mat-expansion-panel>
+</mat-accordion>
+</mat-dialog-content>

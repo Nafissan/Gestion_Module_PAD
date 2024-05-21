@@ -1,0 +1,83 @@
+<div><mat-icon class="close" mat-button mat-dialog-close>close</mat-icon></div>
+<div mat-dialog-title class="popup titre_modal_add">AJOUTER UNE ACTIVITE</div>
+
+<form [formGroup]="form" (ngSubmit)="save()">
+    <mat-dialog-content>
+
+<div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
+      <mat-form-field fxFlex>
+          <mat-label>Libelle</mat-label>
+          <textarea formControlName="libelle" matInput></textarea>
+      </mat-form-field>
+</div>
+  <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
+    <mat-form-field fxFlex>
+        <mat-label>Description</mat-label>
+        <textarea formControlName="description" matInput></textarea>
+    </mat-form-field>
+ </div>
+
+<div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
+
+    <mat-form-field fxFlex >
+      <mat-label>Date</mat-label>
+      <input [matDatepicker]="picker1" formControlName="date"  matInput>
+      <mat-datepicker-toggle matSuffix [for]="picker1">
+        <mat-icon matDatepickerToggleIcon>date_range</mat-icon>
+      </mat-datepicker-toggle>
+      <mat-datepicker #picker1></mat-datepicker>
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Statut</mat-label>
+    <mat-select formControlName="statut" >
+      <mat-option value="1">Demarrer</mat-option>
+      <mat-option value="2">En cours</mat-option>
+      <mat-option value="3">Realiser</mat-option>
+      <mat-option value="4">Annuler</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
+    <mat-form-field fxFlex>
+      <mat-label>Convention</mat-label>
+      <input matInput [matAutocomplete]="auto"  [formControl]="conventionCtrl" >
+      <mat-autocomplete #auto="matAutocomplete">
+        <mat-option *ngFor="let convention of filtereConvention | async" [value]="convention.libelle" (click)="setConvention(convention)">
+                  <span>{{ convention.libelle  }}</span> 
+                 
+        </mat-option>
+      </mat-autocomplete>
+      <button *ngIf="conventionCtrl.value" type="button" mat-icon-button (click)="conventionCtrl.reset()" matSuffix>
+        <mat-icon>close</mat-icon>
+      </button>
+       <button *ngIf="!conventionCtrl.value" type="button" mat-icon-button matSuffix>
+        <mat-icon>arrow_drop_down</mat-icon>
+      </button>
+    </mat-form-field>
+  </div>
+ 
+
+</div>
+
+<div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
+  <mat-form-field fxFlex>
+      <mat-label>Commentaire</mat-label>
+      <textarea formControlName="commentaire" matInput></textarea>
+  </mat-form-field>
+</div>
+
+  <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
+    <section fxFlex>
+        <mat-checkbox fxFlex formControlName="active">Active</mat-checkbox>
+    </section>
+  </div>
+
+    </mat-dialog-content>
+    <mat-dialog-actions fxLayout="row" fxLayoutAlign="end center">
+        <button *ngIf="isCreateMode()" mat-button [disabled]="!form.valid">ENREGISTRER </button>
+        <button *ngIf="isUpdateMode()" mat-button [disabled]="!form.valid">MODIFIER</button>
+    </mat-dialog-actions>
+</form>
+
+
+

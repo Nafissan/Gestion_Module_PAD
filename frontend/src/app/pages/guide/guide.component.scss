@@ -1,0 +1,61 @@
+#corp{
+    width: 100%;
+    height: 100%;
+   
+    
+    }
+#menu{ 
+
+      float: left;
+      width: 25%;
+      border-style: double;
+      border-color: blue($color: #000000);
+      border-radius: 1em;
+     
+      background-color:black;
+      background: white;
+    
+
+
+    } 
+#im{ 
+    margin-left: 10%;
+    border-style: double;
+  
+   } 
+ #idpageguide{
+
+    width: 70%;
+    
+     border-style: double;
+     border-color: blue($color: #000000);
+     border-radius: 1em;
+     background: blue;
+     margin: auto;
+     
+     
+ }
+ mat-tree-node{
+    border-style: double;
+    border-color: blue($color: #000000);
+    border-radius: 1em;
+    background-color:steelblue;
+    height: 10%;
+ }
+ .searche{
+    border-style: double;
+    border-color: blue($color: #000000);
+    border-radius: 1em;
+    background-color:steelblue;
+    height: 10%;
+    width: 80%;
+    
+ }
+ 
+ .searche-button{
+    border-style: double;
+    border-color: blue($color: #000000);
+    border-radius: 1em;
+    background-color:steelblue;
+    
+ }

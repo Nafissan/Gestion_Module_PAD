@@ -1,0 +1,77 @@
+<fury-page-layout mode="card">
+    <fury-page-layout-header>
+        <fury-breadcrumbs [@fadeInRight] [crumbs]="['gestion-conge/suivi-conge']" current="envoi-planning"></fury-breadcrumbs>
+    </fury-page-layout-header>
+    <fury-page-layout-content [@fadeInUp]>
+        <div class="fury-preview-card">
+            <div class="preview">
+                <div class="title">Envoi Planning Direction à la DCH</div>
+                <div class="preview-content">
+                    <mat-form-field>
+                        <input matInput [matDatepicker]="picker" placeholder="Choisir Une Année" [formControl]="dateControl">
+                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker #picker (yearSelected)="yearSelected($event)" startView="multi-year"></mat-datepicker>
+                    </mat-form-field>
+                </div>
+            </div>
+        </div>
+        <fury-page [fxLayoutGap]="gap" class="dashboard" fxLayout="column">
+            <!-- FIRST ROW -->
+            <div class="p-3 mb-2 bg-white text-dark" fxFlex="noshrink" fxLayout="column" [fxLayoutGap]="gap" fxLayout.gt-lg="row">
+                <mat-card *ngIf="planningDirection" fxFlex="auto" [fxFlex.gt-sm]="col(4)" class="example-card">
+                    <mat-card-header>
+                        <mat-icon mat-card-avatar>folder</mat-icon>
+                        <mat-card-title>Planning: {{planningDirection.code.substring(-14, planningDirection.code.length - 14)}}</mat-card-title>
+                        <mat-card-subtitle>Direction: {{planningDirection.descriptionDirection}}</mat-card-subtitle>
+                    </mat-card-header>
+                    <mat-card-content>
+                        <mat-accordion>
+                            <mat-expansion-panel>
+                                <mat-expansion-panel-header>
+                                    <mat-panel-title>
+                                        <span>DETAILS</span>
+                                    </mat-panel-title>
+                                </mat-expansion-panel-header>
+                                <div><span>Etat:</span> {{planningDirection.etat}}</div>
+                                <div><span>Description:</span> {{planningDirection.description}}</div>
+                            </mat-expansion-panel>
+                        </mat-accordion>
+                    </mat-card-content>
+                    <mat-card-actions fxLayoutAlign="center">
+                        <button mat-button mat-raised-button (click)="historiquePlanningDirection(planningDirection)">HISTORIQUE</button>
+                        <button mat-button *ngIf="planningDirection.etat === valider && hasAnyRole(['PLCONGEDIR_TRANSMETTRE'])" mat-raised-button (click)="transmettrePlanningDirection(planningDirection)">TRANSMETTRE</button>
+                    </mat-card-actions>
+                </mat-card>
+                <div *ngIf="!planningDirection && showProgressBar === true" class="card text-center">
+                    <div class="card-header">
+                        <span class="badge badge-info">
+                                INFORMATION
+                            </span>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">PLANNING CONGE VIDE</h5>
+                        <p class="card-text">Ajouter un nouveau planning congé</p>
+                    </div>
+                    <div class="card-footer text-muted">
+                        {{date | date : 'dd/MMM/yyyy HH:mm:ss'}}
+                    </div>
+                </div>
+                <div *ngIf="!dossierConge && showProgressBar === true" class="card text-center">
+                    <div class="card-header">
+                        <span class="badge badge-info">
+                                INFORMATION
+                            </span>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">DOSSIER CONGE VIDE</h5>
+                        <p class="card-text">Le dossier dossier congé n'est pas encore initié</p>
+                    </div>
+                    <div class="card-footer text-muted">
+                        {{date | date : 'dd/MMM/yyyy HH:mm:ss'}}
+                    </div>
+                </div>
+                <mat-progress-bar *ngIf="showProgressBar === false" mode="query" color="primary"></mat-progress-bar>
+            </div>
+        </fury-page>
+    </fury-page-layout-content>
+</fury-page-layout>

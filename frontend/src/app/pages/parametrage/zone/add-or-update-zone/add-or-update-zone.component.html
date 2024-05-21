@@ -1,0 +1,21 @@
+<div>
+    <mat-icon class="close" mat-button mat-dialog-close>close</mat-icon>
+</div>
+<div mat-dialog-title class="titre_modal_add">AJOUTER UNE NOUVELLE ZONE</div>
+<form [formGroup]="form" (ngSubmit)="save()">
+    <mat-dialog-content>
+        <div fxLayout="column"  fxLayoutGap.gt-sm="24px">
+            <mat-form-field fxFlex>
+                <mat-label>Libellé</mat-label>
+                <input matInput formControlName="nom">
+            </mat-form-field>       
+            <section fxFlex>
+                <mat-checkbox fxFlex formControlName="active">Active</mat-checkbox>
+            </section>
+        </div>
+    </mat-dialog-content>
+    <mat-dialog-actions fxLayout="row" fxLayoutAlign="end center">
+        <button *ngIf="isCreateMode()" mat-button [disabled]="!form.valid">AJOUTER</button>
+        <button *ngIf="isUpdateMode()" mat-button [disabled]="!form.valid">MODIFIER</button>
+    </mat-dialog-actions>
+</form>

@@ -1,0 +1,9 @@
+<Configurations>
+	<Configurations>
+		<Message Expediteur="dsi-devlogiciel@portdakar.sn"
+			Objet="Atlantis - Alerte/Notification" />
+		<Divers smtp_hote="webmail.portdakar.sn" smtp_port="25"
+			smtp_utilisateur="dsi-devlogiciel" smtp_mot_de_passe="Ind@2019"
+			smtp_starttls="false" smtp_auth="false" />
+	</Configurations>
+</Configurations>

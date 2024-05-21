@@ -1,0 +1,38 @@
+<mat-icon class="close" mat-button mat-dialog-close>close</mat-icon>
+<div class="pupup" mat-dialog-title class="h1-responsive text-align titre_modal_add">DETAILS VILLE</div>
+<mat-dialog-content>
+    <mat-accordion class="example-headers-align" multi>
+        <div class="example-action-buttons">
+            <button *ngIf="showIcon === true" mat-raised-button color="primary" (click)="accordion.openAll(); showIcon = !showIcon">
+                       <mat-icon>expand_more</mat-icon> Afficher
+                    </button>
+            <button *ngIf="showIcon === false" mat-raised-button color="warn" (click)="accordion.closeAll(); showIcon = !showIcon">
+                      <mat-icon>expand_less</mat-icon> Fermer
+                    </button>
+        </div>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <span style="margin-top: 2px;">{{ville.nom}}</span>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-panel-description>
+                <span class="lib">Code:</span>
+                <span class="des">{{ville.code}}</span>
+            </mat-panel-description>
+            <mat-panel-description>
+                <span class="lib">Nom: </span><span class="des">{{ville.nom}}</span>
+            </mat-panel-description>
+            <mat-panel-description>
+              <span class="lib">Pays : </span><span class="des">{{ville.pays.nomOfficiel}}</span>
+          </mat-panel-description>
+          <mat-panel-description>
+            <span class="lib">Active: </span>
+            <span *ngIf="ville.active === true" class="des badge badge-success">OUI</span>
+            <span *ngIf="ville.active === false" class="des badge badge-danger">NON</span>
+        </mat-panel-description>
+        </mat-expansion-panel>
+    </mat-accordion>
+</mat-dialog-content>
+
+

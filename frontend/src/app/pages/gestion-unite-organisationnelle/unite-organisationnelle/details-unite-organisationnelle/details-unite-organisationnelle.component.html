@@ -1,0 +1,73 @@
+<div mat-dialog-title style="font-family: monospace; text-align: center;">DETAILS UNITE ORGANISATIONNELLE</div>
+<mat-dialog-content>
+
+<mat-accordion class="example-headers-align" multi>
+        <div class="example-action-buttons">
+            <button *ngIf="showIcon === true" mat-raised-button color="primary" (click)="accordion.openAll(); showIcon = !showIcon">
+                           <mat-icon>expand_more</mat-icon> Afficher
+                        </button>
+            <button *ngIf="showIcon === false" mat-raised-button color="warn" (click)="accordion.closeAll(); showIcon = !showIcon">
+                          <mat-icon>expand_less</mat-icon> Fermer
+                        </button>
+        </div>
+        
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon>category</mat-icon>
+                    <span>Unité Organisationelle</span>   
+                </mat-panel-title>       
+              
+            </mat-expansion-panel-header>
+            <mat-panel-description>
+                <span>Id : </span>{{uniteOrganisationnelle.id}}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Code : </span>{{uniteOrganisationnelle.code}}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Nom : </span>{{uniteOrganisationnelle.nom.toUpperCase()}}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Description : </span>{{uniteOrganisationnelle.description}}
+            </mat-panel-description>
+        </mat-expansion-panel>
+        <mat-expansion-panel *ngIf="uniteOrganisationnelle.niveauHierarchique != null">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon>supervisor_account</mat-icon>
+                 <span>Niveau Hiérarchique</span>   
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-panel-description>
+                <span>Id : </span>{{uniteOrganisationnelle.niveauHierarchique.id}}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Libellé : </span>{{uniteOrganisationnelle.niveauHierarchique.libelle.toUpperCase()}}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Position : </span>{{uniteOrganisationnelle.niveauHierarchique.position}}
+            </mat-panel-description>
+        </mat-expansion-panel>
+        <mat-expansion-panel *ngIf="uniteOrganisationnelle.uniteSuperieure != null">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon>perm_identity</mat-icon>
+                 <span>Supérieur</span>   
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-panel-description>
+                <span>Id : </span>{{uniteOrganisationnelle.uniteSuperieure.id}}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Code supérieur : </span>{{uniteOrganisationnelle.uniteSuperieure.code}}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Nom : </span>{{uniteOrganisationnelle.uniteSuperieure.nom}}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Description : </span>{{uniteOrganisationnelle.uniteSuperieure.description}}
+            </mat-panel-description>
+        </mat-expansion-panel>
+    </mat-accordion>
+    </mat-dialog-content>

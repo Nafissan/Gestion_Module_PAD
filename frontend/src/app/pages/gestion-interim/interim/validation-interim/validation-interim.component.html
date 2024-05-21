@@ -1,0 +1,30 @@
+<div><mat-icon class="monIcon" mat-button mat-dialog-close>close</mat-icon></div>
+<div mat-dialog-title>Valider Interim</div>
+
+<form [formGroup]="form" (ngSubmit)="validerEtapeInterim()">
+    <mat-dialog-content>
+        <!-- <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="24px">
+            <mat-form-field fxFlex="none">
+                <mat-label>Action</mat-label>
+                <mat-select formControlName="action">
+                    <mat-option value="VALIDER">Valider</mat-option>
+                    <mat-option value="REJETER">Rejeter</mat-option>
+                    <mat-option value="En Attente">En Attente</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div> -->
+        <div class="person">
+            <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
+                <mat-form-field fxFlex>
+                    <mat-label>Commentaire</mat-label>
+                    <input type="text" formControlName="commentaire" matInput>
+                </mat-form-field>
+            </div>
+        </div>
+ 
+    </mat-dialog-content>
+    <mat-dialog-actions fxLayout="row" fxLayoutAlign="end center">
+        <button  mat-button [disabled]="!form.valid">VALIDER</button>
+        <!-- <button *ngIf="isUpdateMode()" mat-button [disabled]="!form.valid">MODIFIER ETAPE INTERIM</button> -->
+    </mat-dialog-actions>
+</form>

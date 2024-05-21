@@ -1,0 +1,32 @@
+mat-hint {
+    color: red !important;
+}
+
+.font {
+    font-family: monospace;
+}
+
+span {
+    font-family: monospace;
+    font-weight: bold;
+    text-align: center;
+}
+
+.mat-divider {
+    border-top-width: 2px;
+    border-top-style: dashed;
+}
+
+.mat-card {
+    max-width: 70%;
+}
+
+button {
+    text-align: center;
+    text-size-adjust: auto;
+}
+
+mat-selection-list {
+    max-height: 220px;
+    overflow: auto;
+}

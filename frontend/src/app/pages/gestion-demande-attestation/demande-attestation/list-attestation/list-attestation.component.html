@@ -1,0 +1,173 @@
+<fury-page-layout mode="card">
+    <fury-page-layout-header>
+        <fury-breadcrumbs [@fadeInRight] [crumbs]="[]" current="Demande Attestation">
+        </fury-breadcrumbs>
+    </fury-page-layout-header>
+
+    <fury-page-layout-content [@fadeInUp]>
+        <fury-list *ngIf="demandeAttestations.length !== 0 && showProgressBar === true" name="Demande Attestation" [columns]="columns" (filterChange)="onFilterChange($event)">
+            <div class="actions">
+                <button class="create" (click)="createDemandeAttestation()" type="button" mat-mini-fab color="primary">
+              <mat-icon>add</mat-icon>
+          </button>
+                <!-- <fury-list
+   name="Demande Attestation" [columns]="columns"(filterChange)="onFilterChange($event)">
+
+      <div class="actions">
+        <button class="create" style="margin: 2px;" (click)="createDemandeAttestation()" type="button" mat-mini-fab color="primary" >
+          <mat-icon>add</mat-icon>
+        </button> -->
+                <button matTooltip="Transmettre  demande(s)" (click)="transmettreDemandeAttestation(null, 'many')" style="margin: 2px;" [disabled]="selection.isEmpty()" type="button" mat-mini-fab color="accent">
+          <mat-icon>label_important</mat-icon>
+      </button>
+            </div>
+
+            <table [dataSource]="dataSource" mat-table matSort>
+                <!--- Note that these columns can be defined in any order.
+                The actual rendered columns are set as a property on the row definition" -->
+
+                <!-- Checkbox Column -->
+                <ng-container matColumnDef="checkbox">
+                    <th *matHeaderCellDef class="actions-cell" mat-header-cell>
+                        <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()" [indeterminate]="selection.hasValue() && !isAllSelected()" [aria-label]="checkboxLabel()">
+                        </mat-checkbox>
+                    </th>
+                    <td *matCellDef="let row" class="actions-cell" mat-cell>
+                        <mat-checkbox color="primary" (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(row) : null" [checked]="selection.isSelected(row)" [aria-label]="checkboxLabel(row)">
+                        </mat-checkbox>
+                    </td>
+                </ng-container>
+                <!-- fullName Column -->
+                <ng-container *ngFor="let column of columns">
+                    <ng-container *ngIf="column.isModelProperty" [matColumnDef]="column.property">
+                        <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                            {{ column.name }}
+                        </th>
+                        <td *matCellDef="let row" mat-cell>
+
+                            <p *ngIf="row.agent && column.name === 'Matricule'">
+                                {{ row.agent.matricule }}
+                            </p>
+                            <p *ngIf="row.agent && column.name === 'Prenom'">
+                                {{ row.agent.prenom }}
+                            </p>
+                            <p *ngIf="row.agent && column.name === 'Nom'">
+                                {{ row.agent.nom }}
+                            </p>
+                            <p *ngIf="row.agent && column.name === 'Telephone'">
+                                {{ row.agent.telephone }}
+                            </p>
+
+                            <p *ngIf="row.agent && column.name === 'Date Naissance'">
+                                {{ row.agent.dateNaissance | date: "dd-MM-yyyy" }}
+                            </p>
+                            <p *ngIf="column.name === 'Etat' && row.etat === 'SAISI'">
+
+                                <span class="badge badge-warning">{{ row.etat }}</span>
+
+                            </p>
+                            <p *ngIf="column.name === 'Etat' && row.etat === 'VALIDE'">
+
+                                <span class="badge badge-success">{{ row.etat }}</span>
+
+                            </p>
+                            <p *ngIf="column.name === 'Etat' && row.etat === 'TRANSMIS'">
+
+                                <span class="badge badge-info">{{ row.etat }}</span>
+
+                            </p>
+                            <p *ngIf="column.name === 'Etat' && row.etat === 'REJETE'">
+
+                                <span class="badge badge-danger"> {{ row.etat }}</span>
+
+                            </p>
+                            <p *ngIf="column.name === 'Etat' && row.etat === 'CLOTURE'">
+
+                                <span class="badge badge-danger"> {{ row.etat }}</span>
+
+                            </p>
+                            <p *ngIf="
+                  column.name === 'Date de saisie' &&
+                  column.name !== 'Prenom' &&
+                  column.name !== 'Nom' &&
+                  column.name !== 'Matricule' &&
+                  column.name !== 'Telephone' &&
+                  column.name !== 'Etat' ">
+                                {{ row[column.property] | date: "dd-MM-yyyy" }}
+                            </p>
+                            <p *ngIf="
+                  column.name !== 'Prenom' &&
+                  column.name !== 'Nom' &&
+                  column.name !== 'Date de saisie' &&
+                  column.name !== 'Commentaire' &&
+                  column.name !== '' &&
+                  column.property === 'dateSaisie'">
+                                {{ row[column.property] | date: "dd-MM-yyyy" }}
+                            </p>
+                            <p *ngIf="
+                  column.property !== 'dateSaisie' &&
+                  column.property !== 'etat' &&
+                  column.property !== 'prenom' &&
+                  column.property !== 'nom' &&
+                  column.property !== 'matricule' ">
+                                {{ row[column.property] }}
+                            </p>
+                        </td>
+                    </ng-container>
+                </ng-container>
+
+                <!-- actions Column -->
+                <ng-container matColumnDef="actions">
+                    <th *matHeaderCellDef class="actions-cell" mat-header-cell mat-sort-header></th>
+                    <td *matCellDef="let row" class="actions-cell" mat-cell>
+
+                        <button type="button" mat-icon-button [matMenuTriggerFor]="actionsMenu" (click)="$event.stopPropagation()">
+              <mat-icon>more_horiz</mat-icon>
+            </button>
+
+                        <mat-menu #actionsMenu="matMenu" yPosition="below" xPosition="before">
+                            <button [disabled]="row.etat === 'VALIDE' || row.etat === 'TRANSMIS' || row.etat === 'CLOTURE'" (click)="updateDemandeAttestation(row)" mat-menu-item>
+                <mat-icon>edit</mat-icon>
+                <span>Modifier</span>
+              </button>
+                            <button [disabled]="row.etat === 'VALIDE' || row.etat === 'TRANSMIS' || row.etat === 'CLOTURE'" (click)="deleteDemandeAttestation(row)" mat-menu-item>
+                <mat-icon>delete</mat-icon>
+                <span>Supprimer</span>
+              </button>
+                            <button [disabled]=" row.etat === 'VALIDE' || row.etat === 'TRANSMIS' || row.etat === 'CLOTURE'" (click)="transmettreDemandeAttestation(row, 'one')" mat-menu-item>
+
+                <mat-icon>label_important</mat-icon>
+                <span>Transmettre</span>
+              </button>
+                            <button *ngIf="row.etat === 'CLOTURE'" (click)="downloadAttestation(row)" mat-menu-item>
+                <mat-icon>get_app</mat-icon>
+                <span>Télecharger Attestation</span>
+              </button>
+                        </mat-menu>
+                    </td>
+                </ng-container>
+
+                <tr *matHeaderRowDef="visibleColumns" mat-header-row></tr>
+                <tr (click)="detailsDemandeAttestation(row)" *matRowDef="let row; columns: visibleColumns" class="clickable route-animations-elements" mat-row></tr>
+            </table>
+
+            <mat-paginator class="paginator" [pageSize]="pageSize"></mat-paginator>
+        </fury-list>
+        <div *ngIf="demandeAttestations.length === 0 && showProgressBar === true" class="card text-center">
+            <div class="card-header">
+                <span class="badge badge-info">
+              Information
+          </span>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">LISTE ATTESTATION VIDE</h5>
+                <p class="card-text">Ajouter une nouvelle demande d'attestation</p>
+                <button type="button" mat-mini-fab color="primary" (click)="createDemandeAttestation()">
+              <mat-icon>add</mat-icon>
+          </button>
+            </div>
+        </div>
+        <mat-progress-bar *ngIf="showProgressBar === false" mode="query" color="primary"></mat-progress-bar>
+
+    </fury-page-layout-content>
+</fury-page-layout>

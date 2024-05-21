@@ -1,0 +1,98 @@
+<fury-page-layout mode="card">
+    <fury-page-layout-header>
+        <fury-breadcrumbs [@fadeInRight] [crumbs]="['gestion-conge/suivi-conge']" current="valider-planning"></fury-breadcrumbs>
+    </fury-page-layout-header>
+    <fury-page-layout-content [@fadeInUp]>
+        <div class="fury-preview-card">
+            <div class="preview">
+                <div class="title">Processus de validation des Plannings Direction</div>
+                <div class="preview-content" fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="24px">
+                    <mat-form-field>
+                        <input matInput [matDatepicker]="picker" placeholder="Choisir Une Année" [formControl]="dateControl">
+                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker #picker (yearSelected)="yearSelected($event)" startView="multi-year"></mat-datepicker>
+                    </mat-form-field>
+                    <mat-form-field fxflex>
+                        <mat-label>Choisir un Planning Direction</mat-label>
+                        <input matInput [matAutocomplete]="auto2" [formControl]="planningDirectionCtrl">
+                        <mat-autocomplete #auto2="matAutocomplete">
+                            <mat-option *ngFor="let planningDirection of filteredPlanningDirections | async" [value]="planningDirection.code" (click)=setPlanningDirection(planningDirection)>
+                                <mat-icon>folder</mat-icon>
+                                <span>{{ planningDirection.code.substring(-14, planningDirection.code.length - 14) }}</span> |
+                                <small>{{ planningDirection.descriptionDirection }}</small>
+                            </mat-option>
+                        </mat-autocomplete>
+                        <button *ngIf="planningDirectionCtrl.value" type="button" mat-icon-button (click)="planningDirectionCtrl.reset()" matSuffix>
+                        <mat-icon>close</mat-icon>
+                    </button>
+                        <button *ngIf="!planningDirectionCtrl.value" type="button" mat-icon-button matSuffix>
+                        <mat-icon>arrow_drop_down</mat-icon>
+                    </button>
+                        <mat-hint *ngIf="planningDirections && planningDirections.length === 0">Liste Planning Direction vide</mat-hint>
+                    </mat-form-field>
+                </div>
+            </div>
+        </div>
+        <fury-page [fxLayoutGap]="gap" class="dashboard" fxLayout="column">
+            <!-- FIRST ROW -->
+            <div fxFlex="noshrink" fxLayout="column" [fxLayoutGap]="gap" fxLayout.gt-lg="row">
+                <div fxLayout="column" [fxLayoutGap]="gap" [fxFlex]="col(2)" fxLayout.gt-sm="row">
+                    <div class="p-3 mb-2 bg-white text-dark" *ngIf="planningDirection" fxFlex="auto" [fxFlex.gt-sm]="col(4)" class="mat-card">
+                        <mat-card Fxlayout="row">
+                            <mat-card-header>
+                                <mat-icon mat-card-avatar>folder</mat-icon>
+                                <mat-card-title>Planning: {{planningDirection.code.substring(-14, planningDirection.code.length - 14)}}</mat-card-title>
+                                <mat-card-subtitle>Direction: {{planningDirection.descriptionDirection}}</mat-card-subtitle>
+                            </mat-card-header>
+                            <mat-card-content>
+                                <mat-accordion>
+                                    <mat-expansion-panel>
+                                        <mat-expansion-panel-header>
+                                            <mat-panel-title>
+                                                <span>DETAILS</span>
+                                            </mat-panel-title>
+                                        </mat-expansion-panel-header>
+                                        <div><span>Etat:</span> {{planningDirection.etat}}</div>
+                                        <div><span>Description:</span> {{planningDirection.description}}</div>
+                                    </mat-expansion-panel>
+                                </mat-accordion>
+                            </mat-card-content>
+                            <mat-card-actions fxLayoutAlign="left">
+                                <button mat-button (click)="historiquePlanningDirection(planningDirection)">HISTORIQUE</button>
+                                <button mat-button (click)="DetailsPlanningDirection(planningDirection)">DETAILS</button>
+                                <button mat-button *ngIf="(niveau <= planningDirection.niveau - 1 && planningDirection.etape + 1 === niveau) && hasAnyRole(['PLCONGEDIR_IMPUTER'])" (click)="imputerPlanningDirection(planningDirection)">IMPUTER</button>
+                                <button mat-button *ngIf="(niveau >  planningDirection.niveau - 1 && planningDirection.etape < niveau) && hasAnyRole(['PLCONGEDIR_CLOTURER'])" (click)="cloturerPlanningDirection(planningDirection)">CLOTURER</button>
+                            </mat-card-actions>
+                        </mat-card>
+                    </div>
+                    <div fxFlex="auto" [fxFlex.gt-sm]="col(4)" *ngIf="!planningDirection" class="card text-center">
+                        <div class="card-header">
+                            <span class="badge badge-info">
+                                    INFORMATION
+                                </span>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">LISTE PLANNING DIRECTION VIDE</h5>
+                            <p class="card-text">Aucun planning direction reçu</p>
+                        </div>
+                        <div class="card-footer text-muted">
+                            {{date | date : 'dd/MMM/yyyy HH:mm:ss'}}
+                        </div>
+                    </div>
+                    <div class="p-3 mb-2 bg-white text-dark" fxFlex="auto" [fxFlex.gt-sm]="col(4)" *ngIf="planningDirection && planningconges && planningconges.length !== 0">
+                        <span>PLANNING CONGE(S)</span>
+                        <mat-selection-list #PC [multiple]="false">
+                            <mat-list-option *ngFor="let planningConge of planningconges" [value]="planningConge" (click)="setPlanningConge(planningConge)">
+                                <mat-icon mat-list-icon>folder</mat-icon>
+                                <div class="font" mat-line>Code : {{planningConge.code}}</div>
+                                <div class="font" mat-line>Date : {{planningConge.dateCreation | date: 'dd-MM-yyyy' }} </div>
+                                <div class="font" mat-line>Unite Organisationnelle: {{planningConge.uniteOrganisationnelle.description }} </div>
+                                <mat-divider></mat-divider>
+                            </mat-list-option>
+                        </mat-selection-list>
+                    </div>
+                </div>
+            </div>
+        </fury-page>
+    </fury-page-layout-content>
+</fury-page-layout>

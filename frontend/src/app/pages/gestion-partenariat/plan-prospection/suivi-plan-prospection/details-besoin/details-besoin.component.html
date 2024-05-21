@@ -1,0 +1,121 @@
+<mat-icon class="close" mat-button mat-dialog-close>close</mat-icon>
+<div mat-dialog-title class="h1-responsive text-align titre_modal_add">DETAILS BESOIN</div>
+<mat-dialog-content>
+    <mat-accordion class="example-headers-align" multi>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <span style="font-weight: bold; margin-right: 5px;">Structure Bénéficiaire </span> <span class="lib"> {{ besoin.unite.description }} </span>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+        </mat-expansion-panel>
+
+        <ng-container *ngIf="besoin?.domaines?.length > 0">
+            <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        <span style="font-weight: bold;" class="lib">{{ besoin.domaines.length }}
+                            {{besoin.domaines.length <= 1 ? ' Domaine' : ' Domaines' }} </span>
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+                <mat-expansion-panel *ngFor="let domaine of besoin.domaines">
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>
+                            <img style="width: 5%; border-radius: 5px; margin-right: 5px;" src="assets/img/partenaire-logo.jpg">
+                            <span style="margin-top: 2px;">{{domaine.libelle}}</span>
+                        </mat-panel-title>
+                    </mat-expansion-panel-header>
+                </mat-expansion-panel>
+            </mat-expansion-panel>
+        </ng-container>
+
+        <ng-container *ngIf="partenaires?.length > 0">
+            <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        <span style="font-weight: bold;" class="lib">{{ partenaires.length }} {{partenaires.length <= 1
+                                ? ' Partenaire' : ' Partenaires' }} </span>
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+                <mat-expansion-panel *ngFor="let partenaire of partenaires">
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>
+                            <img style="width: 5%; border-radius: 5px; margin-right: 5px;" src="assets/img/partenaire-logo.jpg">
+                            <span style="margin-top: 2px;">{{partenaire.nom}}</span>
+                        </mat-panel-title>
+                    </mat-expansion-panel-header>
+                    <mat-panel-description>
+                        <span class="lib">Email:</span>
+                        <span class="des">{{partenaire.email}}</span>
+                    </mat-panel-description>
+                    <mat-panel-description>
+                        <span class="lib">Téléphone: </span><span class="des">{{partenaire.telephone}}</span>
+                    </mat-panel-description>
+                    <mat-panel-description>
+                        <span class="lib">Site Web: </span><span class="des">{{partenaire.siteWeb}}</span>
+                    </mat-panel-description>
+                    <mat-panel-description>
+                        <span class="lib">Fax: </span><span class="des">{{partenaire.fax}}</span>
+                    </mat-panel-description>
+                    <mat-panel-description>
+                        <span class="lib">Prenom Representant: </span><span class="des">{{partenaire.representantPrenom}}</span>
+                    </mat-panel-description>
+                    <mat-panel-description>
+                        <span class="lib">Nom Representant: </span><span class="des">{{partenaire.representantNom}}</span>
+                    </mat-panel-description>
+                    <mat-panel-description>
+                        <span class="lib">Email Representant: </span><span class="des">{{partenaire.representantEmail}}</span>
+                    </mat-panel-description>
+                    <mat-panel-description>
+                        <span class="lib">Telephone Representant: </span><span class="des">{{partenaire.representantTelephone}}</span>
+                    </mat-panel-description>
+                </mat-expansion-panel>
+            </mat-expansion-panel>
+        </ng-container>
+
+        <ng-container *ngIf="prospects?.length > 0">
+            <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        <span style="font-weight: bold;" class="lib">{{ prospects.length }} {{prospects.length <= 1
+                                ? ' Prospect' : ' Prospects' }} </span>
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+                <mat-expansion-panel *ngFor="let prospect of prospects">
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>
+                            <img style="width: 5%; border-radius: 5px; margin-right: 5px;" src="assets/img/partenaire-logo.jpg">
+                            <span style="margin-top: 2px;">{{prospect.nom}}</span>
+                        </mat-panel-title>
+                    </mat-expansion-panel-header>
+                    <mat-panel-description>
+                        <span class="lib">Email:</span>
+                        <span class="des">{{prospect.email}}</span>
+                    </mat-panel-description>
+                    <mat-panel-description>
+                        <span class="lib">Téléphone: </span><span class="des">{{prospect.telephone}}</span>
+                    </mat-panel-description>
+                    <mat-panel-description>
+                        <span class="lib">Site Web: </span><span class="des">{{prospect.siteWeb}}</span>
+                    </mat-panel-description>
+                    <mat-panel-description>
+                        <span class="lib">Fax: </span><span class="des">{{prospect.fax}}</span>
+                    </mat-panel-description>
+                    <mat-panel-description>
+                        <span class="lib">Prenom Representant: </span><span class="des">{{prospect.representantPrenom}}</span>
+                    </mat-panel-description>
+                    <mat-panel-description>
+                        <span class="lib">Nom Representant: </span><span class="des">{{prospect.representantNom}}</span>
+                    </mat-panel-description>
+                    <mat-panel-description>
+                        <span class="lib">Email Representant: </span><span class="des">{{prospect.representantEmail}}</span>
+                    </mat-panel-description>
+                    <mat-panel-description>
+                        <span class="lib">Telephone Representant: </span><span class="des">{{prospect.representantTelephone}}</span>
+                    </mat-panel-description>
+                </mat-expansion-panel>
+            </mat-expansion-panel>
+        </ng-container>
+
+    </mat-accordion>
+</mat-dialog-content>

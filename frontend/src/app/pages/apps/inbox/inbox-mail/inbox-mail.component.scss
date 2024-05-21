@@ -1,0 +1,94 @@
+@import "var";
+
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.inbox-mail {
+
+  .header {
+    height: $inbox-header-height;
+    padding-left: $spacing/3;
+    padding-right: $spacing/3;
+
+    .mat-icon-button, .button {
+      margin-left: $spacing/3;
+      margin-right: $spacing/3;
+    }
+
+    .vertical-divider {
+      width: 1px;
+      height: calc(100% - #{$spacing});
+      margin: $spacing/2 $spacing/3;
+    }
+  }
+
+  .mail-content {
+    ::ng-deep .scroll-content {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+  }
+
+  .head {
+    padding: $spacing;
+
+    .subject {
+      font: var(--font-title);
+    }
+  }
+
+  .info {
+    padding: $spacing;
+
+    .picture {
+      height: 40px;
+      width: 40px;
+      border-radius: 50%;
+    }
+
+    .from {
+      font: var(--font-subheading-1);
+      white-space: nowrap;
+      overflow-x: hidden;
+      text-overflow: ellipsis;
+
+    }
+
+    .to {
+      white-space: nowrap;
+      overflow-x: hidden;
+      text-overflow: ellipsis;
+      font: var(--font-body-1);
+    }
+
+    .extra {
+
+      .when {
+        white-space: nowrap;
+        overflow-x: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+
+  .content {
+    padding: 0 $spacing $spacing;
+  }
+
+  .reply {
+    padding: $spacing;
+    cursor: pointer;
+  }
+
+  .replying {
+    padding: $spacing;
+
+    .actions {
+      margin-top: $spacing;
+    }
+  }
+}

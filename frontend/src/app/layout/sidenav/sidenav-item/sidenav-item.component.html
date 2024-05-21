@@ -1,0 +1,51 @@
+<div [class.collapsed]="isCollapsed$ | async"
+     [class.dropdown-open]="dropdownOpen$ | async"
+     [ngClass]="levelClass"
+     class="sidenav-item">
+  <div *ngIf="item.type === 'subheading'" [ngClass]="item.customClass"
+       class="subheading">{{ item.name }}
+  </div>
+
+  <ng-container *ngIf="item.type !== 'subheading'">
+    <ng-container *ngIf="item.subItems?.length > 0 || isFunction(item.routeOrFunction); then functionOrSubItems; else link"></ng-container>
+  </ng-container>
+
+  <ng-template #functionOrSubItems>
+    <a (click)="handleClick()"
+       class="sidenav-item-link"
+       fxLayout="row"
+       fxLayoutAlign="start center"
+       matRipple>
+      <ng-container *ngTemplateOutlet="linkContent"></ng-container>
+    </a>
+  </ng-template>
+
+  <ng-template #link>
+    <a [routerLinkActiveOptions]="{ exact: item.pathMatchExact || false }"
+       [routerLink]="item.routeOrFunction"
+       class="sidenav-item-link"
+       fxLayout="row"
+       fxLayoutAlign="start center"
+       matRipple
+       routerLinkActive="active">
+      <ng-container *ngTemplateOutlet="linkContent"></ng-container>
+    </a>
+  </ng-template>
+
+  <ng-template #linkContent>
+    <mat-icon  class="icon">{{ item.icon }}</mat-icon>
+    <div *ngIf="level > 1" class="text-icon" fxFlex="none">{{ getTextIcon(item) }}</div>
+    <span class="name">{{ item.name }}</span>
+    <span fxFlex><!-- fill space --></span>
+    <span *ngIf="item.badge" [style.background-color]="item.badgeColor" class="badge">{{ item.badge }}</span>
+    <mat-icon *ngIf="item.subItems && item.subItems.length > 0" [class.rotate]="dropdownOpen$ | async"
+              class="expand-indicator">
+      expand_more
+    </mat-icon>
+  </ng-template>
+
+
+  <div [@dropdownOpen]="dropdownOpen$ | async" class="dropdown" fxLayout="column">
+    <fury-sidenav-item *ngFor="let subItem of item.subItems" [item]="subItem" [level]="level+1"></fury-sidenav-item>
+  </div>
+</div>

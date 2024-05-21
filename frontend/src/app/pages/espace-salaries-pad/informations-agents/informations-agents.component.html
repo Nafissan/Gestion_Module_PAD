@@ -1,0 +1,40 @@
+<fury-page-layout mode="card">
+    <fury-page-layout-header>
+        <fury-breadcrumbs [@fadeInRight] [crumbs]="['Espace Agents']" current="Mon espace prive"></fury-breadcrumbs>
+    </fury-page-layout-header>
+
+    <fury-page-layout-content [@fadeInUp]>
+<!--     <h4>recupconge : {{ recupConge }} -- Statut : {{ getStatus() }}</h4>
+    <input type="text" class="form-control" [(ngModel)]="recupConge">
+    <h4>recupInterims : {{ recupInterims }} -- Statut : {{ getStatus() }}</h4>
+    <input type="text" class="form-control" [(ngModel)]="recupInterims"> -->
+
+        <fury-card >
+            <mat-tab-group (selectedTabChange)="chargerDonneesTab($event)">
+                <mat-tab label="Mes absences">
+                    <fury-card-content *ngIf="recupAbsence === true" class="padding-top">
+                        <fury-mes-absences ></fury-mes-absences>
+                    </fury-card-content>
+                </mat-tab>
+
+                <mat-tab label="Mes congés"  >                   
+                    <fury-card-content *ngIf="recupConge" class="padding-top">
+                        <fury-mes-conges></fury-mes-conges>
+                    </fury-card-content>
+                </mat-tab>
+
+                <mat-tab label="Mes interims" *ngIf="estChef===true">
+                    <fury-card-content *ngIf="recupInterims && estChef" class="padding-top">
+                        <fury-mes-interims></fury-mes-interims>
+                    </fury-card-content>
+                </mat-tab>
+                <mat-tab label="Mes attestations">
+                    <fury-card-content *ngIf="recupAttestation === true" class="padding-top">
+                        <fury-mes-demandes-atestation></fury-mes-demandes-atestation>
+                    </fury-card-content>
+                </mat-tab>
+            </mat-tab-group>
+        </fury-card>
+    </fury-page-layout-content>   
+
+</fury-page-layout>

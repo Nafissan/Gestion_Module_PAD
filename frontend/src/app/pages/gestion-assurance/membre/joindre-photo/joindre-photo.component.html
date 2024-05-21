@@ -1,0 +1,9 @@
+<div mat-dialog-title class="titre_modal_add">Piece Jointe</div>
+
+<div style="text-align:center">
+    <div [innerHtml]='msg'></div>
+    <div >
+            <input class="form-control-file border" type="file" (change)="selectFile($event)" multiple="false" />   
+    </div>
+    <button class="myBtn btn btn-primary " [disabled]="!selectedFiles" (click)="upload()">Charger Photo</button>
+</div>

@@ -1,0 +1,27 @@
+<div class="export-container">
+    <button *ngIf="isSetTable() && !isFailedToLoad" mat-raised-button color="primary" (click)="createAgents()">Valider
+        importation</button>
+</div>
+<div class="export-container">
+    <button *ngIf="isFailedToLoad" mat-raised-button color="primary" (click)="export()">Exporter et corriger</button>
+</div>
+<fury-page-layout-content [@fadeInUp]>
+    <fury-list name="Chargement">
+        <h3 *ngIf="isSetTable() && !isFailedToLoad">Liste des agents à enregitrer
+        </h3>
+        <h3 *ngIf="isFailedToLoad">Liste des agents enregistrés</h3>
+        <div [@fadeInUp] class="card bodycontainer scrollable">
+            <input *ngIf="!isSetTable()" type="file" (change)="onFileChange($event)" multiple="false" />
+            <table class="sjs-table normal-table mat-elevation-z8">
+                <tbody>
+                    <tr *ngFor="let row of data">
+                        <td *ngFor="let val of row">
+                            {{val}}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <!-- <mat-paginator class="paginator" [pageSize]="pageSize"></mat-paginator> -->
+    </fury-list>
+</fury-page-layout-content>

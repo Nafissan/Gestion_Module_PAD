@@ -1,0 +1,41 @@
+<fury-page-layout mode="card">
+    <fury-page-layout-header>
+        <fury-breadcrumbs [@fadeInRight] [crumbs]="['Stock Acquisition']" current="Stock Acquisition"></fury-breadcrumbs>
+    </fury-page-layout-header>
+    <fury-page-layout-content [@fadeInUp]>
+<div class="card text-center">
+<div mat-dialog-title class="titre_modal_add">AJOUTER UNE NOUVELLE Acquisition</div>
+<form [formGroup]="form" (ngSubmit)="save()" color="white">
+    <mat-dialog-content>
+        <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="12px">
+            <mat-form-field fxFlex>
+                <mat-label>Libelle</mat-label>
+                <input matInput formControlName="libelle" required>
+            </mat-form-field>
+        </div>
+        <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="12px">
+            <mat-form-field fxFlex>
+                <mat-label>Nombre Article</mat-label>
+                <input type="number" matInput formControlName="nbreArticle" required>
+            </mat-form-field>
+        </div>
+        <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="12px">
+            <mat-form-field fxFlex>
+                <mat-label>Date D'attribution</mat-label>
+                <input [matDatepicker]="picker1" placeholder="mm/jj/aaaa" formControlName="dateOperation"  matInput>
+                <mat-datepicker-toggle matSuffix [for]="picker1">
+                  <mat-icon matDatepickerToggleIcon>date_range</mat-icon>
+                </mat-datepicker-toggle>
+                <mat-datepicker #picker1></mat-datepicker>
+            </mat-form-field>
+        </div>
+      
+    </mat-dialog-content>
+    <mat-dialog-actions fxLayout="row" fxLayoutAlign="end center">
+        <button mat-button>AJOUTER</button>
+        <!-- <button *ngIf="isUpdateMode()" mat-button [disabled]="(!form.valid)">MODIFIER</button> -->
+    </mat-dialog-actions>
+</form>
+</div>
+</fury-page-layout-content>
+</fury-page-layout>

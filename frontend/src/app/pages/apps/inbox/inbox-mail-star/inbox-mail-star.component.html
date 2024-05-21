@@ -1,0 +1,4 @@
+<button type="button" mat-icon-button (click)="emitClick()">
+  <mat-icon *ngIf="!isStarred" class="icon">star_border</mat-icon>
+  <mat-icon *ngIf="isStarred" class="icon active">star</mat-icon>
+</button>

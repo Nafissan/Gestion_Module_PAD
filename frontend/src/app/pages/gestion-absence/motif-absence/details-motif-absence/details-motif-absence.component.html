@@ -1,0 +1,33 @@
+<div><mat-icon class="close" mat-button mat-dialog-close>close</mat-icon></div>
+<div class="pupup" mat-dialog-title style="font-family: monospace; text-align: center;">DETAILS MOTIF</div>
+<mat-dialog-content>
+<mat-accordion class="example-headers-align" multi>
+    <div class="example-action-buttons">
+        <button *ngIf="showIcon === true" mat-raised-button color="primary" (click)="accordion.openAll(); showIcon = !showIcon">
+                       <mat-icon>expand_more</mat-icon> Afficher
+                    </button>
+        <button *ngIf="showIcon === false" mat-raised-button color="warn" (click)="accordion.closeAll(); showIcon = !showIcon">
+                      <mat-icon>expand_less</mat-icon> Fermer
+                    </button>
+    </div>
+
+    <mat-expansion-panel>
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+             <mat-icon>help_outline</mat-icon>
+              <span>Motif</span>
+            </mat-panel-title>
+        </mat-expansion-panel-header>
+        <!-- <mat-panel-description>
+            <span>Id : </span>{{motif.id}}
+        </mat-panel-description> -->
+        <mat-panel-description >
+            <span>Description : </span>{{motif.description}}
+        </mat-panel-description>
+        <mat-panel-description >
+            <span>Jours : </span>{{motif.jours}}
+        </mat-panel-description>
+    </mat-expansion-panel>
+
+</mat-accordion>
+</mat-dialog-content>

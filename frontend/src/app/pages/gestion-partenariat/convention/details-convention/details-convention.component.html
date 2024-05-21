@@ -1,0 +1,84 @@
+<mat-icon class="close" mat-button mat-dialog-close>close</mat-icon>
+<div mat-dialog-title class="h1-responsive text-align titre_modal_add">DETAILS CONVENTION</div>
+<mat-dialog-content>
+    <mat-accordion class="example-headers-align" multi>
+        <div class="example-action-buttons">
+            <button *ngIf="showIcon === true" mat-raised-button color="primary" (click)="accordion.openAll(); showIcon = !showIcon">
+                       <mat-icon>expand_more</mat-icon> Afficher
+                    </button>
+            <button *ngIf="showIcon === false" mat-raised-button color="warn" (click)="accordion.closeAll(); showIcon = !showIcon">
+                      <mat-icon>expand_less</mat-icon> Fermer
+                    </button>
+        </div>
+ 
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <span class="lib">{{ convention.domaines.length }}   {{convention.domaines.length <= 1 ? ' Domaine' : ' Domaines'}} </span>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-expansion-panel *ngFor="let domaine of convention.domaines">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        <img style="width: 5%; border-radius: 5px; margin-right: 5px;" src="assets/img/partenaire-logo.jpg">
+                        <span style="margin-top: 2px;">{{domaine.libelle}}</span>
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+                
+                <mat-panel-description>
+                    <span class="lib">Type: </span><span class="des">{{domaine.type}}</span>
+                </mat-panel-description>
+                
+              
+                
+            
+             
+             
+    
+            </mat-expansion-panel>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <span class="lib">{{ convention.partenaires.length }}   {{convention.partenaires.length <= 1 ? ' Partenaire' : ' Partenaires'}} </span>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-expansion-panel *ngFor="let partenaire of convention.partenaires">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        <img style="width: 5%; border-radius: 5px; margin-right: 5px;" src="assets/img/partenaire-logo.jpg">
+                        <span style="margin-top: 2px;">{{partenaire.nom}}</span>
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+                <mat-panel-description>
+                    <span class="lib">Email:</span>
+                    <span class="des">{{partenaire.email}}</span>
+                </mat-panel-description>
+                <mat-panel-description>
+                    <span class="lib">Téléphone: </span><span class="des">{{partenaire.telephone}}</span>
+                </mat-panel-description>
+                <mat-panel-description>
+                    <span class="lib">Site Web: </span><span class="des">{{partenaire.siteWeb}}</span>
+                </mat-panel-description>
+                <mat-panel-description>
+                    <span class="lib">Fax: </span><span class="des">{{partenaire.fax}}</span>
+                </mat-panel-description>
+                
+                <mat-panel-description>
+                    <span class="lib">Prenom Representant: </span><span class="des">{{partenaire.representantPrenom}}</span>
+                </mat-panel-description>
+                <mat-panel-description>
+                    <span class="lib">Nom Representant: </span><span class="des">{{partenaire.representantNom}}</span>
+                </mat-panel-description>
+                <mat-panel-description>
+                    <span class="lib">Email Representant: </span><span class="des">{{partenaire.representantEmail}}</span>
+                </mat-panel-description>
+                <mat-panel-description>
+                    <span class="lib">Telephone Representant: </span><span class="des">{{partenaire.representantTelephone}}</span>
+                </mat-panel-description>
+    
+            </mat-expansion-panel>
+        </mat-expansion-panel>
+    </mat-accordion>
+</mat-dialog-content>

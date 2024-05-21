@@ -1,0 +1,23 @@
+<div><mat-icon class="monIcon" mat-button mat-dialog-close>close</mat-icon></div>
+<div class="pupup" mat-dialog-title>TRAITEMENT ABSENCE</div>
+
+<form [formGroup]="form" (ngSubmit)="save()">
+    <mat-dialog-content>
+
+  
+        <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
+            <mat-form-field fxFlex>
+                <mat-label>Commentaire</mat-label>
+                <textarea formControlName="commentaire" matInput></textarea>
+            </mat-form-field>
+        </div>
+        
+
+    </mat-dialog-content>
+    <mat-dialog-actions fxLayout="row" fxLayoutAlign="end center">
+        <!-- <button *ngIf="isCreateMode()" mat-button [disabled]="!form.valid">TRAITER ABSENCE</button> -->
+        <button *ngIf="isCreateMode()" mat-button [disabled]="!form.valid">TRANSMETTRE</button>
+        <button *ngIf="isUpdateMode()" mat-button [disabled]="!form.valid">MODIFIER</button>
+    </mat-dialog-actions>
+</form>
+

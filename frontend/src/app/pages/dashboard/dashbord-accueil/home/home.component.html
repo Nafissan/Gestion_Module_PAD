@@ -1,0 +1,165 @@
+<mat-tab-group mat-align-tabs="center">
+  <mat-tab label="ANNEE COURANTE">
+    <fury-page [fxLayoutGap]="gap" class="dashboard" fxLayout="column">
+      <div fxLayout="column" [fxLayoutGap]="gap" [fxFlex]="col(2)" fxLayout.gt-sm="row" style="height: 20%;">
+        <div fxFlex="auto" *ngIf="hasAnyRole(['DASHBOARD_CONGE'])" [fxFlex.gt-sm]="col(4)">
+          <div class="card-body p-3 mb-2 bg-success text-white">
+            <h6 class="card-title card-text text-center">CONGES</h6>
+            <h4 class="card-text text-center">{{congeStructure.length}}</h4>
+            <a [routerLink]="['dashboard/dashbord-conge/conge-bar-chart']"
+              class="text-center p-3 text-white">Détails</a>
+          </div>
+        </div>
+
+        <div fxFlex="auto"  *ngIf="hasAnyRole(['DASHBOARD_ABSENCE'])" [fxFlex.gt-sm]="col(4)">
+          <div class="card-body p-3 mb-2 bg-info text-white">
+            <h6 class="card-title card-text text-center">ABSENCES</h6>
+            <h4 class="card-text text-center">{{absenceStructure.length}}</h4>
+            <a [routerLink]="['dashboard/dashbord-absence/absence-bar-chart']" class="p-3 text-white">Détails</a>
+          </div>
+        </div>
+
+        <div fxFlex="auto" *ngIf="hasAnyRole(['DASHBOARD_INTERIM'])" [fxFlex.gt-sm]="col(4)">
+          <div class="card-body p-3 mb-2 bg-primary text-white">
+            <h6 class="card-title card-text text-center">INTERIMS</h6>
+            <h4 class="card-text text-center">{{interimStructure.length}}</h4>
+            <a [routerLink]="['dashboard/dashbord-interim/interim-bar-chart']" class="p-3 text-white">Détails</a>
+          </div>
+        </div>
+      </div>
+
+      <div>
+
+        <div class="example-container">
+          <mat-form-field hintLabel="Année" appearance="fill">
+            <input matInput [matDatepicker]="picker" placeholder="choisir une date" [formControl]="date">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker (yearSelected)="yearSelected($event)" startView="multi-year"></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field *ngIf="hasAnyRole(['DASHBOARD_ALL'])" appearance="fill">
+            <mat-label>Directions</mat-label>
+            <mat-select>
+              <mat-option *ngFor="let direction of filteredDirection | async" [value]="direction.nom" (click)="setDirection(direction)">
+                <small>
+                  <span>
+                      {{ direction.nom }}  |  {{ direction.description }}
+                  </span>
+                </small>
+              </mat-option>
+            </mat-select>
+            <mat-hint align="end">(*) Champs Obligatoires</mat-hint>
+          </mat-form-field>
+
+
+
+
+<!--           <button [disabled]="!hasAnyRole(['DOSSIERCONGE_UPDATE']) || row.etat !== saisi" (click)="updateDossierConge(row)" mat-menu-item>
+            <mat-icon>edit</mat-icon>
+            <span>MODIFIER</span>
+        </button> -->
+
+          <mat-form-field appearance="fill">
+            <mat-label>Structures</mat-label>
+            <mat-select>
+              <mat-option *ngFor="let uniteOrg of filteredUniteOrganisationnelles | async" [value]="uniteOrg.nom" (click)="setUniteOrganisationnelle(uniteOrg)">
+                <small>
+                  <span>
+                      {{ uniteOrg.nom }}  |  {{ uniteOrg.description }}
+                  </span>
+                </small>
+              </mat-option>
+            </mat-select>
+            <!-- <mat-hint align="end">(*) Champs Obligatoires</mat-hint> -->
+          </mat-form-field>
+
+          <mat-form-field  appearance="fill">
+            <mat-label>Agent</mat-label>
+            <mat-select>
+              <mat-option *ngFor="let agent of filteredAgent | async" [value]="agent.matricule" (click)="setAgent(agent)">
+                <small>
+                  <span>
+                      {{ agent.matricule }}  |  {{ agent.prenom }}  {{ agent.nom }}
+                  </span>
+                </small>
+              </mat-option>
+            </mat-select>
+          <!--   <mat-hint align="end">(*) Champs Obligatoires</mat-hint> -->
+          </mat-form-field>
+
+        </div>
+
+  <!--         <mat-form-field appearance="fill">
+            <input matInput [matDatepicker]="picker" placeholder="choisir une date" [formControl]="date">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker (yearSelected)="yearSelected($event)" startView="multi-year"></mat-datepicker>
+          </mat-form-field>
+          <div class="content" fxLayout="column" fxLayoutGap="8px">
+            <div fxLayout="column" fxLayout.gt-xs="row" fxLayoutGap="8px" fxLayoutGap.gt-xs="24px">
+                <mat-form-field fxFlex>
+                    <mat-label>Choisir une unite organisationnelle</mat-label>
+                    <input matInput [matAutocomplete]="auto" [formControl]="uniteOrgganisationnelleCtrl" formControlName="uniteOrganisationnelle" />
+                    <mat-autocomplete #auto="matAutocomplete">
+                        <mat-option *ngFor="let uniteOrg of filteredUniteOrganisationnelles | async" [value]="uniteOrg.nom" (click)="setUniteOrganisationnelle(uniteOrg)">
+                          <small>
+                            <span>
+                                {{ uniteOrg.nom }}  |  {{ uniteOrg.description }}
+                            </span>
+                          </small>
+                        </mat-option>
+                    </mat-autocomplete>
+                    <button *ngIf="uniteOrganisationnelleCtrl.value" type="button" mat-icon-button matSuffix></button>
+                    <mat-icon>arrow_drop_down</mat-icon>
+                </mat-form-field>
+            </div>
+            <small>(*) Champs Obligatoires</small>
+        </div> -->
+
+        <div class="chart-wrapper" *ngIf="anneeSelected">
+          <canvas baseChart [datasets]="lineChartData" [labels]="lineChartLabels" height="25" width="90"
+            [colors]="lineChartColors" [legend]="lineChartLegend" [chartType]="lineChartType">
+          </canvas>
+        </div>
+
+      </div>
+    </fury-page>
+  </mat-tab>
+
+  <mat-tab label="ANNEE PRECEDENTE">
+    <fury-page [fxLayoutGap]="gap" class="dashboard" fxLayout="column">
+
+      <div fxLayout="column" [fxLayoutGap]="gap" [fxFlex]="col(2)" fxLayout.gt-sm="row" style="height: 20%;">
+        <div fxFlex="auto" [fxFlex.gt-sm]="col(4)">
+          <div class="card-body p-3 mb-2 bg-success text-white">
+            <h6 class="card-title card-text text-center">CONGES</h6>
+            <h4 class="card-text text-center">{{congeStructure2.length}}</h4>
+            <a [routerLink]="['dashboard/dashbord-conge/conge-bar-chart']"
+              class="text-center p-3 text-white">Détails</a>
+          </div>
+        </div>
+
+        <div fxFlex="auto" [fxFlex.gt-sm]="col(4)">
+          <div class="card-body p-3 mb-2 bg-info text-white">
+            <h6 class="card-title card-text text-center">ABSENCES</h6>
+            <h4 class="card-text text-center">{{absenceStructure2.length}}</h4>
+            <a [routerLink]="['dashboard/dashbord-absence/absence-bar-chart']" class="p-3 text-white">Détails</a>
+          </div>
+        </div>
+
+        <div fxFlex="auto" [fxFlex.gt-sm]="col(4)">
+          <div class="card-body p-3 mb-2 bg-primary text-white">
+            <h6 class="card-title card-text text-center">INTERIMS</h6>
+            <h4 class="card-text text-center">{{interimStructure2.length}}</h4>
+            <a [routerLink]="['dashboard/dashbord-interim/interim-bar-chart']" class="p-3 text-white">Détails</a>
+          </div>
+        </div>
+      </div>
+    </fury-page>  
+      <div class="chart-wrapper">
+        <canvas baseChart [datasets]="lineChartData2" [labels]="lineChartLabels" height="30" width="90"
+          [colors]="lineChartColors" [legend]="lineChartLegend" [chartType]="lineChartType">
+        </canvas>
+      </div>
+  </mat-tab>
+
+</mat-tab-group>

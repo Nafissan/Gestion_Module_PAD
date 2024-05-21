@@ -1,0 +1,57 @@
+a {
+    text-decoration: none;
+}
+
+.export-container {
+    text-align: right;
+    margin-bottom: 20px;
+}
+
+table {
+    width: 100%;
+}
+
+.m-t-xl {
+    margin-top: 40px;
+}
+
+.m-b-xl {
+    margin-bottom: 40px;
+}
+
+.normal-table-heading {
+    margin-top: 40px;
+}
+
+.normal-table {
+    th {
+        text-align: left;
+        padding: 8px;
+    }
+    td {
+        padding: 8px;
+    }
+}
+
+hr {
+    margin-top: 50px;
+    margin-bottom: 25px;
+}
+
+.bodycontainer {
+    max-height: 350px;
+    width: 90%;
+    margin: 0;
+    overflow-y: auto;
+}
+
+.table-scrollable {
+    margin: 0;
+    padding: 0;
+}
+
+h3 {
+    text-align: center;
+    text-transform: uppercase;
+    font-family: monospace;
+}

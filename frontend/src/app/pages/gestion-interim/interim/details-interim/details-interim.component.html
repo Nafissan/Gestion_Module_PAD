@@ -1,0 +1,118 @@
+<div><mat-icon class="close" mat-button mat-dialog-close>close</mat-icon></div>
+<div mat-dialog-title style="font-family: monospace; text-align: center;">Details Interim</div>
+<mat-dialog-content>
+    <mat-accordion class="example-headers-align" multi>
+        <div class="example-action-buttons">
+            <button *ngIf="showIcon === true" mat-raised-button color="primary" (click)="accordion.openAll(); showIcon = !showIcon">
+                       <mat-icon>expand_more</mat-icon> Afficher
+                    </button>
+            <button *ngIf="showIcon === false" mat-raised-button color="warn" (click)="accordion.closeAll(); showIcon = !showIcon">
+                      <mat-icon>expand_less</mat-icon> Fermer
+                    </button>
+        </div>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon>folder_open</mat-icon>
+                    <span>Interim</span>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-panel-description>
+                <span>Id: </span>{{interim.id}}
+            </mat-panel-description>
+       
+            <mat-panel-description>
+              <span>Commentaire: </span>{{interim.commentaire}}
+          </mat-panel-description>
+            <mat-panel-description>
+                <span>Date Depart : </span>{{interim.dateDepart}}
+            </mat-panel-description>
+            <mat-panel-description>
+              <span>Date Retour : </span>{{interim.dateRetour}}
+          </mat-panel-description>
+          <mat-panel-description>
+            <span>Date Retour Effectif : </span>{{interim.dateRetourEffective}}
+        </mat-panel-description>
+       
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                  <mat-icon>supervisor_account</mat-icon>
+                    <span>Agent Demandeur</span>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-panel-description>
+                <span>Matricule : </span>{{interim.agentDepart.matricule}}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Nom : </span>{{interim.agentDepart.nom.toUpperCase()}}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Prénom : </span>{{interim.agentDepart.prenom}}
+            </mat-panel-description>
+            <mat-panel-description>
+                <!-- <span>Mail : </span>{{interim.agentDepart.email}} -->
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>UniteOrganisationnelle : </span>{{interim.uniteOrganisationnelle.nom}}
+            </mat-panel-description>
+            <mat-panel-description>
+                <!-- <span>Fonction : </span>{{interim.agentDepart.fonction.nom}} -->
+            </mat-panel-description>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+              <mat-panel-title>
+                <mat-icon>supervisor_account</mat-icon>
+                  <span>Agent Interimaire</span>
+              </mat-panel-title>
+          </mat-expansion-panel-header>
+          <mat-panel-description>
+              <span>Matricule : </span>{{interim.agentArrive.matricule}}
+          </mat-panel-description>
+          <mat-panel-description>
+              <span>Nom : </span>{{interim.agentArrive.nom.toUpperCase()}}
+          </mat-panel-description>
+          <mat-panel-description>
+              <span>Prénom : </span>{{interim.agentArrive.prenom}}
+          </mat-panel-description>
+          <mat-panel-description>
+              <!-- <span>Mail : </span>{{interim.agentArrive.email}} -->
+          </mat-panel-description>
+          <mat-panel-description>
+            <span>UniteOrganisationnelle : </span>{{interim.uniteOrganisationnelle.nom}}
+        </mat-panel-description>
+        <mat-panel-description>
+            <!-- <span>Fonction : </span>{{interim.agentArrive.fonction.nom}} -->
+        </mat-panel-description>
+      </mat-expansion-panel>
+        <!-- <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon>perm_identity</mat-icon>
+                    <span>Fonction</span>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-panel-description>
+                <span>Nom : </span>{{dossierConge.agent.fonction.nom}}
+            </mat-panel-description>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    Unite Organisationelle
+                </mat-panel-title>
+                <mat-panel-description>
+                    <mat-icon>category</mat-icon>
+                </mat-panel-description>
+            </mat-expansion-panel-header>
+            <mat-panel-description>
+                <span>Code : </span>{{dossierConge.agent.uniteOrganisationnelle.code.toUpperCase()}}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Description : </span>{{dossierConge.agent.uniteOrganisationnelle.description}}
+            </mat-panel-description>
+        </mat-expansion-panel> -->
+    </mat-accordion>
+</mat-dialog-content>

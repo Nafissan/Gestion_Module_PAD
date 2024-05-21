@@ -1,0 +1,48 @@
+<fury-scrollbar fxFlex="grow">
+  <mat-list class="navigation">
+    <div matSubheader>Inbox</div>
+    <mat-list-item [routerLink]="['/apps/inbox/primary']" class="secondary-text" matRipple routerLinkActive="active">
+      <mat-icon matListIcon>inbox</mat-icon>
+      <div [fxHide]="responsive" [fxShow.gt-sm]="responsive" matLine>Primary</div>
+    </mat-list-item>
+
+    <mat-list-item [routerLink]="['/apps/inbox/social']" class="secondary-text" matRipple routerLinkActive="active">
+      <mat-icon matListIcon>group</mat-icon>
+      <div [fxHide]="responsive" [fxShow.gt-sm]="responsive" matLine>Social</div>
+    </mat-list-item>
+
+    <mat-list-item [routerLink]="['/apps/inbox/promotions']" class="secondary-text" matRipple routerLinkActive="active">
+      <mat-icon matListIcon>local_offer</mat-icon>
+      <div [fxHide]="responsive" [fxShow.gt-sm]="responsive" matLine>Promotions</div>
+    </mat-list-item>
+
+    <mat-divider></mat-divider>
+
+    <mat-list-item [routerLink]="['/apps/inbox/starred']" class="secondary-text" matRipple routerLinkActive="active">
+      <mat-icon matListIcon>star</mat-icon>
+      <div [fxHide]="responsive" [fxShow.gt-sm]="responsive" matLine>Starred</div>
+    </mat-list-item>
+
+    <mat-list-item [routerLink]="['/apps/inbox/sent']" class="secondary-text" matRipple routerLinkActive="active">
+      <mat-icon matListIcon>send</mat-icon>
+      <div [fxHide]="responsive" [fxShow.gt-sm]="responsive" matLine>Sent Mails</div>
+    </mat-list-item>
+
+    <mat-list-item [routerLink]="['/apps/inbox/drafts']" class="secondary-text" matRipple routerLinkActive="active">
+      <mat-icon matListIcon>drafts</mat-icon>
+      <div [fxHide]="responsive" [fxShow.gt-sm]="responsive" matLine>Drafts</div>
+    </mat-list-item>
+
+    <mat-divider></mat-divider>
+
+    <mat-list-item [routerLink]="['/apps/inbox/spam']" class="secondary-text" matRipple routerLinkActive="active">
+      <mat-icon matListIcon>backspace</mat-icon>
+      <div [fxHide]="responsive" [fxShow.gt-sm]="responsive" matLine>Spam</div>
+    </mat-list-item>
+
+    <mat-list-item [routerLink]="['/apps/inbox/trash']" class="secondary-text" matRipple routerLinkActive="active">
+      <mat-icon matListIcon>delete</mat-icon>
+      <div [fxHide]="responsive" [fxShow.gt-sm]="responsive" matLine>Trash</div>
+    </mat-list-item>
+  </mat-list>
+</fury-scrollbar>

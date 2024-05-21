@@ -1,0 +1,31 @@
+$theme-foreground-map: map-get($theme, foreground);
+$theme-background-map: map-get($theme, background);
+$theme-primary-map: map-get($theme, primary);
+$theme-accent-map: map-get($theme, accent);
+$theme-warn-map: map-get($theme, warn);
+
+$theme-text: mat-color($theme-foreground-map, text);
+$theme-hint-text: mat-color($theme-foreground-map, hint-text);
+$theme-secondary-text: mat-color($theme-foreground-map, secondary-text);
+$theme-divider: mat-color($theme-foreground-map, divider);
+$theme-icon: mat-color($theme-foreground-map, icon);
+$theme-elevation: mat-color($theme-foreground-map, elevation);
+
+$theme-background: mat-color($theme-background-map, background);
+$theme-app-bar: mat-color($theme-background-map, app-bar);
+$theme-status-bar: mat-color($theme-background-map, status-bar);
+$theme-background-hover: mat-color($theme-background-map, hover);
+
+$theme-card: mat-color($theme-background-map, card);
+
+$theme-color-primary-palette: map-get($theme, primary);
+$theme-color-accent-palette: map-get($theme, accent);
+$theme-color-warn-palette: map-get($theme, warn);
+
+$theme-color-primary: mat-color($theme-color-primary-palette);
+$theme-color-accent: mat-color($theme-color-accent-palette);
+$theme-color-warn: mat-color($theme-color-warn-palette);
+
+$theme-color-primary-contrast: mat-contrast($theme-color-primary-palette, $theme-primary-hue);
+$theme-color-accent-contrast: mat-contrast($theme-color-accent-palette, $theme-accent-hue);
+$theme-color-warn-contrast: mat-contrast($theme-color-warn-palette, $theme-warn-hue);

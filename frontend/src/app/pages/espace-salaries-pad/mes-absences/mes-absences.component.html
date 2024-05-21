@@ -1,0 +1,151 @@
+    <fury-page-layout-content [@fadeInUp]>
+
+        <fury-list *ngIf=" absences.length !== 0 && showProgressBar === true" name="Absence" [columns]="columns" (filterChange)="onFilterChange($event)">
+            <div class="actions">
+                <button class="create" (click)="createAbsence()" type="button" mat-mini-fab color="primary">
+                    <mat-icon>add</mat-icon>
+                </button>
+            </div>
+            <table [dataSource]="dataSource" mat-table matSort>
+                <ng-container matColumnDef="checkbox">
+                    <th *matHeaderCellDef class="actions-cell" mat-header-cell>
+                        <mat-checkbox color="primary" (click)="$event.stopPropagation()"></mat-checkbox>
+                    </th>
+                    <td *matCellDef="let row" class="actions-cell" mat-cell>
+                        <mat-checkbox color="primary" (click)="$event.stopPropagation()"></mat-checkbox>
+                    </td>
+                </ng-container>
+                <!-- fullName Column -->
+                <ng-container *ngFor="let column of columns">
+                    <ng-container *ngIf="column.isModelProperty" [matColumnDef]="column.property">
+                        <th *matHeaderCellDef mat-header-cell mat-sort-header> {{ column.name }}</th>
+                        <td *matCellDef="let row" mat-cell>
+                            <p
+                                *ngIf="column.name !== 'nom' && column.name !== 'prenom' && column.name !== 'Matricule'
+                                && column.name !== 'Date Depart'
+                                && column.name !== 'date Retour Previsionnelle'
+                                && column.name !== 'date Retour Effectif'
+                                && column.name !== 'date de Saisie'
+                                && column.name !== 'motif'
+                                && column.name !== 'jours absence'
+                                && column.name !== 'Profil'
+                                && column.name !== 'Niveau'
+                                && column.name !== 'Profil'
+                                && column.name !== 'Etat'">
+                                {{ row[column.property] }}
+                            </p>
+                            <p *ngIf="column.name === 'Etat' && row.etat === 'SAISI'">
+                                <span class="badge badge-warning">  {{row.etat}}</span>
+                            </p>
+                            <p *ngIf="column.name === 'Etat' && row.etat === 'En COURS'">
+                                <span class="badge badge-primary">  {{row.etat}}</span>
+                            </p>
+                            <p *ngIf="column.name === 'Etat' && row.etat === 'A TRANSMETTRE'">
+                                <span class="badge badge-primary">  {{row.etat}}</span>
+                            </p>
+                            <p *ngIf="column.name === 'Etat' && row.etat === 'VALIDE'">
+                                <span class="badge badge-success">  {{row.etat}}</span>
+                            </p>
+                            <p *ngIf="column.name === 'Etat' && row.etat === 'TRANSMIS'">
+                                <span class="badge badge-info">  {{row.etat}}</span>
+                            </p>
+                            <p *ngIf="column.name === 'Etat' && row.etat === 'REJETE'">
+                                <span class="badge badge-danger">  {{row.etat}}</span>
+                            </p>
+                            <p *ngIf="column.property === 'etape_validation'  ">
+                                <span class="badge badge-info">{{getNomStructure(row.etape_validation)}}</span>
+                            </p>
+                            <p *ngIf="column.name === 'Date Depart'">
+                                {{ row[column.property] | date: 'dd-MM-yyyy' }}
+                            </p>
+                            <p *ngIf="column.name === 'date Retour Previsionnelle'">
+                                {{ row[column.property] | date: 'dd-MM-yyyy' }}
+                            </p>
+                            <p *ngIf="column.name === 'date Retour Effectif'">
+                                {{ row[column.property] | date: 'dd-MM-yyyy' }}
+                            </p>
+                            <p *ngIf="column.name === 'date de Saisie'">
+                                {{ row[column.property] | date: 'dd-MM-yyyy' }}
+                            </p>
+                            <p *ngIf="row.agent && column.name === 'Matricule'">
+                                {{ row.agent.matricule }}
+                            </p>
+                            <p *ngIf="row.agent && column.name === 'nom'">
+                                {{ row.agent.nom }}
+                            </p>
+                            <p *ngIf="row.agent && column.name === 'prenom'">
+                                {{ row.agent.prenom }}
+                            </p>
+                            <p *ngIf="row.agent && column.name === 'Profil'">
+                                {{ row.agent.profil }}
+                            </p>
+                            <p *ngIf="row.motif && column.name === 'motif'">
+                                {{ row.motif.description }}
+                            </p>
+                            <!-- <p *ngIf="row.motif && column.name === 'jours absence'">
+                                {{ row.motif.jours }}
+                            </p> -->
+                            <p *ngIf="row.motif && column.name === 'jours absence'">
+                                {{ getNombtreJour(row['dateRetourEffectif'], row['dateRetourPrevisionnelle'], row['dateDepart']) }}
+                            </p>
+
+                        </td>
+                    </ng-container>
+                </ng-container>
+
+
+                <!-- actions Column -->
+                <ng-container matColumnDef="actions">
+                    <th *matHeaderCellDef class="actions-cell" mat-header-cell mat-sort-header></th>
+                    <td *matCellDef="let row" class="actions-cell" mat-cell>
+                        <button type="button" mat-icon-button [matMenuTriggerFor]="actionsMenu"
+                            (click)="$event.stopPropagation()">
+                            <mat-icon>more_horiz</mat-icon>
+                        </button>
+
+                        <mat-menu #actionsMenu="matMenu" yPosition="below" xPosition="before">
+                            <button *ngIf="row.etat === 'SAISI' || row.etat === 'REJETE'"  (click)="updateAbsence(row)" mat-menu-item>
+                                <mat-icon>edit</mat-icon>
+                                <span>MODIFIER</span>
+                            </button>
+                            <button *ngIf="row.etat === 'SAISI' || row.etat === 'REJETE'"  (click)="deleteAbsence(row)" mat-menu-item>
+                                <mat-icon>delete</mat-icon>
+                                <span>SUPPRIMER</span>
+                            </button>
+
+                            <button *ngIf="row.etat !== 'SAISI'"  (click)="historiqueAbsence(row)" mat-menu-item>
+                                <mat-icon>bar_chart</mat-icon>
+                                <span>HISTORIQUE</span>
+                            </button>
+
+                        </mat-menu>
+                    </td>
+                </ng-container>
+
+                <tr *matHeaderRowDef="visibleColumns" mat-header-row></tr>
+                <tr (click)="detailsAbsence(row)" *matRowDef="let row; columns: visibleColumns;"
+                    class="clickable route-animations-elements" mat-row></tr>
+            </table>
+
+            <mat-paginator class="paginator" [pageSize]="pageSize"></mat-paginator>
+
+        </fury-list>
+
+        <div *ngIf=" absences.length === 0 && showProgressBar === true" class="card text-center">
+
+            <div class="card-header">
+                  <span class="badge badge-info"> INFORMATION </span>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">LISTE ABSENCE VIDE</h5>
+                <p class="card-text">Ajouter une nouvelle demande pour l'année {{currentYear}}</p>
+                <button class="create" (click)="createAbsence()" type="button" mat-mini-fab color="primary">
+                    <mat-icon>add</mat-icon>
+                </button>
+            </div>
+            <div class="card-footer text-muted">
+                {{date | date : 'dd/MMM/yyyy HH:mm:ss'}}
+            </div>
+        </div>
+    <mat-progress-bar *ngIf="showProgressBar === false" mode="query" color="primary"></mat-progress-bar>
+</fury-page-layout-content>

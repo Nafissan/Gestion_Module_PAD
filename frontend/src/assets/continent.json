@@ -1,0 +1,38 @@
+[
+    {
+        "id": 1,
+        "active": true,
+        "code": "EU",
+        "nom": "Europe"
+    },
+    {
+        "id": 2,
+        "active": true,
+        "code": "AF",
+        "nom": "Afrique"
+    },
+    {
+        "id": 3,
+        "active": true,
+        "code": "Asie",
+        "nom": "AS"
+    },
+    {
+        "id": 4,
+        "active": true,
+        "code": "OC",
+        "nom": "Oceanie"
+    },
+    {
+        "id": 5,
+        "active": true,
+        "code": "AMN",
+        "nom": "Amérique du Nord"
+    },
+    {
+        "id": 6,
+        "active": true,
+        "code": "AMS",
+        "nom": "Amérique du Sud"
+    }
+]

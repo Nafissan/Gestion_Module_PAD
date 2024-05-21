@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: sn.pad.pss.integrations.FonctionControllerIT
+-------------------------------------------------------------------------------
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 5.841 s - in sn.pad.pss.integrations.FonctionControllerIT

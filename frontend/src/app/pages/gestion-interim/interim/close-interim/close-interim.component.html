@@ -1,0 +1,32 @@
+<div><mat-icon class="close" mat-button mat-dialog-close>close</mat-icon></div>
+<div mat-dialog-title>Cloturer Interim</div>
+
+<form [formGroup]="form" (ngSubmit)="validerEtapeInterim()">
+    <mat-dialog-content>
+        <!-- <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="24px">
+            <mat-form-field fxFlex>
+              <mat-label>Date Retour Effective</mat-label>
+              <input [min]="mindate" [matDatepicker]="picker"  formControlName="dateRetourEffective"
+              (ngModelChange)="onDateChange($event)" 
+                matInput>
+              <mat-datepicker-toggle matSuffix [for]="picker">
+                <mat-icon matDatepickerToggleIcon>date_range</mat-icon>
+              </mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+          </div> -->
+        <div class="person">
+            <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
+                <mat-form-field fxFlex>
+                    <mat-label>Commentaire</mat-label>
+                    <input type="text" formControlName="commentaire" matInput>
+                </mat-form-field>
+            </div>
+        </div>
+ 
+    </mat-dialog-content>
+    <mat-dialog-actions fxLayout="row" fxLayoutAlign="end center">
+        <button  mat-button [disabled]="!form.valid">VALIDER</button>
+        <!-- <button *ngIf="isUpdateMode()" mat-button [disabled]="!form.valid">MODIFIER ETAPE INTERIM</button> -->
+    </mat-dialog-actions>
+</form>

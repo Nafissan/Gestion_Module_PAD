@@ -1,0 +1,19 @@
+<mat-icon class="monIcon" mat-button mat-dialog-close>close</mat-icon>
+<div mat-dialog-title>Rejeter attestation</div>
+
+<form [formGroup]="form" (ngSubmit)="rejeterAttestation()">
+    <mat-dialog-content>
+    
+        <div class="person">
+            <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="24px">
+                <mat-form-field fxFlex>
+                    <mat-label>Commentaire</mat-label>
+                    <textarea formControlName="commentaire" matInput></textarea>
+                </mat-form-field>
+            </div>
+        </div>    
+    </mat-dialog-content>
+    <mat-dialog-actions fxLayout="row" fxLayoutAlign="end center">
+        <button mat-button [disabled]="!form.valid">REJETER</button>
+    </mat-dialog-actions>
+</form>

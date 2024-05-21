@@ -1,0 +1,15 @@
+@import "var";
+
+.sticky-list {
+  position: sticky;
+  top: 0;
+}
+
+.navigation {
+  position: relative;
+
+  .mat-list-item {
+    position: relative;
+    cursor: pointer;
+  }
+}

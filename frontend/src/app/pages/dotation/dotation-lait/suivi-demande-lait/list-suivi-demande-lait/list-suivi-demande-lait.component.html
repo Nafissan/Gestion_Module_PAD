@@ -1,0 +1,83 @@
+<fury-page-layout mode="card">
+  <fury-page-layout-header>
+      <fury-breadcrumbs [@fadeInRight] [crumbs]="['Suivi Dotation']" current="Suivi Dotation"></fury-breadcrumbs>
+  </fury-page-layout-header>
+
+  <fury-page-layout-content [@fadeInUp]>
+      <fury-list *ngIf="suiviDotations.length !== 0 && showProgressBar === true" name="Stock" [columns]="columns" (filterChange)="onFilterChange($event)">
+          <table [dataSource]="dataSource" mat-table matSort>
+              <!--- Note that these columns can be defined in any order.
+              The actual rendered columns are set as a property on the row definition" -->
+
+              <!-- Checkbox Column -->
+              <ng-container matColumnDef="checkbox">
+                  <th *matHeaderCellDef class="actions-cell" mat-header-cell>
+                      <mat-checkbox color="primary" (click)="$event.stopPropagation()"></mat-checkbox>
+                  </th>
+                  <td *matCellDef="let row" class="actions-cell" mat-cell>
+                      <mat-checkbox color="primary" (click)="$event.stopPropagation()"></mat-checkbox>
+                  </td>
+              </ng-container>
+
+              <ng-container *ngFor="let column of columns">
+                <ng-container *ngIf="column.isModelProperty" [matColumnDef]="column.property">
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header> {{ column.name }}</th>
+                    <td *matCellDef="let row" mat-cell>
+                        <p *ngIf="column.property === 'categorie'">
+                            {{ row?.categorieLait?.description}}
+                          </p>
+                        <p *ngIf="column.name === 'Date Attribution'">
+                          {{ row[column.property] | date: 'dd-MM-yyyy' }}
+                        </p>
+                        <p *ngIf="column.name === 'Traité par'">
+                            {{ (row.matriculeAgent + ' | ' + row.prenomAgent + ' ' + row.nomAgent) | titlecase}}
+                        </p>
+                        <p *ngIf="row.dotation.beneficiaire && column.name === 'Bénéficiaire'">
+                          {{ (row.dotation.beneficiaire.matricule + ' | ' + row.dotation.beneficiaire.prenom + ' ' + row.dotation.beneficiaire.nom) | titlecase}}
+                        </p>
+                        <p *ngIf="column.name !== 'Date Attribution' && column.name !== 'Bénéficiaire' && column.name !== 'Traité par'">
+                          {{ row[column.property] }}
+                        </p>
+                    </td>
+                </ng-container>
+            </ng-container>
+              <!-- actions Column -->
+              
+              <ng-container matColumnDef="action">
+                  <th *matHeaderCellDef class="actions-cell" mat-header-cell mat-sort-header></th>
+                  <td *matCellDef="let row" class="actions-cell" mat-cell>
+                
+                    <button type="button" mat-icon-button [matMenuTriggerFor]="actionsMenu" (click)="$event.stopPropagation()">
+                        <mat-icon>more_horiz</mat-icon>
+                    </button>
+                    <mat-menu #actionsMenu="matMenu" yPosition="below" xPosition="before">
+                        <button *ngIf="row?.etat === 'A VALIDER' || row?.etat === 'ANNULER'"  (click)="corrigerAttribution(row)" mat-menu-item matTooltip="Suivi Demandes">
+                            <mat-icon>folder</mat-icon>
+                            <span>Corriger</span>
+                        </button>
+                    </mat-menu>
+                  </td>
+              </ng-container>
+
+              <tr *matHeaderRowDef="visibleColumns" mat-header-row></tr>
+              <tr (click)="detailsSuiviStock(row)" *matRowDef="let row; columns: visibleColumns;" class="clickable route-animations-elements" mat-row></tr>
+          </table>
+
+          <mat-paginator class="paginator" [pageSize]="pageSize"></mat-paginator>
+      </fury-list>
+      <div *ngIf="suiviDotations.length === 0 && showProgressBar === true" class="card text-center">
+        <div class="card-header">
+            <span class="badge badge-info">
+                INFORMATION
+            </span>
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">PAS D'ATTRIBUTION POUR CETTE DEMANDE</h5>
+        </div>
+        <div class="card-footer text-muted">
+            {{date | date : 'dd/MMM/yyyy HH:mm:ss'}}
+        </div>
+    </div>
+      <mat-progress-bar *ngIf="showProgressBar === false" mode="query" color="primary"></mat-progress-bar>
+  </fury-page-layout-content>
+</fury-page-layout>

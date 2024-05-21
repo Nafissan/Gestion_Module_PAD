@@ -1,0 +1,111 @@
+@import "var";
+
+
+.header {
+  height: $inbox-header-height;
+  min-height: $inbox-header-height;
+  max-height: $inbox-header-height;
+  padding-left: $padding;
+  padding-right: $padding;
+}
+
+.mail-list {
+  height: 100%;
+}
+
+.content {
+
+  .mail {
+    height: $inbox-mail-list-item-height;
+    min-height: $inbox-mail-list-item-height;
+    max-height: $inbox-mail-list-item-height;
+    padding-left: $padding;
+    padding-right: $padding-sm;
+    position: relative;
+    transition: $swift-ease-out;
+    cursor: pointer;
+    outline: none;
+    font: var(--font-body-1);
+
+    @include media-xs {
+      height: auto;
+      max-height: none;
+      padding-top: $spacing/2;
+      padding-bottom: $spacing/2;
+    }
+
+    @include media-sm {
+      height: auto;
+      max-height: none;
+      padding-top: $spacing/2;
+      padding-bottom: $spacing/2;
+    }
+
+    &.background-hover {
+
+      .from {
+        font-weight: 400;
+      }
+
+      .subject {
+        font-weight: 400;
+      }
+
+      .content {
+        font-weight: 400;
+      }
+
+      .when {
+        font-weight: 400;
+      }
+    }
+
+    .checkbox {
+
+    }
+
+    .picture {
+      height: 30px;
+      width: 30px;
+      border-radius: 50%;
+    }
+
+    .content-container {
+    }
+
+    .content-wrapper {
+      white-space: nowrap;
+      overflow-x: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .from {
+      white-space: nowrap;
+      overflow-x: hidden;
+      text-overflow: ellipsis;
+      font-weight: 500;
+    }
+
+    .subject {
+      white-space: nowrap;
+      overflow-x: hidden;
+      text-overflow: ellipsis;
+      font-weight: 500;
+    }
+
+    .content {
+      white-space: nowrap;
+      overflow-x: hidden;
+      text-overflow: ellipsis;
+      font-weight: 500;
+    }
+
+    .when {
+      white-space: nowrap;
+      overflow-x: hidden;
+      text-overflow: ellipsis;
+      font-weight: 500;
+    }
+
+  }
+}

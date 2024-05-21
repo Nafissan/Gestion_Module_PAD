@@ -1,0 +1,47 @@
+<fury-page [fxLayoutGap]="gap" class="dashboard" fxLayout="column">
+  <div fxFlex="noshrink" fxLayout="column" [fxLayoutGap]="gap" fxLayout.gt-lg="row">
+
+    <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="24px">
+      <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="24px">
+        <mat-form-field fxflex>
+          <mat-label>Choisir une direction</mat-label>
+          <input matInput [matAutocomplete]="auto">
+          <mat-autocomplete #auto="matAutocomplete">
+            <mat-option *ngFor="let uniteSup of filteredUniteOrgNiveauSup | async" [value]="uniteSup.description"
+              (click)=setUniteOrgNiveauSup(uniteSup)>
+              <span>{{ uniteSup.nom }}</span> |
+              <small>{{ uniteSup.description}}</small>
+            </mat-option>
+          </mat-autocomplete>
+          <button *ngIf="uniteOrgNiveauSupCtrl.value" type="button" mat-icon-button
+            (click)="uniteOrgNiveauSupCtrl.reset()" matSuffix>
+            <mat-icon>close</mat-icon>
+          </button>
+          <button *ngIf="!uniteOrgNiveauSupCtrl.value" type="button" mat-icon-button matSuffix>
+            <mat-icon>arrow_drop_down</mat-icon>
+          </button>
+        </mat-form-field>
+
+      </div>
+
+      <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="24px" class="right">
+        <div fxFlex="auto" [fxFlex.gt-sm]="col(4)">
+          <div class="card-body" class="p-3 mb-2 bg-info text-white">
+            <h5 class="card-title card-text text-center">Total</h5>
+            <h3 class="card-text text-center">{{attestationStructure.length}}</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <canvas baseChart [datasets]="barChartData" [labels]="barChartLabels" [options]="barChartOptions"
+      height="40" width="100" [plugins]="barChartPlugins" [legend]="barChartLegend" [chartType]="barChartType">
+      </canvas>
+    </div>
+  </div>
+
+ 
+     
+  
+
+</fury-page>

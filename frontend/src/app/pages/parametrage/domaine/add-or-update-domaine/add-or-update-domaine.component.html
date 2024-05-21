@@ -1,0 +1,35 @@
+<div>
+    <mat-icon class="close" mat-button mat-dialog-close>close</mat-icon>
+</div>
+<div mat-dialog-title class="titre_modal_add">AJOUTER UN NOUVEAU DOMAINE</div>
+<form [formGroup]="form" (ngSubmit)="save()">
+    <mat-dialog-content>
+        <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="24px">
+            
+            <mat-form-field fxFlex>
+                <mat-label>Libelle</mat-label>
+                <input matInput formControlName="libelle">
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Type</mat-label>
+                <mat-select formControlName="type" >
+                  <mat-option value="Domaine de cooperation">Domaine de Cooperation</mat-option>
+                  <mat-option value="Domaine d'activité">Domaine d'Activite</mat-option>
+                 
+                </mat-select>
+              </mat-form-field>
+        </div>
+        
+   <div>
+      
+            
+            <section fxFlex>
+                <mat-checkbox fxFlex formControlName="active">Active</mat-checkbox>
+            </section>
+        </div>  
+    </mat-dialog-content>
+    <mat-dialog-actions fxLayout="row" fxLayoutAlign="end center">
+        <button *ngIf="isCreateMode()" mat-button [disabled]="!form.valid">AJOUTER</button>
+        <button *ngIf="isUpdateMode()" mat-button [disabled]="!form.valid">MODIFIER</button>
+    </mat-dialog-actions>
+</form>
