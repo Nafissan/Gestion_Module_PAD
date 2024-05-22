@@ -50,13 +50,14 @@ export class DossierColonieService {
   getDossiersList(): Observable<DossierColonie[]> {
     return this.dossiersList$;
   }
-  updateDossier(updatedDossier: DossierColonie): void {
-    const dossiers = this.dossiersListSubject.getValue();
-    const index = dossiers.findIndex(dossier => dossier.code === updatedDossier.code);
+  updateDossier(dossier: DossierColonie): Observable<DossierColonie> {
+    const index = this.dossiers.findIndex(d => d.id === dossier.id);
     if (index !== -1) {
-      dossiers[index] = updatedDossier;
-      this.setDossiersList(dossiers);
+      this.dossiers[index] = dossier;
+      this.dossiersListSubject.next(this.dossiers);
     }
+    return of(dossier);
+  
   }delete(dossier: DossierColonie): Observable<void> {
     this.dossiers = this.dossiers.filter(d => d.id !== dossier.id);
     this.dossiersListSubject.next(this.dossiers);

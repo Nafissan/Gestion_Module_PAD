@@ -20,7 +20,6 @@ import { NotificationService } from "../../../../shared/services/notification.se
 import { MailService } from "../../../../shared/services/mail.service";
 import { AgentService } from "../../../../shared/services/agent.service";
 import { Agent } from "../../../../shared/model/agent.model";
-import { Mail } from "../../../../shared/model/mail.model";
 
 @Component({
   selector: "fury-liste-dossier-colonie",
@@ -28,7 +27,7 @@ import { Mail } from "../../../../shared/model/mail.model";
   styleUrls: ["./liste-dossier-colonie.component.scss", "../../../../shared/util/bootstrap4.css"],
   animations: [fadeInRightAnimation, fadeInUpAnimation]
 })
-export class ListDossierColonieComponent implements OnInit, AfterViewInit, OnDestroy {
+export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDestroy {
   showProgressBar: boolean = false;
   saisi: string = EtatDossierColonie.saisi;
   ouvert: string = EtatDossierColonie.ouvert;
@@ -138,7 +137,6 @@ export class ListDossierColonieComponent implements OnInit, AfterViewInit, OnDes
         if (dossierColonie) {
           this.dossierColonies.unshift(new DossierColonie(dossierColonie));
           this.subject$.next(this.dossierColonies);
-          this.getAllAgentsChefByNiveau();
         }
       });
   }
@@ -152,7 +150,7 @@ export class ListDossierColonieComponent implements OnInit, AfterViewInit, OnDes
           const index = this.dossierColonies.findIndex(
             (existingDossierColonie) => existingDossierColonie.id === dossierColonie.id
           );
-          this.dossierColonies[index] = new DossierColonie(dossierColonie);
+          this.dossierColonies[index] = dossierColonie;
           this.subject$.next(this.dossierColonies);
         }
       });
@@ -226,21 +224,5 @@ export class ListDossierColonieComponent implements OnInit, AfterViewInit, OnDes
 
   ngOnDestroy() { }
 
-  hasAnyRole(roles: string[]) {
-    return this.authentificationService.hasAnyRole(roles);
-  }
-
-  getAllAgentsChefByNiveau() {
-    this.agentService.getAllChefByPosition(true, EtatDossierColonie.position).subscribe(
-      response => {
-        this.agentsChefStructure = response.body;
-      },
-      err => { },
-      () => {
-        this.agentsChefStructure.forEach(agent => {
-          this.agentsChefStructureMail.push(agent.email);
-        });
-      }
-    );
-  }
+ 
 }
