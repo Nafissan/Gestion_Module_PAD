@@ -58,6 +58,8 @@ export const MY_FORMATS = {
   // Autres propriétés nécessaires
   fileNoteMinistere: File | null = null;
   fileDemandeProspetion: File | null = null;
+  fileNotePersonnels: File | null =null;
+  fileNotePelerins: File | null =null;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public defaults: DossierColonie,
@@ -106,7 +108,12 @@ export const MY_FORMATS = {
     this.fileDemandeProspetion = files.item(0);
   }
 
-
+  handleNotePersonels(files: FileList): void {
+    this.fileNotePersonnels = files.item(0);
+  }
+  handleNotePelerins(files: FileList): void {
+    this.fileNotePelerins = files.item(0);
+  }
   save(): void {
     if (this.mode === "create") {
       this.createDossierColonie();
@@ -121,7 +128,9 @@ export const MY_FORMATS = {
     formData.code                 = 'DCLN' + '-' + 'PAD' + '-' + formData.annee + '-' + new Date().getTime();
     formData.etat                 = EtatDossierColonie.saisi; 
     formData.noteMinistere        = this.fileNoteMinistere,
-    formData.demandeProspection   = null, // La demande de prospection n'est pas ajoutée lors de la création
+    formData.demandeProspection   = null, 
+    formData.notePelerins   = null, 
+    formData.notePersonnels   = null, 
 
     formData.matricule            = this.agent.matricule;
     formData.prenom               = this.agent.prenom;
@@ -156,6 +165,8 @@ export const MY_FORMATS = {
     const formData: DossierColonie =  this.form.value;
     formData.description        = this.form.get("description").value,
     formData.demandeProspection = this.fileDemandeProspetion;
+    formData.notePelerins = this.fileNotePelerins;
+    formData.notePersonnels = this.fileNotePersonnels;
 
     this.dialogConfirmationService.confirmationDialog().subscribe(action => {
       if (action === DialogUtil.confirmer) {

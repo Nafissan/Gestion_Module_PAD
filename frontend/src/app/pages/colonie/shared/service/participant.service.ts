@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { BehaviorSubject, of } from "rxjs";
+import { BehaviorSubject, of, throwError } from "rxjs";
 import { Participant } from "../model/participant.model";
 import { Agent } from "src/app/shared/model/agent.model";
 import { AgentService } from "src/app/shared/services/agent.service";
@@ -42,14 +42,17 @@ export class ParticipantService {
   }
 
   updateParticipant(participant: Participant) {
-    // You can replace this with actual logic to update participant
-    // For now, we'll find the participant by id and update its data
+    // Find the participant by id and update its data
     const index = this.participantsList.findIndex(p => p.id === participant.id);
     if (index !== -1) {
       this.participantsList[index] = participant;
       this.participantsSubject.next([...this.participantsList]);
+      return of(participant); // Return an observable to mimic HTTP request
+    } else {
+      return throwError('Participant not found');
     }
   }
+  
   delete(participant: Participant) {
     this.participants = this.participants.filter(d => d.id !== participant.id);
     this.participantsSubject.next(this.participants);

@@ -186,7 +186,7 @@ export class DashboardLaitComponent implements OnInit {
     responsive: true
   };
 
-  public barChartLabels = ['Janvier', 'Février', 'Mars', 'Avril', 'Mail', 'juin', 'Juillet','Août','Septembre','Octobre','Novembre','Decembre'];
+  public barChartLabels = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'juin', 'Juillet','Août','Septembre','Octobre','Novembre','Decembre'];
   public barChartType = 'bar';
   public barChartLegend = true;
 

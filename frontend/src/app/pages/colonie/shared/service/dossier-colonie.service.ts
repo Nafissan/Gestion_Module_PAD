@@ -19,6 +19,8 @@ export class DossierColonieService {
       etat: 'ouvert',
       noteMinistere: undefined,
       demandeProspection: undefined,
+      notePelerins: undefined,
+      notePersonnels: undefined,
       matricule: '',
       prenom: '',
       nom: '',

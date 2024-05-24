@@ -1,0 +1,37 @@
+<div mat-dialog-title class="h1-responsive text-align titre_modal_add">DETAILS SATISFACTION</div>
+<mat-dialog-content>
+    <mat-accordion class="example-headers-align" multi>
+        <div class="example-action-buttons">
+            <button *ngIf="showIcon === true" mat-raised-button color="primary" (click)="accordion.openAll(); showIcon = !showIcon">
+                <mat-icon>expand_more</mat-icon> Afficher
+            </button>
+            <button *ngIf="showIcon === false" mat-raised-button color="warn" (click)="accordion.closeAll(); showIcon = !showIcon">
+                <mat-icon>expand_less</mat-icon> Fermer
+            </button>
+        </div>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon>question_answer</mat-icon>
+                    <span>Réponses aux Questions</span>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <div *ngFor="let question of satisfaction.questions">
+                <mat-panel-description>
+                    <span>{{ question }} : </span>{{ satisfaction.reponses[question] }}
+                </mat-panel-description>
+            </div>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon>comment</mat-icon>
+                    <span>Commentaire</span>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-panel-description>
+                <span>Commentaire : </span>{{ satisfaction.commentaire }}
+            </mat-panel-description>
+        </mat-expansion-panel>
+    </mat-accordion>
+</mat-dialog-content>

@@ -9,6 +9,6 @@ export class Participant{
     groupeSanguin: string;
     ficheSocial: File;
     agentParent: Agent;
-    etat?:string;
+    status?:string;
     agent?: Agent;
 }

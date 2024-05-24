@@ -6,6 +6,8 @@ export class DossierColonie {
 	etat: string;
     noteMinistere: File;
     demandeProspection: File;
+	notePersonnels: File;
+	notePelerins: File;
 
 	matricule: string;
 	prenom: string;
@@ -23,7 +25,8 @@ export class DossierColonie {
 		this.etat                     = dossiercolonie.etat;
         this.noteMinistere 			  = dossiercolonie.noteMinistere;
         this.demandeProspection 	  = dossiercolonie.demandeProspection;
-
+		this.notePersonnels			  =	dossiercolonie.notePersonnels;
+		this.notePelerins			  = dossiercolonie.notePelerins;	
 		this.matricule                = dossiercolonie.matricule
 		this.nom                      = dossiercolonie.nom
 		this.prenom                   = dossiercolonie.prenom

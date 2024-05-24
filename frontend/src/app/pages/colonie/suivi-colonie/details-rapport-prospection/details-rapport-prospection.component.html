@@ -1,0 +1,32 @@
+<div mat-dialog-title class="h1-responsive text-align titre_modal_add">DETAILS RAPPORT DE PROSPECTION</div>
+<mat-dialog-content>
+    <mat-accordion class="example-headers-align" multi>
+        <div class="example-action-buttons">
+            <button *ngIf="showIcon === true" mat-raised-button color="primary" (click)="accordion.openAll(); showIcon = !showIcon">
+                <mat-icon>expand_more</mat-icon> Afficher
+            </button>
+            <button *ngIf="showIcon === false" mat-raised-button color="warn" (click)="accordion.closeAll(); showIcon = !showIcon">
+                <mat-icon>expand_less</mat-icon> Fermer
+            </button>
+        </div>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon>insert_drive_file</mat-icon>
+                    <span>Contenu du Fichier Rapport</span>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-panel-description>
+                <div *ngIf="fileContent">
+                    <pre *ngIf="rapportProspection.rapport.type.startsWith('text')">{{ fileContent }}</pre>
+                    <div *ngIf="rapportProspection.rapport.type === 'application/pdf'">
+                        <iframe [src]="fileContent" width="100%" height="500px"></iframe>
+                    </div>
+                    <p *ngIf="!rapportProspection.rapport.type.startsWith('text') && rapportProspection.rapport.type !== 'application/pdf'">
+                        {{ fileContent }}
+                    </p>
+                </div>
+            </mat-panel-description>
+        </mat-expansion-panel>
+    </mat-accordion>
+</mat-dialog-content>

@@ -38,6 +38,8 @@ export class ValidationParticipantComponent implements OnInit {
     { name: 'Date de Naissance', property: 'dateNaissance', visible: true, isModelProperty: true },
     { name: 'Lieu de Naissance', property: 'lieuNaissance', visible: true, isModelProperty: true },
     { name: 'Groupe Sanguin', property: 'groupeSanguin', visible: true, isModelProperty: true },
+    { name: 'Status', property: 'status', visible: false, isModelProperty: true },
+    { name: 'Traité par', property: 'agent', visible: false, isModelProperty: true },
     { name: 'Actions', property: 'action', visible: true },
   ] as ListColumn[];
 
@@ -53,11 +55,6 @@ export class ValidationParticipantComponent implements OnInit {
 
   ngOnInit() {
     this.dataSource = new MatTableDataSource();
-    this.data$.pipe(filter((data: any) => !!data)).subscribe(participants => {
-      this.participants = participants;
-      this.dataSource.data = participants;
-    });
-
     this.participantService.getAllParticipants().subscribe(participants => {
       this.participants = participants;
       this.subject$.next(this.participants);
@@ -66,13 +63,6 @@ export class ValidationParticipantComponent implements OnInit {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
 
-    this.searchMatriculeControl.valueChanges.subscribe(value => {
-      if (value) {
-        this.filterParticipantsByAgentMatricule(value);
-      } else {
-        this.subject$.next(this.participants);
-      }
-    });
   }
 
   get visibleColumns() {
@@ -90,37 +80,16 @@ export class ValidationParticipantComponent implements OnInit {
       return dataStr.indexOf(filter) !== -1;
     };
   }
-
-  filterParticipantsByAgentMatricule(matricule: string) {
-    const filteredParticipants = this.participants.filter(participant => participant.agentParent.matricule.toLowerCase().includes(matricule.toLowerCase()));
-    this.subject$.next(filteredParticipants);
-  }
-
-  createParticipant() {
-    // Logic to open a dialog and create a new participant
-  }
-
-  updateParticipant(participant: Participant) {
-    // Logic to open a dialog and update the selected participant
-  }
-
-  deleteParticipant(participant: Participant) {
-    this.dialogConfirmationService.confirmationDialog().subscribe(action => {
-      if (action === 'confirmer') {
-        this.participantService.delete(participant).subscribe(() => {
-          this.participants = this.participants.filter(p => p.id !== participant.id);
-          this.subject$.next(this.participants);
-          this.notificationService.success('Participant supprimé avec succès');
-        }, () => {
-          this.notificationService.warn('Échec de la suppression du participant');
-        });
-      }
+  validerParticipant(participant: Participant) {
+    // Update the participant state to 'validated'
+    participant.status = 'validee';
+    this.participantService.updateParticipant(participant).subscribe(() => {
+      this.notificationService.success('Participant validé avec succès');
+    }, () => {
+      this.notificationService.warn('Échec de la validation du participant');
     });
   }
-
-  validerParticipant(participant: Participant) {
-    // Logic to validate the selected participant
-  }
+  
 
   hasAnyRole(roles: string[]) {
     return this.authentificationService.hasAnyRole(roles);

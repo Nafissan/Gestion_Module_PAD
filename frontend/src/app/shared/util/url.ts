@@ -918,7 +918,16 @@ export let menus = [
       parent: null,
     }
   },
-  
+  {
+    id: 65,
+    name: "Colonie",
+    routeOrFunction: "/colonie",
+    icon: "list",
+    position: 1,
+    pathMatchExact: true,
+    parent: null,
+    privilege: "MENU_COLONIE"
+  },
 ];
 
 export let getMenu = function (privileges) {

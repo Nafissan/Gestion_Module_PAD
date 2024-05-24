@@ -30,6 +30,15 @@
             <input type="file" (change)="handleDemandeProspectionFileInput($event.target.files)">
         </mat-form-field>
 
+           <mat-form-field>
+            <mat-label>Note aux personels</mat-label>
+            <input type="file" (change)="handleNotePersonels($event.target.files)">
+        </mat-form-field>
+
+           <mat-form-field>
+            <mat-label>Note aux pelerins</mat-label>
+            <input type="file" (change)="handleNotePersonels($event.target.files)">
+        </mat-form-field>
     </mat-dialog-content>
 
     <mat-dialog-actions fxLayout="row" fxLayoutAlign="end center">
