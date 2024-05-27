@@ -11,12 +11,13 @@ import { MatAccordion } from '@angular/material/expansion';
 })
 export class DetailsSatisfactionComponent implements OnInit {
   satisfaction: Satisfaction; // Définissez le type de données de la satisfaction
-satisfactionService: SatisfactionService;
 @ViewChild(MatAccordion) accordion: MatAccordion;
 //Show icon
 showIcon = true;
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: Satisfaction // Injectez les données de satisfaction passées en entrée
+    @Inject(MAT_DIALOG_DATA) public data: Satisfaction,
+    private satisfactionService: SatisfactionService // Inject the SatisfactionService
+    // Injectez les données de satisfaction passées en entrée
   ) { }
 
   ngOnInit(): void {

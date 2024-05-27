@@ -13,6 +13,8 @@ import { NotificationService } from 'src/app/shared/services/notification.servic
 import { NotificationUtil } from 'src/app/shared/util/util';
 import { filter } from 'rxjs/operators';
 import { AuthenticationService } from 'src/app/shared/services/authentification.service';
+import { SelectionModel } from '@angular/cdk/collections';
+import { DetailsSatisfactionComponent } from '../details-satisfaction/details-satisfaction.component';
 
 @Component({
   selector: 'fury-liste-satisfaction',
@@ -26,6 +28,8 @@ export class ListeSatisfactionComponent implements OnInit {
   pageSize = 10;
   dataSource: MatTableDataSource<Satisfaction> | null;
   showProgressBar: boolean = false;
+  selection = new SelectionModel<Satisfaction>(true, []);
+  satisfactionSelected: Satisfaction;
 
   private paginator: MatPaginator;
   private sort: MatSort;
@@ -83,6 +87,7 @@ export class ListeSatisfactionComponent implements OnInit {
   getSatisfactions() {
     this.satisfactionService.getAllSatisfactions().subscribe((response) => {
       this.satisfactions = response;
+      this.satisfactionSelected = this.satisfactions.find(e => e.id ===1);
       this.subject$.next(this.satisfactions);
       this.showProgressBar = true;
     console.log(this.satisfactions); 
@@ -95,6 +100,22 @@ export class ListeSatisfactionComponent implements OnInit {
     value = value.trim().toLowerCase();
     this.dataSource.filter = value;
     this.dataSource.filterPredicate = (data: any, value) => { const dataStr =JSON.stringify(data).toLowerCase(); return dataStr.indexOf(value) != -1; }
+  }
+  isAllSelected() {
+    const numSelected = this.selection.selected.length;
+    const numRows = this.dataSource.data.length;
+    return numSelected === numRows;
+  }
+  masterToggle() {
+    this.isAllSelected() ?
+        this.selection.clear() :
+        this.dataSource.data.forEach(row => this.selection.select(row));
+  }
+  checkboxLabel(row?: Satisfaction): string {
+    if (!row) {
+      return `${this.isAllSelected() ? 'select' : 'deselect'} all`;
+    }
+    return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.id + 1}`;
   }
   createSatisfaction(){
     this.dialog.open(AddOrUpdateSatisfactionComponent)
@@ -142,6 +163,21 @@ export class ListeSatisfactionComponent implements OnInit {
       }
     })
   }  
+  detailsSatisfaction(satisfaction: Satisfaction){
+    console.log(satisfaction);
+    this.dialog
+    .open(DetailsSatisfactionComponent, {data : satisfaction})
+    .afterClosed()
+    .subscribe((satisfaction)=> {
+      if(satisfaction){
+        const index= this.satisfactions.findIndex(
+          (existing) => existing.id === satisfaction.id
+        );
+        this.satisfactions[index] = new Satisfaction(satisfaction);
+        this.subject$.next(this.satisfactions);
+      }
+    })
+  }
   hasAnyRole(roles: string[]) {
     return this.authentificationService.hasAnyRole(roles);
   }

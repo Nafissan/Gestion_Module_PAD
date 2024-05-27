@@ -10,12 +10,13 @@
         <div *ngFor="let question of questions; let i = index" fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
             <mat-form-field fxFlex>
                 <mat-label>{{ question }}</mat-label>
-                <mat-select [formControlName]="'reponses.' + question" required>
-                    <mat-option value="true">Oui</mat-option>
-                    <mat-option value="false">Non</mat-option>
+                <mat-select [formControlName]="question" required>
+                    <mat-option [value]="true">Oui</mat-option>
+                    <mat-option [value]="false">Non</mat-option>
                 </mat-select>
             </mat-form-field>
         </div>
+
         <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
             <mat-form-field fxFlex>
                 <mat-label>Code Dossier Colonie</mat-label>

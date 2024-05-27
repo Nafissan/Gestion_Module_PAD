@@ -36,7 +36,8 @@ registerLocaleData(localeFr, 'fr');
     }),
     PendingInterceptorModule,
   ],
-  declarations: [AppComponent, DialogComponent],
+  declarations: [AppComponent, DialogComponent
+  ],
   bootstrap: [AppComponent],
   providers: [
     {

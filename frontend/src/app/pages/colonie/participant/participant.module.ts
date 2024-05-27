@@ -13,10 +13,12 @@ import { FuryCardModule } from 'src/@fury/shared/card/card.module';
 import { ListModule } from 'src/@fury/shared/list/list.module';
 import { MaterialModule } from 'src/@fury/shared/material-components.module';
 import { PageLayoutDemoContentModule } from '../../page-layouts/components/page-layout-content/page-layout-demo-content.module';
+import { ReadFileParticipantComponent } from './read-file-participant/read-file-participant.component';
+import { SafeUrlPipe } from './safe-url.pipe';
 
 
 @NgModule({
-  declarations: [ListeParticipantComponent, AddOrUpdateParticipantComponent],
+  declarations: [ListeParticipantComponent, AddOrUpdateParticipantComponent, ReadFileParticipantComponent, SafeUrlPipe],
   imports: [
     CommonModule,
     ParticipantRoutingModule,
@@ -31,6 +33,10 @@ import { PageLayoutDemoContentModule } from '../../page-layouts/components/page-
     ListModule,
     BreadcrumbsModule,
     ReactiveFormsModule
-  ]
+  ],
+  exports: [
+    SafeUrlPipe,
+    // Autres exports propres au module participant
+  ],
 })
 export class ParticipantModule { }

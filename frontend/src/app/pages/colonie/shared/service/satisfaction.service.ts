@@ -14,8 +14,24 @@ export class SatisfactionService {
   constructor() {
     // Initialize with some dummy data if necessary
     this.satisfactionsList = [
-      new Satisfaction(1, ['question1', 'question2', 'question3', 'question4', 'question5'], { question1: true, question2: false, question3: true, question4: false, question5: true }, new Date(), null, "DCLN2024", "dkflrlflelf"),
-      new Satisfaction(2, ['question1', 'question2', 'question3', 'question4', 'question5'], { question1: false, question2: true, question3: false, question4: true, question5: false }, new Date(), null, "DCLN2023", "dvfcf")
+      new Satisfaction({
+        id: 1,
+        questions: ['question1', 'question2', 'question3', 'question4', 'question5'],
+        reponses: { question1: true, question2: false, question3: true, question4: false, question5: true },
+        dateCreation: new Date(),
+        traitePar: null,
+        code: "DCLN2024",
+        commentaire: "dkflrlflelf"
+      }),
+      new Satisfaction({
+        id: 2,
+        questions: ['question1', 'question2', 'question3', 'question4', 'question5'],
+        reponses: { question1: false, question2: true, question3: false, question4: true, question5: false },
+        dateCreation: new Date(),
+        traitePar: null,
+        code: "DCLN2023",
+        commentaire: "dvfcf"
+      })
     ];
     this.satisfactionsSubject.next(this.satisfactionsList);
   }

@@ -42,7 +42,15 @@ export class ParticipantService {
     this.participantsSubject.next([...this.participantsList]);
     return of(this.participants);
   }
-
+  getParticipantById(id: number) {
+    const participant = this.participants.find(p => p.id === id);
+    if (participant) {
+      return of(participant);
+    } else {
+      return throwError('Participant not found');
+    }
+  }
+  
   updateParticipant(participant: Participant) {
     // Find the participant by id and update its data
     const index = this.participants.findIndex(p => p.id === participant.id);

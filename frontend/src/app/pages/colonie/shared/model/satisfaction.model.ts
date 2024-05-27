@@ -9,14 +9,14 @@ export class Satisfaction {
     code: string;  
     commentaire: string;
   
-    constructor(id: number, q1: string[], q2: { [key: string]: boolean }, date: Date, agent: Agent, code: string, comment: string) {
-      this.id = id;
-      this.questions = q1;
-      this.reponses = q2;
-      this.code = code;
-      this.dateCreation= date;
-      this.traitePar = agent;
-      this.commentaire = comment;
+    constructor(satisfaction: Satisfaction) {
+      this.id = satisfaction.id;
+      this.questions = satisfaction.questions;
+      this.reponses = satisfaction.reponses;
+      this.code = satisfaction.code;
+      this.dateCreation= satisfaction.dateCreation;
+      this.traitePar = satisfaction.traitePar;
+      this.commentaire = satisfaction.commentaire;
     }
   }
   

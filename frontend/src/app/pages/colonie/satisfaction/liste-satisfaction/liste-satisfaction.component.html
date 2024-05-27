@@ -50,7 +50,7 @@
 
                 <!-- Table Header and Rows -->
                 <tr mat-header-row *matHeaderRowDef="visibleColumns"></tr>
-                <tr mat-row *matRowDef="let row; columns: visibleColumns" class="clickable"></tr>
+                <tr mat-row *matRowDef="let row; columns: visibleColumns" (click)="detailsSatisfaction(row)" class="clickable"></tr>
             </table>
 
             <mat-paginator [pageSize]="pageSize" class="paginator"></mat-paginator>

@@ -3,6 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { ListeParticipantComponent } from './liste-participant/liste-participant.component';
 import { AuthGuard } from 'src/app/shared/services/authguard.service';
 import { AddOrUpdateParticipantComponent } from './add-or-update-participant/add-or-update-participant.component';
+import { ReadFileParticipantComponent } from './read-file-participant/read-file-participant.component';
 
 
 const routes: Routes = [
@@ -15,7 +16,8 @@ const routes: Routes = [
   {
     path: 'add-participant-colonie', component: AddOrUpdateParticipantComponent, canActivate: [AuthGuard],
   },
- 
+  { path: 'read-fiche-social', component: ReadFileParticipantComponent , canActivate: [AuthGuard] }, 
+
 
 ];
 

@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
 import { ColonieRoutingModule } from './colonie-routing.module';
 import { DossierColonieModule } from './dossier-colonie/dossier-colonie.module';
 import { ParticipantModule } from './participant/participant.module';
@@ -9,7 +8,8 @@ import { SuiviColonieModule } from './suivi-colonie/suivi-colonie.module';
 
 
 @NgModule({
-  declarations: [],
+  declarations: [
+],
   imports: [
     CommonModule,
     ColonieRoutingModule,

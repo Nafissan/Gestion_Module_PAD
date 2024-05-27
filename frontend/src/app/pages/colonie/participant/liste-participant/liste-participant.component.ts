@@ -17,6 +17,8 @@ import { AddOrUpdateParticipantComponent } from '../add-or-update-participant/ad
 import { SelectionModel } from '@angular/cdk/collections';
 import { NotificationUtil } from 'src/app/shared/util/util';
 import { filter } from 'rxjs/operators';
+import { Route, Router } from '@angular/router';
+import { ReadFileParticipantComponent } from '../read-file-participant/read-file-participant.component';
 
 @Component({
   selector: 'fury-liste-participant',
@@ -34,7 +36,11 @@ export class ListeParticipantComponent implements OnInit {
   pageSize = 4;
   dataSource: MatTableDataSource<Participant> | null;
   selection = new SelectionModel<Participant>(true, []);
-
+  afficherFicheSociale: boolean = false;
+  participantSelectionne: Participant;
+  
+  
+  
   private paginator: MatPaginator;
   private sort: MatSort;
   @ViewChild(MatSort) set matSort(ms: MatSort) {
@@ -84,7 +90,8 @@ export class ListeParticipantComponent implements OnInit {
     private notificationService: NotificationService,
     private dialogConfirmationService: DialogConfirmationService,
     private authentificationService: AuthenticationService,
-    private agentService: AgentService
+    private agentService: AgentService,
+    private router: Router
 
   ) {}
 
@@ -207,4 +214,19 @@ export class ListeParticipantComponent implements OnInit {
       this.notificationService.warn('Échec de la validation du participant');
     });
   }
+  afficherFicheSocial(participant: Participant): void {
+    this.participantSelectionne = participant;
+    this.afficherFicheSociale = true;
+}
+telechargerFicheSocial(participant: Participant) {
+  const ficheSocialBlob = new Blob([participant.ficheSocial], { type: 'application/pdf' });
+  const ficheSocialUrl = window.URL.createObjectURL(ficheSocialBlob);
+  const a = document.createElement('a');
+  a.href = ficheSocialUrl;
+  a.download = `Fiche_Sociale_${participant.nom}_${participant.prenom}.pdf`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  window.URL.revokeObjectURL(ficheSocialUrl);
+}
 }

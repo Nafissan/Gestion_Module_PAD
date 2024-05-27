@@ -17,10 +17,8 @@
                 </mat-panel-title>
             </mat-expansion-panel-header>
             <div *ngFor="let question of satisfaction.questions">
-                <mat-panel-description>
-                    <span>{{ question }} : </span>{{ satisfaction.reponses[question] }}
-                </mat-panel-description>
-            </div>
+                <p>{{ question }}: {{ satisfaction.reponses[question] ? 'Oui' : 'Non' }}</p>
+              </div>
         </mat-expansion-panel>
         <mat-expansion-panel>
             <mat-expansion-panel-header>
@@ -30,7 +28,7 @@
                 </mat-panel-title>
             </mat-expansion-panel-header>
             <mat-panel-description>
-                <span>Commentaire : </span>{{ satisfaction.commentaire }}
+                <span>{{ satisfaction.commentaire }} </span>
             </mat-panel-description>
         </mat-expansion-panel>
     </mat-accordion>

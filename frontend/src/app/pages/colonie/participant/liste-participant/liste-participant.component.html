@@ -49,6 +49,14 @@
                   <mat-icon>edit</mat-icon>
                   <span>VALIDER</span>
                 </button>
+                <button mat-menu-item (click)="telechargerFicheSocial(row)">
+                  <mat-icon>file_download</mat-icon>
+                  <span>TELECHARGER FICHE </span>
+                </button>
+                <button mat-menu-item (click)="afficherFicheSocial(row)">
+                  <mat-icon>file_download</mat-icon>
+                  <span>AFFICHER FICHE </span>
+                </button>
               </mat-menu>
             </td>
           </ng-container>
@@ -60,7 +68,9 @@
   
         <mat-paginator [pageSize]="pageSize" class="paginator"></mat-paginator>
       </fury-list>
-  
+      <div *ngIf="afficherFicheSociale">
+        <fury-read-file-participant [participant]="participantSelectionne"></fury-read-file-participant>
+    </div>
       <div *ngIf="participants.length === 0 && showProgressBar === true" class="card text-center">
         <div class="card-header">
           <span class="badge badge-info">INFORMATION</span>
