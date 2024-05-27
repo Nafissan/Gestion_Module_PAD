@@ -9,6 +9,7 @@
 	<classpathentry excluding="**" kind="src" output="target/classes" path="src/main/resources">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
+			<attribute name="optional" value="true"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" output="target/test-classes" path="src/test/java">
@@ -51,7 +52,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
-	<classpathentry kind="src" output="target/test-classes" path="pad-obur-0658/Users/Adama DRAME/Desktop/Workspace/psalaries-backend/PAD-OBUR-0658/Users/Adama DRAME/Desktop/Workspace/psalaries-backend/src/it/java">
+	<classpathentry kind="src" output="target/test-classes" path="src/it/java">
 		<attributes>
 			<attribute name="optional" value="true"/>
 			<attribute name="maven.pomderived" value="true"/>

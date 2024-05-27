@@ -62,13 +62,15 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
   columns: ListColumn[] = [
     { name: "Checkbox", property: "checkbox", visible: false },
     { name: "Id", property: "id", visible: false, isModelProperty: true },
-    { name: "Code", property: "code", visible: false, isModelProperty: true },
+    { name: "Code", property: "code", visible: true, isModelProperty: true },
     { name: "Annee", property: "annee", visible: true, isModelProperty: true },
     { name: "Description", property: "description", visible: true, isModelProperty: true },
     { name: "Etat", property: "etat", visible: true, isModelProperty: true },
-    { name: "Note du Ministre", property: "noteMinistre", visible: true, isModelProperty: true },
+    { name: "Note du Ministere", property: "noteMinistere", visible: true, isModelProperty: true },
     { name: "Demande de Prospection", property: "demandeProspection", visible: true, isModelProperty: true },
-    { name: "Matricule", property: "matricule", visible: false, isModelProperty: true },
+    { name: "Note aux Employes", property: "notePersonnels", visible: false, isModelProperty: true },
+    { name: "Note aux Colons", property: "notePelerins", visible: false, isModelProperty: true },
+    { name: "Matricule", property: "matricule", visible: true, isModelProperty: true },
     { name: "Prenom", property: "prenom", visible: false, isModelProperty: true },
     { name: "Nom", property: "nom", visible: false, isModelProperty: true },
     { name: "Fonction", property: "fonction", visible: false, isModelProperty: true },
@@ -94,6 +96,7 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
     this.data$.pipe(filter((data) => !!data)).subscribe((dossierColonies) => {
       this.dossierColonies = dossierColonies;
       this.dataSource.data = dossierColonies;
+      console.log('Dossier Colonies in ngOnInit:', this.dossierColonies); // Debugging output
     });
   }
 
@@ -120,12 +123,14 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
   getDossierColonies() {
     this.dossierColonieService.getAll().subscribe(
       (response) => {
+        console.log('Response:', response); // Debugging output
         this.dossierColonies = response;
-        this.currentDossierColonie = this.dossierColonies.find(e => e.etat === EtatDossierColonie.saisi || e.etat === EtatDossierColonie.ouvert);
+        console.log('Dossier Colonies:', this.dossierColonies); // Debugging output
+        this.subject$.next(this.dossierColonies);
+        this.showProgressBar = true;
       },
-      (err) => { },
-      () => {
-        this.subject$.next(this.dossierColonies.filter(dossierColonie => dossierColonie.etat !== EtatDossierColonie.fermer));
+      (err) => {
+        console.error('Error loading dossier colonies:', err); // Debugging output
       }
     );
   }
@@ -140,18 +145,24 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
         }
       });
   }
-
+  hasAnyRole(roles: string[]) {
+    return this.authentificationService.hasAnyRole(roles);
+  }
   updateDossierColonie(dossierColonie: DossierColonie) {
     this.dialog
       .open(AddDossierColonieComponent, { data: dossierColonie })
       .afterClosed()
-      .subscribe((dossierColonie) => {
-        if (dossierColonie) {
+      .subscribe((updatedDossierColonie) => {
+        console.log("Apres update", updatedDossierColonie);
+        if (updatedDossierColonie) {
           const index = this.dossierColonies.findIndex(
-            (existingDossierColonie) => existingDossierColonie.id === dossierColonie.id
+            (existingDossierColonie) => existingDossierColonie.id === updatedDossierColonie.id
           );
-          this.dossierColonies[index] = dossierColonie;
-          this.subject$.next(this.dossierColonies);
+          if (index !== -1) {
+            this.dossierColonies[index] = new DossierColonie(updatedDossierColonie);
+            this.subject$.next(this.dossierColonies);
+            console.log("Apres update", this.dossierColonies.length);
+          }
         }
       });
   }

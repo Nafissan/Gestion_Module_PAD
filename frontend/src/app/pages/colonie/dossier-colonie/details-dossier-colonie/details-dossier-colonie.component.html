@@ -56,6 +56,42 @@
         <mat-expansion-panel>
             <mat-expansion-panel-header>
                 <mat-panel-title>
+                    <mat-icon>insert_drive_file</mat-icon>
+                    <span>Rapport de prospection</span>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-panel-description>
+                <span>Nom du fichier : </span>{{ dossierColonie.demandeProspection ? dossierColonie.demandeProspection.name : 'Aucun fichier sélectionné' }}
+            </mat-panel-description>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon>insert_drive_file</mat-icon>
+                    <span>Note d'information</span>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-panel-description>
+                <span>Destinee aux employes : </span>{{ dossierColonie.demandeProspection ? dossierColonie.demandeProspection.name : 'Aucun fichier sélectionné' }}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Destinee aux colons : </span>{{ dossierColonie.demandeProspection ? dossierColonie.demandeProspection.name : 'Aucun fichier sélectionné' }}
+            </mat-panel-description>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon>insert_drive_file</mat-icon>
+                    <span>Rapport de colonie</span>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-panel-description>
+                <span>Nom du fichier : </span>{{ dossierColonie.demandeProspection ? dossierColonie.demandeProspection.name : 'Aucun fichier sélectionné' }}
+            </mat-panel-description>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
                     <mat-icon>supervisor_account</mat-icon>
                     <span>Agent Responsable</span>
                 </mat-panel-title>

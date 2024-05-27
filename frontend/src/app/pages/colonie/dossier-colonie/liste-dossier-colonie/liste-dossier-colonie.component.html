@@ -6,7 +6,7 @@
     <fury-page-layout-content [@fadeInUp]>
       <fury-list *ngIf="dossierColonies.length !== 0 && showProgressBar === true" name="Dossier Colonie" [columns]="columns" (filterChange)="onFilterChange($event)">
         <div class="actions">
-          <button class="create" (click)="createDossierColonie()" [disabled]="(currentDossierColonie && currentDossierColonie.etat !== fermer) || !hasAnyRole(['DOSSIER_COLONIE_ADD'])" type="button" mat-mini-fab color="primary">
+          <button class="create" (click)="createDossierColonie()" [disabled]="(currentDossierColonie && currentDossierColonie.etat !== fermer) || !hasAnyRole(['MENU_DOTATION'])" type="button" mat-mini-fab color="primary">
             <mat-icon>add</mat-icon>
           </button>
         </div>
@@ -26,7 +26,7 @@
             <ng-container *ngIf="column.isModelProperty" [matColumnDef]="column.property">
               <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ column.name }} </th>
               <td mat-cell *matCellDef="let row">
-                <span *ngIf="column.property === 'etat'">
+                <ng-container *ngIf="column.property === 'etat'">
                   <span class="badge" [ngClass]="{
                     'badge-warning': row[column.property] === saisi,
                     'badge-info': row[column.property] === ouvert,
@@ -34,9 +34,16 @@
                   }">
                     {{ row[column.property] }}
                   </span>
-                </span>
-                <span *ngIf="column.property !== 'etat'">{{ row[column.property] }}</span>
-              </td>
+                </ng-container>
+            
+                <ng-container *ngIf="column.property !== 'etat'">
+                  <!-- Si la propriété est 'noteMinistere', afficher uniquement le nom du fichier -->
+                  <span *ngIf="column.property === 'noteMinistere' && row.noteMinistere">{{ row.noteMinistere.name }}</span>
+                  <span *ngIf="column.property === 'demandeProspection' && row.demandeProspection">{{ row.demandeProspection.name }}</span>
+                  <!-- Sinon, afficher la valeur normale -->
+                  <span *ngIf="column.property !== 'noteMinistere' && column.property !== 'demandeProspection'">{{ row[column.property] }}</span>
+                </ng-container>
+               </td>
             </ng-container>
           </ng-container>
   
@@ -48,19 +55,19 @@
                 <mat-icon>more_horiz</mat-icon>
               </button>
               <mat-menu #actionsMenu="matMenu">
-                <button mat-menu-item (click)="updateDossierColonie(row)" [disabled]="!hasAnyRole(['DOSSIER_COLONIE_UPDATE']) || row.etat !== saisi">
+                <button mat-menu-item (click)="updateDossierColonie(row)" [disabled]="!hasAnyRole(['MENU_DOTATION']) || row.etat == ouvert">
                   <mat-icon>edit</mat-icon>
                   <span>MODIFIER</span>
                 </button>
-                <button mat-menu-item (click)="deleteDossierColonie(row)" [disabled]="!hasAnyRole(['DOSSIER_COLONIE_DELETE']) || row.etat !== saisi">
+                <button mat-menu-item (click)="deleteDossierColonie(row)" [disabled]="!hasAnyRole(['MENU_DOTATION']) || row.etat !== saisi">
                   <mat-icon>delete_sweep</mat-icon>
                   <span>SUPPRIMER</span>
                 </button>
-                <button mat-menu-item (click)="ouvrirDossierColonie(row)" [disabled]="!hasAnyRole(['DOSSIER_COLONIE_OUVRIR']) || row.etat === ouvert || row.etat === fermer">
+                <button mat-menu-item (click)="ouvrirDossierColonie(row)" [disabled]="!hasAnyRole(['MENU_DOTATION']) || row.etat === ouvert || row.etat === fermer">
                   <mat-icon>send</mat-icon>
                   <span>OUVRIR</span>
                 </button>
-                <button mat-menu-item (click)="fermerDossierColonie(row)" [disabled]="!hasAnyRole(['DOSSIER_COLONIE_FERMER']) || row.etat === fermer || row.etat === saisi">
+                <button mat-menu-item (click)="fermerDossierColonie(row)" [disabled]="!hasAnyRole(['MENU_DOTATION']) || row.etat === fermer || row.etat === saisi">
                   <mat-icon>close</mat-icon>
                   <span>FERMER</span>
                 </button>

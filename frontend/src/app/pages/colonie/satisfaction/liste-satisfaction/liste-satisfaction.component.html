@@ -49,8 +49,8 @@
                 </ng-container>
 
                 <!-- Table Header and Rows -->
-                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                <tr mat-row *matRowDef="let row; columns: displayedColumns" class="clickable"></tr>
+                <tr mat-header-row *matHeaderRowDef="visibleColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: visibleColumns" class="clickable"></tr>
             </table>
 
             <mat-paginator [pageSize]="pageSize" class="paginator"></mat-paginator>
@@ -61,8 +61,8 @@
                 <span class="badge badge-info">INFORMATION</span>
             </div>
             <div class="card-body">
-                <h5 class="card-title">LISTE DES SATISFACTIONS VIDE</h5>
-                <p class="card-text">Ajouter un nouveau participant à la colonie</p>
+                <h5 class="card-title">LISTE DES FORMULAIRES SATISFACTIONS VIDE</h5>
+                <p class="card-text">Ajouter un nouveau formulaire satisfactions</p>
                 <button mat-mini-fab color="primary" (click)="createSatisfaction()">
                   <mat-icon>add</mat-icon>
                 </button>            </div>

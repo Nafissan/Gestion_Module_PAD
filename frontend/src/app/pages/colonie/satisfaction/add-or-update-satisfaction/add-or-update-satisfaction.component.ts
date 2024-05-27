@@ -6,9 +6,9 @@ import { Satisfaction } from '../../shared/model/satisfaction.model';
 import { CompteService } from 'src/app/pages/gestion-utilisateurs/shared/services/compte.service';
 import { AuthenticationService } from 'src/app/shared/services/authentification.service';
 @Component({
-  selector: 'app-satisfaction-form',
+  selector: 'fury-satisfaction-form',
   templateUrl: './add-or-update-satisfaction.component.html',
-  styleUrls: ['./add-or-update-satisfaction.component.scss']
+  styleUrls: ['./add-or-update-satisfaction.component.scss', "../../../../shared/util/bootstrap4.css"],
 })
 export class AddOrUpdateSatisfactionComponent implements OnInit {
   form: FormGroup;

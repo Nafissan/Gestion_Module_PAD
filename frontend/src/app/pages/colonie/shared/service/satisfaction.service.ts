@@ -1,11 +1,10 @@
-// src/app/shared/service/satisfaction.service.ts
 
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { Satisfaction } from '../model/satisfaction.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class SatisfactionService {
   private satisfactionsList: Satisfaction[] = [];

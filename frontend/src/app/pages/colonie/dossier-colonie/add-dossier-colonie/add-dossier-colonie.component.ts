@@ -29,7 +29,7 @@ export const MY_FORMATS = {
   },
 };
 @Component({
-  selector: "app-add-dossier-colonie",
+  selector: "fury-add-dossier-colonie",
   templateUrl: "./add-dossier-colonie.component.html",
   styleUrls: ["./add-dossier-colonie.component.scss"],
   providers: [
@@ -53,6 +53,7 @@ export const MY_FORMATS = {
   mode: "create" | "update" = "create";
   colonieDossier: DossierColonie;
   etatDossierColonie: EtatDossierColonie = new EtatDossierColonie();
+  selectedFileName: string = '';
 
 
   // Autres propriétés nécessaires
@@ -99,9 +100,14 @@ export const MY_FORMATS = {
   }
 
  
-
-  handleNoteMinistereFileInput(files: FileList): void {
-    this.fileNoteMinistere = files.item(0);
+ 
+  handleNoteMinistereFileInput(files: FileList) {
+    if (files.length > 0) {
+      this.fileNoteMinistere  = files[0];
+      this.selectedFileName = this.fileNoteMinistere.name;
+      console.log(this.fileNoteMinistere.name);
+      // Faites quelque chose avec le fichier
+    }
   }
 
   handleDemandeProspectionFileInput(files: FileList): void {
@@ -125,7 +131,7 @@ export const MY_FORMATS = {
   createDossierColonie(): void {
     let formData: DossierColonie   = this.form.value;
     formData.annee                = new Date(this.dateCreation.value).getFullYear().toString();
-    formData.code                 = 'DCLN' + '-' + 'PAD' + '-' + formData.annee + '-' + new Date().getTime();
+    formData.code                 = 'DCLN' + '-' + 'PAD' + '-' + formData.annee;
     formData.etat                 = EtatDossierColonie.saisi; 
     formData.noteMinistere        = this.fileNoteMinistere,
     formData.demandeProspection   = null, 
@@ -162,18 +168,31 @@ export const MY_FORMATS = {
   }
 
   updateDossierColonie(): void {
-    const formData: DossierColonie =  this.form.value;
-    formData.description        = this.form.get("description").value,
+    const formData: DossierColonie = this.form.value ;
+    formData.annee                = this.defaults.annee;
+    formData.code                 = this.defaults.code;
+    formData.etat                 = EtatDossierColonie.saisi;  
+
+    formData.matricule            = this.defaults.matricule;
+    formData.prenom               = this.defaults.prenom;
+    formData.nom                  = this.defaults.nom;
+    formData.fonction             = this.defaults.fonction;
+
+    formData.codeDirection        = this.defaults.codeDirection;
+    formData.nomDirection         = this.defaults.nomDirection;
+    formData.descriptionDirection = this.defaults.descriptionDirection;
+    formData.noteMinistere = this.fileNoteMinistere;
     formData.demandeProspection = this.fileDemandeProspetion;
     formData.notePelerins = this.fileNotePelerins;
     formData.notePersonnels = this.fileNotePersonnels;
 
     this.dialogConfirmationService.confirmationDialog().subscribe(action => {
       if (action === DialogUtil.confirmer) {
-        const updatedDossier = { ...this.colonieDossier, ...formData };
-        this.dossierColonieService.updateDossier(updatedDossier);
-        this.notificationService.success(NotificationUtil.modification);
-        this.dialogRef.close(updatedDossier);
+        console.log(formData);
+        this.dossierColonieService.updateDossier(formData).subscribe(updatedDossier => {
+          this.notificationService.success(NotificationUtil.modification);
+          this.dialogRef.close(updatedDossier);
+        });
       } else {
         this.dialogRef.close();
       }

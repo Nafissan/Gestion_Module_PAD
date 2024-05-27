@@ -30,8 +30,6 @@ export class DetailsDossierColonieComponent implements OnInit {
     this.loadDossierColonie();
   }
   loadDossierColonie(): void {
-    this.dossierColonieService.getDossiersList().subscribe(dossiers => {
-      this.dossierColonie = dossiers.find(dossier => dossier.code === this.defaults.code);
-    });
+    this.dossierColonie=this.defaults;
   }
 }

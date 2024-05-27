@@ -26,11 +26,11 @@
         <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
             <mat-form-field fxFlex>
                 <mat-label>Nom Enfant</mat-label>
-                <input type="text" formControlName="nomEnfant" matInput required>
+                <input type="text" formControlName="nom" matInput required>
             </mat-form-field>
             <mat-form-field fxFlex>
                 <mat-label>Prénom Enfant</mat-label>
-                <input type="text" formControlName="prenomEnfant" matInput required>
+                <input type="text" formControlName="prenom" matInput required>
             </mat-form-field>
         </div>
 
@@ -54,14 +54,14 @@
         <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
             <!-- Date de Naissance -->
             <mat-form-field fxFlex>
-                <mat-label>Date de Naissance</mat-label>
+                <mat-label>Date de Naissance Enfant</mat-label>
                 <input [matDatepicker]="picker1" formControlName="dateNaissance" matInput required>
                 <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
                 <mat-datepicker #picker1></mat-datepicker>
             </mat-form-field>
             <!-- Lieu de Naissance -->
             <mat-form-field fxFlex>
-                <mat-label>Lieu de Naissance</mat-label>
+                <mat-label>Lieu de Naissance Enfant</mat-label>
                 <input type="text" formControlName="lieuNaissance" matInput required>
             </mat-form-field>
         </div>
@@ -69,20 +69,18 @@
         <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
             <!-- Sexe -->
             <mat-form-field fxFlex>
-                <mat-label>Sexe</mat-label>
-                <mat-select formControlName="sexeEnfant" required>
-                    <mat-option value="m">Masculin</mat-option>
-                    <mat-option value="f">Féminin</mat-option>
+                <mat-label>Sexe Enfant</mat-label>
+                <mat-select formControlName="sexe" required>
+                    <mat-option value="masculin">Masculin</mat-option>
+                    <mat-option value="feminin">Féminin</mat-option>
                 </mat-select>
             </mat-form-field>
         </div>
 
         <!-- Fiche Sociale -->
         <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
-            <mat-form-field fxFlex>
                 <mat-label>Fiche Sociale</mat-label>
-                <input type="file" formControlName="ficheSociale" (change)="handleFicheSociale($event)" matInput required>
-            </mat-form-field>
+                <input type="file" (change)="handleFicheSociale($event.target.files)"  required>
         </div>
     </mat-dialog-content>
 

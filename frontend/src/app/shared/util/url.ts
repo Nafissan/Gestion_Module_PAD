@@ -923,11 +923,74 @@ export let menus = [
     name: "Colonie",
     routeOrFunction: "/colonie",
     icon: "list",
-    position: 1,
-    pathMatchExact: true,
+    position: 5,
     parent: null,
-    privilege: "MENU_COLONIE"
+    privilege: "MENU_DOTATION"
   },
+  {
+    id: 66,
+    name: "Dossier Colonie",
+    routeOrFunction: "/colonie/dossier-colonie",
+    // icon: "list",
+    position: 5,
+    privilege: "MENU_DOTATION",
+    parent: {
+      id: 65,
+      name: "Colonie",
+      routeOrFunction: "/colonie",
+      icon: "list",
+      position: 5,
+      privilege: "MENU_DOTATION"
+    },
+  },
+    {
+      id: 67,
+      name: "Participant Colonie",
+      routeOrFunction: "/colonie/participant",
+      // icon: "list",
+      position: 5,
+      privilege: "MENU_DOTATION",
+      parent: {
+        id: 65,
+        name: "Colonie",
+        routeOrFunction: "/colonie",
+        icon: "list",
+        position: 5,
+        privilege: "MENU_DOTATION"
+      },
+  },
+  {
+    id: 68,
+    name: "Suivi Satisfaction",
+    routeOrFunction: "/colonie/satisfaction",
+    // icon: "list",
+    position: 5,
+    privilege: "MENU_DOTATION",
+    parent: {
+      id: 65,
+      name: "Colonie",
+      routeOrFunction: "/colonie",
+      icon: "list",
+      position: 5,
+      privilege: "MENU_DOTATION"
+    },
+},
+{
+  id: 69,
+  name: "Suivi Dossier",
+  routeOrFunction: "/colonie/suivi-colonie",
+  // icon: "list",
+  position: 5,
+  privilege: "MENU_DOTATION",
+  parent: {
+    id: 65,
+    name: "Colonie",
+    routeOrFunction: "/colonie",
+    icon: "list",
+    position: 5,
+    privilege: "MENU_DOTATION"
+  },
+},
 ];
 
 export let getMenu = function (privileges) {

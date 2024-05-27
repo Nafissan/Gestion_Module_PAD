@@ -3,6 +3,8 @@ import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { Participant } from "../../shared/model/participant.model";
 import { ParticipantService } from "../../shared/service/participant.service";
+import { DialogUtil } from "src/app/shared/util/util";
+import { DialogConfirmationService } from "src/app/shared/services/dialog-confirmation.service";
 
 @Component({
   selector: "app-add-update-participant-colonie",
@@ -12,12 +14,14 @@ import { ParticipantService } from "../../shared/service/participant.service";
 export class AddOrUpdateParticipantComponent implements OnInit {
   form: FormGroup;
   mode: "create" | "update" = "create";
-ficheSocial: File | null =null;
+  ficheSocial: File | null =null;
+  
   constructor(
     @Inject(MAT_DIALOG_DATA) public defaults: Participant,
     private dialogRef: MatDialogRef<AddOrUpdateParticipantComponent>,
     private fb: FormBuilder,
-    private participantService: ParticipantService
+    private participantService: ParticipantService,
+    private dialogConfirmationService: DialogConfirmationService
   ) {}
 
   ngOnInit() {
@@ -28,34 +32,58 @@ ficheSocial: File | null =null;
     }
 
     this.form = this.fb.group({
-      matriculeParent: [this.defaults.agentParent?.matricule || "", Validators.required], // Utilisez matriculeParent pour le matricule de l'agent
-      nomParent: [this.defaults.agentParent?.nom || "", Validators.required], // Utilisez nomParent pour le nom de l'agent
-      prenomParent: [this.defaults.agentParent?.prenom || "", Validators.required], // Utilisez prenomParent pour le prénom de l'agent
+      matriculeParent: [this.defaults.agentParent?.matricule || "", Validators.required], 
+      nomParent: [this.defaults.agentParent?.nom || "", Validators.required], 
+      prenomParent: [this.defaults.agentParent?.prenom || "", Validators.required], 
       nom: [this.defaults.nom || "", Validators.required],
       prenom: [this.defaults.prenom || "", Validators.required],
+      sexe: [this.defaults.sexe || "", Validators.required],
       dateNaissance: [this.defaults.dateNaissance || "", Validators.required],
       lieuNaissance: [this.defaults.lieuNaissance || "", Validators.required],
       groupeSanguin: [this.defaults.groupeSanguin || "", Validators.required],
     });
   }
+  
   isCreateMode() {
     return this.mode === "create";
   }
+  
   isUpdateMode() {
     return this.mode === "update";
   }
+  
   handleFicheSociale(files: FileList): void {
     this.ficheSocial = files.item(0);
   }
-  save() {
-    const participant: Participant = this.form.value;
-    participant.ficheSocial = this.ficheSocial;
+  
+  save(): void {
     if (this.mode === "create") {
-      this.participantService.addParticipant(participant);
+      this.createParticipant();
     } else if (this.mode === "update") {
-      participant.id = this.defaults.id;
-      this.participantService.updateParticipant(participant);
+      this.updateParticipant();
     }
-    this.dialogRef.close();
+  }
+  
+  createParticipant() {
+    let formData: Participant =this.form.value;
+    formData.ficheSocial = this.ficheSocial;
+    console.log(formData);
+    this.dialogConfirmationService.confirmationDialog().subscribe(action => {
+      if (action === DialogUtil.confirmer) {
+        this.participantService.addParticipant(formData).subscribe(() => {
+          this.dialogRef.close(formData);
+        });
+      }
+    });
+  }
+  
+  updateParticipant() {
+    let formData: Participant = this.form.value;
+    formData.ficheSocial = this.ficheSocial;
+    formData.id = this.defaults.id;
+    console.log(formData);
+    this.participantService.updateParticipant(formData).subscribe(() => {
+      this.dialogRef.close(formData);
+    });
   }
 }

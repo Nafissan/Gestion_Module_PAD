@@ -5,9 +5,9 @@ import { SatisfactionService } from '../../shared/service/satisfaction.service';
 import { MatAccordion } from '@angular/material/expansion';
 
 @Component({
-  selector: 'app-details-satisfaction',
+  selector: 'fury-details-satisfaction',
   templateUrl: './details-satisfaction.component.html',
-  styleUrls: ['./details-satisfaction.component.scss']
+  styleUrls: ['./details-satisfaction.component.scss', "../../../../shared/util/bootstrap4.css"],
 })
 export class DetailsSatisfactionComponent implements OnInit {
   satisfaction: Satisfaction; // Définissez le type de données de la satisfaction

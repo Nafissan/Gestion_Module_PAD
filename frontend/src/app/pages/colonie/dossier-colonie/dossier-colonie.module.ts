@@ -31,7 +31,7 @@ import { PageLayoutDemoContentModule } from '../../page-layouts/components/page-
     // Core
     ListModule,
     BreadcrumbsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
   ]
 })
 export class DossierColonieModule { }

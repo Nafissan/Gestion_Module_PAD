@@ -5,50 +5,40 @@
 <div mat-dialog-title class="titre_modal_add" *ngIf="isUpdateMode()">Mise à jour Dossier</div>
 <form [formGroup]="form" (ngSubmit)="save()">
     <mat-dialog-content>
-
+        <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
         <!-- Description -->
-        <mat-form-field>
+        <mat-form-field fxFlex >
             <mat-label>Description</mat-label>
-            <input matInput formControlName="description">
+            <input type="text" formControlName="description" matInput>
         </mat-form-field>
-
-        <!-- Code -->
-        <mat-form-field>
+        <mat-form-field fxFlex *ngIf="mode === 'update'">
             <mat-label>Code</mat-label>
-            <input matInput formControlName="code" [disabled]="isUpdateMode()">
+            <input matInput formControlName="code">
         </mat-form-field>
+        </div>
+        <div fxLayout="column" fxLayout.gt-sm="column" fxLayoutGap.gt-sm="34px">
+        
 
         <!-- Champ pour télécharger la note du ministère -->
-        <mat-form-field>
-            <mat-label>Note du ministère</mat-label>
-            <input type="file" (change)="handleNoteMinistereFileInput($event.target.files)">
-        </mat-form-field>
+                <mat-label>Note du ministère</mat-label>
+                <div class="file-upload">
+                  <input type="file" id="fileInput" (change)="handleNoteMinistereFileInput($event.target.files)">
+                </div>
+                <mat-label>Demande de prospection</mat-label>
+                <div class="file-upload">
+                  <input type="file" id="fileInput" (change)="handleDemandeProspectionFileInput($event.target.files)" >
+                </div>
+                <mat-label>Note d'information</mat-label>
+                <div class="file-upload">
+                  <input type="file" id="fileInput" (change)="handleNotePersonels($event.target.files)" >
+                </div>
+    </div>
 
-        <!-- Champ pour télécharger la demande de prospection -->
-        <mat-form-field>
-            <mat-label>Demande de prospection</mat-label>
-            <input type="file" (change)="handleDemandeProspectionFileInput($event.target.files)">
-        </mat-form-field>
-
-           <mat-form-field>
-            <mat-label>Note aux personels</mat-label>
-            <input type="file" (change)="handleNotePersonels($event.target.files)">
-        </mat-form-field>
-
-           <mat-form-field>
-            <mat-label>Note aux pelerins</mat-label>
-            <input type="file" (change)="handleNotePersonels($event.target.files)">
-        </mat-form-field>
     </mat-dialog-content>
 
     <mat-dialog-actions fxLayout="row" fxLayoutAlign="end center">
-        <button *ngIf="isCreateMode()" mat-button [disabled]="!form.valid || !stateCtrl.value || form.get('enfantFormGroup').get('enfants').value.length === 0"
-            [ngClass]="{
-                'sm:text-sm md:text-md text-white bg-blue-100': !form.valid || !stateCtrl.value
-                    || (form.get('enfantFormGroup').get('enfants').value.length === 0),
-                'sm:text-sm md:text-md text-white bg-blue-400': form.valid && stateCtrl.value &&
-                    (form.get('enfantFormGroup').get('enfants').value.length > 0)
-            }">VALIDER</button>
+        <button *ngIf="isCreateMode()" mat-button [disabled]="!form.valid 
+            ">VALIDER</button>
         <button *ngIf="isUpdateMode()" mat-button [disabled]="!form.valid">MODIFIER</button>
     </mat-dialog-actions>
 </form>

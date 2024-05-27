@@ -4,7 +4,6 @@ import { CommonModule } from '@angular/common';
 import { ParticipantRoutingModule } from './participant-routing.module';
 import { ListeParticipantComponent } from './liste-participant/liste-participant.component';
 import { AddOrUpdateParticipantComponent } from './add-or-update-participant/add-or-update-participant.component';
-import { ValidationParticipantComponent } from './validation-participant/validation-participant.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -17,7 +16,7 @@ import { PageLayoutDemoContentModule } from '../../page-layouts/components/page-
 
 
 @NgModule({
-  declarations: [ListeParticipantComponent, AddOrUpdateParticipantComponent, ValidationParticipantComponent],
+  declarations: [ListeParticipantComponent, AddOrUpdateParticipantComponent],
   imports: [
     CommonModule,
     ParticipantRoutingModule,

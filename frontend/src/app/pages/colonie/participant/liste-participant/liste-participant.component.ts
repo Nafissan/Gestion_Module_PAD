@@ -16,6 +16,7 @@ import { AgentService } from 'src/app/shared/services/agent.service';
 import { AddOrUpdateParticipantComponent } from '../add-or-update-participant/add-or-update-participant.component';
 import { SelectionModel } from '@angular/cdk/collections';
 import { NotificationUtil } from 'src/app/shared/util/util';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'fury-liste-participant',
@@ -54,26 +55,27 @@ export class ListeParticipantComponent implements OnInit {
    @Input()
    columns: ListColumn[] = [
      { name: "Checkbox", property: "checkbox", visible: true },
-     { name: "Matricule Parent", property: "matricule", visible: false, isModelProperty: true },
-     { name: "Nom Parent", property: "nomParent", visible: false, isModelProperty: true },
-     { name: "Prenom Parent", property: "dateDebut", visible: true, isModelProperty: true,},
-     { name: "ID", property: "dateFin", visible: true, isModelProperty: true, },
+     { name: "Matricule Parent", property: "agentParent.matricule", visible: true, isModelProperty: true },
+     { name: "Nom Parent", property: "agentParent.nom", visible: true, isModelProperty: true },
+     { name: "Prenom Parent", property: "agentParent.prenom", visible: true, isModelProperty: true },
+    
      {
        name: "Nom Enfant",
-       property: "nomEnfant", 
+       property: "nom", 
        visible: true,   
        isModelProperty: true,
      },
      {
        name: "Prenom Enfant",
-       property: "prenomEnfant", 
+       property: "prenom", 
        visible: true,   
        isModelProperty: true,
      },
      { name: "Date de Naissance", property: "dateNaissance", visible: true, isModelProperty: true,},
      { name: "Groupe Sanguin", property: "groupeSanguin", visible: false, isModelProperty: true, },
      { name: "Lieu de Naissance", property: "lieuNaissance", visible: false, isModelProperty: true,},
-     { name: "Fiche Sociale", property: "ficheSocial", visible: true,  isModelProperty: true,},
+     { name: "Fiche Sociale", property: "ficheSocial.name", visible: true,  isModelProperty: true,},
+     { name: "Status", property: "status", visible: false,  isModelProperty: true,},
      { name: "Actions", property: "actions", visible: true },
    ] as ListColumn[];
   constructor(
@@ -87,6 +89,13 @@ export class ListeParticipantComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.getParticipants();
+    this.dataSource = new MatTableDataSource();
+    this.data$.pipe(filter((data) => !!data)).subscribe((participant) => {
+      this.participants = participant;
+      this.dataSource.data = participant;
+      console.log('Participants Colonies in ngOnInit:', this.participants); // Debugging output
+    });
   }
   ngAfterViewInit() {
     this.setDataSourceAttributes();
@@ -100,8 +109,7 @@ export class ListeParticipantComponent implements OnInit {
     if (!this.dataSource) {
       return;
     }
-    value = value.trim();
-    value = value.toLowerCase();
+    value = value.trim().toLowerCase();
     this.dataSource.filter = value;
     this.dataSource.filterPredicate = (data: any, value) => { const dataStr =JSON.stringify(data).toLowerCase(); return dataStr.indexOf(value) != -1; }
   }
@@ -109,19 +117,21 @@ export class ListeParticipantComponent implements OnInit {
     this.participantService.getAllParticipants()
       .subscribe((response) => {
         this.participants = response;
+        console.log(this.participants);
       this.participantSelected = this.participants.find(e => e.id ===1);
-      
-      },(err) => {
-        this.showProgressBar = true;
-      },
-      () => {
-        this.showProgressBar = true;
         this.subject$.next(this.participants);
+        this.showProgressBar = true;
+      },(err) => {
+        console.error('Error loading participant colonies:', err); // Debugging output
       }
     
     );
     
   }
+  getProperty(row: any, property: string) {
+    return property.split('.').reduce((acc, part) => acc && acc[part], row);
+  }
+  
   isAllSelected() {
     const numSelected = this.selection.selected.length;
     const numRows = this.dataSource.data.length;
@@ -162,8 +172,12 @@ export class ListeParticipantComponent implements OnInit {
         );
         this.participants[index] = participant;
         this.subject$.next(this.participants);
+        console.log(this.participants);
       }
     })
+  }
+  hasAnyRole(roles: string[]) {
+    return this.authentificationService.hasAnyRole(roles);
   }
   deleteParticipant(participant: Participant){
     this.dialogConfirmationService.confirmationDialog().subscribe(action => {
@@ -183,5 +197,14 @@ export class ListeParticipantComponent implements OnInit {
         });
       }
     })
+  }
+   validerParticipant(participant: Participant) {
+    // Update the participant state to 'validated'
+    participant.status = 'validee';
+    this.participantService.updateParticipant(participant).subscribe(() => {
+      this.notificationService.success('Participant validé avec succès');
+    }, () => {
+      this.notificationService.warn('Échec de la validation du participant');
+    });
   }
 }

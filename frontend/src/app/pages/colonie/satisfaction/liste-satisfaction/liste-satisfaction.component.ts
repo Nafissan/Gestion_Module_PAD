@@ -11,11 +11,13 @@ import { MatDialog } from '@angular/material/dialog';
 import { DialogConfirmationService } from 'src/app/shared/services/dialog-confirmation.service';
 import { NotificationService } from 'src/app/shared/services/notification.service';
 import { NotificationUtil } from 'src/app/shared/util/util';
+import { filter } from 'rxjs/operators';
+import { AuthenticationService } from 'src/app/shared/services/authentification.service';
 
 @Component({
-  selector: 'app-liste-satisfaction',
+  selector: 'fury-liste-satisfaction',
   templateUrl: './liste-satisfaction.component.html',
-  styleUrls: ['./liste-satisfaction.component.scss']
+  styleUrls: ['./liste-satisfaction.component.scss', "../../../../shared/util/bootstrap4.css"],
 })
 export class ListeSatisfactionComponent implements OnInit {
   satisfactions: Satisfaction[] = [];
@@ -43,17 +45,24 @@ export class ListeSatisfactionComponent implements OnInit {
     { name: "Checkbox", property: "checkbox", visible: true },
     { name: "Code Dossier Colonie", property: "code", visible: true, isModelProperty: true, },
      { name: "Date de creation", property: "dateCreation", visible: true, isModelProperty: true,},
-     { name: "Cree par", property: "traitePar", visible: true,  isModelProperty: true,},
+     { name: "Cree par", property: "traitePar.matricule", visible: true,  isModelProperty: true,},
      { name: "Actions", property: "actions", visible: true },
     ] as ListColumn[];
   constructor(private satisfactionService: SatisfactionService,
     private dialog: MatDialog,
+    private authentificationService: AuthenticationService,
     private notificationService: NotificationService,
     private dialogConfirmationService: DialogConfirmationService
   ) {}
 
   ngOnInit(): void {
     this.getSatisfactions();
+    this.dataSource = new MatTableDataSource();
+    this.data$.pipe(filter((data) => !!data)).subscribe((satisfaction) => {
+      this.satisfactions = satisfaction;
+      this.dataSource.data = satisfaction;
+      console.log('satisfaction Colonies in ngOnInit:', this.satisfactions); // Debugging output
+    });
   }
 
   ngAfterViewInit() {
@@ -76,8 +85,16 @@ export class ListeSatisfactionComponent implements OnInit {
       this.satisfactions = response;
       this.subject$.next(this.satisfactions);
       this.showProgressBar = true;
-      this.dataSource = new MatTableDataSource<Satisfaction>(this.satisfactions);
-    });
+    console.log(this.satisfactions); 
+   });
+  }
+  onFilterChange(value) {
+    if (!this.dataSource) {
+      return;
+    }
+    value = value.trim().toLowerCase();
+    this.dataSource.filter = value;
+    this.dataSource.filterPredicate = (data: any, value) => { const dataStr =JSON.stringify(data).toLowerCase(); return dataStr.indexOf(value) != -1; }
   }
   createSatisfaction(){
     this.dialog.open(AddOrUpdateSatisfactionComponent)
@@ -102,6 +119,7 @@ export class ListeSatisfactionComponent implements OnInit {
         );
         this.satisfactions[index] = satisfaction;
         this.subject$.next(this.satisfactions);
+        console.log("update"+this.satisfactions);
       }
     })
   }
@@ -124,4 +142,7 @@ export class ListeSatisfactionComponent implements OnInit {
       }
     })
   }  
+  hasAnyRole(roles: string[]) {
+    return this.authentificationService.hasAnyRole(roles);
+  }
 }

@@ -23,6 +23,7 @@ export class ParticipantService {
       dateNaissance: null,
       lieuNaissance: 'dadar',
       agentParent: this.agent,
+      sexe:"feminin"
     },
     // Ajoutez d'autres objets DossierColonie si nécessaire
   ];
@@ -39,19 +40,23 @@ export class ParticipantService {
     // For now, we'll just push the new participant to the list
     this.participantsList.push(participant);
     this.participantsSubject.next([...this.participantsList]);
+    return of(this.participants);
   }
 
   updateParticipant(participant: Participant) {
     // Find the participant by id and update its data
-    const index = this.participantsList.findIndex(p => p.id === participant.id);
+    const index = this.participants.findIndex(p => p.id === participant.id);
     if (index !== -1) {
-      this.participantsList[index] = participant;
-      this.participantsSubject.next([...this.participantsList]);
+      console.log(participant);
+      this.participants[index] = participant; // Update the participant in the current list
+      this.participantsSubject.next([...this.participants]);
+      console.log(this.participantsSubject);
       return of(participant); // Return an observable to mimic HTTP request
     } else {
       return throwError('Participant not found');
     }
   }
+
   
   delete(participant: Participant) {
     this.participants = this.participants.filter(d => d.id !== participant.id);
