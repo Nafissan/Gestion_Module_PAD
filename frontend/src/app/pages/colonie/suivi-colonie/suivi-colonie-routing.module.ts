@@ -4,7 +4,6 @@ import { ListeRapportProspectionComponent } from './liste-rapport-prospection/li
 import { AuthGuard } from 'src/app/shared/services/authguard.service';
 import { AddOrUpdateRapportProspectionComponent } from './add-or-update-rapport-prospection/add-or-update-rapport-prospection.component';
 import { DetailsRapportProspectionComponent } from './details-rapport-prospection/details-rapport-prospection.component';
-import { ValidationDchComponent } from './validation-dch/validation-dch.component';
 
 
 const routes: Routes = [
@@ -19,9 +18,6 @@ const routes: Routes = [
   },
   {
     path: 'details-rapport-prospection', component: DetailsRapportProspectionComponent, canActivate: [AuthGuard],
-  },
-  {
-    path: 'vadilder-rapport-prospection', component: ValidationDchComponent, canActivate: [AuthGuard],
   },
 ];
 

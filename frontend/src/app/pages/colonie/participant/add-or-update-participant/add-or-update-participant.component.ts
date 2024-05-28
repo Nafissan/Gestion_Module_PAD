@@ -67,6 +67,7 @@ export class AddOrUpdateParticipantComponent implements OnInit {
   createParticipant() {
     let formData: Participant =this.form.value;
     formData.ficheSocial = this.ficheSocial;
+    formData.status = 'A VALIDER'
     console.log(formData);
     this.dialogConfirmationService.confirmationDialog().subscribe(action => {
       if (action === DialogUtil.confirmer) {

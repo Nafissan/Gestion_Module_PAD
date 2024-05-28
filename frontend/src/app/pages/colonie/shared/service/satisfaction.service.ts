@@ -36,26 +36,26 @@ export class SatisfactionService {
     this.satisfactionsSubject.next(this.satisfactionsList);
   }
 
-  getAllSatisfactions(): Observable<Satisfaction[]> {
-    return this.satisfactions$;
+  getAllSatisfactions() {
+    return this.satisfactionsSubject;
   }
 
-  addSatisfaction(satisfaction: Satisfaction): Observable<void> {
+  addSatisfaction(satisfaction: Satisfaction) {
     this.satisfactionsList.push(satisfaction);
     this.satisfactionsSubject.next([...this.satisfactionsList]);
-    return of();
+    return of(this.satisfactionsList);
   }
 
-  updateSatisfaction(satisfaction: Satisfaction): Observable<void> {
+  updateSatisfaction(satisfaction: Satisfaction) {
     const index = this.satisfactionsList.findIndex(s => s.id === satisfaction.id);
     if (index !== -1) {
       this.satisfactionsList[index] = satisfaction;
       this.satisfactionsSubject.next([...this.satisfactionsList]);
     }
-    return of();
+    return of(satisfaction);
   }
 
-  deleteSatisfaction(id: number): Observable<void> {
+  deleteSatisfaction(id: number) {
     this.satisfactionsList = this.satisfactionsList.filter(s => s.id !== id);
     this.satisfactionsSubject.next(this.satisfactionsList);
     return of();

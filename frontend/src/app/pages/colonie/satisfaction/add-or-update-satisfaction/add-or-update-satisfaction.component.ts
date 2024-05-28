@@ -113,8 +113,8 @@ export class AddOrUpdateSatisfactionComponent implements OnInit {
   }
 
   updateSatisfaction(formData: Satisfaction){
-    console.log(formData);
-    formData.id = this.satisfaction.id; // Ajouter l'ID de la satisfaction existante
+    formData.id = this.satisfaction.id;
+    console.log(formData); // Ajouter l'ID de la satisfaction existante
     this.satisfactionService.updateSatisfaction(formData).subscribe(() => {
       this.dialogRef.close(formData);
     });

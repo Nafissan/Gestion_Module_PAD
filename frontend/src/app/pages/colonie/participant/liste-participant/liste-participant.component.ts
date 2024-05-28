@@ -80,7 +80,7 @@ export class ListeParticipantComponent implements OnInit {
      { name: "Date de Naissance", property: "dateNaissance", visible: true, isModelProperty: true,},
      { name: "Groupe Sanguin", property: "groupeSanguin", visible: false, isModelProperty: true, },
      { name: "Lieu de Naissance", property: "lieuNaissance", visible: false, isModelProperty: true,},
-     { name: "Fiche Sociale", property: "ficheSocial.name", visible: true,  isModelProperty: true,},
+     { name: "Fiche Sociale", property: "ficheSocial", visible: true,  isModelProperty: true,},
      { name: "Status", property: "status", visible: false,  isModelProperty: true,},
      { name: "Actions", property: "actions", visible: true },
    ] as ListColumn[];
@@ -207,26 +207,24 @@ export class ListeParticipantComponent implements OnInit {
   }
    validerParticipant(participant: Participant) {
     // Update the participant state to 'validated'
-    participant.status = 'validee';
+    participant.status = 'VALIDER';
     this.participantService.updateParticipant(participant).subscribe(() => {
       this.notificationService.success('Participant validé avec succès');
     }, () => {
       this.notificationService.warn('Échec de la validation du participant');
     });
   }
+  rejeterParticipant(participant: Participant) {
+    // Update the participant state to 'validated'
+    participant.status = 'REJETER';
+    this.participantService.updateParticipant(participant).subscribe(() => {
+      this.notificationService.success('Participant rejete avec succès');
+    }, () => {
+      this.notificationService.warn('Échec de rejection du participant');
+    });
+  }
   afficherFicheSocial(participant: Participant): void {
     this.participantSelectionne = participant;
     this.afficherFicheSociale = true;
-}
-telechargerFicheSocial(participant: Participant) {
-  const ficheSocialBlob = new Blob([participant.ficheSocial], { type: 'application/pdf' });
-  const ficheSocialUrl = window.URL.createObjectURL(ficheSocialBlob);
-  const a = document.createElement('a');
-  a.href = ficheSocialUrl;
-  a.download = `Fiche_Sociale_${participant.nom}_${participant.prenom}.pdf`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  window.URL.revokeObjectURL(ficheSocialUrl);
 }
 }

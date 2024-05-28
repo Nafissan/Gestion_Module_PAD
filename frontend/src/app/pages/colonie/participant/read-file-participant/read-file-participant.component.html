@@ -1,4 +1,6 @@
 <div *ngIf="pdfDataUrl && showFrame">
-  <iframe [src]="pdfDataUrl | safeUrl" frameborder="0" style="width: 100%; height: 600px;"></iframe>
-  <button (click)="closeFrame()">Fermer</button>
+  <button color="primary" (click)="closeFrame()">Fermer</button>
+
+  <iframe [src]="pdfDataUrl" frameborder="0" style="width: 100%; height: 600px;"></iframe>
+
 </div>

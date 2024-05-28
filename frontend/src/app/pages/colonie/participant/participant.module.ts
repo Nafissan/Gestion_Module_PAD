@@ -14,11 +14,10 @@ import { ListModule } from 'src/@fury/shared/list/list.module';
 import { MaterialModule } from 'src/@fury/shared/material-components.module';
 import { PageLayoutDemoContentModule } from '../../page-layouts/components/page-layout-content/page-layout-demo-content.module';
 import { ReadFileParticipantComponent } from './read-file-participant/read-file-participant.component';
-import { SafeUrlPipe } from './safe-url.pipe';
 
 
 @NgModule({
-  declarations: [ListeParticipantComponent, AddOrUpdateParticipantComponent, ReadFileParticipantComponent, SafeUrlPipe],
+  declarations: [ListeParticipantComponent, AddOrUpdateParticipantComponent, ReadFileParticipantComponent],
   imports: [
     CommonModule,
     ParticipantRoutingModule,
@@ -32,11 +31,9 @@ import { SafeUrlPipe } from './safe-url.pipe';
     // Core
     ListModule,
     BreadcrumbsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
   ],
-  exports: [
-    SafeUrlPipe,
-    // Autres exports propres au module participant
-  ],
+
+  
 })
 export class ParticipantModule { }

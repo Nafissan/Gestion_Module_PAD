@@ -5,7 +5,6 @@ import { SuiviColonieRoutingModule } from './suivi-colonie-routing.module';
 import { AddOrUpdateRapportProspectionComponent } from './add-or-update-rapport-prospection/add-or-update-rapport-prospection.component';
 import { ListeRapportProspectionComponent } from './liste-rapport-prospection/liste-rapport-prospection.component';
 import { DetailsRapportProspectionComponent } from './details-rapport-prospection/details-rapport-prospection.component';
-import { ValidationDchComponent } from './validation-dch/validation-dch.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -18,7 +17,7 @@ import { PageLayoutDemoContentModule } from '../../page-layouts/components/page-
 
 
 @NgModule({
-  declarations: [AddOrUpdateRapportProspectionComponent, ListeRapportProspectionComponent, DetailsRapportProspectionComponent, ValidationDchComponent],
+  declarations: [AddOrUpdateRapportProspectionComponent, ListeRapportProspectionComponent, DetailsRapportProspectionComponent],
   imports: [
     CommonModule,
     SuiviColonieRoutingModule,
@@ -32,7 +31,8 @@ import { PageLayoutDemoContentModule } from '../../page-layouts/components/page-
     // Core
     ListModule,
     BreadcrumbsModule,
-    ReactiveFormsModule
-  ]
+    ReactiveFormsModule,
+  ],  
+
 })
 export class SuiviColonieModule { }

@@ -20,17 +20,25 @@
         
 
         <!-- Champ pour télécharger la note du ministère -->
-                <mat-label>Note du ministère</mat-label>
-                <div class="file-upload">
+                <mat-label  *ngIf="mode === 'create'">Note du ministère</mat-label>
+                <div class="file-upload"  *ngIf="mode === 'create'">
                   <input type="file" id="fileInput" (change)="handleNoteMinistereFileInput($event.target.files)">
                 </div>
-                <mat-label>Demande de prospection</mat-label>
-                <div class="file-upload">
+                <mat-label  *ngIf="mode === 'update'">Demande de prospection</mat-label>
+                <div class="file-upload"  *ngIf="mode === 'update'">
                   <input type="file" id="fileInput" (change)="handleDemandeProspectionFileInput($event.target.files)" >
                 </div>
-                <mat-label>Note d'information</mat-label>
-                <div class="file-upload">
+                <mat-label  *ngIf="mode === 'update'">Note d'information aux employes</mat-label>
+                <div class="file-upload"  *ngIf="mode === 'update'">
                   <input type="file" id="fileInput" (change)="handleNotePersonels($event.target.files)" >
+                </div>
+                <mat-label  *ngIf="mode === 'update'">Note d'information aux colons</mat-label>
+                <div class="file-upload"  *ngIf="mode === 'update'">
+                  <input type="file" id="fileInput" (change)="handleNotePelerins($event.target.files)" >
+                </div>
+                <mat-label  *ngIf="mode === 'update'">Rapport de mission</mat-label>
+                <div class="file-upload"  *ngIf="mode === 'update'">
+                  <input type="file" id="fileInput" (change)="handleRapport($event.target.files)" >
                 </div>
     </div>
 

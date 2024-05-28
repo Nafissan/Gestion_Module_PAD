@@ -16,6 +16,7 @@ import { RapportProspection } from "../../shared/model/rapport-prospection.model
 import { RapportProspectionService } from "../../shared/service/rapport-prospection.service";
 import { AddOrUpdateRapportProspectionComponent } from "../add-or-update-rapport-prospection/add-or-update-rapport-prospection.component";
 import { DetailsRapportProspectionComponent } from "../details-rapport-prospection/details-rapport-prospection.component";
+import { AuthenticationService } from "src/app/shared/services/authentification.service";
 
 @Component({
   selector: "fury-liste-rapport-prospection",
@@ -32,6 +33,8 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
   data$: Observable<RapportProspection[]> = this.subject$.asObservable();
   pageSize = 4;
   dataSource: MatTableDataSource<RapportProspection> | null;
+  rapportSelectionne: RapportProspection;
+  afficherRapport: boolean = false;
 
   private paginator: MatPaginator;
   private sort: MatSort;
@@ -55,13 +58,15 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
     { name: "Code", property: "codeDossierColonie", visible: true, isModelProperty: true },
     { name: "Date de création", property: "dateCreation", visible: true, isModelProperty: true },
     { name: "État", property: "etat", visible: true, isModelProperty: true },
+    { name: "Rapport Prospection", property: "rapport", visible: true, isModelProperty: true },
     { name: "Ajoute par", property: "Agent", visible: true, isModelProperty: true },
     { name: "Actions", property: "actions", visible: true },
   ] as ListColumn[];
 
   constructor(
     private rapportService: RapportProspectionService,
-    private dialog: MatDialog,
+    private dialog: MatDialog,    private authentificationService: AuthenticationService,
+
     private dialogConfirmationService: DialogConfirmationService,
     private notificationService: NotificationService
   ) { }
@@ -72,6 +77,8 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
     this.data$.pipe(filter((data) => !!data)).subscribe((rapports) => {
       this.rapports = rapports;
       this.dataSource.data = rapports;
+      console.log('Participants Colonies in ngOnInit:', this.rapports); // Debugging output
+
     });
   }
 
@@ -100,6 +107,9 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
       (response) => {
         this.rapports = response;
         this.currentRapport = this.rapports.find(e => e.etat === 'Non Valide');
+        this.subject$.next(this.rapports);
+this.showProgressBar=true;
+console.log(this.rapports);
       },
       (err) => { },
       () => {
@@ -134,7 +144,9 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
         }
       });
   }
-
+  hasAnyRole(roles: string[]) {
+    return this.authentificationService.hasAnyRole(roles);
+  }
   detailsDossierColonie(rapport: RapportProspection) {
     this.dialog
       .open(DetailsRapportProspectionComponent, { data: rapport })
@@ -168,6 +180,25 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
       }
     });
   }
-
+  validerRapportProspection(rapport: RapportProspection){
+    rapport.etat = 'VALIDER';
+    this.rapportService.updateReport(rapport).subscribe(()=>{
+      this.notificationService.success('Rapport de prospection valide avec succes');
+    },() => {
+      this.notificationService.warn('Echac de validation du rapport');
+    })
+  }
+  rejeterRapportProspection(rapport: RapportProspection){
+    rapport.etat = 'REJETER';
+    this.rapportService.updateReport(rapport).subscribe(()=>{
+      this.notificationService.success('Rapport de prospection rejete avec succes');
+    },() => {
+      this.notificationService.warn('Echac de rejection du rapport');
+    })
+  }
+  afficherRapportProspection(rapport:RapportProspection){
+    this.rapportSelectionne = rapport;
+    this.afficherRapport=true;
+  }
   ngOnDestroy() { }
 }

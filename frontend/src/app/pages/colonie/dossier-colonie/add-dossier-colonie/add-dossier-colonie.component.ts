@@ -61,6 +61,7 @@ export const MY_FORMATS = {
   fileDemandeProspetion: File | null = null;
   fileNotePersonnels: File | null =null;
   fileNotePelerins: File | null =null;
+  fileRapport: File | null =null;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public defaults: DossierColonie,
@@ -119,6 +120,9 @@ export const MY_FORMATS = {
   }
   handleNotePelerins(files: FileList): void {
     this.fileNotePelerins = files.item(0);
+  }
+  handleRapport(files: FileList): void {
+    this.fileRapport = files.item(0);
   }
   save(): void {
     if (this.mode === "create") {

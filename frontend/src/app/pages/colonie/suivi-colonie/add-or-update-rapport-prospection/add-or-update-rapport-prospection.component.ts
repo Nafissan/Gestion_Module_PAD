@@ -73,6 +73,7 @@ export class AddOrUpdateRapportProspectionComponent implements OnInit {
         formData.dateCreation = this.currentDate; // Utiliser la date actuelle pour la création
         formData.agent = this.agent; // Utiliser l'agent connecté
         formData.rapport= this.fileRapportProspection;
+        console.log(formData);
         this.rapportProspectionService.addReport(formData);
         this.notificationService.success(NotificationUtil.ajout);
       } else if (this.mode === "update") {
