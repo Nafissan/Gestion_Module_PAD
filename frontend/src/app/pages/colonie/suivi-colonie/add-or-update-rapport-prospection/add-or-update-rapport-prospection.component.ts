@@ -54,7 +54,7 @@ export class AddOrUpdateRapportProspectionComponent implements OnInit {
     this.form = this.fb.group({
       dateCreation: [this.defaults.dateCreation || this.currentDate, Validators.required],
       codeDossier: [ this.defaults.codeDossierColonie || "", Validators.required],
-      etat: [ "Non valide" ],
+      etat: [ "A VALIDER" ],
     });
 
     // Désactiver le champ dateCreation en mode de mise à jour

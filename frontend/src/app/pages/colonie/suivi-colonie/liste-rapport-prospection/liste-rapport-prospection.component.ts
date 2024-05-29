@@ -106,7 +106,7 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
     this.rapportService.getAllReports().subscribe(
       (response) => {
         this.rapports = response;
-        this.currentRapport = this.rapports.find(e => e.etat === 'Non Valide');
+        this.currentRapport = this.rapports.find(e => e.etat === 'A VALIDER');
         this.subject$.next(this.rapports);
 this.showProgressBar=true;
 console.log(this.rapports);
