@@ -13,13 +13,14 @@ import { MatDialog } from "@angular/material/dialog";
 import { AddDossierColonieComponent } from "../add-dossier-colonie/add-dossier-colonie.component";
 import { DetailsDossierColonieComponent } from "../details-dossier-colonie/details-dossier-colonie.component";
 import { DialogConfirmationService } from "../../../../shared/services/dialog-confirmation.service";
-import { DialogUtil, NotificationUtil } from "../../../../shared/util/util";
+import { DialogUtil, MailDossierColonie, NotificationUtil } from "../../../../shared/util/util";
 import { AuthenticationService } from "../../../../shared/services/authentification.service";
 import { EtatDossierColonie } from "../../shared/util/util";
 import { NotificationService } from "../../../../shared/services/notification.service";
 import { MailService } from "../../../../shared/services/mail.service";
 import { AgentService } from "../../../../shared/services/agent.service";
 import { Agent } from "../../../../shared/model/agent.model";
+import { Mail } from "src/app/shared/model/mail.model";
 
 @Component({
   selector: "fury-liste-dossier-colonie",
@@ -66,17 +67,21 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
     { name: "Annee", property: "annee", visible: true, isModelProperty: true },
     { name: "Description", property: "description", visible: true, isModelProperty: true },
     { name: "Etat", property: "etat", visible: true, isModelProperty: true },
-    { name: "Note du Ministere", property: "noteMinistere", visible: true, isModelProperty: true },
-    { name: "Demande de Prospection", property: "demandeProspection", visible: true, isModelProperty: true },
-    { name: "Note aux Employes", property: "notePersonnels", visible: false, isModelProperty: true },
-    { name: "Note aux Colons", property: "notePelerins", visible: false, isModelProperty: true },
+    
     { name: "Matricule", property: "matricule", visible: true, isModelProperty: true },
     { name: "Prenom", property: "prenom", visible: false, isModelProperty: true },
     { name: "Nom", property: "nom", visible: false, isModelProperty: true },
     { name: "Fonction", property: "fonction", visible: false, isModelProperty: true },
-    { name: "CodeDirection", property: "codeDirection", visible: false, isModelProperty: true },
-    { name: "NomDirection", property: "nomDirection", visible: false, isModelProperty: true },
-    { name: "DescriptionDirection", property: "descriptionDirection", visible: true, isModelProperty: true },
+   
+    { name: "Note du Ministere", property: "noteMinistere", visible: true, isModelProperty: true },
+    { name: "Demande de Prospection", property: "demandeProspection", visible: false, isModelProperty: true },
+    { name: "Note d'information", property: "noteInformation", visible: false, isModelProperty: true },
+    { name: "Note d'instruction", property: "noteInstruction", visible: false, isModelProperty: true },
+    { name: "Rapport prospection", property: "rapportProspection", visible: false, isModelProperty: true },
+    { name: "Rapport de mission", property: "rapportMission", visible: false, isModelProperty: true },
+
+    { name: "Date creation", property: "createAt", visible: false, isModelProperty: true },
+
     { name: "Actions", property: "actions", visible: true },
   ] as ListColumn[];
 
@@ -123,14 +128,17 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
   getDossierColonies() {
     this.dossierColonieService.getAll().subscribe(
       (response) => {
-        console.log('Response:', response); // Debugging output
-        this.dossierColonies = response;
-        console.log('Dossier Colonies:', this.dossierColonies); // Debugging output
+        this.dossierColonies = response.body;
+        console.log('Dossier Colonies:', this.dossierColonies); 
+        this.currentDossierColonie = this.dossierColonies.find(e => e.etat === EtatDossierColonie.ouvert || e.etat === EtatDossierColonie.saisi);// Debugging output
         this.subject$.next(this.dossierColonies);
         this.showProgressBar = true;
       },
       (err) => {
-        console.error('Error loading dossier colonies:', err); // Debugging output
+      },
+      () => {
+        this.subject$.next(this.dossierColonies.filter(dossierColonie => dossierColonie.etat === EtatDossierColonie.saisi || dossierColonie.etat === EtatDossierColonie.ouvert));
+        this.showProgressBar = true;
       }
     );
   }
@@ -153,16 +161,13 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
       .open(AddDossierColonieComponent, { data: dossierColonie })
       .afterClosed()
       .subscribe((updatedDossierColonie) => {
-        console.log("Apres update", updatedDossierColonie);
         if (updatedDossierColonie) {
           const index = this.dossierColonies.findIndex(
             (existingDossierColonie) => existingDossierColonie.id === updatedDossierColonie.id
           );
-          if (index !== -1) {
             this.dossierColonies[index] = new DossierColonie(updatedDossierColonie);
             this.subject$.next(this.dossierColonies);
-            console.log("Apres update", this.dossierColonies.length);
-          }
+            console.log("Apres update", this.dossierColonies);
         }
       });
   }
@@ -185,7 +190,7 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
   deleteDossierColonie(dossierColonie: DossierColonie) {
     this.dialogConfirmationService.confirmationDialog().subscribe(action => {
       if (action === DialogUtil.confirmer) {
-        this.dossierColonieService.delete(dossierColonie).subscribe(
+        this.dossierColonieService.delete(dossierColonie.id).subscribe(
           () => {
             this.dossierColonies.splice(
               this.dossierColonies.findIndex((existingDossierColonie) => existingDossierColonie.id === dossierColonie.id), 1
@@ -195,40 +200,68 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
           },
           err => {
             this.notificationService.warn(NotificationUtil.echec);
-          }
-        );
+          }, () => { }
+        )
       }
-    });
+    })
   }
 
   ouvrirDossierColonie(dossierColonie: DossierColonie) {
     this.dialogConfirmationService.confirmationDialog().subscribe(action => {
+      let mail = new Mail();
+      mail.objet = MailDossierColonie.objet;
+      mail.contenu = MailDossierColonie.content;
+      mail.lien = "";
+      mail.emetteur = "";
+      mail.destinataires = ["nnafissa27@gmail.com"]; 
       if (action === DialogUtil.confirmer) {
         dossierColonie.etat = this.ouvert;
-        this.dossierColonieService.updateDossier(dossierColonie).subscribe(
+        this.dossierColonieService.update(dossierColonie).subscribe(
           (response) => {
             this.notificationService.success(NotificationUtil.ouvertureDossier);
           },
           err => {
             this.notificationService.warn(NotificationUtil.echec);
-          }
-        );
+          }, () => {
+            this.mailService.sendMailByDirections(mail).subscribe(
+              response => {
+              }, err => {
+                this.notificationService.warn(NotificationUtil.echec);
+              },
+              () => {
+                this.notificationService.success(NotificationUtil.ouvertureDossier);
+              });
+          });
       }
     });
   }
 
   fermerDossierColonie(dossierColonie: DossierColonie) {
     this.dialogConfirmationService.confirmationDialog().subscribe(action => {
+      let mail = new Mail();
+      mail.objet = MailDossierColonie.objet;
+      mail.contenu = MailDossierColonie.content;
+      mail.lien = "";
+      mail.emetteur = "";
+      mail.destinataires = ["nnafissa27@gmail.com"];
       if (action === DialogUtil.confirmer) {
         dossierColonie.etat = this.fermer;
-        this.dossierColonieService.updateDossier(dossierColonie).subscribe(
+        this.dossierColonieService.update(dossierColonie).subscribe(
           (response) => {
             this.notificationService.success(NotificationUtil.fermetureDossier);
           },
           err => {
             this.notificationService.warn(NotificationUtil.echec);
-          }
-        );
+          }, () => {
+            this.mailService.sendMailByDirections(mail).subscribe(
+              response => {
+              }, err => {
+                this.notificationService.warn(NotificationUtil.echec);
+              },
+              () => {
+                this.notificationService.success(NotificationUtil.envoyeDossier);
+              });
+          });
       }
     });
   }

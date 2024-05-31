@@ -1,43 +1,66 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
+import { HttpHeaders, HttpClient, HttpResponse } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { RapportProspection } from '../model/rapport-prospection.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class RapportProspectionService {
-  private reports: RapportProspection[] = []; // Liste des rapports
-  private reportsSubject: BehaviorSubject<RapportProspection[]> = new BehaviorSubject<RapportProspection[]>([]);
+  private url = '/pss-backend/rapportsProspection';
 
-  constructor() { }
+  private httpOptions = {
+    headers: new HttpHeaders({
+      'Content-Type': 'application/json',
+    }),
+  };
 
-  // Ajouter un rapport
-  addReport(report: RapportProspection){
-    this.reports.push(report);
-    this.reportsSubject.next([...this.reports]);
+  constructor(private httpClient: HttpClient) {}
+
+  // Récupérer tous les rapports de prospection
+  getAllRapportsProspection(): Observable<HttpResponse<RapportProspection[]>> {
+    return this.httpClient.get<RapportProspection[]>(this.url, { observe: 'response' })
+      .pipe(catchError(this.errorHandler));
   }
 
-  // Modifier un rapport
-  updateReport(updatedReport: RapportProspection){
-    const index = this.reports.findIndex(report => report.id === updatedReport.id);
-    if (index !== -1) {
-      this.reports[index] = updatedReport;
-      this.reportsSubject.next([...this.reports]);
-      return of(updatedReport); // Return an observable to mimic HTTP request
+  // Récupérer un rapport de prospection par son ID
+  getRapportProspectionById(id: number): Observable<HttpResponse<RapportProspection>> {
+    const getUrl = `${this.url}/${id}`;
+    return this.httpClient.get<RapportProspection>(getUrl, { observe: 'response' })
+      .pipe(catchError(this.errorHandler));
+  }
+
+  // Créer un rapport de prospection
+  saveRapportProspection(rapportProspection: RapportProspection): Observable<HttpResponse<RapportProspection>> {
+    return this.httpClient.post<RapportProspection>(this.url, rapportProspection, { observe: 'response' })
+      .pipe(catchError(this.errorHandler));
+  }
+
+  // Mettre à jour un rapport de prospection
+  updateRapportProspection(rapportProspection: RapportProspection): Observable<HttpResponse<any>> {
+    return this.httpClient.put<any>(this.url, rapportProspection, { headers: this.httpOptions.headers, observe: 'response' })
+      .pipe(catchError(this.errorHandler));
+  }
+
+  // Supprimer un rapport de prospection
+  deleteRapportProspection(id: number): Observable<HttpResponse<any>> {
+    const deleteUrl = `${this.url}/${id}`;
+    return this.httpClient.delete<any>(deleteUrl, { observe: 'response' })
+      .pipe(catchError(this.errorHandler));
+  }
+
+  // Gérer les erreurs HTTP
+  private errorHandler(error: any) {
+    let errorMessage = '';
+    if (error.error instanceof ErrorEvent) {
+      // Erreur côté client
+      errorMessage = error.error.message;
     } else {
-      return throwError('Participant not found');
+      // Erreur côté serveur
+      errorMessage = `Code d'erreur: ${error.status}\nMessage: ${error.message}`;
     }
-  }
-
-  // Supprimer un rapport
-  deleteReport(reportId: string) {
-    this.reports = this.reports.filter(report => report.id !== reportId);
-    this.reportsSubject.next([...this.reports]);
-    return of();
-  }
-
-  // Récupérer tous les rapports
-  getAllReports() {
-    return this.reportsSubject;
+    console.error(errorMessage);
+    return throwError(errorMessage);
   }
 }

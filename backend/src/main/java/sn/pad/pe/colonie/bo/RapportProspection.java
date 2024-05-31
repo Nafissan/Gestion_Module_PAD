@@ -7,7 +7,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.OneToOne;
 
 @Entity
 public class RapportProspection implements Serializable{
@@ -24,7 +26,9 @@ public class RapportProspection implements Serializable{
     private Date dateCreation;
     private Date dateValidation;
     private String etat;
-    private String codeDossier;
+    @OneToOne    
+    @JoinColumn(name = "CODE_DOSSIER_COLONIE", referencedColumnName = "code" ,unique = true, nullable = false)
+    private DossierColonie codeDossier;
     //agent qui valide le rapport
     private String matriculeAgent;
     private String nomAgent;
@@ -77,10 +81,10 @@ public class RapportProspection implements Serializable{
     public void setEtat(String etat) {
         this.etat = etat;
     }
-    public String getCodeDossier() {
+    public DossierColonie getCodeDossier() {
         return codeDossier;
     }
-    public void setCodeDossier(String codeDossier) {
+    public void setCodeDossier(DossierColonie codeDossier) {
         this.codeDossier = codeDossier;
     }
     public String getMatriculeAgent() {

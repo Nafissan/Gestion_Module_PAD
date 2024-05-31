@@ -8,4 +8,6 @@ import sn.pad.pe.colonie.bo.Colon;
 
 public interface ColonRepository extends JpaRepository<Colon, Long>{
     Optional<Colon> findByMatriculeParent(String matricule);
+   Optional<Colon> findByCodeDossier(String codeDossier);
+
 }

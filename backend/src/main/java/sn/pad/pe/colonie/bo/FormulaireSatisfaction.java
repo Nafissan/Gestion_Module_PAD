@@ -9,13 +9,12 @@ import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyJoinColumn;
+import javax.persistence.OneToOne;
 @Entity
 public class FormulaireSatisfaction implements Serializable{
     private static final long serialVersionUID = 1L;
@@ -23,8 +22,8 @@ public class FormulaireSatisfaction implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CODE_DOSSIER_COLONIE", referencedColumnName = "id", unique = true, nullable = false)
+    @OneToOne    
+    @JoinColumn(name = "CODE_DOSSIER_COLONIE", referencedColumnName = "code", unique = true, nullable = false)
     private DossierColonie codeDossier;
 
     private Date dateCreation;

@@ -22,23 +22,23 @@
         <!-- Champ pour télécharger la note du ministère -->
                 <mat-label  *ngIf="mode === 'create'">Note du ministère</mat-label>
                 <div class="file-upload"  *ngIf="mode === 'create'">
-                  <input type="file" id="fileInput" (change)="handleNoteMinistereFileInput($event.target.files)">
+                  <input type="file" class="form-control-file border" id="fileInput" multiple="false"  (change)="handleNoteMinistereFileInput($event.target.files)">
                 </div>
                 <mat-label  *ngIf="mode === 'update'">Demande de prospection</mat-label>
                 <div class="file-upload"  *ngIf="mode === 'update'">
-                  <input type="file" id="fileInput" (change)="handleDemandeProspectionFileInput($event.target.files)" >
+                  <input type="file" class="form-control-file border" id="fileInput" multiple="false"  (change)="handleDemandeProspectionFileInput($event.target.files)" >
                 </div>
-                <mat-label  *ngIf="mode === 'update'">Note d'information aux employes</mat-label>
+                <mat-label  *ngIf="mode === 'update'">Note d'information </mat-label>
                 <div class="file-upload"  *ngIf="mode === 'update'">
-                  <input type="file" id="fileInput" (change)="handleNotePersonels($event.target.files)" >
+                  <input type="file" class="form-control-file border" id="fileInput" multiple="false"  (change)="handleNotePersonels($event.target.files)" >
                 </div>
-                <mat-label  *ngIf="mode === 'update'">Note d'information aux colons</mat-label>
+                <mat-label  *ngIf="mode === 'update'">Note d'instruction colonie</mat-label>
                 <div class="file-upload"  *ngIf="mode === 'update'">
-                  <input type="file" id="fileInput" (change)="handleNotePelerins($event.target.files)" >
+                  <input type="file" class="form-control-file border" id="fileInput" multiple="false" (change)="handleNotePelerins($event.target.files)" >
                 </div>
                 <mat-label  *ngIf="mode === 'update'">Rapport de mission</mat-label>
                 <div class="file-upload"  *ngIf="mode === 'update'">
-                  <input type="file" id="fileInput" (change)="handleRapport($event.target.files)" >
+                  <input type="file" class="form-control-file border" id="fileInput" multiple="false" (change)="handleRapport($event.target.files)" >
                 </div>
     </div>
 
@@ -46,7 +46,7 @@
 
     <mat-dialog-actions fxLayout="row" fxLayoutAlign="end center">
         <button *ngIf="isCreateMode()" mat-button [disabled]="!form.valid 
-            ">VALIDER</button>
+            ">CREER</button>
         <button *ngIf="isUpdateMode()" mat-button [disabled]="!form.valid">MODIFIER</button>
     </mat-dialog-actions>
 </form>

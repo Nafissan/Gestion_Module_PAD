@@ -1,3 +1,5 @@
+import { RapportProspection } from "./rapport-prospection.model";
+
 export class DossierColonie {
 	id: number;
 	annee: string;
@@ -6,17 +8,17 @@ export class DossierColonie {
 	etat: string;
     noteMinistere: File;
     demandeProspection: File;
-	notePersonnels: File;
-	notePelerins: File;
-
+	noteInformation: File;
+	noteInstruction: File;
+	rapportProspection: RapportProspection
+	rapportMission: File
 	matricule: string;
 	prenom: string;
 	nom: string;
 	fonction: string;
 
-	codeDirection: string;
-	nomDirection: string;
-	descriptionDirection: string;
+	 createdAt: Date;
+	 updatedAt: Date;
 	constructor(dossiercolonie){
 		this.id                       = dossiercolonie.id;
 		this.code                     = dossiercolonie.code;
@@ -25,16 +27,18 @@ export class DossierColonie {
 		this.etat                     = dossiercolonie.etat;
         this.noteMinistere 			  = dossiercolonie.noteMinistere;
         this.demandeProspection 	  = dossiercolonie.demandeProspection;
-		this.notePersonnels			  =	dossiercolonie.notePersonnels;
-		this.notePelerins			  = dossiercolonie.notePelerins;	
+		this.noteInformation			  =	dossiercolonie.noteInformation;
+		this.noteInstruction			  = dossiercolonie.noteInstruction;	
+		this.rapportProspection       = dossiercolonie.rapportProspection
+		this.rapportMission			 = dossiercolonie.rapportMission
+		
 		this.matricule                = dossiercolonie.matricule
 		this.nom                      = dossiercolonie.nom
 		this.prenom                   = dossiercolonie.prenom
 		this.fonction                 = dossiercolonie.fonction
 
-		this.codeDirection            = dossiercolonie.codeDirection
-		this.nomDirection             = dossiercolonie.nomDirection
-		this.descriptionDirection     = dossiercolonie.descriptionDirection
+		this.createdAt				 = dossiercolonie.createdAt
+		this.updatedAt				= dossiercolonie.updatedAt
 
 
 	}

@@ -38,6 +38,13 @@ export class MailClotureAttestation {
         "Bonjour, \nVotre demande d'attestation de travail a été traitée avec succés et est disponible dans votre espace privé ";
 
 }
+export class MailDossierColonie{
+    static objet: string = "DOSSIER COLONIE" + new Date().getFullYear() + " ";
+    static content: string =
+        "Le dossier colonie de l\'annee " + new Date().getFullYear() + " est ouvert.\n" +
+        " Veuillez coomencer la plannification."
+}
+
 export class MailRejeterAttestation {
     static susbject: string = "Rejet de la demande d'attestation de travail ";
     static content: string = "Votre demande d'attestation de travail a été rejeter ";

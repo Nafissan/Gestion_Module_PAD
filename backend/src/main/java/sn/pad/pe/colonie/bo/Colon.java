@@ -9,7 +9,9 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class Colon implements Serializable{
@@ -17,7 +19,9 @@ public class Colon implements Serializable{
      @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String codeDossier;
+    @ManyToOne
+    @JoinColumn(name = "CODE_DOSSIER_COLONIE", referencedColumnName = "code" ,unique = true, nullable = false)
+    private DossierColonie codeDossier;
     private String nomEnfant;
     private String prenomEnfant;
     private Date dateNaissance;
@@ -53,10 +57,10 @@ public class Colon implements Serializable{
     public void setId(Long id) {
         this.id = id;
     }
-    public String getCodeDossier() {
+    public DossierColonie getCodeDossier() {
         return codeDossier;
     }
-    public void setCodeDossier(String codeDossier) {
+    public void setCodeDossier(DossierColonie codeDossier) {
         this.codeDossier = codeDossier;
     }
     public String getNomEnfant() {

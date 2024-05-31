@@ -1,74 +1,68 @@
-import { Injectable } from "@angular/core";
-import { BehaviorSubject, of, throwError } from "rxjs";
-import { Participant } from "../model/participant.model";
-import { Agent } from "src/app/shared/model/agent.model";
-import { AgentService } from "src/app/shared/services/agent.service";
+import { Injectable } from '@angular/core';
+import { HttpHeaders, HttpClient, HttpResponse } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { Participant } from '../model/participant.model';
 
 @Injectable({
-  providedIn: "root"
+  providedIn: 'root',
 })
 export class ParticipantService {
-  private participantsList: Participant[] = [];
-  private participantsSubject = new BehaviorSubject<Participant[]>([]);
-  agent: Agent = new Agent();
-  participants$ = this.participantsSubject.asObservable();
-  private agentService: AgentService;
-  private participants: Participant[] = [
-    {
-      id: 1,
-      nom: 'nana',
-      prenom: 'ndiaye',
-      ficheSocial: null,
-      groupeSanguin: 'A+',
-      dateNaissance: null,
-      lieuNaissance: 'dadar',
-      agentParent: this.agent,
-      sexe:"feminin"
-    },
-    // Ajoutez d'autres objets DossierColonie si nécessaire
-  ];
-  constructor() { this.participantsSubject.next(this.participants);}
+  private url = '/pss-backend/participants';
 
-  getAllParticipants() {
-    // You can replace this with actual fetching logic from backend
-    // For now, we'll just return a copy of the participants list
-    return this.participantsSubject;
+  private httpOptions = {
+    headers: new HttpHeaders({
+      'Content-Type': 'application/json',
+    }),
+  };
+
+  constructor(private httpClient: HttpClient) {}
+
+  // Récupérer tous les participants
+  getAllParticipants(): Observable<HttpResponse<Participant[]>> {
+    return this.httpClient.get<Participant[]>(this.url, { observe: 'response' })
+      .pipe(catchError(this.errorHandler));
   }
 
-  addParticipant(participant: Participant) {
-    // You can replace this with actual logic to add participant
-    // For now, we'll just push the new participant to the list
-    this.participantsList.push(participant);
-    this.participantsSubject.next([...this.participantsList]);
-    return of(this.participants);
+  // Récupérer un participant par son ID
+  getParticipantById(id: number): Observable<HttpResponse<Participant>> {
+    const getUrl = `${this.url}/${id}`;
+    return this.httpClient.get<Participant>(getUrl, { observe: 'response' })
+      .pipe(catchError(this.errorHandler));
   }
-  getParticipantById(id: number) {
-    const participant = this.participants.find(p => p.id === id);
-    if (participant) {
-      return of(participant);
+
+  // Mettre à jour un participant
+  updateParticipant(id: number, participant: Participant): Observable<HttpResponse<any>> {
+    const updateUrl = `${this.url}/${id}`;
+    return this.httpClient.put<any>(updateUrl, participant, { headers: this.httpOptions.headers, observe: 'response' })
+      .pipe(catchError(this.errorHandler));
+  }
+
+  // Mettre à jour le statut d'un participant
+  updateParticipantStatus(id: number, newStatus: string): Observable<HttpResponse<any>> {
+    const updateStatusUrl = `${this.url}/${id}/status/${newStatus}`;
+    return this.httpClient.put<any>(updateStatusUrl, null, { observe: 'response' })
+      .pipe(catchError(this.errorHandler));
+  }
+
+  // Supprimer un participant
+  deleteParticipant(id: number): Observable<HttpResponse<any>> {
+    const deleteUrl = `${this.url}/${id}`;
+    return this.httpClient.delete<any>(deleteUrl, { observe: 'response' })
+      .pipe(catchError(this.errorHandler));
+  }
+
+  // Gérer les erreurs HTTP
+  private errorHandler(error: any) {
+    let errorMessage = '';
+    if (error.error instanceof ErrorEvent) {
+      // Erreur côté client
+      errorMessage = error.error.message;
     } else {
-      return throwError('Participant not found');
+      // Erreur côté serveur
+      errorMessage = `Code d'erreur: ${error.status}\nMessage: ${error.message}`;
     }
-  }
-  
-  updateParticipant(participant: Participant) {
-    // Find the participant by id and update its data
-    const index = this.participants.findIndex(p => p.id === participant.id);
-    if (index !== -1) {
-      console.log(participant);
-      this.participants[index] = participant; // Update the participant in the current list
-      this.participantsSubject.next([...this.participants]);
-      console.log(this.participantsSubject);
-      return of(participant); // Return an observable to mimic HTTP request
-    } else {
-      return throwError('Participant not found');
-    }
-  }
-
-  
-  delete(participant: Participant) {
-    this.participants = this.participants.filter(d => d.id !== participant.id);
-    this.participantsSubject.next(this.participants);
-    return of();
+    console.error(errorMessage);
+    return throwError(errorMessage);
   }
 }

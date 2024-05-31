@@ -21,6 +21,10 @@ import sn.pad.pe.pss.repositories.PasswordTokenRepository;
 import sn.pad.pe.pss.repositories.UniteOrganisationnelleRepository;
 import sn.pad.pe.pss.services.AgentService;
 
+/**
+ *
+ * @author Nafissa NDIAYE
+ */
 @Service
 public class AgentServiceImpl implements AgentService {
 

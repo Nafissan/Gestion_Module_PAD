@@ -61,7 +61,7 @@
                 </mat-panel-title>
             </mat-expansion-panel-header>
             <mat-panel-description>
-                <span>Nom du fichier : </span>{{ dossierColonie.demandeProspection ? dossierColonie.demandeProspection.name : 'Aucun fichier sélectionné' }}
+                <span>Nom du fichier : </span>{{ dossierColonie.rapportProspection ? dossierColonie.rapportProspection.rapport.name : 'Aucun fichier sélectionné' }}
             </mat-panel-description>
         </mat-expansion-panel>
         <mat-expansion-panel>
@@ -72,21 +72,21 @@
                 </mat-panel-title>
             </mat-expansion-panel-header>
             <mat-panel-description>
-                <span>Destinee aux employes : </span>{{ dossierColonie.demandeProspection ? dossierColonie.demandeProspection.name : 'Aucun fichier sélectionné' }}
+                <span>Pour inscription colonie : </span>{{ dossierColonie.noteInformation ? dossierColonie.noteInformation.name : 'Aucun fichier sélectionné' }}
             </mat-panel-description>
             <mat-panel-description>
-                <span>Destinee aux colons : </span>{{ dossierColonie.demandeProspection ? dossierColonie.demandeProspection.name : 'Aucun fichier sélectionné' }}
+                <span>Pour details colonie : </span>{{ dossierColonie.noteInstruction ? dossierColonie.noteInstruction.name : 'Aucun fichier sélectionné' }}
             </mat-panel-description>
         </mat-expansion-panel>
         <mat-expansion-panel>
             <mat-expansion-panel-header>
                 <mat-panel-title>
                     <mat-icon>insert_drive_file</mat-icon>
-                    <span>Rapport de colonie</span>
+                    <span>Rapport de mission</span>
                 </mat-panel-title>
             </mat-expansion-panel-header>
             <mat-panel-description>
-                <span>Nom du fichier : </span>{{ dossierColonie.demandeProspection ? dossierColonie.demandeProspection.name : 'Aucun fichier sélectionné' }}
+                <span>Nom du fichier : </span>{{ dossierColonie.rapportMission ? dossierColonie.rapportMission.name : 'Aucun fichier sélectionné' }}
             </mat-panel-description>
         </mat-expansion-panel>
         <mat-expansion-panel>
@@ -103,7 +103,7 @@
                 <span>Nom : </span>{{dossierColonie.nom.toUpperCase()}}
             </mat-panel-description>
             <mat-panel-description>
-                <span>Prénom : </span>{{dossierColonie.prenom}}
+                <span>Prénom : </span>{{dossierColonie.prenom.toUpperCase()}}
             </mat-panel-description>
         </mat-expansion-panel>
         <mat-expansion-panel>
@@ -115,20 +115,6 @@
             </mat-expansion-panel-header>
             <mat-panel-description>
                 <span>Nom : </span>{{dossierColonie.fonction}}
-            </mat-panel-description>
-        </mat-expansion-panel>
-        <mat-expansion-panel>
-            <mat-expansion-panel-header>
-                <mat-panel-title>
-                    <mat-icon>category</mat-icon>
-                    <span>Unite Organisationelle</span>
-                </mat-panel-title>
-            </mat-expansion-panel-header>
-            <mat-panel-description>
-                <span>Nom : </span>{{dossierColonie.nomDirection}}
-            </mat-panel-description>
-            <mat-panel-description>
-                <span>Decription : </span>{{dossierColonie.descriptionDirection.toUpperCase()}}
             </mat-panel-description>
         </mat-expansion-panel>
     </mat-accordion>

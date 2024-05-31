@@ -1,63 +1,56 @@
-
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
+import { catchError } from 'rxjs/operators';
 import { Satisfaction } from '../model/satisfaction.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SatisfactionService {
-  private satisfactionsList: Satisfaction[] = [];
-  private satisfactionsSubject = new BehaviorSubject<Satisfaction[]>([]);
-  satisfactions$ = this.satisfactionsSubject.asObservable();
+  private url = '/pss-backend/formulairesSatisfaction';
+  private httpOptions = {
+    headers: new HttpHeaders({
+      'Content-Type': 'application/json',
+    }),
+  };
 
-  constructor() {
-    // Initialize with some dummy data if necessary
-    this.satisfactionsList = [
-      new Satisfaction({
-        id: 1,
-        questions: ['question1', 'question2', 'question3', 'question4', 'question5'],
-        reponses: { question1: true, question2: false, question3: true, question4: false, question5: true },
-        dateCreation: new Date(),
-        traitePar: null,
-        code: "DCLN2024",
-        commentaire: "dkflrlflelf"
-      }),
-      new Satisfaction({
-        id: 2,
-        questions: ['question1', 'question2', 'question3', 'question4', 'question5'],
-        reponses: { question1: false, question2: true, question3: false, question4: true, question5: false },
-        dateCreation: new Date(),
-        traitePar: null,
-        code: "DCLN2023",
-        commentaire: "dvfcf"
-      })
-    ];
-    this.satisfactionsSubject.next(this.satisfactionsList);
+  constructor(private httpClient: HttpClient) {}
+
+  getAllSatisfactions(): Observable<HttpResponse<Satisfaction[]>> {
+    return this.httpClient
+      .get<Satisfaction[]>(this.url, { observe: 'response' })
+      .pipe(catchError(this.errorHandler));
   }
 
-  getAllSatisfactions() {
-    return this.satisfactionsSubject;
+  addSatisfaction(satisfaction: Satisfaction): Observable<HttpResponse<Satisfaction>> {
+    return this.httpClient
+      .post<Satisfaction>(this.url, satisfaction, { observe: 'response', headers: this.httpOptions.headers })
+      .pipe(catchError(this.errorHandler));
   }
 
-  addSatisfaction(satisfaction: Satisfaction) {
-    this.satisfactionsList.push(satisfaction);
-    this.satisfactionsSubject.next([...this.satisfactionsList]);
-    return of(this.satisfactionsList);
+  updateSatisfaction(satisfaction: Satisfaction): Observable<HttpResponse<Satisfaction>> {
+    return this.httpClient
+      .put<Satisfaction>(`${this.url}/${satisfaction.id}`, satisfaction, { observe: 'response', headers: this.httpOptions.headers })
+      .pipe(catchError(this.errorHandler));
   }
 
-  updateSatisfaction(satisfaction: Satisfaction) {
-    const index = this.satisfactionsList.findIndex(s => s.id === satisfaction.id);
-    if (index !== -1) {
-      this.satisfactionsList[index] = satisfaction;
-      this.satisfactionsSubject.next([...this.satisfactionsList]);
+  deleteSatisfaction(id: number): Observable<HttpResponse<any>> {
+    return this.httpClient
+      .delete<any>(`${this.url}/${id}`, { observe: 'response' })
+      .pipe(catchError(this.errorHandler));
+  }
+
+  private errorHandler(error) {
+    let errorMessage = '';
+    if (error.error instanceof ErrorEvent) {
+      // Client-side error
+      errorMessage = error.error.message;
+    } else {
+      // Server-side error
+      errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
     }
-    return of(satisfaction);
-  }
-
-  deleteSatisfaction(id: number) {
-    this.satisfactionsList = this.satisfactionsList.filter(s => s.id !== id);
-    this.satisfactionsSubject.next(this.satisfactionsList);
-    return of();
+    console.error(errorMessage);
+    return of(error);
   }
 }

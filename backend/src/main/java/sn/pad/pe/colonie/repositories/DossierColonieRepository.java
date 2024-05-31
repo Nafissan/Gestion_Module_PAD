@@ -8,7 +8,7 @@ import sn.pad.pe.colonie.bo.DossierColonie;
 
 public interface  DossierColonieRepository extends JpaRepository<DossierColonie, Long>{
 
-    Optional<DossierColonie> findDossierColonieByAnnee(String annee);
+    Optional<DossierColonie> findByAnnee(String annee);
 
-    public Object findByCode(String code);
+   Optional<DossierColonie> findByCode(String code);
 }

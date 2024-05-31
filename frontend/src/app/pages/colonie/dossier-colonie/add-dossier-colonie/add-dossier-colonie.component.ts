@@ -46,6 +46,7 @@ export const MY_FORMATS = {
   ],
 })export class AddDossierColonieComponent implements OnInit {
   dateCreation: FormControl; 
+  dateModif: FormControl; 
   username: string;
   agent: Agent;
   compte: Compte;
@@ -136,43 +137,44 @@ export const MY_FORMATS = {
     let formData: DossierColonie   = this.form.value;
     formData.annee                = new Date(this.dateCreation.value).getFullYear().toString();
     formData.code                 = 'DCLN' + '-' + 'PAD' + '-' + formData.annee;
-    formData.etat                 = EtatDossierColonie.saisi; 
-    formData.noteMinistere        = this.fileNoteMinistere,
-    formData.demandeProspection   = null, 
-    formData.notePelerins   = null, 
-    formData.notePersonnels   = null, 
-
+    formData.etat                 = EtatDossierColonie.ouvert; 
+    formData.noteMinistere        = this.fileNoteMinistere;
+    formData.demandeProspection   = null; 
+    formData.noteInformation   = null;
+    formData.noteInstruction   = null;
+    formData.rapportProspection = null;
+    formData.rapportMission = null;
     formData.matricule            = this.agent.matricule;
     formData.prenom               = this.agent.prenom;
     formData.nom                  = this.agent.nom;
     formData.fonction             = this.agent.fonction.nom;
 
-    formData.codeDirection        = this.agent.uniteOrganisationnelle.code;
-    formData.nomDirection         = this.agent.uniteOrganisationnelle.nom;
-    formData.descriptionDirection = this.agent.uniteOrganisationnelle.description;
+    formData.createdAt = new Date();
+    formData.updatedAt = null;
     this.dialogConfirmationService.confirmationDialog().subscribe(action => {
       if (action === DialogUtil.confirmer) {
-        this.dossierColonieService.getDossiersList().subscribe(dossiers => {
-          const existingDossier = dossiers.find(dossier => dossier.annee === formData.annee);
-          if (existingDossier) {
+        console.log("create dossier"+formData);
+        this.dossierColonieService.create(formData).subscribe(response => {
+          let existingDossier = response.body;
+          if (existingDossier.id != null) {
+            this.notificationService.success(NotificationUtil.ajout);
+            this.dialogRef.close(response.body);
+          } else {
             this.notificationService.warn(`Le dossier colonie de l'année ${formData.annee} existe déjà`);
             this.dialogRef.close();
-          } else {
-            const newDossier = new DossierColonie(formData);
-            dossiers.push(newDossier);
-            this.dossierColonieService.setDossiersList(dossiers);
-            this.notificationService.success(NotificationUtil.ajout);
-            this.dialogRef.close(newDossier);
           }
-        });
+        }, err => {
+          this.notificationService.warn(NotificationUtil.echec);}, 
+          () => {});
       } else {
         this.dialogRef.close();
       }
-    });
+    })
   }
 
   updateDossierColonie(): void {
     const formData: DossierColonie = this.form.value ;
+    formData.id                   = this.defaults.id;
     formData.annee                = this.defaults.annee;
     formData.code                 = this.defaults.code;
     formData.etat                 = EtatDossierColonie.saisi;  
@@ -182,25 +184,28 @@ export const MY_FORMATS = {
     formData.nom                  = this.defaults.nom;
     formData.fonction             = this.defaults.fonction;
 
-    formData.codeDirection        = this.defaults.codeDirection;
-    formData.nomDirection         = this.defaults.nomDirection;
-    formData.descriptionDirection = this.defaults.descriptionDirection;
-    formData.noteMinistere = this.fileNoteMinistere;
+    formData.noteMinistere = this.defaults.noteMinistere;
     formData.demandeProspection = this.fileDemandeProspetion;
-    formData.notePelerins = this.fileNotePelerins;
-    formData.notePersonnels = this.fileNotePersonnels;
+    formData.noteInformation = this.fileNotePersonnels;
+    formData.noteInstruction = this.fileNotePelerins;
+    formData.rapportProspection = this.defaults.rapportProspection;
+    formData.rapportMission = this.fileRapport;
 
+    formData.createdAt = this.defaults.createdAt;
+    formData.updatedAt = new Date();
     this.dialogConfirmationService.confirmationDialog().subscribe(action => {
       if (action === DialogUtil.confirmer) {
-        console.log(formData);
-        this.dossierColonieService.updateDossier(formData).subscribe(updatedDossier => {
+        console.log("update dossier "+formData);
+        this.dossierColonieService.update(formData).subscribe(reponse => {
           this.notificationService.success(NotificationUtil.modification);
-          this.dialogRef.close(updatedDossier);
-        });
+          this.dialogRef.close(reponse);
+        }, err => {
+          this.notificationService.warn(NotificationUtil.echec);},
+        () => { })
       } else {
         this.dialogRef.close();
       }
-    });
+    })
   }
   isCreateMode() {
     return this.mode === "create";
@@ -213,12 +218,5 @@ export const MY_FORMATS = {
     const ctrlValue = this.dateCreation.value;
     ctrlValue.year(normalizedYear.year());
     this.dateCreation.setValue(ctrlValue);
-  }
-
-  resetFormAndCloseDialog(): void {
-    this.form.reset();
-    this.fileNoteMinistere = null;
-    this.fileDemandeProspetion = null;
-    this.dialogRef.close();
   }
 }

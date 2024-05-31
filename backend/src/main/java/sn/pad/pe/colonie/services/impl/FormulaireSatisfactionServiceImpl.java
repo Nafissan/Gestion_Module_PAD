@@ -4,15 +4,12 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sn.pad.pe.colonie.bo.FormulaireSatisfaction;
-import sn.pad.pe.colonie.bo.DossierColonie;
 import sn.pad.pe.colonie.dto.FormulaireSatisfactionDTO;
 import sn.pad.pe.colonie.repositories.FormulaireSatisfactionRepository;
-import sn.pad.pe.colonie.repositories.DossierColonieRepository;
 import sn.pad.pe.colonie.services.FormulaireSatisfactionService;
 import sn.pad.pe.configurations.exception.ResourceNotFoundException;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,8 +18,7 @@ public class FormulaireSatisfactionServiceImpl implements FormulaireSatisfaction
     @Autowired
     private FormulaireSatisfactionRepository formulaireSatisfactionRepository;
 
-    @Autowired
-    private DossierColonieRepository dossierColonieRepository;
+ 
 
     @Autowired
     private ModelMapper modelMapper;
@@ -50,12 +46,20 @@ public class FormulaireSatisfactionServiceImpl implements FormulaireSatisfaction
     }
 
     @Override
-    public FormulaireSatisfactionDTO saveFormulaire(FormulaireSatisfactionDTO formulaire) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public FormulaireSatisfactionDTO saveFormulaire(FormulaireSatisfactionDTO formulaireDTO) {
+        FormulaireSatisfaction formulaire = modelMapper.map(formulaireDTO, FormulaireSatisfaction.class);
+        FormulaireSatisfaction savedFormulaire = formulaireSatisfactionRepository.save(formulaire);        
+        return modelMapper.map(savedFormulaire, FormulaireSatisfactionDTO.class);
     }
+
 
     @Override
     public FormulaireSatisfactionDTO getFormulaireByCodeDossier(String code) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        FormulaireSatisfaction formulaire = formulaireSatisfactionRepository.findByCodeDossier(code);
+        if (formulaire != null) {
+            return modelMapper.map(formulaire, FormulaireSatisfactionDTO.class);
+        } else {
+            throw new ResourceNotFoundException("Formulaire not found with code dossier: " + code);
+        }
     }
 }

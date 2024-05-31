@@ -1,6 +1,7 @@
 package sn.pad.pe.colonie.bo;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -10,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -24,7 +26,7 @@ public class DossierColonie implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+    @Column(unique = true, nullable = false)
     private String code;
     
     @Column(unique = true)
@@ -57,8 +59,13 @@ public class DossierColonie implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	@UpdateTimestamp
 	private Date updatedAt;
-    @OneToOne(fetch = FetchType.LAZY,mappedBy = "dossierColonie", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.LAZY,mappedBy = "codeDossier", cascade = CascadeType.ALL, orphanRemoval = true)
     private FormulaireSatisfaction formulaireSatisfaction;
+     @OneToOne(mappedBy = "codeDossier", cascade = CascadeType.ALL, orphanRemoval = true)
+    private RapportProspection rapportProspections;
+    @OneToMany(mappedBy = "codeDossier", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Colon> colons;
+
     public Long getId() {
         return id;
     }
@@ -200,4 +207,22 @@ public class DossierColonie implements Serializable {
     public void setFormulaireSatisfaction(FormulaireSatisfaction formulaireSatisfaction) {
         this.formulaireSatisfaction = formulaireSatisfaction;
     }
+
+    public RapportProspection getRapportProspections() {
+        return rapportProspections;
+    }
+
+    public void setRapportProspections(RapportProspection rapportProspections) {
+        this.rapportProspections = rapportProspections;
+    }
+
+    public List<Colon> getColons() {
+        return colons;
+    }
+
+    public void setColons(List<Colon> colons) {
+        this.colons = colons;
+    }
+
+  
 }
