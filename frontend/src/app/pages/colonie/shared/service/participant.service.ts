@@ -17,7 +17,14 @@ export class ParticipantService {
   };
 
   constructor(private httpClient: HttpClient) {}
-
+  create(participant: Participant): Observable<HttpResponse<any>> {
+    return this.httpClient
+      .post<any>(this.url, JSON.stringify(participant), {
+        headers: this.httpOptions.headers,
+        observe: 'response',
+      })
+      .pipe(catchError(this.errorHandler));
+  }
   // Récupérer tous les participants
   getAllParticipants(): Observable<HttpResponse<Participant[]>> {
     return this.httpClient.get<Participant[]>(this.url, { observe: 'response' })

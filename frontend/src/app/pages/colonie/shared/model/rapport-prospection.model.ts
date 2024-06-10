@@ -1,7 +1,7 @@
 import { Agent } from "../../../../shared/model/agent.model";
 
 export class RapportProspection {
-  id: string; // Identifiant du rapport (optionnel, dépend de vos besoins)
+  id: number; // Identifiant du rapport (optionnel, dépend de vos besoins)
   rapport: File; // Le fichier du rapport
   agent: Agent; // L'agent qui a ajouté le rapport
   dateCreation: Date; // La date de création du rapport

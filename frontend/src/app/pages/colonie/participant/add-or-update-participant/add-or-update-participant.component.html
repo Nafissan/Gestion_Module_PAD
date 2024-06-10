@@ -10,15 +10,11 @@
         <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
             <mat-form-field fxFlex>
                 <mat-label>Matricule Parent</mat-label>
-                <input matInput formControlName="matriculeParent" required>
-            </mat-form-field>
-            <mat-form-field fxFlex>
-                <mat-label>Nom Parent</mat-label>
-                <input matInput formControlName="nomParent" required>
-            </mat-form-field>
-            <mat-form-field fxFlex>
-                <mat-label>Prénom Parent</mat-label>
-                <input matInput formControlName="prenomParent" required>
+                <mat-select formControlName="matriculeParent" required>
+                    <mat-option *ngFor="let agent of agents" [value]="agent.matricule">
+                      {{ agent.matricule }}
+                    </mat-option>
+                  </mat-select>
             </mat-form-field>
         </div>
 

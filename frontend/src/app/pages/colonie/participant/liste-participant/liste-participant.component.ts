@@ -15,7 +15,7 @@ import { AuthenticationService } from 'src/app/shared/services/authentification.
 import { AgentService } from 'src/app/shared/services/agent.service';
 import { AddOrUpdateParticipantComponent } from '../add-or-update-participant/add-or-update-participant.component';
 import { SelectionModel } from '@angular/cdk/collections';
-import { NotificationUtil } from 'src/app/shared/util/util';
+import { DialogUtil, NotificationUtil } from 'src/app/shared/util/util';
 import { filter } from 'rxjs/operators';
 import { Route, Router } from '@angular/router';
 import { ReadFileParticipantComponent } from '../read-file-participant/read-file-participant.component';
@@ -61,9 +61,10 @@ export class ListeParticipantComponent implements OnInit {
    @Input()
    columns: ListColumn[] = [
      { name: "Checkbox", property: "checkbox", visible: true },
-     { name: "Matricule Parent", property: "agentParent.matricule", visible: true, isModelProperty: true },
-     { name: "Nom Parent", property: "agentParent.nom", visible: true, isModelProperty: true },
-     { name: "Prenom Parent", property: "agentParent.prenom", visible: true, isModelProperty: true },
+     { name: "Code Dossier", property: "codeDossier", visible: true, isModelProperty: true },
+     { name: "Matricule Parent", property: "matriculeParent", visible: true, isModelProperty: true },
+     { name: "Nom Parent", property: "nomParent", visible: true, isModelProperty: true },
+     { name: "Prenom Parent", property: "prenomParent", visible: true, isModelProperty: true },
     
      {
        name: "Nom Enfant",
@@ -77,7 +78,8 @@ export class ListeParticipantComponent implements OnInit {
        visible: true,   
        isModelProperty: true,
      },
-     { name: "Date de Naissance", property: "dateNaissance", visible: true, isModelProperty: true,},
+     { name: "Ajoute par", property: "matriculeAgent", visible: true, isModelProperty: true },
+      { name: "Date de Naissance", property: "dateNaissance", visible: true, isModelProperty: true,},
      { name: "Groupe Sanguin", property: "groupeSanguin", visible: false, isModelProperty: true, },
      { name: "Lieu de Naissance", property: "lieuNaissance", visible: false, isModelProperty: true,},
      { name: "Fiche Sociale", property: "ficheSocial", visible: true,  isModelProperty: true,},
@@ -123,7 +125,7 @@ export class ListeParticipantComponent implements OnInit {
   getParticipants(){
     this.participantService.getAllParticipants()
       .subscribe((response) => {
-        this.participants = response;
+        this.participants = response.body;
         console.log(this.participants);
       this.participantSelected = this.participants.find(e => e.id ===1);
         this.subject$.next(this.participants);
@@ -179,7 +181,7 @@ export class ListeParticipantComponent implements OnInit {
         );
         this.participants[index] = participant;
         this.subject$.next(this.participants);
-        console.log(this.participants);
+        console.log(participant);
       }
     })
   }
@@ -188,15 +190,15 @@ export class ListeParticipantComponent implements OnInit {
   }
   deleteParticipant(participant: Participant){
     this.dialogConfirmationService.confirmationDialog().subscribe(action => {
-      if (action === 'CONFIRMER') {
-        this.participantService.delete(participant).subscribe((response) => {
-          this.notificationService.success(NotificationUtil.suppression)
+      if (action === DialogUtil.confirmer) {
+        this.participantService.deleteParticipant(participant.id).subscribe((response) => {
           this.participants.splice(
             this.participants.findIndex(
               (existingParticipant) => existingParticipant.id === participant.id
             ),
             1
           );
+          this.notificationService.success(NotificationUtil.suppression)
           this.subject$.next(this.participants);
         }
         ,err => {
@@ -206,19 +208,17 @@ export class ListeParticipantComponent implements OnInit {
     })
   }
    validerParticipant(participant: Participant) {
-    // Update the participant state to 'validated'
-    participant.status = 'VALIDER';
-    this.participantService.updateParticipant(participant).subscribe(() => {
+    const status = 'VALIDER';
+    this.participantService.updateParticipantStatus(participant.id,status).subscribe(() => {
       this.notificationService.success('Participant validé avec succès');
     }, () => {
       this.notificationService.warn('Échec de la validation du participant');
     });
   }
   rejeterParticipant(participant: Participant) {
-    // Update the participant state to 'validated'
-    participant.status = 'REJETER';
-    this.participantService.updateParticipant(participant).subscribe(() => {
-      this.notificationService.success('Participant rejete avec succès');
+    const status = 'REJETER';
+    this.participantService.updateParticipantStatus(participant.id,status).subscribe(() => {
+      this.notificationService.success('Participant rejeté avec succès');
     }, () => {
       this.notificationService.warn('Échec de rejection du participant');
     });

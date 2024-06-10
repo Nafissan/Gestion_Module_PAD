@@ -21,8 +21,7 @@ showIcon = true;
   ) { }
 
   ngOnInit(): void {
-    this.satisfactionService.getAllSatisfactions().subscribe(satisfactions => {
-      this.satisfaction = satisfactions.find(result => result.code === this.data.code);
-    }); // Affectez les données de satisfaction à la propriété du composant
+
+      this.satisfaction = this.data;
   }
 }

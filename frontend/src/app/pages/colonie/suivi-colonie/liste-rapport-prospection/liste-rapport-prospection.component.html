@@ -57,40 +57,36 @@
               <mat-menu #actionsMenu="matMenu" yPosition="below" xPosition="before">
                 <button (click)="updateDossierColonie(row)" mat-menu-item matTooltip="Modifier le Rapport">
                   <mat-icon>edit</mat-icon>
-                  <span>Modifier</span>
+                  <span>MODIFIER</span>
                 </button>
                 <button (click)="deleteDossierColonie(row)" mat-menu-item matTooltip="Supprimer le Rapport">
                   <mat-icon>delete</mat-icon>
-                  <span>Supprimer</span>
-                </button>
-                <button (click)="detailsDossierColonie(row)" mat-menu-item matTooltip="Détails du Rapport">
-                  <mat-icon>info</mat-icon>
-                  <span>Détails</span>
+                  <span>SUPPRIMER</span>
                 </button>
                 <button *ngIf="row.etat === 'A VALIDER'" (click)="validerRapportProspection(row)" mat-menu-item>
                     <mat-icon>check_circle_outline</mat-icon>
-                    <span>Valider</span>
+                    <span>VALIDER</span>
                 </button>
                 <button *ngIf="row.etat === 'A VALIDER'" (click)="rejeterRapportProspection(row)" mat-menu-item>
                   <mat-icon>check_circle_outline</mat-icon>
-                  <span>rejeter</span>
+                  <span>REJETER</span>
               </button>
                 <button (click)="afficherRapportProspection(row)" mat-menu-item>
                     <mat-icon>visibility</mat-icon>
-                    <span>Afficher Rapport</span>
+                    <span>AFFICHER RAPPORT</span>
                   </button>                  
               </mat-menu>
             </td>
           </ng-container>
   
           <tr *matHeaderRowDef="visibleColumns" mat-header-row></tr>
-          <tr (click)="detailsDossierColonie(row)" *matRowDef="let row; columns: visibleColumns;" class="clickable route-animations-elements" mat-row></tr>
+          <tr *matRowDef="let row; columns: visibleColumns;" class="clickable route-animations-elements" mat-row></tr>
         </table>
   
         <mat-paginator class="paginator" [pageSize]="pageSize"></mat-paginator>
       </fury-list>
       <div *ngIf="afficherRapport">
-        <fury-read-rapport-prospection [rapport]="rapportSelectionne"></fury-read-rapport-prospection>
+        <fury-details-rapport-prospection [rapport]="rapportSelectionne"></fury-details-rapport-prospection>
     </div>
       <div *ngIf="rapports.length === 0 && showProgressBar === true" class="card text-center">
         <div class="card-header">

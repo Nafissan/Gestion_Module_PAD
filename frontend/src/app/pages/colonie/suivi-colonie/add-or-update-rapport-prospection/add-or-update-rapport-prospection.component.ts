@@ -66,30 +66,66 @@ export class AddOrUpdateRapportProspectionComponent implements OnInit {
     this.fileRapportProspection = files.item(0);
   }
   save(): void {
-    if (this.form.valid) {
-      const formData: RapportProspection = this.form.value;
-
+  
       if (this.mode === "create") {
-        formData.dateCreation = this.currentDate; // Utiliser la date actuelle pour la création
-        formData.agent = this.agent; // Utiliser l'agent connecté
-        formData.rapport= this.fileRapportProspection;
-        console.log(formData);
-        this.rapportProspectionService.addReport(formData);
-        this.notificationService.success(NotificationUtil.ajout);
+        this.createRapport();
       } else if (this.mode === "update") {
-        formData.id = this.defaults.id; // Assurez-vous d'avoir l'identifiant pour la mise à jour
-        formData.agent = this.defaults.agent; // Conserver l'agent d'origine
-        formData.dateCreation = this.defaults.dateCreation; // Conserver la date de création d'origine
-        formData.rapport= this.fileRapportProspection;
-
-        this.rapportProspectionService.updateReport(formData);
-        this.notificationService.success(NotificationUtil.modification);
+       this.updateRapportProspection();
       }
 
+    
+  }
+createRapport(){
+  if (this.form.valid) {
+    const formData: RapportProspection = this.form.value;
+  formData.dateCreation = this.currentDate; 
+  formData.agent = this.agent; 
+  formData.rapport= this.fileRapportProspection;
+  console.log(formData);
+  this.dialogConfirmationService.confirmationDialog().subscribe(action => {
+    if (action === DialogUtil.confirmer) {
+  this.rapportProspectionService.saveRapportProspection(formData).subscribe((response) => {
+    if(response.body.id != null){
+      this.notificationService.success(NotificationUtil.ajout);
+      this.dialogRef.close(formData);
+
+    }else{
+      this.notificationService.warn("Erreur dans l'ajout du formulaire");
       this.dialogRef.close();
     }
-  }
+  },err => {
+    this.notificationService.warn(NotificationUtil.echec);
+  });
+} else {
+  this.dialogRef.close();
+}
+});
 
+}
+}
+updateRapportProspection(){
+  if (this.form.valid) {
+    const formData: RapportProspection = this.form.value;
+  formData.id = this.defaults.id; // Assurez-vous d'avoir l'identifiant pour la mise à jour
+  formData.agent = this.defaults.agent; // Conserver l'agent d'origine
+  formData.dateCreation = this.defaults.dateCreation; // Conserver la date de création d'origine
+  formData.rapport= this.fileRapportProspection;
+  this.dialogConfirmationService.confirmationDialog().subscribe(action => {
+    if (action === DialogUtil.confirmer) {
+  this.rapportProspectionService.updateRapportProspection(formData).subscribe(() => {
+    this.notificationService.success(NotificationUtil.modification);
+
+    this.dialogRef.close(formData);
+  },err => {
+    this.notificationService.warn(NotificationUtil.echec);
+},
+() => {})
+ } else{
+  this.dialogRef.close();
+ }
+})
+  }
+}
   isCreateMode(): boolean {
     return this.mode === "create";
   }

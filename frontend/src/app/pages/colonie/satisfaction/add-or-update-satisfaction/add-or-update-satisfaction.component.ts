@@ -5,8 +5,9 @@ import { SatisfactionService } from '../../shared/service/satisfaction.service';
 import { Satisfaction } from '../../shared/model/satisfaction.model';
 import { CompteService } from 'src/app/pages/gestion-utilisateurs/shared/services/compte.service';
 import { AuthenticationService } from 'src/app/shared/services/authentification.service';
-import { DialogUtil } from "src/app/shared/util/util";
+import { DialogUtil, NotificationUtil } from "src/app/shared/util/util";
 import { DialogConfirmationService } from "src/app/shared/services/dialog-confirmation.service";
+import { NotificationService } from 'src/app/shared/services/notification.service';
 
 @Component({
   selector: 'fury-satisfaction-form',
@@ -29,7 +30,8 @@ export class AddOrUpdateSatisfactionComponent implements OnInit {
     private authService: AuthenticationService,
     private compteService: CompteService,
     private dialogRef: MatDialogRef<AddOrUpdateSatisfactionComponent>,
-    private dialogConfirmationService: DialogConfirmationService,
+    private dialogConfirmationService: DialogConfirmationService,    
+    private notificationService:NotificationService,
     private formBuilder: FormBuilder
   ) {
     this.satisfaction = defaults || {} as Satisfaction;
@@ -103,9 +105,20 @@ export class AddOrUpdateSatisfactionComponent implements OnInit {
     console.log(formData);
     this.dialogConfirmationService.confirmationDialog().subscribe(action => {
       if (action === DialogUtil.confirmer) {
-        this.satisfactionService.addSatisfaction(formData).subscribe(() => {
-          this.dialogRef.close(formData);
+        this.satisfactionService.addSatisfaction(formData).subscribe((response) => {
+          if(response.body.id != null){
+            this.notificationService.success(NotificationUtil.ajout);
+            this.dialogRef.close(formData);
+
+          }else{
+            this.notificationService.warn("Erreur dans l'ajout du formulaire");
+            this.dialogRef.close();
+          }
+        },err => {
+          this.notificationService.warn(NotificationUtil.echec);
         });
+      } else {
+        this.dialogRef.close();
       }
     });
     
@@ -115,8 +128,19 @@ export class AddOrUpdateSatisfactionComponent implements OnInit {
   updateSatisfaction(formData: Satisfaction){
     formData.id = this.satisfaction.id;
     console.log(formData); // Ajouter l'ID de la satisfaction existante
+    this.dialogConfirmationService.confirmationDialog().subscribe(action => {
+      if (action === DialogUtil.confirmer) {
     this.satisfactionService.updateSatisfaction(formData).subscribe(() => {
+      this.notificationService.success(NotificationUtil.modification);
+
       this.dialogRef.close(formData);
-    });
-  }
+    },err => {
+      this.notificationService.warn(NotificationUtil.echec);
+  },
+  () => {})
+   } else{
+    this.dialogRef.close();
+   }
+  })
+}
 }

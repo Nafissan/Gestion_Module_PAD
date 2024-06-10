@@ -10,7 +10,7 @@ import { AddOrUpdateSatisfactionComponent } from '../add-or-update-satisfaction/
 import { MatDialog } from '@angular/material/dialog';
 import { DialogConfirmationService } from 'src/app/shared/services/dialog-confirmation.service';
 import { NotificationService } from 'src/app/shared/services/notification.service';
-import { NotificationUtil } from 'src/app/shared/util/util';
+import { DialogUtil, NotificationUtil } from 'src/app/shared/util/util';
 import { filter } from 'rxjs/operators';
 import { AuthenticationService } from 'src/app/shared/services/authentification.service';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -86,7 +86,7 @@ export class ListeSatisfactionComponent implements OnInit {
 
   getSatisfactions() {
     this.satisfactionService.getAllSatisfactions().subscribe((response) => {
-      this.satisfactions = response;
+      this.satisfactions = response.body;
       this.satisfactionSelected = this.satisfactions.find(e => e.id ===1);
       this.subject$.next(this.satisfactions);
       this.showProgressBar = true;
@@ -146,15 +146,15 @@ export class ListeSatisfactionComponent implements OnInit {
   }
   deleteSatisfaction(satisfaction: Satisfaction) {
     this.dialogConfirmationService.confirmationDialog().subscribe(action => {
-      if (action === 'CONFIRMER') {
+      if (action === DialogUtil.confirmer) {
         this.satisfactionService.deleteSatisfaction(satisfaction.id).subscribe((response) => {
-          this.notificationService.success(NotificationUtil.suppression)
           this.satisfactions.splice(
             this.satisfactions.findIndex(
               (existingsatisfaction) => existingsatisfaction.id === satisfaction.id
             ),
             1
-          );
+          );          
+          this.notificationService.success(NotificationUtil.suppression)
           this.subject$.next(this.satisfactions);
         }
         ,err => {

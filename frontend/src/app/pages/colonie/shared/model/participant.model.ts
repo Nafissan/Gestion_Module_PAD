@@ -1,4 +1,3 @@
-import { Agent } from "src/app/shared/model/agent.model";
 
 export class Participant {
     id: number;

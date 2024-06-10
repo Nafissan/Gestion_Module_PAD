@@ -55,11 +55,11 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
   @Input()
   columns: ListColumn[] = [
     { name: "Checkbox", property: "checkbox", visible: false },
-    { name: "Code", property: "codeDossierColonie", visible: true, isModelProperty: true },
+    { name: "Code Dossier", property: "codeDossierColonie", visible: true, isModelProperty: true },
     { name: "Date de création", property: "dateCreation", visible: true, isModelProperty: true },
     { name: "État", property: "etat", visible: true, isModelProperty: true },
     { name: "Rapport Prospection", property: "rapport", visible: true, isModelProperty: true },
-    { name: "Ajoute par", property: "Agent", visible: true, isModelProperty: true },
+    { name: "Ajoute par", property: "agent", visible: true, isModelProperty: true },
     { name: "Actions", property: "actions", visible: true },
   ] as ListColumn[];
 
@@ -103,17 +103,17 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
   }
 
   getRapportProspections() {
-    this.rapportService.getAllReports().subscribe(
+    this.rapportService.getAllRapportsProspection().subscribe(
       (response) => {
-        this.rapports = response;
+        this.rapports = response.body;
         this.currentRapport = this.rapports.find(e => e.etat === 'A VALIDER');
         this.subject$.next(this.rapports);
-this.showProgressBar=true;
-console.log(this.rapports);
+        this.showProgressBar=true;
+        console.log(this.rapports);
       },
-      (err) => { },
-      () => {
-        this.subject$.next(this.rapports);
+      (err) => {        
+         console.error('Error loading rapport prospection colonies:', err); 
+
       }
     );
   }
@@ -147,25 +147,11 @@ console.log(this.rapports);
   hasAnyRole(roles: string[]) {
     return this.authentificationService.hasAnyRole(roles);
   }
-  detailsDossierColonie(rapport: RapportProspection) {
-    this.dialog
-      .open(DetailsRapportProspectionComponent, { data: rapport })
-      .afterClosed()
-      .subscribe((rapport) => {
-        if (rapport) {
-          const index = this.rapports.findIndex(
-            (existingrapport) => existingrapport.id === rapport.id
-          );
-          this.rapports[index] = new rapport(rapport);
-          this.subject$.next(this.rapports);
-        }
-      });
-  }
 
   deleteDossierColonie(rapport: RapportProspection) {
     this.dialogConfirmationService.confirmationDialog().subscribe(action => {
       if (action === DialogUtil.confirmer) {
-        this.rapportService.deleteReport(rapport.id).subscribe(
+        this.rapportService.deleteRapportProspection(rapport.id).subscribe(
           () => {
             this.rapports.splice(
               this.rapports.findIndex((existingrapport) => existingrapport.id === rapport.id), 1
@@ -182,7 +168,7 @@ console.log(this.rapports);
   }
   validerRapportProspection(rapport: RapportProspection){
     rapport.etat = 'VALIDER';
-    this.rapportService.updateReport(rapport).subscribe(()=>{
+    this.rapportService.updateRapportProspection(rapport).subscribe(()=>{
       this.notificationService.success('Rapport de prospection valide avec succes');
     },() => {
       this.notificationService.warn('Echac de validation du rapport');
@@ -190,7 +176,7 @@ console.log(this.rapports);
   }
   rejeterRapportProspection(rapport: RapportProspection){
     rapport.etat = 'REJETER';
-    this.rapportService.updateReport(rapport).subscribe(()=>{
+    this.rapportService.updateRapportProspection(rapport).subscribe(()=>{
       this.notificationService.success('Rapport de prospection rejete avec succes');
     },() => {
       this.notificationService.warn('Echac de rejection du rapport');
