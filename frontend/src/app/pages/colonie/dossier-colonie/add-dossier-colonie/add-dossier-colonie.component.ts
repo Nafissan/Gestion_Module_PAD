@@ -14,6 +14,8 @@ import { EtatDossierColonie } from "../../shared/util/util";
 import { DialogUtil, NotificationUtil } from "src/app/shared/util/util";
 import * as moment from "moment";
 import { DossierColonieService } from "../../shared/service/dossier-colonie.service";
+import { MailService } from "src/app/shared/services/mail.service";
+import { Mail } from "src/app/shared/model/mail.model";
 
 // See the Moment.js docs for the meaning of these formats:
 // https://momentjs.com/docs/#/displaying/format/
@@ -55,14 +57,15 @@ export const MY_FORMATS = {
   colonieDossier: DossierColonie;
   etatDossierColonie: EtatDossierColonie = new EtatDossierColonie();
   selectedFileName: string = '';
-
+  emailSentForNoteInformation: boolean = false;
+  emailSentForNoteInstruction: boolean = false;
 
   // Autres propriétés nécessaires
-  fileNoteMinistere: File | null = null;
-  fileDemandeProspetion: File | null = null;
-  fileNotePersonnels: File | null =null;
-  fileNotePelerins: File | null =null;
-  fileRapport: File | null =null;
+  noteMinistere: string | null = null;
+  demandeProspection: string | null = null;
+  notePersonnels: string | null = null;
+  notePelerins: string | null = null;
+  rapport: string | null = null;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public defaults: DossierColonie,
@@ -71,7 +74,8 @@ export const MY_FORMATS = {
     private authService: AuthenticationService,
     private compteService: CompteService,
     private dossierColonieService: DossierColonieService,
-    private dialog: MatDialog,
+    private dialog: MatDialog,   
+     private mailService: MailService,
     private dialogConfirmationService: DialogConfirmationService,
     private notificationService: NotificationService
   ) {}
@@ -86,6 +90,8 @@ export const MY_FORMATS = {
 
     if (this.defaults) {
       this.mode = "update";
+      this.emailSentForNoteInformation = !!this.defaults.noteInformation;
+      this.emailSentForNoteInstruction = !!this.defaults.noteInstruction;
     } else {
       this.defaults = {} as DossierColonie;
     }
@@ -103,28 +109,60 @@ export const MY_FORMATS = {
 
  
  
-  handleNoteMinistereFileInput(files: FileList) {
+  async handleNoteMinistereFileInput(files: FileList) {
     if (files.length > 0) {
-      this.fileNoteMinistere  = files[0];
-      this.selectedFileName = this.fileNoteMinistere.name;
-      console.log(this.fileNoteMinistere.name);
-      // Faites quelque chose avec le fichier
+      this.noteMinistere = await this.convertFileToBase64(files[0]);
+      this.selectedFileName = files[0].name;
+      console.log(this.noteMinistere); // Vous pouvez afficher ou utiliser la chaîne base64 ici
     }
   }
 
-  handleDemandeProspectionFileInput(files: FileList): void {
-    this.fileDemandeProspetion = files.item(0);
+  async handleDemandeProspectionFileInput(files: FileList) {
+    if (files.length > 0) {
+      this.demandeProspection = await this.convertFileToBase64(files[0]);
+      console.log(this.demandeProspection); // Vous pouvez afficher ou utiliser la chaîne base64 ici
+    }
   }
 
-  handleNotePersonels(files: FileList): void {
-    this.fileNotePersonnels = files.item(0);
+  async handleNotePersonels(files: FileList) {
+    if (files.length > 0) {
+      this.notePersonnels = await this.convertFileToBase64(files[0]);
+
+      if (!this.emailSentForNoteInformation) {
+        this.sendEmail(
+          'New Note Information Uploaded',
+          'A new Note Information file has been uploaded.',
+          ['nnafissa27@gmail.com'],
+          this.notePersonnels
+        );
+        this.emailSentForNoteInformation = true;
+      }
+    }
   }
-  handleNotePelerins(files: FileList): void {
-    this.fileNotePelerins = files.item(0);
+
+  async handleNotePelerins(files: FileList) {
+    if (files.length > 0) {
+      this.notePelerins = await this.convertFileToBase64(files[0]);
+
+      if (!this.emailSentForNoteInstruction) {
+        this.sendEmail(
+          'New Note Instruction Uploaded',
+          'A new Note Instruction file has been uploaded.',
+          ['nnafissa27@gmail.com'],
+          this.notePelerins
+        );
+        this.emailSentForNoteInstruction = true;
+      }
+    }
   }
-  handleRapport(files: FileList): void {
-    this.fileRapport = files.item(0);
+
+  async handleRapport(files: FileList) {
+    if (files.length > 0) {
+      this.rapport = await this.convertFileToBase64(files[0]);
+      console.log(this.rapport); // Vous pouvez afficher ou utiliser la chaîne base64 ici
+    }
   }
+
   save(): void {
     if (this.mode === "create") {
       this.createDossierColonie();
@@ -138,7 +176,7 @@ export const MY_FORMATS = {
     formData.annee                = new Date(this.dateCreation.value).getFullYear().toString();
     formData.code                 = 'DCLN' + '-' + 'PAD' + '-' + formData.annee;
     formData.etat                 = EtatDossierColonie.ouvert; 
-    formData.noteMinistere        = this.fileNoteMinistere;
+    formData.noteMinistere        = this.noteMinistere;
     formData.demandeProspection   = null; 
     formData.noteInformation   = null;
     formData.noteInstruction   = null;
@@ -185,11 +223,11 @@ export const MY_FORMATS = {
     formData.fonction             = this.defaults.fonction;
 
     formData.noteMinistere = this.defaults.noteMinistere;
-    formData.demandeProspection = this.fileDemandeProspetion;
-    formData.noteInformation = this.fileNotePersonnels;
-    formData.noteInstruction = this.fileNotePelerins;
+    formData.demandeProspection = this.demandeProspection;
+    formData.noteInformation = this.notePersonnels;
+    formData.noteInstruction = this.notePelerins;
     formData.rapportProspection = this.defaults.rapportProspection;
-    formData.rapportMission = this.fileRapport;
+    formData.rapportMission = this.rapport;
 
     formData.createdAt = this.defaults.createdAt;
     formData.updatedAt = new Date();
@@ -206,6 +244,37 @@ export const MY_FORMATS = {
         this.dialogRef.close();
       }
     })
+  }
+  async convertFileToBase64(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      if (!file) {
+        resolve(null);
+      }
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64String = reader.result as string;
+        resolve(base64String);
+      };
+      reader.onerror = error => reject(error);
+      reader.readAsDataURL(file);
+    });
+  }
+  sendEmail(subject: string, body: string, recipients: string[], file: string): void {
+    let mail = new Mail();
+    mail.objet = subject;
+    mail.contenu = body;
+    mail.destinataires = recipients;
+    mail.lien = "";
+    mail.emetteur = "";
+    mail.file = file;
+    this.mailService.sendMailByDirections(mail).subscribe(
+      response => {
+        this.notificationService.success('Email sent successfully');
+      },
+      error => {
+        this.notificationService.warn('Failed to send email');
+      }
+    );
   }
   isCreateMode() {
     return this.mode === "create";

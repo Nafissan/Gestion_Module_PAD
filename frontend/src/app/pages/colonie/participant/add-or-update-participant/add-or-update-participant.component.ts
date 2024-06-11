@@ -11,6 +11,7 @@ import { CompteService } from "src/app/pages/gestion-utilisateurs/shared/service
 import { AuthenticationService } from "src/app/shared/services/authentification.service";
 import { NotificationService } from "src/app/shared/services/notification.service";
 import { AgentService } from "src/app/shared/services/agent.service";
+import { DossierColonieService } from "../../shared/service/dossier-colonie.service";
 
 @Component({
   selector: "app-add-update-participant-colonie",
@@ -35,7 +36,9 @@ export class AddOrUpdateParticipantComponent implements OnInit {
     private participantService: ParticipantService,
     private notificationService:NotificationService,
     private agentService: AgentService,
-    private dialogConfirmationService: DialogConfirmationService
+    private dialogConfirmationService: DialogConfirmationService,   
+     private dossierColonieService: DossierColonieService // Inject the service
+
   ) {
   
   }
@@ -61,6 +64,7 @@ export class AddOrUpdateParticipantComponent implements OnInit {
       dateNaissance: [this.defaults.dateNaissance || "", Validators.required],
       lieuNaissance: [this.defaults.lieuNaissance || "", Validators.required],
       groupeSanguin: [this.defaults.groupeSanguin || "", Validators.required],
+      codeDossier: [this.defaults.codeDossier || ""],
     });
   }
   
@@ -110,6 +114,12 @@ export class AddOrUpdateParticipantComponent implements OnInit {
        formData.nomParent = selectedAgent.nom;
        formData.prenomParent = selectedAgent.prenom;
      }
+     this.dossierColonieService.getAll().subscribe(dossiersResponse => {
+      const dossiers = dossiersResponse.body;
+      const openOrSaisiDossier = dossiers.find(dossier => dossier.etat === 'ouvert' || dossier.etat === 'saisi');
+      if (openOrSaisiDossier) {
+        formData.codeDossier = openOrSaisiDossier.code;
+      }});
     console.log(formData);
     this.dialogConfirmationService.confirmationDialog().subscribe(action => {
       if (action === DialogUtil.confirmer) {

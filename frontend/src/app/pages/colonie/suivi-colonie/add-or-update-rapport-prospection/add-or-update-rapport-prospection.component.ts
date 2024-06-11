@@ -11,6 +11,7 @@ import { DialogUtil, NotificationUtil } from "src/app/shared/util/util";
 import * as moment from "moment";
 import { Compte } from "src/app/pages/gestion-utilisateurs/shared/model/compte.model";
 import { CompteService } from "src/app/pages/gestion-utilisateurs/shared/services/compte.service";
+import { DossierColonieService } from "../../shared/service/dossier-colonie.service";
 
 @Component({
   selector: "app-add-update-rapport-prospection",
@@ -35,7 +36,8 @@ export class AddOrUpdateRapportProspectionComponent implements OnInit {
     private compteService: CompteService,
     private rapportProspectionService: RapportProspectionService,
     private dialogConfirmationService: DialogConfirmationService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private dossierColonieService: DossierColonieService 
   ) {}
 
   ngOnInit(): void {
@@ -81,6 +83,12 @@ createRapport(){
   formData.dateCreation = this.currentDate; 
   formData.agent = this.agent; 
   formData.rapport= this.fileRapportProspection;
+  this.dossierColonieService.getAll().subscribe(dossiersResponse => {
+    const dossiers = dossiersResponse.body;
+    const openOrSaisiDossier = dossiers.find(dossier => dossier.etat === 'ouvert' || dossier.etat === 'saisi');
+    if (openOrSaisiDossier) {
+      formData.codeDossierColonie = openOrSaisiDossier.code;
+    }});
   console.log(formData);
   this.dialogConfirmationService.confirmationDialog().subscribe(action => {
     if (action === DialogUtil.confirmer) {

@@ -5,6 +5,7 @@ export class Mail{
 	lien: string;
 	pieceJointe: string;
 	emetteur: string;
+    file: string;
 	destinataires: string[];
     // constructor(mail?){
     //     this.objet         = mail.objet

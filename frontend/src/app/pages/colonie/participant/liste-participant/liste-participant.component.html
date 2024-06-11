@@ -25,17 +25,19 @@
           <ng-container *ngFor="let column of columns">
             <ng-container *ngIf="column.isModelProperty" [matColumnDef]="column.property">
               <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ column.name }} </th>
-              <td mat-cell *matCellDef="let row">
+              <td mat-cell *matCellDef="let row" (click)="onCellClick(column.property, row)">
                 <p *ngIf="column.name === 'Status'">
-                  <span *ngIf="row?.status === 'A VALIDER' " class="badge badge-primary">{{ 'A Valider'}}
+                  <span *ngIf="row?.status === 'A VALIDER' " class="badge badge-warning">{{ 'A Valider'}}
                   </span>
                   <span *ngIf="row?.status === 'VALIDER' " class="badge badge-success">{{ 'Validée' }}
                   </span>
                   <span *ngIf="row?.status === 'REJETER' " class="badge badge-danger">{{ 'rejetée' }}
                   </span>
               </p>
+              <p *ngIf="column.property == 'ajoutePar'" > {{(row.matricule + ' | ' + row.prenom + ' ' + row.nom) | titlecase }}</p>
               <p *ngIf="column.property == 'ficheSocial' && row[column.property]" > {{ row[column.property].name }}</p>
-              <p *ngIf="column.name !== 'Status' && column.property !== 'ficheSocial'">
+              <p *ngIf="column.property == 'document' && row[column.property]" > {{ row[column.property].name }}</p>
+              <p *ngIf="column.name !== 'Status' && column.property !== 'ficheSocial'&& column.property !== 'document' && column.property !== 'ajoutePar'">
                     {{ row[column.property] }}
                 </p></td>
             </ng-container>
@@ -65,10 +67,6 @@
                   <mat-icon>edit</mat-icon>
                   <span>REJETER</span>
                 </button>
-                <button mat-menu-item (click)="afficherFicheSocial(row)">
-                  <mat-icon>visibility</mat-icon>
-                  <span>AFFICHER FICHE </span>
-                </button>
               </mat-menu>
             </td>
           </ng-container>
@@ -80,9 +78,9 @@
   
         <mat-paginator [pageSize]="pageSize" class="paginator"></mat-paginator>
       </fury-list>
-      <div *ngIf="afficherFicheSociale">
-        <fury-read-file-participant [participant]="participantSelectionne"></fury-read-file-participant>
-    </div>
+      <div *ngIf="afficherFicheSociale || afficherDoc">
+        <fury-read-file-participant [participant]="participantSelectionne" [fileType]="fileType"></fury-read-file-participant>
+      </div>
       <div *ngIf="participants.length === 0 && showProgressBar === true" class="card text-center">
         <div class="card-header">
           <span class="badge badge-info">INFORMATION</span>

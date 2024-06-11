@@ -24,7 +24,10 @@
                 <ng-container *ngFor="let column of columns">
                     <ng-container *ngIf="column.isModelProperty" [matColumnDef]="column.property">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ column.name }} </th>
-                        <td mat-cell *matCellDef="let row">{{ row[column.property] }}</td>
+                        <td mat-cell *matCellDef="let row">
+                            <p *ngIf="column.property == 'traitePar' " > {{ (row.matricule + ' | ' + row.prenom + ' ' + row.nom) | titlecase }} </p>
+                            <p *ngIf="column.property !== 'traitePar' " >  {{ row[column.property] }} </p>
+                           </td>
                     </ng-container>
                 </ng-container>
 

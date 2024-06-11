@@ -30,12 +30,14 @@
                     <span class="badge badge-warning">{{ row[column.property]}}</span>
                 </p>
                 <p *ngIf="column.property === 'etat' && row[column.property] === ouvert">
-                    <span class="badge badge-info">{{ row[column.property]}}</span>
-                </p>
-                <p *ngIf="column.property === 'etat' && row[column.property] === fermer">
                     <span class="badge badge-success">{{ row[column.property]}}</span>
                 </p>
-            
+                <p *ngIf="column.property === 'etat' && row[column.property] === fermer">
+                    <span class="badge badge-danger">{{ row[column.property]}}</span>
+                </p>
+                <p *ngIf="column.property === 'ajoutePar'">
+                  {{ (row.matricule + ' | ' + row.prenom + ' ' + row.nom + ' - ' + row.fonction) | titlecase }}
+                </p>
                 <p *ngIf="column.property === 'noteMinistere' && row.noteMinistere">
                   <span>{{ row.noteMinistere.name }}</span>
                 </p>
@@ -76,10 +78,6 @@
                 <button mat-menu-item (click)="deleteDossierColonie(row)" [disabled]="!hasAnyRole(['MENU_DOTATION']) || row.etat !== saisi">
                   <mat-icon>delete_sweep</mat-icon>
                   <span>SUPPRIMER</span>
-                </button>
-                <button mat-menu-item (click)="ouvrirDossierColonie(row)" [disabled]="!hasAnyRole(['MENU_DOTATION']) || row.etat === ouvert || row.etat === fermer">
-                  <mat-icon>send</mat-icon>
-                  <span>OUVRIR</span>
                 </button>
                 <button mat-menu-item (click)="fermerDossierColonie(row)" [disabled]="!hasAnyRole(['MENU_DOTATION']) || row.etat === fermer || row.etat === saisi">
                   <mat-icon>close</mat-icon>

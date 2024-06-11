@@ -8,7 +8,8 @@ import { AuthenticationService } from 'src/app/shared/services/authentification.
 import { DialogUtil, NotificationUtil } from "src/app/shared/util/util";
 import { DialogConfirmationService } from "src/app/shared/services/dialog-confirmation.service";
 import { NotificationService } from 'src/app/shared/services/notification.service';
-
+import { DossierColonieService } from '../../shared/service/dossier-colonie.service';
+import {QuestionService} from '../../shared/service/question.service';
 @Component({
   selector: 'fury-satisfaction-form',
   templateUrl: './add-or-update-satisfaction.component.html',
@@ -18,7 +19,8 @@ export class AddOrUpdateSatisfactionComponent implements OnInit {
   form: FormGroup;
   satisfaction: Satisfaction;
   agentConnecte: any;
-  questions: string[] = ['Question 1', 'Question 2', 'Question 3', 'Question 4', 'Question 5']; // Liste de vos questions
+  questions: string[] = [];
+  mode: "create" | "update" = "create";
 
   
    
@@ -32,26 +34,42 @@ export class AddOrUpdateSatisfactionComponent implements OnInit {
     private dialogRef: MatDialogRef<AddOrUpdateSatisfactionComponent>,
     private dialogConfirmationService: DialogConfirmationService,    
     private notificationService:NotificationService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,        
+     private questionService: QuestionService ,
+    private dossierColonieService: DossierColonieService 
+
   ) {
     this.satisfaction = defaults || {} as Satisfaction;
   }
 
   ngOnInit(): void {
-    // Créer le formulaire avec un contrôle pour chaque question
-    // Initialisation du formulaire avec les contrôles correspondant aux questions
+    this.getQuestions();
+    this.getAgentConnecte();
+  }
+  getQuestions() {
+    this.questionService.getAllQuestions().subscribe(
+      response => {
+        this.questions = response.body.map(q => q.texte); 
+        this.initForm();
+      },
+      error => {
+        console.error('Error fetching questions', error);
+      }
+    );
+  }
+  initForm(): void {
     this.form = this.formBuilder.group({});
     this.questions.forEach(question => {
       this.form.addControl(question, this.formBuilder.control(null));
     });
-    this.form.addControl('code', this.formBuilder.control(null)); // Ajouter un contrôle pour le code
-    this.form.addControl('commentaire', this.formBuilder.control(null)); // Ajouter un contrôle pour le commentaire
+    this.form.addControl('code', this.formBuilder.control(null));
+    this.form.addControl('commentaire', this.formBuilder.control(null));
+
     if (this.satisfaction) {
       this.form.patchValue(this.satisfaction);
       this.form.patchValue({ reponses: this.satisfaction.reponses });
     }
   }
-
   isCreateMode(): boolean {
     return !this.satisfaction || !this.satisfaction.id;
   }
@@ -71,17 +89,13 @@ export class AddOrUpdateSatisfactionComponent implements OnInit {
   }
 
   save(): void {
-    // Récupérer les réponses aux questions
     const reponses = {};
     this.questions.forEach(question => {
       reponses[question] = this.form.get(question).value;
     });
 
-    // Récupérer le code et le commentaire
     const code = this.form.get('code').value;
     const commentaire = this.form.get('commentaire').value;
-    this.getAgentConnecte();
-    // Créer un nouvel objet Satisfaction avec les données du formulaire
     const satisfactionData: Satisfaction = {
       ...this.form.value,
       reponses: reponses,
@@ -92,16 +106,19 @@ export class AddOrUpdateSatisfactionComponent implements OnInit {
       dateCreation: new Date()
     };
 
-    // Appeler la méthode appropriée en fonction du mode
     if (this.isCreateMode()) {
-      // Mode création
       this.addSatisfaction(satisfactionData);
     } else if (this.isUpdateMode()) {
-      // Mode mise à jour
       this.updateSatisfaction(satisfactionData);
     }
   }
   addSatisfaction(formData: Satisfaction) {
+    this.dossierColonieService.getAll().subscribe(dossiersResponse => {
+      const dossiers = dossiersResponse.body;
+      const openOrSaisiDossier = dossiers.find(dossier => dossier.etat === 'ouvert' || dossier.etat === 'saisi');
+      if (openOrSaisiDossier) {
+        formData.code = openOrSaisiDossier.code;
+      }});
     console.log(formData);
     this.dialogConfirmationService.confirmationDialog().subscribe(action => {
       if (action === DialogUtil.confirmer) {
@@ -127,7 +144,7 @@ export class AddOrUpdateSatisfactionComponent implements OnInit {
 
   updateSatisfaction(formData: Satisfaction){
     formData.id = this.satisfaction.id;
-    console.log(formData); // Ajouter l'ID de la satisfaction existante
+    console.log(formData); 
     this.dialogConfirmationService.confirmationDialog().subscribe(action => {
       if (action === DialogUtil.confirmer) {
     this.satisfactionService.updateSatisfaction(formData).subscribe(() => {

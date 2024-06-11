@@ -6,7 +6,7 @@
 <form [formGroup]="form" (ngSubmit)="save()">
     <mat-dialog-content>
         <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
-            <mat-form-field fxFlex *ngIf="mode === 'create'">
+            <mat-form-field fxFlex *ngIf="mode === 'update'">
                     <mat-label>Code</mat-label>
                     <input matInput formControlName="codeDossier" [disabled]="isUpdateMode()">
                 </mat-form-field>

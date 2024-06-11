@@ -38,8 +38,9 @@ export class ListeParticipantComponent implements OnInit {
   selection = new SelectionModel<Participant>(true, []);
   afficherFicheSociale: boolean = false;
   participantSelectionne: Participant;
-  
-  
+  afficherDocument : boolean =false;
+  fileType: 'ficheSocial' | 'document'; // New property to indicate file type
+
   
   private paginator: MatPaginator;
   private sort: MatSort;
@@ -78,13 +79,15 @@ export class ListeParticipantComponent implements OnInit {
        visible: true,   
        isModelProperty: true,
      },
-     { name: "Ajoute par", property: "matriculeAgent", visible: true, isModelProperty: true },
+     { name: "Ajoute par", property: "ajoutePar", visible: true },
       { name: "Date de Naissance", property: "dateNaissance", visible: true, isModelProperty: true,},
      { name: "Groupe Sanguin", property: "groupeSanguin", visible: false, isModelProperty: true, },
      { name: "Lieu de Naissance", property: "lieuNaissance", visible: false, isModelProperty: true,},
      { name: "Fiche Sociale", property: "ficheSocial", visible: true,  isModelProperty: true,},
+     { name: "Document Supplementaire", property: "document", visible: false,  isModelProperty: true,},
      { name: "Status", property: "status", visible: false,  isModelProperty: true,},
      { name: "Actions", property: "actions", visible: true },
+
    ] as ListColumn[];
   constructor(
     private participantService: ParticipantService,
@@ -226,5 +229,23 @@ export class ListeParticipantComponent implements OnInit {
   afficherFicheSocial(participant: Participant): void {
     this.participantSelectionne = participant;
     this.afficherFicheSociale = true;
+    this.afficherDocument = false; // Ensure document view is hidden
+    this.fileType = 'ficheSocial'; // Set file type
+  }
+
+  afficherDoc(participant: Participant): void {
+    this.participantSelectionne = participant;
+    this.afficherFicheSociale = false; // Ensure fiche sociale view is hidden
+    this.afficherDocument = true;
+    this.fileType = 'document'; // Set file type
+  }
+
+onCellClick(property: string, row: Participant) {
+  if (property === 'ficheSocial') {
+    this.afficherFicheSocial(row);
+  } else if (property === 'document') {
+    this.afficherDoc(row);
+  }
 }
+ 
 }

@@ -16,6 +16,10 @@
                     </mat-option>
                   </mat-select>
             </mat-form-field>
+            <mat-form-field fxFlex *ngIf="mode === 'update'">
+                <mat-label>Code</mat-label>
+                <input matInput formControlName="codeDossier" [disabled]="isUpdateMode()">
+            </mat-form-field>
         </div>
 
         <!-- Enfant Information -->

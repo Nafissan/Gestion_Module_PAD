@@ -42,6 +42,7 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
   data$: Observable<DossierColonie[]> = this.subject$.asObservable();
   pageSize = 4;
   dataSource: MatTableDataSource<DossierColonie> | null;
+ 
 
   private paginator: MatPaginator;
   private sort: MatSort;
@@ -67,12 +68,8 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
     { name: "Annee", property: "annee", visible: true, isModelProperty: true },
     { name: "Description", property: "description", visible: true, isModelProperty: true },
     { name: "Etat", property: "etat", visible: true, isModelProperty: true },
-    
-    { name: "Matricule", property: "matricule", visible: true, isModelProperty: true },
-    { name: "Prenom", property: "prenom", visible: false, isModelProperty: true },
-    { name: "Nom", property: "nom", visible: false, isModelProperty: true },
-    { name: "Fonction", property: "fonction", visible: false, isModelProperty: true },
-   
+    { name: "Ajoute par", property: "ajoutePar", visible: true }, // New combined column
+
     { name: "Note du Ministere", property: "noteMinistere", visible: true, isModelProperty: true },
     { name: "Demande de Prospection", property: "demandeProspection", visible: false, isModelProperty: true },
     { name: "Note d'information", property: "noteInformation", visible: false, isModelProperty: true },
@@ -205,37 +202,6 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
       }
     })
   }
-
-  ouvrirDossierColonie(dossierColonie: DossierColonie) {
-    this.dialogConfirmationService.confirmationDialog().subscribe(action => {
-      let mail = new Mail();
-      mail.objet = MailDossierColonie.objet;
-      mail.contenu = MailDossierColonie.content;
-      mail.lien = "";
-      mail.emetteur = "";
-      mail.destinataires = ["nnafissa27@gmail.com"]; 
-      if (action === DialogUtil.confirmer) {
-        dossierColonie.etat = this.ouvert;
-        this.dossierColonieService.update(dossierColonie).subscribe(
-          (response) => {
-            this.notificationService.success(NotificationUtil.ouvertureDossier);
-          },
-          err => {
-            this.notificationService.warn(NotificationUtil.echec);
-          }, () => {
-            this.mailService.sendMailByDirections(mail).subscribe(
-              response => {
-              }, err => {
-                this.notificationService.warn(NotificationUtil.echec);
-              },
-              () => {
-                this.notificationService.success(NotificationUtil.ouvertureDossier);
-              });
-          });
-      }
-    });
-  }
-
   fermerDossierColonie(dossierColonie: DossierColonie) {
     this.dialogConfirmationService.confirmationDialog().subscribe(action => {
       let mail = new Mail();

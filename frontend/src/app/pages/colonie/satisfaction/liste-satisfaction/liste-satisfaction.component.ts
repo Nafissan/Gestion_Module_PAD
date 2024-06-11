@@ -49,7 +49,7 @@ export class ListeSatisfactionComponent implements OnInit {
     { name: "Checkbox", property: "checkbox", visible: true },
     { name: "Code Dossier Colonie", property: "code", visible: true, isModelProperty: true, },
      { name: "Date de creation", property: "dateCreation", visible: true, isModelProperty: true,},
-     { name: "Cree par", property: "traitePar.matricule", visible: true,  isModelProperty: true,},
+     { name: "Cree par", property: "traitePar", visible: true,  isModelProperty: true,},
      { name: "Actions", property: "actions", visible: true },
     ] as ListColumn[];
   constructor(private satisfactionService: SatisfactionService,
@@ -65,7 +65,7 @@ export class ListeSatisfactionComponent implements OnInit {
     this.data$.pipe(filter((data) => !!data)).subscribe((satisfaction) => {
       this.satisfactions = satisfaction;
       this.dataSource.data = satisfaction;
-      console.log('satisfaction Colonies in ngOnInit:', this.satisfactions); // Debugging output
+      console.log('satisfaction Colonies in ngOnInit:', this.satisfactions); 
     });
   }
 
