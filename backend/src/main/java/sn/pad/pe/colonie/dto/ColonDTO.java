@@ -23,13 +23,16 @@ public class ColonDTO {
     private String matriculeAgent;
     private String nomAgent;
     private String prenomAgent;
-    private byte[] ficheSocial;
-    private byte[] document;
-    public byte[] getFicheSocial() {
+    private String ficheSocial; // Base64 representation
+    private String document; // Base64 representation
+
+    private byte[] ficheSocialBytes; // byte array for internal use
+    private byte[] documentBytes; 
+    public String getFicheSocial() {
         return ficheSocial;
     }
 
-    public void setFicheSocial(byte[] ficheSocial) {
+    public void setFicheSocial(String ficheSocial) {
         this.ficheSocial = ficheSocial;
     }
     public Long getId() {
@@ -123,11 +126,27 @@ public class ColonDTO {
         this.prenomAgent = prenomAgent;
     }
 
-    public byte[] getDocument() {
+    public String getDocument() {
         return document;
     }
 
-    public void setDocument(byte[] document) {
+    public void setDocument(String document) {
         this.document = document;
+    }
+
+    public byte[] getFicheSocialBytes() {
+        return ficheSocialBytes;
+    }
+
+    public void setFicheSocialBytes(byte[] ficheSocialBytes) {
+        this.ficheSocialBytes = ficheSocialBytes;
+    }
+
+    public byte[] getDocumentBytes() {
+        return documentBytes;
+    }
+
+    public void setDocumentBytes(byte[] documentBytes) {
+        this.documentBytes = documentBytes;
     }
 }

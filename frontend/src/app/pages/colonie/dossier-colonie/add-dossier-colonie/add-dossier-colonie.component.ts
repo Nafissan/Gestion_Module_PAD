@@ -35,9 +35,6 @@ export const MY_FORMATS = {
   templateUrl: "./add-dossier-colonie.component.html",
   styleUrls: ["./add-dossier-colonie.component.scss"],
   providers: [
-    // `MomentDateAdapter` can be automatically provided by importing `MomentDateModule` in your
-    // application's root module. We provide it at the component level here, due to limitations of
-    // our example generation script.
     {
       provide: DateAdapter,
       useClass: MomentDateAdapter,
@@ -189,6 +186,8 @@ export const MY_FORMATS = {
 
     formData.createdAt = new Date();
     formData.updatedAt = null;
+    formData.formulaireSatisfaction = null;
+    formData.colons= null;
     this.dialogConfirmationService.confirmationDialog().subscribe(action => {
       if (action === DialogUtil.confirmer) {
         console.log("create dossier"+formData);

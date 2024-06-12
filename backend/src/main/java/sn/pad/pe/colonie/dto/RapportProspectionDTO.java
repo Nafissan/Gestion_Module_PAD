@@ -6,7 +6,7 @@ import java.util.Date;
 public class RapportProspectionDTO {
    
     private Long id;
-    private byte[] rapportProspection;
+    private String rapportProspection;
     //Agent qui ajoute le rapport
     private String matricule;
     private String nom;
@@ -19,16 +19,17 @@ public class RapportProspectionDTO {
     private String matriculeAgent;
     private String nomAgent;
     private String prenomAgent;
+    private byte[] rapportProspectionByte;
     public Long getId() {
         return id;
     }
     public void setId(Long id) {
         this.id = id;
     }
-    public byte[] getRapportProspection() {
+    public String getRapportProspection() {
         return rapportProspection;
     }
-    public void setRapportProspection(byte[] rapportProspection) {
+    public void setRapportProspection(String rapportProspection) {
         this.rapportProspection = rapportProspection;
     }
     public String getMatricule() {
@@ -90,6 +91,14 @@ public class RapportProspectionDTO {
     }
     public void setPrenomAgent(String prenomAgent) {
         this.prenomAgent = prenomAgent;
+    }
+
+    public byte[] getRapportProspectionByte() {
+        return rapportProspectionByte;
+    }
+
+    public void setRapportProspectionByte(byte[] rapportProspectionByte) {
+        this.rapportProspectionByte = rapportProspectionByte;
     }
 
 }

@@ -1,7 +1,7 @@
 package sn.pad.pe.colonie.services.impl;
 
+import java.util.Base64;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
@@ -12,7 +12,6 @@ import sn.pad.pe.colonie.bo.Colon;
 import sn.pad.pe.colonie.dto.ColonDTO;
 import sn.pad.pe.colonie.repositories.ColonRepository;
 import sn.pad.pe.colonie.services.ColonService;
-import sn.pad.pe.configurations.exception.ResourceNotFoundException;
 
 @Service
 public class ColonServiceImpl implements ColonService {
@@ -22,57 +21,42 @@ public class ColonServiceImpl implements ColonService {
 
     @Autowired
     private ModelMapper modelMapper;
-
     @Override
     public List<ColonDTO> getColons() {
         return colonRepository.findAll().stream()
-                .map(colon -> modelMapper.map(colon, ColonDTO.class))
+                .map(colon -> {
+                    ColonDTO dto = modelMapper.map(colon, ColonDTO.class);
+                    convertBytesFieldsToBase64(dto);
+                    return dto;
+                })
                 .collect(Collectors.toList());
     }
+
     @Override
     public ColonDTO saveColon(ColonDTO colonDTO) {
+        convertBase64FieldsToBytes(colonDTO);
         Colon colon = modelMapper.map(colonDTO, Colon.class);
-        return modelMapper.map(colonRepository.save(colon), ColonDTO.class);
-    }
-    @Override
-    public ColonDTO getColonByMatriculeParent(String matricule) {
-        Optional<Colon> colon = colonRepository.findByMatriculeParent(matricule);
-        if(colon.isPresent()) return modelMapper.map(colon, ColonDTO.class);
-        else throw  new ResourceNotFoundException("Colon not found with matriculeParent: " + matricule);
+        Colon savedColon = colonRepository.save(colon);
+        ColonDTO dto = modelMapper.map(savedColon, ColonDTO.class);
+        convertBase64FieldsToBytes(dto);
+        return dto;
     }
 
-    @Override
-    public ColonDTO getColonByCodeDossier(String code) {
-        Optional<Colon> colon = colonRepository.findByCodeDossier(code);
-        if(colon.isPresent()) return modelMapper.map(colon, ColonDTO.class);
-        else throw  new ResourceNotFoundException("Colon not found with codeDossier: " + code);
-    }
-
-    @Override
-    public boolean update(ColonDTO colonDTO) {
-        Optional<Colon> colonOptional = colonRepository.findById(colonDTO.getId());
-        if (colonOptional.isPresent()) {
-            Colon colon = modelMapper.map(colonDTO, Colon.class);
-            colonRepository.save(colon);
-            return true;
-        } else {
-            return false;
+    private void convertBase64FieldsToBytes(ColonDTO colonDTO) {
+        if (colonDTO.getFicheSocial() != null) {
+            colonDTO.setFicheSocialBytes(Base64.getDecoder().decode(colonDTO.getFicheSocial()));
+        }
+        if (colonDTO.getDocument() != null) {
+            colonDTO.setDocumentBytes(Base64.getDecoder().decode(colonDTO.getDocument()));
         }
     }
 
-    @Override
-    public ColonDTO getColonById(Long id) {
-        Optional<Colon> colon = colonRepository.findById(id);
-        if(colon.isPresent()) return modelMapper.map(colon, ColonDTO.class);
-        else throw new ResourceNotFoundException("Colon not found with id: " + id);
-        
-    }
-    @Override
-    public boolean deleteColonById(Long id) {
-        if (colonRepository.existsById(id)) {
-            colonRepository.deleteById(id);
-            return true;
+    private void convertBytesFieldsToBase64(ColonDTO colonDTO) {
+        if (colonDTO.getFicheSocialBytes() != null) {
+            colonDTO.setFicheSocial(Base64.getEncoder().encodeToString(colonDTO.getFicheSocialBytes()));
         }
-        return false;
+        if (colonDTO.getDocumentBytes() != null) {
+            colonDTO.setDocument(Base64.getEncoder().encodeToString(colonDTO.getDocumentBytes()));
+        }
     }
 }

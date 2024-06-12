@@ -35,14 +35,6 @@ export class DossierColonieService {
       .pipe(catchError(this.errorHandler));
   }
 
-  getById(id: number): Observable<HttpResponse<any>> {
-    return this.httpClient
-      .get<any>(`${this.url}/${id}`, {
-        observe: 'response',
-      })
-      .pipe(catchError(this.errorHandler));
-  }
-
   getByAnnee(annee: string): Observable<HttpResponse<any>> {
     return this.httpClient
       .get<any>(`${this.url}/annee/${annee}`, {

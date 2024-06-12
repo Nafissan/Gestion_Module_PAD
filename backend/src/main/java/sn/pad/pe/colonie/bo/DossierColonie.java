@@ -34,7 +34,6 @@ public class DossierColonie implements Serializable {
     
     private String description;
     private String etat;
-    //document
     @Lob
     private byte[] noteMinistere;
     @Lob
@@ -43,8 +42,6 @@ public class DossierColonie implements Serializable {
     private byte[] noteInformation;
     @Lob
     private byte[] noteInstruction;
-    @Lob
-    private RapportProspection rapportProspection;
     @Lob
     private byte[] rapportMission;
     //agent
@@ -62,7 +59,7 @@ public class DossierColonie implements Serializable {
     @OneToOne(fetch = FetchType.LAZY,mappedBy = "codeDossier", cascade = CascadeType.ALL, orphanRemoval = true)
     private FormulaireSatisfaction formulaireSatisfaction;
      @OneToOne(mappedBy = "codeDossier", cascade = CascadeType.ALL, orphanRemoval = true)
-    private RapportProspection rapportProspections;
+    private RapportProspection rapportProspection;
     @OneToMany(mappedBy = "codeDossier", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Colon> colons;
 
@@ -206,14 +203,6 @@ public class DossierColonie implements Serializable {
 
     public void setFormulaireSatisfaction(FormulaireSatisfaction formulaireSatisfaction) {
         this.formulaireSatisfaction = formulaireSatisfaction;
-    }
-
-    public RapportProspection getRapportProspections() {
-        return rapportProspections;
-    }
-
-    public void setRapportProspections(RapportProspection rapportProspections) {
-        this.rapportProspections = rapportProspections;
     }
 
     public List<Colon> getColons() {

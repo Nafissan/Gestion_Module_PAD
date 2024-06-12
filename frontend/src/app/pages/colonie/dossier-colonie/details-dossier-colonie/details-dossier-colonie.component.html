@@ -2,12 +2,12 @@
 <mat-dialog-content>
     <mat-accordion class="example-headers-align" multi>
         <div class="example-action-buttons">
-            <button *ngIf="showIcon === true" mat-raised-button color="primary" (click)="accordion.openAll(); showIcon = !showIcon">
-                       <mat-icon>expand_more</mat-icon> Afficher
-                    </button>
-            <button *ngIf="showIcon === false" mat-raised-button color="warn" (click)="accordion.closeAll(); showIcon = !showIcon">
-                      <mat-icon>expand_less</mat-icon> Fermer
-                    </button>
+            <button *ngIf="showIcon" mat-raised-button color="primary" (click)="accordion.openAll(); showIcon = !showIcon">
+                <mat-icon>expand_more</mat-icon> Afficher
+            </button>
+            <button *ngIf="!showIcon" mat-raised-button color="warn" (click)="accordion.closeAll(); showIcon = !showIcon">
+                <mat-icon>expand_less</mat-icon> Fermer
+            </button>
         </div>
         <mat-expansion-panel>
             <mat-expansion-panel-header>
@@ -26,9 +26,15 @@
                 <span>Commentaire : </span>{{dossierColonie.description}}
             </mat-panel-description>
             <mat-panel-description>
-                <div *ngIf="dossierColonie.etat === saisi"><span> Etat : </span> <span class="badge badge-warning">{{dossierColonie.etat}}</span></div>
-                <div *ngIf="dossierColonie.etat === ouvrir"><span>Etat : </span> <span class="badge badge-info">{{ dossierColonie.etat}}</span></div>
-                <div *ngIf="dossierColonie.etat === fermer"><span>Etat : </span> <span class="badge badge-success">{{dossierColonie.etat}}</span></div>
+                <div *ngIf="dossierColonie.etat === saisi">
+                    <span> Etat : </span> <span class="badge badge-warning">{{dossierColonie.etat}}</span>
+                </div>
+                <div *ngIf="dossierColonie.etat === ouvrir">
+                    <span>Etat : </span> <span class="badge badge-info">{{ dossierColonie.etat}}</span>
+                </div>
+                <div *ngIf="dossierColonie.etat === fermer">
+                    <span>Etat : </span> <span class="badge badge-success">{{dossierColonie.etat}}</span>
+                </div>
             </mat-panel-description>
         </mat-expansion-panel>
         <mat-expansion-panel>
@@ -39,7 +45,8 @@
                 </mat-panel-title>
             </mat-expansion-panel-header>
             <mat-panel-description>
-                <span>Nom du fichier : </span>{{ dossierColonie.noteMinistere ? dossierColonie.noteMinistere : 'Aucun fichier sélectionné' }}
+                <span>Nom du fichier : </span>{{ dossierColonie.noteMinistere ?'': 'Aucun fichier sélectionné' }}
+                <a *ngIf="dossierColonie.noteMinistere" [href]="getFileLink(dossierColonie.noteMinistere, 'application/pdf')" target="_blank">Télécharger</a>
             </mat-panel-description>
         </mat-expansion-panel>
         <mat-expansion-panel>
@@ -50,7 +57,8 @@
                 </mat-panel-title>
             </mat-expansion-panel-header>
             <mat-panel-description>
-                <span>Nom du fichier : </span>{{ dossierColonie.demandeProspection ? dossierColonie.demandeProspection : 'Aucun fichier sélectionné' }}
+                <span>Nom du fichier : </span>{{ dossierColonie.demandeProspection ? '' : 'Aucun fichier sélectionné' }}
+                <a *ngIf="dossierColonie.demandeProspection" [href]="getFileLink(dossierColonie.demandeProspection, 'application/pdf')" target="_blank">Télécharger</a>
             </mat-panel-description>
         </mat-expansion-panel>
         <mat-expansion-panel>
@@ -61,7 +69,8 @@
                 </mat-panel-title>
             </mat-expansion-panel-header>
             <mat-panel-description>
-                <span>Nom du fichier : </span>{{ dossierColonie.rapportProspection ? dossierColonie.rapportProspection.rapport : 'Aucun fichier sélectionné' }}
+                <span>Nom du fichier : </span>{{ dossierColonie.rapportProspection ? '' : 'Aucun fichier sélectionné' }}
+                <a *ngIf="dossierColonie.rapportProspection" [href]="getFileLink(dossierColonie.rapportProspection, 'application/pdf')" target="_blank">Télécharger</a>
             </mat-panel-description>
         </mat-expansion-panel>
         <mat-expansion-panel>
@@ -72,10 +81,12 @@
                 </mat-panel-title>
             </mat-expansion-panel-header>
             <mat-panel-description>
-                <span>Pour inscription colonie : </span>{{ dossierColonie.noteInformation ? dossierColonie.noteInformation : 'Aucun fichier sélectionné' }}
+                <span>Pour inscription colonie : </span>{{ dossierColonie.noteInformation ? '' : 'Aucun fichier sélectionné' }}
+                <a *ngIf="dossierColonie.noteInformation" [href]="getFileLink(dossierColonie.noteInformation, 'application/pdf')" target="_blank">Télécharger</a>
             </mat-panel-description>
             <mat-panel-description>
                 <span>Pour details colonie : </span>{{ dossierColonie.noteInstruction ? dossierColonie.noteInstruction : 'Aucun fichier sélectionné' }}
+                <a *ngIf="dossierColonie.noteInstruction" [href]="getFileLink(dossierColonie.noteInstruction, 'application/pdf')" target="_blank">Télécharger</a>
             </mat-panel-description>
         </mat-expansion-panel>
         <mat-expansion-panel>
@@ -86,7 +97,8 @@
                 </mat-panel-title>
             </mat-expansion-panel-header>
             <mat-panel-description>
-                <span>Nom du fichier : </span>{{ dossierColonie.rapportMission ? dossierColonie.rapportMission : 'Aucun fichier sélectionné' }}
+                <span>Nom du fichier : </span>{{ dossierColonie.rapportMission ? '' : 'Aucun fichier disponible'}}
+                <a ngIf="dossierColonie.rapportMission" [href]="getFileLink(dossierColonie.rapportMission, 'application/pdf')" target="_blank">Télécharger</a>
             </mat-panel-description>
         </mat-expansion-panel>
         <mat-expansion-panel>

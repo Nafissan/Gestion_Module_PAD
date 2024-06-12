@@ -1,4 +1,5 @@
 import { Agent } from "src/app/shared/model/agent.model";
+import { DossierColonie } from "./dossier-colonie.model";
 
 export class Satisfaction {
     id: number;
@@ -6,7 +7,7 @@ export class Satisfaction {
     reponses: { [key: string]: boolean };
     dateCreation: Date;
     traitePar: Agent;
-    code: string;  
+    code: DossierColonie;  
     commentaire: string;
   
     constructor(satisfaction: Satisfaction) {

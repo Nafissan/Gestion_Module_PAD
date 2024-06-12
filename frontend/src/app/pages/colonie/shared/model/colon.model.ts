@@ -1,23 +1,22 @@
-import { Agent } from "../../../../shared/model/agent.model";
-
+import {DossierColonie} from '../model/dossier-colonie.model';
 export class Colon {
     id: number;
-    codeDossier: string;
+    codeDossier: DossierColonie;
     nom: string;
     prenom: string;
     dateNaissance: Date;
     lieuNaissance: string;
     groupeSanguin: string;
     sexe: string;
-    matriculeParent: String;
-    nomParent: String;
-    prenomParent: String;
-    ficheSocial: File;
+    matriculeParent: string;
+    nomParent: string;
+    prenomParent: string;
+    ficheSocial: string;
     status: string;
     matriculeAgent: String;
-    nomAgent: String;
-    prenomAgent: String;
-    document: File;
+    nomAgent: string;
+    prenomAgent: string;
+    document: string;
 
     constructor(colon: Colon) {
         this.id = colon.id ;

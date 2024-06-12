@@ -4,6 +4,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sn.pad.pe.colonie.bo.FormulaireSatisfaction;
+import sn.pad.pe.colonie.dto.DossierColonieDTO;
 import sn.pad.pe.colonie.dto.FormulaireSatisfactionDTO;
 import sn.pad.pe.colonie.repositories.FormulaireSatisfactionRepository;
 import sn.pad.pe.colonie.services.FormulaireSatisfactionService;
@@ -54,7 +55,7 @@ public class FormulaireSatisfactionServiceImpl implements FormulaireSatisfaction
 
 
     @Override
-    public FormulaireSatisfactionDTO getFormulaireByCodeDossier(String code) {
+    public FormulaireSatisfactionDTO getFormulaireByCodeDossier(DossierColonieDTO code) {
         FormulaireSatisfaction formulaire = formulaireSatisfactionRepository.findByCodeDossier(code);
         if (formulaire != null) {
             return modelMapper.map(formulaire, FormulaireSatisfactionDTO.class);

@@ -28,14 +28,14 @@ public class MessageManager {
 		}
 		return str;
 	}
-
+ 
 	public static int sendMail(MailDTO mail) {
-		EmailMessage em;
-		int sent = 0;
-		if (mail.getDestinataires() != null) {
-			em = new EmailMessage();
-			sent = em.sendMail(mail);
-		}
-		return sent;
-	}
+        EmailMessage em;
+        int sent = 0;
+        if (mail.getDestinataires() != null) {
+            em = new EmailMessage();
+            sent = em.sendMail(mail);
+        }
+        return sent;
+    }
 }

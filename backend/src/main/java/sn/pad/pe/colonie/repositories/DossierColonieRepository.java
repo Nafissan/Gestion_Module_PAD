@@ -10,5 +10,4 @@ public interface  DossierColonieRepository extends JpaRepository<DossierColonie,
 
     Optional<DossierColonie> findByAnnee(String annee);
 
-   Optional<DossierColonie> findByCode(String code);
 }

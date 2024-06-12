@@ -7,14 +7,10 @@ import java.util.List;
 public interface ParticipantService {
     ParticipantDTO saveParticipant(ParticipantDTO participantDTO);
 
-    ParticipantDTO getParticipantById(Long id);
-
     List<ParticipantDTO> getAllParticipants();
 
-    List<ParticipantDTO> getParticipantsByStatus(String status);
+    boolean deleteParticipant(Long id);
 
-    void deleteParticipant(Long id);
-
-    void updateParticipantStatus(Long id, String newStatus);
-    ParticipantDTO updateParticipant(Long id, ParticipantDTO updatedParticipant);
+    boolean updateParticipantStatus(Long id, String newStatus);
+    boolean updateParticipant(ParticipantDTO updatedParticipant);
 }

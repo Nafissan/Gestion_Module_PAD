@@ -1,4 +1,6 @@
 import { RapportProspection } from "./rapport-prospection.model";
+import { Satisfaction } from "./satisfaction.model";
+import { Colon } from "./colon.model";
 
 export class DossierColonie {
 	id: number;
@@ -18,6 +20,8 @@ export class DossierColonie {
 	fonction: string;
 	createdAt: Date;
 	updatedAt: Date;
+	formulaireSatisfaction: Satisfaction;
+    colons: Colon[];
   
 	constructor(dossiercolonie: DossierColonie) {
 	  this.id = dossiercolonie.id;
@@ -37,6 +41,8 @@ export class DossierColonie {
 	  this.fonction = dossiercolonie.fonction;
 	  this.createdAt = dossiercolonie.createdAt;
 	  this.updatedAt = dossiercolonie.updatedAt;
+	  this.colons = dossiercolonie.colons;
+	  this.formulaireSatisfaction =dossiercolonie.formulaireSatisfaction;
 	}
 
   }

@@ -23,24 +23,6 @@ export class ColonService {
       .pipe(catchError(this.errorHandler));
   }
 
-  getById(id: number): Observable<HttpResponse<any>> {
-    return this.httpClient
-      .get<any>(`${this.url}/${id}`, { observe: 'response' })
-      .pipe(catchError(this.errorHandler));
-  }
-
-  getByMatriculeParent(matricule: string): Observable<HttpResponse<any>> {
-    return this.httpClient
-      .get<any>(`${this.url}/matriculeParent/${matricule}`, { observe: 'response' })
-      .pipe(catchError(this.errorHandler));
-  }
-
-  getByCodeDossier(code: string): Observable<HttpResponse<any>> {
-    return this.httpClient
-      .get<any>(`${this.url}/codeDossier/${code}`, { observe: 'response' })
-      .pipe(catchError(this.errorHandler));
-  }
-
   create(colon: Colon): Observable<HttpResponse<any>> {
     return this.httpClient
       .post<any>(this.url, JSON.stringify(colon), {
@@ -49,23 +31,6 @@ export class ColonService {
       })
       .pipe(catchError(this.errorHandler));
   }
-
-  update(colon: Colon): Observable<HttpResponse<any>> {
-    return this.httpClient
-      .put<any>(this.url, JSON.stringify(colon), {
-        headers: this.httpOptions.headers,
-        observe: 'response',
-      })
-      .pipe(catchError(this.errorHandler));
-  }
-  delete(id: number): Observable<HttpResponse<any>> {
-    return this.httpClient
-      .delete<any>(`${this.url}/${id}`, {
-        observe: 'response',
-      })
-      .pipe(catchError(this.errorHandler));
-  }
-
   errorHandler(error) {
     let errorMessage = '';
     if (error.error instanceof ErrorEvent) {

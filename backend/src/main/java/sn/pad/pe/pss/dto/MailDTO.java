@@ -1,9 +1,7 @@
 package sn.pad.pe.pss.dto;
 
-import java.sql.Blob;
 import java.util.List;
 
-import javax.persistence.Lob;
 
 
 public class MailDTO {
@@ -13,8 +11,7 @@ public class MailDTO {
 	private String lien;
 	private String pieceJointe;
 	private String emetteur;  //document
-    @Lob
-	private byte [] file;
+	private String file;
 	private List<String> destinataires;
 
 	public MailDTO() {
@@ -68,11 +65,11 @@ public class MailDTO {
 		this.pieceJointe = pieceJointe;
 	}
 
-    public Blob getFile() {
+    public String getFile() {
         return file;
     }
 
-    public void setFile(Blob file) {
+    public void setFile(String file) {
         this.file = file;
     }
 

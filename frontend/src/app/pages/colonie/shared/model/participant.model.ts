@@ -1,22 +1,23 @@
+import { DossierColonie } from "./dossier-colonie.model";
 
 export class Participant {
     id: number;
-    codeDossier: string;
+    codeDossier: DossierColonie;
     nom: string;
     prenom: string;
     dateNaissance: Date;
     lieuNaissance: string;
     groupeSanguin: string;
     sexe: string;
-    matriculeParent: String;
-    nomParent: String;
-    prenomParent: String;
-    ficheSocial: File;
+    matriculeParent: string;
+    nomParent: string;
+    prenomParent: string;
+    ficheSocial: string;
     status: string;
-    matriculeAgent: String;
-    nomAgent: String;
-    prenomAgent: String;
-    document: File;
+    matriculeAgent: string;
+    nomAgent: string;
+    prenomAgent: string;
+    document: string;
 
     constructor(participant: any) {
         this.id = participant.id ;

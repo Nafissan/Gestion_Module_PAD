@@ -1,15 +1,34 @@
 package sn.pad.pe.colonie.bo;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Participant {
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+
+@Entity
+public class Participant implements Serializable{
+    private static final long serialVersionUID = 1L;
+     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String codeDossier;
+     @ManyToOne
+    @JoinColumn(name = "CODE_DOSSIER_COLONIE", referencedColumnName = "code" ,unique = true, nullable = false)
+    private DossierColonie codeDossier;
     private String nomEnfant;
     private String prenomEnfant;
     private Date dateNaissance;
     private String lieuNaissance;
+    @Enumerated(EnumType.STRING)
     private GroupeSanguin groupeSanguin;
+    @Enumerated(EnumType.STRING)
     private Sexe sexe;
     private String matriculeParent;
     private String nomParent;
@@ -18,18 +37,21 @@ public class Participant {
     private String matriculeAgent;
     private String nomAgent;
     private String prenomAgent;
+    @Lob
     private byte[] ficheSocial;
+    @Lob
     private byte[] document;
+
     public Long getId() {
         return id;
     }
     public void setId(Long id) {
         this.id = id;
     }
-    public String getCodeDossier() {
+    public DossierColonie getCodeDossier() {
         return codeDossier;
     }
-    public void setCodeDossier(String codeDossier) {
+    public void setCodeDossier(DossierColonie codeDossier) {
         this.codeDossier = codeDossier;
     }
     public String getNomEnfant() {

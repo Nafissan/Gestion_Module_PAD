@@ -1,7 +1,13 @@
 package sn.pad.pe.configurations.mail;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Base64;
 import java.util.Properties;
 
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
 import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -17,115 +23,144 @@ import javax.mail.internet.MimeMultipart;
 import sn.pad.pe.pss.dto.MailDTO;
 
 public class EmailMessage {
-	private String attachmentFilePathList;
-	private String sender;
-	private String senderPassword;
-	private String senderSMTP;
-	private String senderPasswordSMTP;
-	private String smtp_host;
-	private String smtp_port;
-	private String smtp_auth;
-	private String smtp_starttls;
+    private String attachmentFilePathList;
+    private String sender;
+    private String senderPassword;
+    private String senderSMTP;
+    private String senderPasswordSMTP;
+    private String smtp_host;
+    private String smtp_port;
+    private String smtp_auth;
+    private String smtp_starttls;
 
-	public String getSenderSMTP() {
-		return senderSMTP;
-	}
+    public EmailMessage() {
+        this.sender = MailConfig.smtp_expediteur;
+        this.senderPassword = MailConfig.smtp_mot_de_passe;
+        this.smtp_host = MailConfig.smtp_hote;
+        this.smtp_port = MailConfig.smtp_port;
+        this.smtp_starttls = MailConfig.smtp_starttls;
+        this.smtp_auth = MailConfig.smtp_auth;
+        this.senderSMTP = MailConfig.smtp_utilisateur;
+        this.senderPasswordSMTP = MailConfig.smtp_mot_de_passe;
+    }
 
-	public void setSenderSMTP(String senderSMTP) {
-		this.senderSMTP = senderSMTP;
-	}
+    public int sendMail(MailDTO mail) {
+        Authenticator authenticator = new Authenticator(this.senderSMTP, this.senderPasswordSMTP);
+        Properties props = System.getProperties();
+        props.put("mail.smtp.host", this.smtp_host);
+        props.put("mail.smtp.port", this.smtp_port);
+        props.put("mail.smtp.starttls.enable", this.smtp_starttls);
+        props.put("mail.smtp.auth", this.smtp_auth);
 
-	public String getSenderPasswordSMTP() {
-		return senderPasswordSMTP;
-	}
+        Session session = Session.getDefaultInstance(props, authenticator);
 
-	public void setSenderPasswordSMTP(String senderPasswordSMTP) {
-		this.senderPasswordSMTP = senderPasswordSMTP;
-	}
+        try {
+            Message emailMessage = new MimeMessage(session);
+            emailMessage.setFrom(new InternetAddress(this.getSender()));
+            for (String email : mail.getDestinataires()) {
+                emailMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(email));
+            }
+            emailMessage.setSubject(mail.getObjet());
 
-	public String getSenderPassword() {
-		return senderPassword;
-	}
+            Multipart multipart = new MimeMultipart();
 
-	public void setSenderPassword(String senderPassword) {
-		this.senderPassword = senderPassword;
-	}
+            // Add the email body
+            BodyPart messageBodyPart = new MimeBodyPart();
+            messageBodyPart.setContent(mail.getContenu(), "text/html");
+            multipart.addBodyPart(messageBodyPart);
 
-	public EmailMessage() {
-		this.sender = MailConfig.smtp_expediteur;
-		this.senderPassword = MailConfig.smtp_mot_de_passe;
-		this.smtp_host = MailConfig.smtp_hote;
-		this.smtp_port = MailConfig.smtp_port;
-		this.smtp_starttls = MailConfig.smtp_starttls;
-		this.smtp_auth = MailConfig.smtp_auth;
-		this.senderSMTP = MailConfig.smtp_utilisateur;
-		this.senderPasswordSMTP = MailConfig.smtp_mot_de_passe;
-	}
+            // Add the attachment if it exists
+            if (mail.getFile() != null && !mail.getFile().isEmpty()) {
+                File attachment = convertBase64ToFile(mail.getFile(), "pieceJointe", "application/pdf");
+                addAttachment(multipart, attachment);
+            }
 
-	public int sendMail(MailDTO mails) {
-		Authenticator authenticator = new Authenticator(this.senderSMTP, this.senderPasswordSMTP);
-		Properties props = System.getProperties();
-		props.put("mail.smtp.host", this.smtp_host);
-		props.put("mail.smtp.port", this.smtp_port);
-		props.put("mail.smtp.starttls.enable", this.smtp_starttls);
-		props.put("mail.smtp.auth", this.smtp_auth);
+            emailMessage.setContent(multipart);
 
-		// Setup authentication, get session
-		Session session = Session.getDefaultInstance(props, authenticator);
+            Transport.send(emailMessage);
+            return 1;
 
-		// Define message
-		Message emailMessage = new MimeMessage(session);
-		try {
+        } catch (AddressException e) {
+            e.printStackTrace();
+            return 0;
+        } catch (MessagingException e) {
+            e.printStackTrace();
+            return 0;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
 
-			emailMessage.setFrom(new InternetAddress(this.getSender()));
-			for (String email : mails.getDestinataires()) {
-				emailMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(email));
-			}
-			emailMessage.setSubject(mails.getObjet());
+    private File convertBase64ToFile(String base64, String fileName, String fileType) throws IOException {
+        byte[] decodedBytes = Base64.getDecoder().decode(base64);
+        File tempFile = File.createTempFile(fileName, "." + getFileExtension(fileType));
+        try (FileOutputStream fos = new FileOutputStream(tempFile)) {
+            fos.write(decodedBytes);
+        }
+        return tempFile;
+    }
 
-			// Create the message part
-			BodyPart messageBodyPart = new MimeBodyPart();
+    private String getFileExtension(String mimeType) {
+        switch (mimeType) {
+            case "application/pdf":
+                return "pdf";
+            case "image/jpeg":
+                return "jpg";
+            case "image/png":
+                return "png";
+            default:
+                return "tmp";
+        }
+    }
 
-			// Fill the message
-			messageBodyPart.setContent(mails.getContenu(), "text/html");
+    private void addAttachment(Multipart multipart, File file) throws MessagingException {
+        BodyPart messageBodyPart = new MimeBodyPart();
+        DataSource source = new FileDataSource(file);
+        messageBodyPart.setDataHandler(new javax.activation.DataHandler(source));
+        messageBodyPart.setFileName(file.getName());
+        multipart.addBodyPart(messageBodyPart);
+    }
 
-			Multipart multipart = new MimeMultipart();
-			multipart.addBodyPart(messageBodyPart);
+    // Getters and setters...
 
-			// Part two is attachment
-			messageBodyPart = new MimeBodyPart();
+    public String getAttachmentFilePathList() {
+        return attachmentFilePathList;
+    }
 
-			// Put parts in message
-			emailMessage.setContent(multipart);
+    public void setAttachmentFilePathList(String attachmentFilePathList) {
+        this.attachmentFilePathList = attachmentFilePathList;
+    }
 
-			// Send the message
+    public String getSender() {
+        return sender;
+    }
 
-			Transport.send(emailMessage);
+    public void setSender(String sender) {
+        this.sender = sender;
+    }
 
-		} catch (AddressException e) {
-			return 0;
+    public String getSenderSMTP() {
+        return senderSMTP;
+    }
 
-		} catch (MessagingException e) {
-			return 0;
-		}
-		return 1;
+    public void setSenderSMTP(String senderSMTP) {
+        this.senderSMTP = senderSMTP;
+    }
 
-	}
+    public String getSenderPasswordSMTP() {
+        return senderPasswordSMTP;
+    }
 
-	public String getAttachmentFilePathList() {
-		return attachmentFilePathList;
-	}
+    public void setSenderPasswordSMTP(String senderPasswordSMTP) {
+        this.senderPasswordSMTP = senderPasswordSMTP;
+    }
 
-	public void setAttachmentFilePathList(String attachmentFilePathList) {
-		this.attachmentFilePathList = attachmentFilePathList;
-	}
+    public String getSenderPassword() {
+        return senderPassword;
+    }
 
-	public String getSender() {
-		return sender;
-	}
-
-	public void setSender(String sender) {
-		this.sender = sender;
-	}
-
+    public void setSenderPassword(String senderPassword) {
+        this.senderPassword = senderPassword;
+    }
 }

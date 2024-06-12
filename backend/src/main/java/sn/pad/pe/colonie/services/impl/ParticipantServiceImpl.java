@@ -1,74 +1,97 @@
 package sn.pad.pe.colonie.services.impl;
 
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import sn.pad.pe.colonie.dto.ParticipantDTO;
-import sn.pad.pe.colonie.services.ParticipantService;
-import sn.pad.pe.configurations.exception.ResourceNotFoundException;
 
-import java.util.ArrayList;
+import sn.pad.pe.colonie.bo.Participant;
+import sn.pad.pe.colonie.dto.ParticipantDTO;
+import sn.pad.pe.colonie.repositories.ParticipantColonieRepository;
+import sn.pad.pe.colonie.services.ParticipantService;
+import java.util.Base64;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service("colonieParticipantServiceImpl")
 public class ParticipantServiceImpl implements ParticipantService {
 
-    private final List<ParticipantDTO> participantList = new ArrayList<>();
+      @Autowired
+    private ParticipantColonieRepository participantColonieRepository;
 
+    @Autowired
+    private ModelMapper modelMapper;
 
     @Override
     public ParticipantDTO saveParticipant(ParticipantDTO participantDTO) {
-        participantList.add(participantDTO);
-        return participantDTO;
-    }
-
-    @Override
-    public ParticipantDTO getParticipantById(Long id) {
-        return participantList.stream()
-                .filter(participant -> participant.getId().equals(id))
-                .findFirst()
-                .orElseThrow(() -> new ResourceNotFoundException("Participant not found with id: " + id));
+        convertBase64FieldsToBytes(participantDTO);
+        Participant participant = modelMapper.map(participantDTO, Participant.class);
+        Participant savedParticipant = participantColonieRepository.save(participant);
+        return modelMapper.map(savedParticipant, ParticipantDTO.class);
     }
 
     @Override
     public List<ParticipantDTO> getAllParticipants() {
-        return participantList;
+        return participantColonieRepository.findAll().stream()
+        .map(participant -> {
+            ParticipantDTO dto = modelMapper.map(participant, ParticipantDTO.class);
+            convertBytesFieldsToBase64(dto);
+            return dto;
+        })
+        .collect(Collectors.toList());
+        }
+
+
+    @Override
+    public boolean deleteParticipant(Long id) {
+        Optional<Participant> dossier = participantColonieRepository.findById(id);
+        if (dossier.isPresent()) {
+            participantColonieRepository.deleteById(id);
+            return true;
+        }
+        return false;
     }
 
     @Override
-    public List<ParticipantDTO> getParticipantsByStatus(String status) {
-        return participantList.stream()
-                .filter(participant -> participant.getStatus().equals(status))
-                .collect(Collectors.toList());
+    public boolean updateParticipantStatus(Long id, String newStatus) {
+        Optional<Participant> participantOptional = participantColonieRepository.findById(id);
+        if (participantOptional.isPresent()) {
+            Participant participant = participantOptional.get();
+            participant.setStatus(newStatus);
+            participantColonieRepository.save(participant);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
-    public void deleteParticipant(Long id) {
-        participantList.removeIf(participant -> participant.getId().equals(id));
-    }
-
-    @Override
-    public void updateParticipantStatus(Long id, String newStatus) {
-        ParticipantDTO participant = getParticipantById(id);
-        participant.setStatus(newStatus);
-    }
-    @Override
-public ParticipantDTO updateParticipant(Long id, ParticipantDTO updatedParticipant) {
-    ParticipantDTO participant = getParticipantById(id);
-    participant.setNomEnfant(updatedParticipant.getNomEnfant());
-    participant.setPrenomEnfant(updatedParticipant.getPrenomEnfant());
-    participant.setDateNaissance(updatedParticipant.getDateNaissance());
-    participant.setLieuNaissance(updatedParticipant.getLieuNaissance());
-    participant.setGroupeSanguin(updatedParticipant.getGroupeSanguin());
-    participant.setSexe(updatedParticipant.getSexe());
-    participant.setMatriculeParent(updatedParticipant.getMatriculeParent());
-    participant.setNomParent(updatedParticipant.getNomParent());
-    participant.setPrenomParent(updatedParticipant.getPrenomParent());
-    participant.setStatus(updatedParticipant.getStatus());
-    participant.setMatriculeAgent(updatedParticipant.getMatriculeAgent());
-    participant.setNomAgent(updatedParticipant.getNomAgent());
-    participant.setPrenomAgent(updatedParticipant.getPrenomAgent());
-    participant.setFicheSocial(updatedParticipant.getFicheSocial());
-    participant.setDocument(updatedParticipant.getDocument());
-    return participant;
+    public boolean  updateParticipant( ParticipantDTO updatedParticipant) {
+        Optional<Participant> parOptional = participantColonieRepository.findById(updatedParticipant.getId());
+        if (parOptional.isPresent()) {
+            convertBase64FieldsToBytes(updatedParticipant);
+            Participant participant = modelMapper.map(updatedParticipant, Participant.class);
+            participantColonieRepository.save(participant);
+            return true;
+        } else {
+            return false;
+        }
 }
+  private void convertBase64FieldsToBytes(ParticipantDTO participantDTO) {
+        if (participantDTO.getFicheSocial() != null) {
+            participantDTO.setFicheSocialBytes(Base64.getDecoder().decode(participantDTO.getFicheSocial()));
+        }
+        if (participantDTO.getDocument() != null) {
+            participantDTO.setDocumentBytes(Base64.getDecoder().decode(participantDTO.getDocument()));
+        }
+    }
+
+    private void convertBytesFieldsToBase64(ParticipantDTO participantDTO) {
+        if (participantDTO.getFicheSocialBytes() != null) {
+            participantDTO.setFicheSocial(Base64.getEncoder().encodeToString(participantDTO.getFicheSocialBytes()));
+        }
+        if (participantDTO.getDocumentBytes() != null) {
+            participantDTO.setDocument(Base64.getEncoder().encodeToString(participantDTO.getDocumentBytes()));
+        }
+    }
 }

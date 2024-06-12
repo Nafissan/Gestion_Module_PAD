@@ -21,8 +21,8 @@ import { DossierColonieService } from "../../shared/service/dossier-colonie.serv
 export class AddOrUpdateParticipantComponent implements OnInit {
   form: FormGroup;
   mode: "create" | "update" = "create";
-  ficheSocial: File | null =null;
-  document: File | null =null;
+  ficheSocial: string | null =null;
+  document: string | null  =null;
   agent: Agent;
   compte: Compte;
   username: string;
@@ -76,12 +76,15 @@ export class AddOrUpdateParticipantComponent implements OnInit {
     return this.mode === "update";
   }
   
-  handleFicheSociale(files: FileList): void {
-    this.ficheSocial = files.item(0);
+  async handleFicheSociale(files: FileList): Promise<void> {
+    if (files.length > 0) {
+    this.ficheSocial = await this.convertFileToBase64(files[0]);
   }
-   
-  handleDocument(files: FileList): void {
-    this.document= files.item(0);
+}
+  async handleDocument(files: FileList) {
+    if (files.length > 0) {
+      this.document= await this.convertFileToBase64(files[0]);
+    }
   }
   save(): void {
     if (this.mode === "create") {
@@ -89,6 +92,20 @@ export class AddOrUpdateParticipantComponent implements OnInit {
     } else if (this.mode === "update") {
       this.updateParticipant();
     }
+  }
+  async convertFileToBase64(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      if (!file) {
+        resolve(null);
+      }
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64String = reader.result as string;
+        resolve(base64String);
+      };
+      reader.onerror = error => reject(error);
+      reader.readAsDataURL(file);
+    });
   }
   getAgents(): void {
     this.agentService.getAll().subscribe(
@@ -118,7 +135,7 @@ export class AddOrUpdateParticipantComponent implements OnInit {
       const dossiers = dossiersResponse.body;
       const openOrSaisiDossier = dossiers.find(dossier => dossier.etat === 'ouvert' || dossier.etat === 'saisi');
       if (openOrSaisiDossier) {
-        formData.codeDossier = openOrSaisiDossier.code;
+        formData.codeDossier = openOrSaisiDossier;
       }});
     console.log(formData);
     this.dialogConfirmationService.confirmationDialog().subscribe(action => {

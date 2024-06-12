@@ -24,31 +24,6 @@ export class QuestionService {
       .pipe(catchError(this.errorHandler));
   }
 
-  // Récupérer une question par son ID
-  getQuestionById(id: number): Observable<HttpResponse<Question>> {
-    const getUrl = `${this.url}/${id}`;
-    return this.httpClient.get<Question>(getUrl, { observe: 'response' })
-      .pipe(catchError(this.errorHandler));
-  }
-
-  // Créer une question
-  saveQuestion(question: Question): Observable<HttpResponse<Question>> {
-    return this.httpClient.post<Question>(this.url, question, { observe: 'response' })
-      .pipe(catchError(this.errorHandler));
-  }
-
-  // Mettre à jour une question
-  updateQuestion(question: Question): Observable<HttpResponse<any>> {
-    return this.httpClient.put<any>(this.url, question, { headers: this.httpOptions.headers, observe: 'response' })
-      .pipe(catchError(this.errorHandler));
-  }
-
-  // Supprimer une question
-  deleteQuestion(id: number): Observable<HttpResponse<any>> {
-    const deleteUrl = `${this.url}/${id}`;
-    return this.httpClient.delete<any>(deleteUrl, { observe: 'response' })
-      .pipe(catchError(this.errorHandler));
-  }
 
   // Gérer les erreurs HTTP
   private errorHandler(error: any) {

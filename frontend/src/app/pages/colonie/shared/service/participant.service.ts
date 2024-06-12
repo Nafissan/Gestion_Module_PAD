@@ -31,12 +31,6 @@ export class ParticipantService {
       .pipe(catchError(this.errorHandler));
   }
 
-  // Récupérer un participant par son ID
-  getParticipantById(id: number): Observable<HttpResponse<Participant>> {
-    const getUrl = `${this.url}/${id}`;
-    return this.httpClient.get<Participant>(getUrl, { observe: 'response' })
-      .pipe(catchError(this.errorHandler));
-  }
 
   // Mettre à jour un participant
   updateParticipant(id: number, participant: Participant): Observable<HttpResponse<any>> {
