@@ -12,13 +12,14 @@ import { MatDialog } from '@angular/material/dialog';
 import { DialogConfirmationService } from 'src/app/shared/services/dialog-confirmation.service';
 import { NotificationService } from 'src/app/shared/services/notification.service';
 import { AuthenticationService } from 'src/app/shared/services/authentification.service';
-import { AgentService } from 'src/app/shared/services/agent.service';
+import { ColonService } from '../../shared/service/colon.service';
 import { AddOrUpdateParticipantComponent } from '../add-or-update-participant/add-or-update-participant.component';
 import { SelectionModel } from '@angular/cdk/collections';
 import { DialogUtil, NotificationUtil } from 'src/app/shared/util/util';
 import { filter } from 'rxjs/operators';
 import { Route, Router } from '@angular/router';
-import { ReadFileParticipantComponent } from '../read-file-participant/read-file-participant.component';
+import { Colon } from '../../shared/model/colon.model';
+import { DossierColonieService } from '../../shared/service/dossier-colonie.service';
 
 @Component({
   selector: 'fury-liste-participant',
@@ -95,8 +96,8 @@ export class ListeParticipantComponent implements OnInit {
     private notificationService: NotificationService,
     private dialogConfirmationService: DialogConfirmationService,
     private authentificationService: AuthenticationService,
-    private agentService: AgentService,
-    private router: Router
+    private   colonService: ColonService,
+    private dossierColonieService: DossierColonieService // Inject the service
 
   ) {}
 
@@ -210,14 +211,62 @@ export class ListeParticipantComponent implements OnInit {
       }
     })
   }
-   validerParticipant(participant: Participant) {
+  validerParticipant(participant: Participant) {
     const status = 'VALIDER';
-    this.participantService.updateParticipantStatus(participant.id,status).subscribe(() => {
+    this.participantService.updateParticipantStatus(participant.id, status).subscribe(() => {
       this.notificationService.success('Participant validé avec succès');
+      
+      const colon: Colon = {
+        nom: participant.nom,
+        prenom: participant.prenom,
+        dateNaissance: participant.dateNaissance,
+        ficheSocial: participant.ficheSocial,
+        document: participant.document,
+        codeDossier: participant.codeDossier,
+        lieuNaissance: participant.lieuNaissance,
+        groupeSanguin: participant.groupeSanguin,
+        sexe: participant.sexe,
+        matriculeParent: participant.matriculeParent,
+        nomParent: participant.nomParent,
+        prenomParent: participant.prenomParent,
+        status: participant.status,
+        matriculeAgent: participant.matriculeAgent,
+        nomAgent: participant.nomAgent,
+        prenomAgent: participant.prenomAgent,
+        id: 0
+      };
+  
+      this.colonService.create(colon).subscribe((response) => {
+        this.notificationService.success('Colon créé avec succès');
+        
+        const newColon = response.body;
+        this.dossierColonieService.getAll().subscribe(dossiersResponse => {
+          const dossiers = dossiersResponse.body;
+          const dossierColonie = dossiers.find(dossier => dossier.code === participant.codeDossier.code);
+          if (dossierColonie) {
+            dossierColonie.colons = dossierColonie.colons || [];
+            dossierColonie.colons.push(newColon);
+  
+            this.dossierColonieService.update(dossierColonie).subscribe(
+              updateResponse => {
+                this.notificationService.success('Dossier mis à jour avec le nouveau colon');
+              },
+              updateError => {
+                this.notificationService.warn('Échec de la mise à jour du dossier avec le nouveau colon');
+              }
+            );
+          }
+        });
+  
+      }, () => {
+        this.notificationService.warn('Échec de la création du colon');
+      });
+  
     }, () => {
       this.notificationService.warn('Échec de la validation du participant');
     });
   }
+  
   rejeterParticipant(participant: Participant) {
     const status = 'REJETER';
     this.participantService.updateParticipantStatus(participant.id,status).subscribe(() => {
@@ -229,15 +278,15 @@ export class ListeParticipantComponent implements OnInit {
   afficherFicheSocial(participant: Participant): void {
     this.participantSelectionne = participant;
     this.afficherFicheSociale = true;
-    this.afficherDocument = false; // Ensure document view is hidden
-    this.fileType = 'ficheSocial'; // Set file type
+    this.afficherDocument = false; 
+    this.fileType = 'ficheSocial'; 
   }
 
   afficherDoc(participant: Participant): void {
     this.participantSelectionne = participant;
-    this.afficherFicheSociale = false; // Ensure fiche sociale view is hidden
+    this.afficherFicheSociale = false;
     this.afficherDocument = true;
-    this.fileType = 'document'; // Set file type
+    this.fileType = 'document'; 
   }
 
 onCellClick(property: string, row: Participant) {

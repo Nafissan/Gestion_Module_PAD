@@ -3,9 +3,6 @@ import java.util.Date;
 
 import java.util.List;
 
-import sn.pad.pe.colonie.bo.Colon;
-import sn.pad.pe.colonie.bo.FormulaireSatisfaction;
-import sn.pad.pe.colonie.bo.RapportProspection;
 
 public class DossierColonieDTO  {
 
@@ -23,7 +20,7 @@ public class DossierColonieDTO  {
     private String demandeProspection;
     private String noteInformation;
     private String noteInstruction;
-    private RapportProspection rapportProspection;
+    private RapportProspectionDTO rapportProspection;
     private String rapportMission;
     private byte[] noteMinistereBytes;
     private byte[] demandeProspectionBytes;
@@ -39,8 +36,8 @@ public class DossierColonieDTO  {
 
 	private Date createdAt;
 	private Date updatedAt;
-    private FormulaireSatisfaction formulaireSatisfactionDTO;
-    private List<Colon> colons;
+    private FormulaireSatisfactionDTO formulaireSatisfactionDTO;
+    private List<ColonDTO> colons;
     // Getters and setters
     
     public Long getId() {
@@ -111,11 +108,11 @@ public class DossierColonieDTO  {
     public void setNoteInstruction(String noteInstruction) {
         this.noteInstruction = noteInstruction;
     }
-      public RapportProspection getRapportProspection() {
+      public RapportProspectionDTO getRapportProspection() {
         return rapportProspection;
     }
 
-    public void setRapportProspection(RapportProspection rapportProspection) {
+    public void setRapportProspection(RapportProspectionDTO rapportProspection) {
         this.rapportProspection = rapportProspection;
     }
 
@@ -215,19 +212,19 @@ public class DossierColonieDTO  {
         this.rapportMissionBytes = rapportMissionBytes;
     }
 
-    public FormulaireSatisfaction getFormulaireSatisfactionDTO() {
+    public FormulaireSatisfactionDTO getFormulaireSatisfactionDTO() {
         return formulaireSatisfactionDTO;
     }
 
-    public void setFormulaireSatisfactionDTO(FormulaireSatisfaction formulaireSatisfactionDTO) {
+    public void setFormulaireSatisfactionDTO(FormulaireSatisfactionDTO formulaireSatisfactionDTO) {
         this.formulaireSatisfactionDTO = formulaireSatisfactionDTO;
     }
 
-    public List<Colon> getColons() {
+    public List<ColonDTO> getColons() {
         return colons;
     }
 
-    public void setColons(List<Colon> colons) {
+    public void setColons(List<ColonDTO> colons) {
         this.colons = colons;
     }
 }

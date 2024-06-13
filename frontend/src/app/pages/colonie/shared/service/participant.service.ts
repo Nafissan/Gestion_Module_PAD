@@ -30,6 +30,14 @@ export class ParticipantService {
     return this.httpClient.get<Participant[]>(this.url, { observe: 'response' })
       .pipe(catchError(this.errorHandler));
   }
+  deleteAllParticipants(): Observable<HttpResponse<any>> {
+    return this.httpClient
+      .delete<any>(`${this.url}/deleteAll`, {
+        headers: this.httpOptions.headers,
+        observe: 'response',
+      })
+      .pipe(catchError(this.errorHandler));
+  }
 
 
   // Mettre à jour un participant

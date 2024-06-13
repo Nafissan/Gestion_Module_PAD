@@ -5,9 +5,10 @@ import java.util.Date;
 
 
 
+
 public class ColonDTO {
     private Long id;
-    private String codeDossier;
+    private DossierColonieDTO codeDossier;
     private String nomEnfant;
     private String prenomEnfant;
     private Date dateNaissance;
@@ -41,10 +42,10 @@ public class ColonDTO {
     public void setId(Long id) {
         this.id = id;
     }
-    public String getCodeDossier() {
+    public DossierColonieDTO getCodeDossier() {
         return codeDossier;
     }
-    public void setCodeDossier(String codeDossier) {
+    public void setCodeDossier(DossierColonieDTO codeDossier) {
         this.codeDossier = codeDossier;
     }
     public String getNomEnfant() {

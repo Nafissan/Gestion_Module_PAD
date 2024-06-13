@@ -21,6 +21,7 @@ import { MailService } from "../../../../shared/services/mail.service";
 import { AgentService } from "../../../../shared/services/agent.service";
 import { Agent } from "../../../../shared/model/agent.model";
 import { Mail } from "src/app/shared/model/mail.model";
+import { ParticipantService } from "../../shared/service/participant.service";
 
 @Component({
   selector: "fury-liste-dossier-colonie",
@@ -89,7 +90,7 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
     private authentificationService: AuthenticationService,
     private notificationService: NotificationService,
     private mailService: MailService,
-    private agentService: AgentService
+    private participantService: ParticipantService
   ) { }
 
   ngOnInit() {
@@ -215,6 +216,7 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
         this.dossierColonieService.update(dossierColonie).subscribe(
           (response) => {
             this.notificationService.success(NotificationUtil.fermetureDossier);
+            this.deleteAllParticipants();
           },
           err => {
             this.notificationService.warn(NotificationUtil.echec);
@@ -231,7 +233,17 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
       }
     });
   }
-
+  deleteAllParticipants(): void {
+    this.participantService.deleteAllParticipants().subscribe(
+      () => {
+        this.notificationService.success('Tous les participants ont été supprimés avec succès');
+      },
+      error => {
+        this.notificationService.warn('Échec de la suppression des participants');
+        console.error('Error deleting participants:', error);
+      }
+    );
+  }
   ngOnDestroy() { }
 
  

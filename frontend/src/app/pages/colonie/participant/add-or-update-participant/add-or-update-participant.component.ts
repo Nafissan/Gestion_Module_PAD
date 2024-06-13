@@ -64,7 +64,7 @@ export class AddOrUpdateParticipantComponent implements OnInit {
       dateNaissance: [this.defaults.dateNaissance || "", Validators.required],
       lieuNaissance: [this.defaults.lieuNaissance || "", Validators.required],
       groupeSanguin: [this.defaults.groupeSanguin || "", Validators.required],
-      codeDossier: [this.defaults.codeDossier || ""],
+      codeDossier: [this.defaults.codeDossier.code || ""],
     });
   }
   

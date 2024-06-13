@@ -1,23 +1,24 @@
-import { Agent } from "src/app/shared/model/agent.model";
 import { DossierColonie } from "./dossier-colonie.model";
 
 export class Satisfaction {
-    id: number;
-    questions: string[];
-    reponses: { [key: string]: boolean };
-    dateCreation: Date;
-    traitePar: Agent;
-    code: DossierColonie;  
-    commentaire: string;
-  
-    constructor(satisfaction: Satisfaction) {
-      this.id = satisfaction.id;
-      this.questions = satisfaction.questions;
-      this.reponses = satisfaction.reponses;
-      this.code = satisfaction.code;
-      this.dateCreation= satisfaction.dateCreation;
-      this.traitePar = satisfaction.traitePar;
-      this.commentaire = satisfaction.commentaire;
-    }
+  id: number;
+  codeDossier: DossierColonie;
+  dateCreation: Date;
+  reponses: { [questionId: number]: string };
+  commentaire: string;
+  matricule: string;
+  nom: string;
+  prenom: string;
+
+  constructor(satisfaction: Satisfaction) {
+    this.id = satisfaction.id;
+    this.codeDossier = satisfaction.codeDossier;
+    this.dateCreation = satisfaction.dateCreation;
+    this.reponses = satisfaction.reponses;
+    this.commentaire = satisfaction.commentaire;
+    this.matricule = satisfaction.matricule;
+    this.nom = satisfaction.nom;
+    this.prenom = satisfaction.prenom;
   }
+}
   

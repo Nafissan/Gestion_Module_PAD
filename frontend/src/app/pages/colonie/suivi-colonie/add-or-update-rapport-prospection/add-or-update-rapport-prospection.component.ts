@@ -26,7 +26,7 @@ export class AddOrUpdateRapportProspectionComponent implements OnInit {
   currentDate: Date = new Date();
   username: string;
   compte: Compte;
-  fileRapportProspection: File | null = null;
+  fileRapportProspection: string | null = null;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public defaults: RapportProspection,
@@ -55,7 +55,7 @@ export class AddOrUpdateRapportProspectionComponent implements OnInit {
 
     this.form = this.fb.group({
       dateCreation: [this.defaults.dateCreation || this.currentDate, Validators.required],
-      codeDossier: [ this.defaults.codeDossierColonie || "", Validators.required],
+      codeDossier: [ this.defaults.codeDossierColonie.code || "", Validators.required],
       etat: [ "A VALIDER" ],
     });
 
@@ -64,8 +64,10 @@ export class AddOrUpdateRapportProspectionComponent implements OnInit {
       this.form.get("dateCreation").disable();
     }
   }
-  handleRapportProspection(files: FileList): void {
-    this.fileRapportProspection = files.item(0);
+  async handleRapportProspection(files: FileList): Promise<void> {
+    if (files.length > 0) {
+    this.fileRapportProspection = await this.convertFileToBase64(files[0]);
+    }
   }
   save(): void {
   
@@ -77,17 +79,36 @@ export class AddOrUpdateRapportProspectionComponent implements OnInit {
 
     
   }
+  async convertFileToBase64(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      if (!file) {
+        resolve(null);
+      }
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64String = reader.result as string;
+        resolve(base64String);
+      };
+      reader.onerror = error => reject(error);
+      reader.readAsDataURL(file);
+    });
+  }
 createRapport(){
   if (this.form.valid) {
     const formData: RapportProspection = this.form.value;
   formData.dateCreation = this.currentDate; 
-  formData.agent = this.agent; 
-  formData.rapport= this.fileRapportProspection;
+  formData.matricule = this.agent.matricule; 
+  formData.nom = this.agent.nom;
+  formData.prenom = this.agent.prenom;
+  formData.rapportProspection= this.fileRapportProspection;
+  formData.prenomAgent = '';
+  formData.nomAgent= '';
+  formData.matriculeAgent= '';
   this.dossierColonieService.getAll().subscribe(dossiersResponse => {
     const dossiers = dossiersResponse.body;
     const openOrSaisiDossier = dossiers.find(dossier => dossier.etat === 'ouvert' || dossier.etat === 'saisi');
     if (openOrSaisiDossier) {
-      formData.codeDossierColonie = openOrSaisiDossier.code;
+      formData.codeDossierColonie = openOrSaisiDossier;
     }});
   console.log(formData);
   this.dialogConfirmationService.confirmationDialog().subscribe(action => {
@@ -114,10 +135,10 @@ createRapport(){
 updateRapportProspection(){
   if (this.form.valid) {
     const formData: RapportProspection = this.form.value;
-  formData.id = this.defaults.id; // Assurez-vous d'avoir l'identifiant pour la mise à jour
-  formData.agent = this.defaults.agent; // Conserver l'agent d'origine
-  formData.dateCreation = this.defaults.dateCreation; // Conserver la date de création d'origine
-  formData.rapport= this.fileRapportProspection;
+  formData.id = this.defaults.id; 
+  formData.matriculeAgent = this.agent.matricule;
+  formData.nomAgent=this.agent.nom;
+  formData.prenomAgent=this.agent.prenom;
   this.dialogConfirmationService.confirmationDialog().subscribe(action => {
     if (action === DialogUtil.confirmer) {
   this.rapportProspectionService.updateRapportProspection(formData).subscribe(() => {

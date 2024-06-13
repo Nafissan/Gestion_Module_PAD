@@ -5,11 +5,12 @@ import { DossierColonieModule } from './dossier-colonie/dossier-colonie.module';
 import { ParticipantModule } from './participant/participant.module';
 import { SatisfactionModule } from './satisfaction/satisfaction.module';
 import { SuiviColonieModule } from './suivi-colonie/suivi-colonie.module';
+import { HistoriqueColonieComponent } from './historique-colonie/historique-colonie.component';
 
 
 @NgModule({
   declarations: [
-],
+HistoriqueColonieComponent],
   imports: [
     CommonModule,
     ColonieRoutingModule,

@@ -26,6 +26,7 @@
             <ng-container *ngIf="column.isModelProperty" [matColumnDef]="column.property">
               <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ column.name }} </th>
               <td mat-cell *matCellDef="let row" (click)="onCellClick(column.property, row)">
+                <p *ngIf="column.property == 'codeDossier'" > {{ row[column.property].code }}</p>
                 <p *ngIf="column.name === 'Status'">
                   <span *ngIf="row?.status === 'A VALIDER' " class="badge badge-warning">{{ 'A Valider'}}
                   </span>
@@ -35,9 +36,9 @@
                   </span>
               </p>
               <p *ngIf="column.property == 'ajoutePar'" > {{(row.matricule + ' | ' + row.prenom + ' ' + row.nom) | titlecase }}</p>
-              <p *ngIf="column.property == 'ficheSocial' && row[column.property]" > {{ row[column.property].name }}</p>
-              <p *ngIf="column.property == 'document' && row[column.property]" > {{ row[column.property].name }}</p>
-              <p *ngIf="column.name !== 'Status' && column.property !== 'ficheSocial'&& column.property !== 'document' && column.property !== 'ajoutePar'">
+              <p *ngIf="column.property == 'ficheSocial' && row[column.property]" > Disponible</p>
+              <p *ngIf="column.property == 'document' && row[column.property]" >Disponible/p>
+              <p *ngIf="column.name !== 'Status' && column.property !== 'ficheSocial'&& column.property !== 'document' && column.property !== 'ajoutePar'  && column.property !== 'codeDossier'">
                     {{ row[column.property] }}
                 </p></td>
             </ng-container>

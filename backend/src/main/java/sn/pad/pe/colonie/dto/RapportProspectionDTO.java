@@ -7,15 +7,13 @@ public class RapportProspectionDTO {
    
     private Long id;
     private String rapportProspection;
-    //Agent qui ajoute le rapport
     private String matricule;
     private String nom;
     private String prenom;
     private Date dateCreation;
     private Date dateValidation;
     private String etat;
-    private String codeDossier;
-    //agent qui valide le rapport
+    private DossierColonieDTO codeDossier;
     private String matriculeAgent;
     private String nomAgent;
     private String prenomAgent;
@@ -68,10 +66,10 @@ public class RapportProspectionDTO {
     public void setEtat(String etat) {
         this.etat = etat;
     }
-    public String getCodeDossier() {
+    public DossierColonieDTO getCodeDossier() {
         return codeDossier;
     }
-    public void setCodeDossier(String codeDossier) {
+    public void setCodeDossier(DossierColonieDTO codeDossier) {
         this.codeDossier = codeDossier;
     }
     public String getMatriculeAgent() {

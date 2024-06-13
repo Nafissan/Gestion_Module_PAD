@@ -51,7 +51,10 @@ public class ParticipantServiceImpl implements ParticipantService {
         }
         return false;
     }
-
+    @Override
+    public void deleteAllParticipants() {
+        participantColonieRepository.deleteAll();
+    }
     @Override
     public boolean updateParticipantStatus(Long id, String newStatus) {
         Optional<Participant> participantOptional = participantColonieRepository.findById(id);

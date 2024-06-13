@@ -15,8 +15,11 @@ import { NotificationService } from "../../../../shared/services/notification.se
 import { RapportProspection } from "../../shared/model/rapport-prospection.model";
 import { RapportProspectionService } from "../../shared/service/rapport-prospection.service";
 import { AddOrUpdateRapportProspectionComponent } from "../add-or-update-rapport-prospection/add-or-update-rapport-prospection.component";
-import { DetailsRapportProspectionComponent } from "../details-rapport-prospection/details-rapport-prospection.component";
 import { AuthenticationService } from "src/app/shared/services/authentification.service";
+import { Compte } from "src/app/pages/gestion-utilisateurs/shared/model/compte.model";
+import { CompteService } from "src/app/pages/gestion-utilisateurs/shared/services/compte.service";
+import { Agent } from "src/app/shared/model/agent.model";
+import { DossierColonieService } from "../../shared/service/dossier-colonie.service";
 
 @Component({
   selector: "fury-liste-rapport-prospection",
@@ -35,6 +38,9 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
   dataSource: MatTableDataSource<RapportProspection> | null;
   rapportSelectionne: RapportProspection;
   afficherRapport: boolean = false;
+  username: string;
+  compte: Compte;  
+  agent: Agent;
 
   private paginator: MatPaginator;
   private sort: MatSort;
@@ -58,20 +64,30 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
     { name: "Code Dossier", property: "codeDossierColonie", visible: true, isModelProperty: true },
     { name: "Date de création", property: "dateCreation", visible: true, isModelProperty: true },
     { name: "État", property: "etat", visible: true, isModelProperty: true },
-    { name: "Rapport Prospection", property: "rapport", visible: true, isModelProperty: true },
-    { name: "Ajoute par", property: "agent", visible: true, isModelProperty: true },
+    { name: "Rapport Prospection", property: "rapportProspection", visible: true, isModelProperty: true },
+    { name: "Ajoute par", property: "agentAjout", visible: true },
+    { name: "Valide/Rejeter par", property: "agentModif", visible: true },
     { name: "Actions", property: "actions", visible: true },
   ] as ListColumn[];
 
   constructor(
     private rapportService: RapportProspectionService,
     private dialog: MatDialog,    private authentificationService: AuthenticationService,
-
+    private authService: AuthenticationService,    
+    private compteService: CompteService,
     private dialogConfirmationService: DialogConfirmationService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private dossierColonieService: DossierColonieService 
+
   ) { }
 
   ngOnInit() {
+    this.username = this.authService.getUsername();
+
+    this.compteService.getByUsername(this.username).subscribe((response) => {
+      this.compte = response.body;
+      this.agent = this.compte.agent;
+    });
     this.getRapportProspections();
     this.dataSource = new MatTableDataSource();
     this.data$.pipe(filter((data) => !!data)).subscribe((rapports) => {
@@ -166,16 +182,40 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
       }
     });
   }
-  validerRapportProspection(rapport: RapportProspection){
+  validerRapportProspection(rapport: RapportProspection) {
     rapport.etat = 'VALIDER';
-    this.rapportService.updateRapportProspection(rapport).subscribe(()=>{
-      this.notificationService.success('Rapport de prospection valide avec succes');
-    },() => {
-      this.notificationService.warn('Echac de validation du rapport');
-    })
-  }
+    rapport.matriculeAgent = this.agent.matricule;
+    rapport.nomAgent = this.agent.nom;
+    rapport.prenomAgent = this.agent.prenom;
+    rapport.dateValidation = new Date();
+
+    this.rapportService.updateRapportProspection(rapport).subscribe(() => {
+      this.notificationService.success('Rapport de prospection validé avec succès');
+
+      this.dossierColonieService.getAll().subscribe(response => {
+        const dossiers = response.body;
+        const dossierToUpdate = dossiers.find(dossier => dossier.id === rapport.codeDossierColonie.id);
+        if (dossierToUpdate) {
+          dossierToUpdate.rapportProspection = rapport;
+          this.dossierColonieService.update(dossierToUpdate).subscribe(() => {
+            this.notificationService.success('Dossier mis à jour avec succès');
+          }, err => {
+            this.notificationService.warn('Échec de la mise à jour du dossier');
+          });
+        }
+      }, err => {
+        this.notificationService.warn('Échec de la récupération des dossiers');
+      });
+    }, () => {
+      this.notificationService.warn('Échec de la validation du rapport');
+    });
+}
+
   rejeterRapportProspection(rapport: RapportProspection){
     rapport.etat = 'REJETER';
+    rapport.matriculeAgent=this.agent.matricule;
+    rapport.nomAgent=this.agent.nom;
+    rapport.prenomAgent=this.agent.prenom;
     this.rapportService.updateRapportProspection(rapport).subscribe(()=>{
       this.notificationService.success('Rapport de prospection rejete avec succes');
     },() => {

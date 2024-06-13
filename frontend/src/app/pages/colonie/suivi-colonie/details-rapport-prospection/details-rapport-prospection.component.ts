@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { RapportProspection } from '../../shared/model/rapport-prospection.model';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
@@ -7,21 +7,28 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
   templateUrl: './details-rapport-prospection.component.html',
   styleUrls: ['./details-rapport-prospection.component.scss']
 })
-export class DetailsRapportProspectionComponent implements OnInit {
-  @Input()rapportProspection: RapportProspection;
-  pdfDataUrl: SafeResourceUrl; // Safe URL for the PDF file
-  showFrame: boolean = true;
-  
-  constructor(
-    private sanitizer: DomSanitizer
-  ) {}
+export class DetailsRapportProspectionComponent implements OnInit, OnDestroy {
+  @Input() rapportProspection: RapportProspection;
+  pdfDataUrl: SafeResourceUrl; 
+  showFrame: boolean = true; 
+
+  constructor(private sanitizer: DomSanitizer) {}
 
   ngOnInit(): void {
-    if(this.rapportProspection && this.rapportProspection.rapport instanceof Blob){
-      const objectUrl = URL.createObjectURL(this.rapportProspection.rapport);
-      this.pdfDataUrl =this.sanitizer.bypassSecurityTrustResourceUrl(objectUrl);
+    if (this.rapportProspection) {
+      const fileBase64 = this.rapportProspection.rapportProspection;
+      if (fileBase64) {
+        const byteCharacters = atob(fileBase64);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+          byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: 'application/pdf' });
+        const objectUrl = URL.createObjectURL(blob);
+        this.pdfDataUrl = this.sanitizer.bypassSecurityTrustResourceUrl(objectUrl);
+      }
     }
-   
   }
 
   ngOnDestroy(): void {

@@ -47,9 +47,9 @@ export class ListeSatisfactionComponent implements OnInit {
   @Input()
   columns: ListColumn[] = [
     { name: "Checkbox", property: "checkbox", visible: true },
-    { name: "Code Dossier Colonie", property: "code", visible: true, isModelProperty: true, },
+    { name: "Code Dossier Colonie", property: "codeDossier", visible: true, isModelProperty: true, },
      { name: "Date de creation", property: "dateCreation", visible: true, isModelProperty: true,},
-     { name: "Cree par", property: "traitePar", visible: true,  isModelProperty: true,},
+     { name: "Ajoute par", property: "traitePar", visible: true, },
      { name: "Actions", property: "actions", visible: true },
     ] as ListColumn[];
   constructor(private satisfactionService: SatisfactionService,

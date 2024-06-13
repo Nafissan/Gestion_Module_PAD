@@ -17,9 +17,16 @@ export class ReadFileParticipantComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     if (this.participant && this.fileType) {
-      const file = this.participant[this.fileType];
-      if (file instanceof Blob) {
-        const objectUrl = URL.createObjectURL(file);
+      const fileBase64 = this.participant[this.fileType];
+      if (fileBase64) {
+        const byteCharacters = atob(fileBase64);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+          byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: 'application/pdf' });
+        const objectUrl = URL.createObjectURL(blob);
         this.pdfDataUrl = this.sanitizer.bypassSecurityTrustResourceUrl(objectUrl);
       }
     }

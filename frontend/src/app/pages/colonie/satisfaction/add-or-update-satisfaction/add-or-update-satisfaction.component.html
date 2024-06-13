@@ -20,7 +20,7 @@
         <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
             <mat-form-field fxFlex *ngIf="mode === 'update'">
                 <mat-label>Code Dossier Colonie</mat-label>
-                <input type="text" formControlName="code" matInput [disabled]="isUpdateMode()">
+                <input type="text" formControlName="codeDossier" matInput [disabled]="isUpdateMode()">
             </mat-form-field>
             <mat-form-field fxFlex>
                 <mat-label>Commentaire</mat-label>
