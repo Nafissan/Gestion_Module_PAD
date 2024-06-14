@@ -18,7 +18,6 @@ import { AuthenticationService } from "../../../../shared/services/authentificat
 import { EtatDossierColonie } from "../../shared/util/util";
 import { NotificationService } from "../../../../shared/services/notification.service";
 import { MailService } from "../../../../shared/services/mail.service";
-import { AgentService } from "../../../../shared/services/agent.service";
 import { Agent } from "../../../../shared/model/agent.model";
 import { Mail } from "src/app/shared/model/mail.model";
 import { ParticipantService } from "../../shared/service/participant.service";
@@ -99,7 +98,7 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
     this.data$.pipe(filter((data) => !!data)).subscribe((dossierColonies) => {
       this.dossierColonies = dossierColonies;
       this.dataSource.data = dossierColonies;
-      console.log('Dossier Colonies in ngOnInit:', this.dossierColonies); // Debugging output
+      console.log('Dossier Colonies in ngOnInit:', this.dossierColonies); 
     });
   }
 
@@ -128,18 +127,20 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
       (response) => {
         this.dossierColonies = response.body;
         console.log('Dossier Colonies:', this.dossierColonies); 
-        this.currentDossierColonie = this.dossierColonies.find(e => e.etat === EtatDossierColonie.ouvert || e.etat === EtatDossierColonie.saisi);// Debugging output
-        this.subject$.next(this.dossierColonies);
         this.showProgressBar = true;
+        const filteredDossierColonies = this.dossierColonies.filter(dossier => 
+          dossier.etat === EtatDossierColonie.ouvert || dossier.etat === EtatDossierColonie.saisi
+        );
+        this.subject$.next(filteredDossierColonies);
+        console.log('Filtered Dossier Colonies:', filteredDossierColonies); 
       },
       (err) => {
-      },
-      () => {
-        this.subject$.next(this.dossierColonies.filter(dossierColonie => dossierColonie.etat === EtatDossierColonie.saisi || dossierColonie.etat === EtatDossierColonie.ouvert));
-        this.showProgressBar = true;
+        console.error('Error loading dossier colonies:', err); 
+        this.showProgressBar = false;
       }
     );
   }
+  
   createDossierColonie() {
     this.dialog
       .open(AddDossierColonieComponent)

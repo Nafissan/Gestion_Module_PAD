@@ -991,6 +991,36 @@ export let menus = [
     privilege: "MENU_DOTATION"
   },
 },
+{
+  id: 70,
+  name: "Historique Colonie",
+  routeOrFunction: "/colonie/historique-colonie",
+  position: 5,
+  privilege: "MENU_DOTATION",
+  parent: {
+    id: 65,
+    name: "Colonie",
+    routeOrFunction: "/colonie",
+    icon: "list",
+    position: 5,
+    privilege: "MENU_DOTATION"
+  },
+},
+{
+  id: 71,
+  name: "Tableau de bord Colonie",
+  routeOrFunction: "/colonie/tableau-statistique",
+  position: 5,
+  privilege: "MENU_DOTATION",
+  parent: {
+    id: 65,
+    name: "Colonie",
+    routeOrFunction: "/colonie",
+    icon: "list",
+    position: 5,
+    privilege: "MENU_DOTATION"
+  },
+},
 ];
 
 export let getMenu = function (privileges) {

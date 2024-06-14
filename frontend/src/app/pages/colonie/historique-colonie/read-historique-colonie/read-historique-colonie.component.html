@@ -1,0 +1,6 @@
+<div *ngIf="fileContent" class="file-content">
+    <pre *ngIf="file && file.type.startsWith('text')">{{ fileContent }}</pre>
+    <!-- PDF content will be displayed in a new window -->
+    <p *ngIf="fileContent && !file.type.startsWith('text')">{{ fileContent }}</p>
+  </div>
+  

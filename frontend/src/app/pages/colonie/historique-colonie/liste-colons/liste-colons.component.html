@@ -1,0 +1,54 @@
+<fury-page-layout mode="card">
+    <fury-page-layout-header>
+      <fury-breadcrumbs [@fadeInRight] [crumbs]="['colonie']" current="colons-colonie"></fury-breadcrumbs>
+    </fury-page-layout-header>
+  
+    <fury-page-layout-content [@fadeInUp]>
+      <fury-list *ngIf="colons.length !== 0 && showProgressBar === true" name="Colons" [columns]="columns" (filterChange)="onFilterChange($event)">
+        <div class="actions"></div>
+        <table [dataSource]="dataSource" mat-table matSort>
+  
+          <!-- Dynamic Columns -->
+          <ng-container *ngFor="let column of columns">
+            <ng-container *ngIf="column.isModelProperty" [matColumnDef]="column.property">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ column.name }} </th>
+              <td mat-cell *matCellDef="let row" >
+                <p *ngIf="column.property == 'codeDossier'"> {{ row[column.property].code }}</p>
+                <p *ngIf="column.name === 'Status'">
+                  <span *ngIf="row?.status === 'A VALIDER' " class="badge badge-warning">{{ 'A Valider'}}</span>
+                  <span *ngIf="row?.status === 'VALIDER' " class="badge badge-success">{{ 'Validé(e)' }}</span>
+                  <span *ngIf="row?.status === 'REJETER' " class="badge badge-danger">{{ 'Rejeté(e)' }}</span>
+                </p>
+                <p *ngIf="column.property == 'ajoutePar'">{{(row.matricule + ' | ' + row.prenom + ' ' + row.nom) | titlecase }}</p>
+                <p *ngIf="column.property == 'ficheSocial' && row[column.property]">Disponible</p>
+                <p *ngIf="column.property == 'document' && row[column.property]">Disponible</p>
+                <p *ngIf="column.name !== 'Status' && column.property !== 'ficheSocial' && column.property !== 'document' && column.property !== 'ajoutePar' && column.property !== 'codeDossier'">
+                  {{ row[column.property] }}
+                </p>
+              </td>
+            </ng-container>
+          </ng-container>
+  
+          <!-- Table Header and Rows -->
+          <tr mat-header-row *matHeaderRowDef="visibleColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: visibleColumns" class="clickable"></tr>
+        </table>
+  
+        <mat-paginator [pageSize]="pageSize" class="paginator"></mat-paginator>
+      </fury-list>
+      <div *ngIf="colons.length === 0 && showProgressBar === true" class="card text-center">
+        <div class="card-header">
+          <span class="badge badge-info">INFORMATION</span>
+        </div>
+        <div class="card-body">
+          <h5 class="card-title">LISTE DES COLONS VIDE</h5>
+        </div>
+        <div class="card-footer text-muted">
+          {{date | date : 'dd/MMM/yyyy HH:mm:ss'}}
+        </div>
+      </div>
+  
+      <mat-progress-bar *ngIf="showProgressBar === false" mode="query" color="primary"></mat-progress-bar>
+    </fury-page-layout-content>
+  </fury-page-layout>
+  

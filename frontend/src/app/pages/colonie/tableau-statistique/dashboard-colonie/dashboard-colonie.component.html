@@ -1,0 +1,23 @@
+<fury-page [fxLayoutGap]="gap" class="dashboard" fxLayout="column">
+    <mat-card>
+        <mat-card-header>
+          <mat-card-title>Nombre de colons par année</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <mat-tab-group>
+            <mat-tab label="Graphique">
+              <div style="height: 300px;">
+    <div>
+        <canvas baseChart
+                [datasets]="barChartData"
+                [labels]="barChartLabels"
+                [options]="barChartOptions"
+                [legend]="barChartLegend"
+                [chartType]="barChartType">
+        </canvas>
+      </div>
+    </div>
+</mat-tab>
+</mat-tab-group>
+</mat-card-content>
+</mat-card>

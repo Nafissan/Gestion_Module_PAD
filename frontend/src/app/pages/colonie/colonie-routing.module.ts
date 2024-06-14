@@ -22,6 +22,16 @@ const routes: Routes = [
     loadChildren: () => import('./suivi-colonie/suivi-colonie.module').then(m => m.SuiviColonieModule),
     pathMatch: 'full'
   },
+  {
+    path: 'historique-colonie',
+    loadChildren: () => import('./historique-colonie/historique-colonie.module').then(m => m.HistoriqueColonieModule),
+    pathMatch: 'full'
+  },
+  {
+    path: 'tableau-statistique',
+    loadChildren: () => import('./tableau-statistique/tableau-statistique.module').then(m => m.TableauStatistiqueModule),
+    pathMatch: 'full'
+  },
 ];
 
 @NgModule({

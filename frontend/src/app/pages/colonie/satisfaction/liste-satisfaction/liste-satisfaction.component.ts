@@ -11,10 +11,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { DialogConfirmationService } from 'src/app/shared/services/dialog-confirmation.service';
 import { NotificationService } from 'src/app/shared/services/notification.service';
 import { DialogUtil, NotificationUtil } from 'src/app/shared/util/util';
-import { filter } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import { AuthenticationService } from 'src/app/shared/services/authentification.service';
 import { SelectionModel } from '@angular/cdk/collections';
 import { DetailsSatisfactionComponent } from '../details-satisfaction/details-satisfaction.component';
+import { DossierColonieService } from '../../shared/service/dossier-colonie.service';
 
 @Component({
   selector: 'fury-liste-satisfaction',
@@ -56,7 +57,8 @@ export class ListeSatisfactionComponent implements OnInit {
     private dialog: MatDialog,
     private authentificationService: AuthenticationService,
     private notificationService: NotificationService,
-    private dialogConfirmationService: DialogConfirmationService
+    private dialogConfirmationService: DialogConfirmationService,
+    private dossierColonieService: DossierColonieService
   ) {}
 
   ngOnInit(): void {
@@ -82,6 +84,15 @@ export class ListeSatisfactionComponent implements OnInit {
 
   get visibleColumns() {
     return this.columns.filter((column) => column.visible).map((column) => column.property);
+  }
+  canAddSatisfaction(): boolean {
+     this.dossierColonieService.getAll().pipe(map(response => {
+      const dossiers = response.body;
+      const dossierToUpdate = dossiers.find(dossier => dossier.etat === 'ouvert' || dossier.etat === 'saisi');
+      const existingSatisfaction = this.satisfactions.find(rapport => dossierToUpdate && rapport.codeDossier.id === dossierToUpdate.id);
+      return !!dossierToUpdate && !existingSatisfaction;
+    }));
+    return false;
   }
 
   getSatisfactions() {

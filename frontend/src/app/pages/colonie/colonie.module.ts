@@ -5,19 +5,22 @@ import { DossierColonieModule } from './dossier-colonie/dossier-colonie.module';
 import { ParticipantModule } from './participant/participant.module';
 import { SatisfactionModule } from './satisfaction/satisfaction.module';
 import { SuiviColonieModule } from './suivi-colonie/suivi-colonie.module';
-import { HistoriqueColonieComponent } from './historique-colonie/historique-colonie.component';
+import { HistoriqueColonieModule } from './historique-colonie/historique-colonie.module';
+import { TableauStatistiqueModule } from './tableau-statistique/tableau-statistique.module';
 
 
 @NgModule({
   declarations: [
-HistoriqueColonieComponent],
+],
   imports: [
     CommonModule,
     ColonieRoutingModule,
     DossierColonieModule,
     ParticipantModule,
     SatisfactionModule,
-    SuiviColonieModule
+    SuiviColonieModule,
+    HistoriqueColonieModule,
+    TableauStatistiqueModule
   ]
 })
 export class ColonieModule { }

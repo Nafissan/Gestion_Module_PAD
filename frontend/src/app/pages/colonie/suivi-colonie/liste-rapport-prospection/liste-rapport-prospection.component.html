@@ -6,7 +6,7 @@
     <fury-page-layout-content [@fadeInUp]>
       <fury-list *ngIf="rapports.length !== 0 && showProgressBar === true" name="Prospection Reports" [columns]="columns" (filterChange)="onFilterChange($event)">
         <div class="actions">
-          <button class="create" (click)="createRapportProspection()" type="button" mat-mini-fab color="primary">
+          <button class="create" (click)="createRapportProspection()" [disabled]="canAddRapportProspection()" type="button" mat-mini-fab color="primary">
             <mat-icon>add</mat-icon>
           </button>
         </div>
@@ -94,7 +94,7 @@
         </div>
         <div class="card-body">
           <h5 class="card-title">PAS DE RAPPORTS DISPONIBLES</h5>
-          <button mat-mini-fab color="primary" (click)="createRapportProspection()">
+          <button mat-mini-fab color="primary" (click)="createRapportProspection()" [disabled]="canAddRapportProspection()">
             <mat-icon>add</mat-icon>
           </button>
         </div>

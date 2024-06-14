@@ -16,7 +16,7 @@ import { ColonService } from '../../shared/service/colon.service';
 import { AddOrUpdateParticipantComponent } from '../add-or-update-participant/add-or-update-participant.component';
 import { SelectionModel } from '@angular/cdk/collections';
 import { DialogUtil, NotificationUtil } from 'src/app/shared/util/util';
-import { filter } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import { Route, Router } from '@angular/router';
 import { Colon } from '../../shared/model/colon.model';
 import { DossierColonieService } from '../../shared/service/dossier-colonie.service';
@@ -189,6 +189,15 @@ export class ListeParticipantComponent implements OnInit {
       }
     })
   }
+  canAddParticipant(): boolean {
+     this.dossierColonieService.getAll().pipe(map(response => {
+      const dossiers = response.body;
+      const dossierToUpdate = dossiers.find(dossier => dossier.etat === 'ouvert' || dossier.etat === 'saisi');
+      return !!dossierToUpdate;
+    }));
+    return false;
+  }
+
   hasAnyRole(roles: string[]) {
     return this.authentificationService.hasAnyRole(roles);
   }

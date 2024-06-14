@@ -5,12 +5,12 @@ import { MatTableDataSource } from "@angular/material/table";
 import { MatPaginator } from "@angular/material/paginator";
 import { MatSort } from "@angular/material/sort";
 import { ListColumn } from "../../../../../@fury/shared/list/list-column.model";
-import { filter } from "rxjs/operators";
+import { filter, map } from "rxjs/operators";
 import { fadeInRightAnimation } from "../../../../../@fury/animations/fade-in-right.animation";
 import { fadeInUpAnimation } from "../../../../../@fury/animations/fade-in-up.animation";
 import { MatDialog } from "@angular/material/dialog";
 import { DialogConfirmationService } from "../../../../shared/services/dialog-confirmation.service";
-import { DialogUtil, NotificationUtil } from "../../../../shared/util/util";
+import { DialogUtil, MailDossierColonie, NotificationUtil } from "../../../../shared/util/util";
 import { NotificationService } from "../../../../shared/services/notification.service";
 import { RapportProspection } from "../../shared/model/rapport-prospection.model";
 import { RapportProspectionService } from "../../shared/service/rapport-prospection.service";
@@ -20,6 +20,8 @@ import { Compte } from "src/app/pages/gestion-utilisateurs/shared/model/compte.m
 import { CompteService } from "src/app/pages/gestion-utilisateurs/shared/services/compte.service";
 import { Agent } from "src/app/shared/model/agent.model";
 import { DossierColonieService } from "../../shared/service/dossier-colonie.service";
+import { Mail } from "src/app/shared/model/mail.model";
+import { MailService } from "src/app/shared/services/mail.service";
 
 @Component({
   selector: "fury-liste-rapport-prospection",
@@ -77,7 +79,9 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
     private compteService: CompteService,
     private dialogConfirmationService: DialogConfirmationService,
     private notificationService: NotificationService,
-    private dossierColonieService: DossierColonieService 
+    private dossierColonieService: DossierColonieService ,
+    private mailService: MailService,
+
 
   ) { }
 
@@ -100,6 +104,15 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
 
   ngAfterViewInit() {
     this.setDataSourceAttributes();
+  }
+  canAddRapportProspection(): boolean {
+     this.dossierColonieService.getAll().pipe(map(response => {
+      const dossiers = response.body;
+      const dossierToUpdate = dossiers.find(dossier => dossier.etat === 'ouvert' || dossier.etat === 'saisi');
+      const existingReport = this.rapports.find(rapport => dossierToUpdate && rapport.codeDossierColonie.id === dossierToUpdate.id);
+      return !!dossierToUpdate && !existingReport;
+    }));
+    return false;
   }
 
   get visibleColumns() {
@@ -188,7 +201,12 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
     rapport.nomAgent = this.agent.nom;
     rapport.prenomAgent = this.agent.prenom;
     rapport.dateValidation = new Date();
-
+    let mail = new Mail();
+    mail.objet = "Rapport_Prospection";
+    mail.contenu ="Le rapport de Prospection du dossier colonie est valide";
+    mail.lien = "";
+    mail.emetteur = "";
+    mail.destinataires = ["nnafissa27@gmail.com"];
     this.rapportService.updateRapportProspection(rapport).subscribe(() => {
       this.notificationService.success('Rapport de prospection validé avec succès');
 
@@ -206,8 +224,17 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
       }, err => {
         this.notificationService.warn('Échec de la récupération des dossiers');
       });
+    }, err => {
+      this.notificationService.warn('Échec de la validation du rapport'+err);
     }, () => {
-      this.notificationService.warn('Échec de la validation du rapport');
+      this.mailService.sendMailByDirections(mail).subscribe(
+        response => {
+        }, err => {
+          this.notificationService.warn(NotificationUtil.echec);
+        },
+        () => {
+          this.notificationService.success(NotificationUtil.envoyeDossier);
+        });
     });
 }
 
@@ -216,11 +243,26 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
     rapport.matriculeAgent=this.agent.matricule;
     rapport.nomAgent=this.agent.nom;
     rapport.prenomAgent=this.agent.prenom;
+    let mail = new Mail();
+    mail.objet = "Rapport_Prospection";
+    mail.contenu ="Le rapport de Prospection du dossier colonie a ete rejete";
+    mail.lien = "";
+    mail.emetteur = "";
+    mail.destinataires = ["nnafissa27@gmail.com"];
     this.rapportService.updateRapportProspection(rapport).subscribe(()=>{
       this.notificationService.success('Rapport de prospection rejete avec succes');
-    },() => {
-      this.notificationService.warn('Echac de rejection du rapport');
-    })
+    },err => {
+      this.notificationService.warn('Echac de rejection du rapport'+err);
+    }, () => {
+      this.mailService.sendMailByDirections(mail).subscribe(
+        response => {
+        }, err => {
+          this.notificationService.warn(NotificationUtil.echec);
+        },
+        () => {
+          this.notificationService.success(NotificationUtil.envoyeDossier);
+        });
+    });
   }
   afficherRapportProspection(rapport:RapportProspection){
     this.rapportSelectionne = rapport;
