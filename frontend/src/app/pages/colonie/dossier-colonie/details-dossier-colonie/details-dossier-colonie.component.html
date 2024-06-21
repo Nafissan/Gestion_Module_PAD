@@ -45,8 +45,7 @@
                 </mat-panel-title>
             </mat-expansion-panel-header>
             <mat-panel-description>
-                <span>Nom du fichier : </span>{{ dossierColonie.noteMinistere ?'': 'Aucun fichier sélectionné' }}
-                <a *ngIf="dossierColonie.noteMinistere" [href]="getFileLink(dossierColonie.noteMinistere, 'application/pdf')" target="_blank">Télécharger</a>
+                <span>Nom du fichier : </span>{{ dossierColonie.noteMinistere ?'Disponible': 'Aucun fichier sélectionné' }}
             </mat-panel-description>
         </mat-expansion-panel>
         <mat-expansion-panel>
@@ -57,8 +56,7 @@
                 </mat-panel-title>
             </mat-expansion-panel-header>
             <mat-panel-description>
-                <span>Nom du fichier : </span>{{ dossierColonie.demandeProspection ? '' : 'Aucun fichier sélectionné' }}
-                <a *ngIf="dossierColonie.demandeProspection" [href]="getFileLink(dossierColonie.demandeProspection, 'application/pdf')" target="_blank">Télécharger</a>
+                <span>Nom du fichier : </span>{{ dossierColonie.demandeProspection ? 'Disponible' : 'Aucun fichier sélectionné' }}
             </mat-panel-description>
         </mat-expansion-panel>
         <mat-expansion-panel>
@@ -69,8 +67,7 @@
                 </mat-panel-title>
             </mat-expansion-panel-header>
             <mat-panel-description>
-                <span>Nom du fichier : </span>{{ dossierColonie.rapportProspection ? '' : 'Aucun fichier sélectionné' }}
-                <a *ngIf="dossierColonie.rapportProspection" [href]="getFileLink(dossierColonie.rapportProspection, 'application/pdf')" target="_blank">Télécharger</a>
+                <span>Nom du fichier : </span>{{ dossierColonie.rapportProspection ? 'Disponible' : 'Aucun fichier sélectionné' }}
             </mat-panel-description>
         </mat-expansion-panel>
         <mat-expansion-panel>
@@ -81,12 +78,10 @@
                 </mat-panel-title>
             </mat-expansion-panel-header>
             <mat-panel-description>
-                <span>Pour inscription colonie : </span>{{ dossierColonie.noteInformation ? '' : 'Aucun fichier sélectionné' }}
-                <a *ngIf="dossierColonie.noteInformation" [href]="getFileLink(dossierColonie.noteInformation, 'application/pdf')" target="_blank">Télécharger</a>
+                <span>Pour inscription colonie : </span>{{ dossierColonie.noteInformation ? 'Disponible' : 'Aucun fichier sélectionné' }}
             </mat-panel-description>
             <mat-panel-description>
-                <span>Pour details colonie : </span>{{ dossierColonie.noteInstruction ? dossierColonie.noteInstruction : 'Aucun fichier sélectionné' }}
-                <a *ngIf="dossierColonie.noteInstruction" [href]="getFileLink(dossierColonie.noteInstruction, 'application/pdf')" target="_blank">Télécharger</a>
+                <span>Pour details colonie : </span>{{ dossierColonie.noteInstruction ? 'Disponible' : 'Aucun fichier sélectionné' }}
             </mat-panel-description>
         </mat-expansion-panel>
         <mat-expansion-panel>
@@ -97,8 +92,7 @@
                 </mat-panel-title>
             </mat-expansion-panel-header>
             <mat-panel-description>
-                <span>Nom du fichier : </span>{{ dossierColonie.rapportMission ? '' : 'Aucun fichier disponible'}}
-                <a ngIf="dossierColonie.rapportMission" [href]="getFileLink(dossierColonie.rapportMission, 'application/pdf')" target="_blank">Télécharger</a>
+                <span>Nom du fichier : </span>{{ dossierColonie.rapportMission ? 'Disponible' : 'Aucun fichier disponible'}}
             </mat-panel-description>
         </mat-expansion-panel>
         <mat-expansion-panel>

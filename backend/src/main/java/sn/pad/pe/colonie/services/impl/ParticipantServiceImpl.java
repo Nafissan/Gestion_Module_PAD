@@ -53,8 +53,15 @@ public class ParticipantServiceImpl implements ParticipantService {
     }
     @Override
     public void deleteAllParticipants() {
-        participantColonieRepository.deleteAll();
+        long count = participantColonieRepository.count();
+        if (count > 0) {
+            participantColonieRepository.deleteAll();
+            System.out.println("Tous les participants ont été supprimés.");
+        } else {
+            System.out.println("Aucun participant à supprimer.");
+        }
     }
+    
     @Override
     public boolean updateParticipantStatus(Long id, String newStatus) {
         Optional<Participant> participantOptional = participantColonieRepository.findById(id);

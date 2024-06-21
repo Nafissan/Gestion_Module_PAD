@@ -20,7 +20,7 @@ public class Participant implements Serializable{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
      @ManyToOne
-    @JoinColumn(name = "CODE_DOSSIER_COLONIE", referencedColumnName = "code" ,unique = true, nullable = false)
+    @JoinColumn(name = "CODE_DOSSIER_COLONIE", referencedColumnName = "id" , nullable = false)
     private DossierColonie codeDossier;
     private String nomEnfant;
     private String prenomEnfant;

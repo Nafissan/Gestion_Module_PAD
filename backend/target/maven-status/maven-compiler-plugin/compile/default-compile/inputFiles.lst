@@ -214,6 +214,7 @@ C:\Users\Nafissa NDIAYE\Documents\code\backend\src\main\java\sn\pad\pe\partenari
 C:\Users\Nafissa NDIAYE\Documents\code\backend\src\main\java\sn\pad\pe\pss\services\DossierAbsenceService.java
 C:\Users\Nafissa NDIAYE\Documents\code\backend\src\main\java\sn\pad\pe\pss\repositories\EtapePlanningRepository.java
 C:\Users\Nafissa NDIAYE\Documents\code\backend\src\main\java\sn\pad\pe\colonie\services\impl\RapportProspectionServiceImpl.java
+C:\Users\Nafissa NDIAYE\Documents\code\backend\src\main\java\sn\pad\pe\colonie\repositories\ParticipantColonieRepository.java
 C:\Users\Nafissa NDIAYE\Documents\code\backend\src\main\java\sn\pad\pe\partenariat\services\ZoneService.java
 C:\Users\Nafissa NDIAYE\Documents\code\backend\src\main\java\sn\pad\pe\pss\services\impl\AgentServiceImpl.java
 C:\Users\Nafissa NDIAYE\Documents\code\backend\src\main\java\sn\pad\pe\pss\repositories\DossierInterimRepository.java

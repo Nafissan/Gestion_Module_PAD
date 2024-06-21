@@ -27,7 +27,7 @@ public class RapportProspection implements Serializable{
     private Date dateValidation;
     private String etat;
     @OneToOne    
-    @JoinColumn(name = "CODE_DOSSIER_COLONIE", referencedColumnName = "code" ,unique = true, nullable = false)
+    @JoinColumn(name = "CODE_DOSSIER_COLONIE", referencedColumnName = "id" ,nullable = false)
     private DossierColonie codeDossier;
     //agent qui valide le rapport
     private String matriculeAgent;

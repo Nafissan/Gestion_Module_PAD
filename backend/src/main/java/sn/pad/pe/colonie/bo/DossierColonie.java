@@ -26,10 +26,8 @@ public class DossierColonie implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(unique = true, nullable = false)
     private String code;
-    
-    @Column(unique = true)
+    @Column( unique = true)
     private String annee;
     
     private String description;
@@ -58,9 +56,9 @@ public class DossierColonie implements Serializable {
 	private Date updatedAt;
     @OneToOne(fetch = FetchType.LAZY,mappedBy = "codeDossier", cascade = CascadeType.ALL, orphanRemoval = true)
     private FormulaireSatisfaction formulaireSatisfaction;
-     @OneToOne(mappedBy = "codeDossier", cascade = CascadeType.ALL, orphanRemoval = true)
+     @OneToOne(fetch = FetchType.LAZY,mappedBy = "codeDossier", cascade = CascadeType.ALL, orphanRemoval = true)
     private RapportProspection rapportProspection;
-    @OneToMany(mappedBy = "codeDossier", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "codeDossier", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Colon> colons;
 
     public Long getId() {

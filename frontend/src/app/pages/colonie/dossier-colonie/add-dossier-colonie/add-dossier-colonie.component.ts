@@ -110,14 +110,12 @@ export const MY_FORMATS = {
     if (files.length > 0) {
       this.noteMinistere = await this.convertFileToBase64(files[0]);
       this.selectedFileName = files[0].name;
-      console.log(this.noteMinistere); // Vous pouvez afficher ou utiliser la chaîne base64 ici
     }
   }
 
   async handleDemandeProspectionFileInput(files: FileList) {
     if (files.length > 0) {
       this.demandeProspection = await this.convertFileToBase64(files[0]);
-      console.log(this.demandeProspection); // Vous pouvez afficher ou utiliser la chaîne base64 ici
     }
   }
 
@@ -156,7 +154,6 @@ export const MY_FORMATS = {
   async handleRapport(files: FileList) {
     if (files.length > 0) {
       this.rapport = await this.convertFileToBase64(files[0]);
-      console.log(this.rapport); // Vous pouvez afficher ou utiliser la chaîne base64 ici
     }
   }
 
@@ -190,7 +187,6 @@ export const MY_FORMATS = {
     formData.colons= null;
     this.dialogConfirmationService.confirmationDialog().subscribe(action => {
       if (action === DialogUtil.confirmer) {
-        console.log("create dossier"+formData);
         this.dossierColonieService.create(formData).subscribe(response => {
           let existingDossier = response.body;
           if (existingDossier.id != null) {
@@ -227,7 +223,8 @@ export const MY_FORMATS = {
     formData.noteInstruction = this.notePelerins;
     formData.rapportProspection = this.defaults.rapportProspection;
     formData.rapportMission = this.rapport;
-
+    formData.formulaireSatisfaction = this.defaults.formulaireSatisfaction;
+    formData.colons= this.defaults.colons;
     formData.createdAt = this.defaults.createdAt;
     formData.updatedAt = new Date();
     this.dialogConfirmationService.confirmationDialog().subscribe(action => {
@@ -252,7 +249,9 @@ export const MY_FORMATS = {
       const reader = new FileReader();
       reader.onload = () => {
         const base64String = reader.result as string;
-        resolve(base64String);
+        // Remove the data URL prefix to get only the Base64 string
+        const base64Content = base64String.split(',')[1];
+        resolve(base64Content);
       };
       reader.onerror = error => reject(error);
       reader.readAsDataURL(file);

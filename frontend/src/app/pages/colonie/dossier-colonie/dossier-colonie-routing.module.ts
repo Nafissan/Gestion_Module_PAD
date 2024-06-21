@@ -4,6 +4,7 @@ import { AddDossierColonieComponent } from './add-dossier-colonie/add-dossier-co
 import { AuthGuard } from 'src/app/shared/services/authguard.service';
 import { ListeDossierColonieComponent } from './liste-dossier-colonie/liste-dossier-colonie.component';
 import { DetailsDossierColonieComponent } from './details-dossier-colonie/details-dossier-colonie.component';
+import { ReadFileDossierComponent } from './read-file-dossier/read-file-dossier.component';
 
 
 const routes: Routes = [
@@ -18,6 +19,9 @@ const routes: Routes = [
   },
   {
     path: 'details-dossier-colonie', component: DetailsDossierColonieComponent, canActivate: [AuthGuard],
+  },
+  {
+    path: 'read-file-dossier', component: ReadFileDossierComponent, canActivate: [AuthGuard],
   },
 ];
 

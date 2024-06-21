@@ -42,7 +42,9 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
   data$: Observable<DossierColonie[]> = this.subject$.asObservable();
   pageSize = 4;
   dataSource: MatTableDataSource<DossierColonie> | null;
- 
+  afficherDoc: boolean = false;
+  dossierSelectionne: DossierColonie;
+  fileType: 'noteMinistere' | 'demandeProspection' | 'noteInformation' | 'noteInstruction' | 'rapportMission';
 
   private paginator: MatPaginator;
   private sort: MatSort;
@@ -74,10 +76,9 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
     { name: "Demande de Prospection", property: "demandeProspection", visible: false, isModelProperty: true },
     { name: "Note d'information", property: "noteInformation", visible: false, isModelProperty: true },
     { name: "Note d'instruction", property: "noteInstruction", visible: false, isModelProperty: true },
-    { name: "Rapport prospection", property: "rapportProspection", visible: false, isModelProperty: true },
     { name: "Rapport de mission", property: "rapportMission", visible: false, isModelProperty: true },
 
-    { name: "Date creation", property: "createAt", visible: false, isModelProperty: true },
+    { name: "Date creation", property: "createdAt", visible: false, isModelProperty: true },
 
     { name: "Actions", property: "actions", visible: true },
   ] as ListColumn[];
@@ -131,6 +132,7 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
         const filteredDossierColonies = this.dossierColonies.filter(dossier => 
           dossier.etat === EtatDossierColonie.ouvert || dossier.etat === EtatDossierColonie.saisi
         );
+        this.dataSource.data = filteredDossierColonies; // Ensure dataSource is updated correctly
         this.subject$.next(filteredDossierColonies);
         console.log('Filtered Dossier Colonies:', filteredDossierColonies); 
       },
@@ -165,7 +167,7 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
             (existingDossierColonie) => existingDossierColonie.id === updatedDossierColonie.id
           );
             this.dossierColonies[index] = new DossierColonie(updatedDossierColonie);
-            this.subject$.next(this.dossierColonies);
+            this.subject$.next([...this.dossierColonies]); // Notify subscribers
             console.log("Apres update", this.dossierColonies);
         }
       });
@@ -194,7 +196,7 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
             this.dossierColonies.splice(
               this.dossierColonies.findIndex((existingDossierColonie) => existingDossierColonie.id === dossierColonie.id), 1
             );
-            this.subject$.next(this.dossierColonies);
+            this.subject$.next([...this.dossierColonies]); // Notify subscribers
             this.notificationService.success(NotificationUtil.suppression);
           },
           err => {
@@ -215,24 +217,27 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
       if (action === DialogUtil.confirmer) {
         dossierColonie.etat = this.fermer;
         this.dossierColonieService.update(dossierColonie).subscribe(
-          (response) => {
-            this.notificationService.success(NotificationUtil.fermetureDossier);
+          (response) => { this.dossierColonies.splice(
+            this.dossierColonies.findIndex((existingDossierColonie) => existingDossierColonie.id === dossierColonie.id), 1
+          );
+          this.subject$.next([...this.dossierColonies]); // Notify subscribers
+          this.notificationService.success(NotificationUtil.fermetureDossier);
             this.deleteAllParticipants();
           },
           err => {
             this.notificationService.warn(NotificationUtil.echec);
           }, () => {
-            this.mailService.sendMailByDirections(mail).subscribe(
-              response => {
-              }, err => {
-                this.notificationService.warn(NotificationUtil.echec);
-              },
-              () => {
-                this.notificationService.success(NotificationUtil.envoyeDossier);
-              });
           });
       }
     });
+  }
+  onCellClick(property: string, row: DossierColonie): void {
+    this.dossierSelectionne = row;
+    this.fileType = property as 'noteMinistere' | 'demandeProspection' | 'noteInformation' | 'noteInstruction'  | 'rapportMission';
+    this.afficherDoc = true;
+    console.log(this.dossierSelectionne);
+    console.log(this.fileType);
+
   }
   deleteAllParticipants(): void {
     this.participantService.deleteAllParticipants().subscribe(

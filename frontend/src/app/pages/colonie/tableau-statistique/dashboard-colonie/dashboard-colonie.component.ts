@@ -9,7 +9,7 @@ import { EtatDossierColonie } from '../../shared/util/util';
 @Component({
   selector: 'app-dashboard-colonie',
   templateUrl: './dashboard-colonie.component.html',
-  styleUrls: ['./dashboard-colonie.component.css']
+  styleUrls: ['./dashboard-colonie.component.scss']
 })
 export class DashboardColonieComponent implements OnInit {
 

@@ -23,7 +23,7 @@ public class FormulaireSatisfaction implements Serializable{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @OneToOne    
-    @JoinColumn(name = "CODE_DOSSIER_COLONIE", referencedColumnName = "code", unique = true, nullable = false)
+    @JoinColumn(name = "CODE_DOSSIER_COLONIE", referencedColumnName = "id", nullable = false)
     private DossierColonie codeDossier;
 
     private Date dateCreation;

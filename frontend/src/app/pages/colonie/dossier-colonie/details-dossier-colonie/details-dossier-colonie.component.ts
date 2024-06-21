@@ -33,18 +33,4 @@ export class DetailsDossierColonieComponent implements OnInit {
     this.dossierColonie = this.defaults;
   }
 
-  base64ToBlob(base64: string, mime: string): Blob {
-    const byteCharacters = atob(base64);
-    const byteNumbers = new Array(byteCharacters.length);
-    for (let i = 0; i < byteCharacters.length; i++) {
-      byteNumbers[i] = byteCharacters.charCodeAt(i);
-    }
-    const byteArray = new Uint8Array(byteNumbers);
-    return new Blob([byteArray], { type: mime });
-  }
-
-  getFileLink(base64: string, mime: string): string {
-    const blob = this.base64ToBlob(base64, mime);
-    return URL.createObjectURL(blob);
-  }
 }

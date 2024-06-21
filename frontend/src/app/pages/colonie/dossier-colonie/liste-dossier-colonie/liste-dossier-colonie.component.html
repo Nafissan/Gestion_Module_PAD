@@ -1,117 +1,135 @@
 <fury-page-layout mode="card">
-    <fury-page-layout-header>
-      <fury-breadcrumbs [@fadeInRight] [crumbs]="['gestion-colonie']" current="dossier-colonie"></fury-breadcrumbs>
-    </fury-page-layout-header>
-  
-    <fury-page-layout-content [@fadeInUp]>
-      <fury-list *ngIf="dossierColonies.length !== 0 && showProgressBar === true" name="Dossier Colonie" [columns]="columns" (filterChange)="onFilterChange($event)">
-        <div class="actions">
-          <button class="create" (click)="createDossierColonie()" [disabled]="(currentDossierColonie && currentDossierColonie.etat !== fermer) || !hasAnyRole(['MENU_DOTATION'])" type="button" mat-mini-fab color="primary">
-            <mat-icon>add</mat-icon>
-          </button>
-        </div>
-        <table [dataSource]="dataSource" mat-table matSort>
-          <!-- Checkbox Column -->
-          <ng-container matColumnDef="checkbox">
-            <th mat-header-cell *matHeaderCellDef class="actions-cell">
-              <mat-checkbox color="primary" (click)="$event.stopPropagation()"></mat-checkbox>
-            </th>
-            <td mat-cell *matCellDef="let row" class="actions-cell">
-              <mat-checkbox color="primary" (click)="$event.stopPropagation()"></mat-checkbox>
+  <fury-page-layout-header>
+    <fury-breadcrumbs [@fadeInRight] [crumbs]="['gestion-colonie']" current="dossier-colonie"></fury-breadcrumbs>
+  </fury-page-layout-header>
+
+  <fury-page-layout-content [@fadeInUp]>
+    <fury-list *ngIf="dossierColonies.length !== 0 && showProgressBar === true" name="Dossier Colonie" [columns]="columns" (filterChange)="onFilterChange($event)">
+      <div class="actions">
+        <button class="create" (click)="createDossierColonie()" [disabled]="(currentDossierColonie && currentDossierColonie.etat !== 'fermer') || !hasAnyRole(['MENU_DOTATION'])" type="button" mat-mini-fab color="primary">
+          <mat-icon>add</mat-icon>
+        </button>
+      </div>
+      <table [dataSource]="dataSource" mat-table matSort>
+        <!-- Checkbox Column -->
+        <ng-container matColumnDef="checkbox">
+          <th mat-header-cell *matHeaderCellDef class="actions-cell">
+            <mat-checkbox color="primary" (click)="$event.stopPropagation()"></mat-checkbox>
+          </th>
+          <td mat-cell *matCellDef="let row" class="actions-cell">
+            <mat-checkbox color="primary" (click)="$event.stopPropagation()"></mat-checkbox>
+          </td>
+        </ng-container>
+
+        <!-- Dynamic Columns -->
+        <ng-container *ngFor="let column of columns">
+          <ng-container *ngIf="column.isModelProperty || column.property === 'ajoutePar'" [matColumnDef]="column.property">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ column.name }} </th>
+            <td *matCellDef="let row" mat-cell>
+              <p *ngIf="column.property === 'etat' && row[column.property] === saisi">
+                <span class="badge badge-warning">{{ row[column.property]}}</span>
+            </p>
+            <p *ngIf="column.property === 'etat' && row[column.property] === ouvert">
+                <span class="badge badge-success">{{ row[column.property]}}</span>
+            </p>
+            <p *ngIf="column.property === 'etat' && row[column.property] === fermer">
+                <span class="badge badge-danger">{{ row[column.property]}}</span>
+            </p>
+              <p *ngIf="column.property === 'ajoutePar'">
+                {{ (row.matricule + ' | ' + row.prenom + ' ' + row.nom + ' - ' + row.fonction) | titlecase }}
+              </p>
+              <p *ngIf="column.property === 'noteMinistere' && row.noteMinistere" (click)="onCellClick(column.property, row)">
+                <span>Disponible</span>
+              </p>
+              <p *ngIf="column.property === 'demandeProspection' && row.demandeProspection" (click)="onCellClick(column.property, row)">
+                <span>Disponible</span>
+              </p>
+              <p *ngIf="column.property === 'noteInformation' && row.noteInformation" (click)="onCellClick(column.property, row)">
+                <span>Disponible</span>
+              </p>
+              <p *ngIf="column.property === 'noteInstruction' && row.noteInstruction" (click)="onCellClick(column.property, row)">
+                <span>Disponible</span>
+              </p>
+              <p *ngIf="column.property === 'rapportMission' && row.rapportMission" (click)="onCellClick(column.property, row)">
+                <span>Disponible</span>
+              </p>
+              <p *ngIf="column.property !== 'etat' && column.property !== 'rapportMission'  && column.property !== 'noteInstruction' && column.property !== 'noteInformation' && column.property !== 'demandeProspection' && column.property !== 'noteMinistere'">
+                <span>{{ row[column.property]}}</span>
+            </p>
             </td>
           </ng-container>
-  
-          <!-- Dynamic Columns -->
-          <ng-container *ngFor="let column of columns">
-            <ng-container *ngIf="column.isModelProperty" [matColumnDef]="column.property">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ column.name }} </th>
-              <td *matCellDef="let row" mat-cell>
-                <p *ngIf="column.property === 'etat' && row[column.property] === saisi">
-                    <span class="badge badge-warning">{{ row[column.property]}}</span>
-                </p>
-                <p *ngIf="column.property === 'etat' && row[column.property] === ouvert">
-                    <span class="badge badge-success">{{ row[column.property]}}</span>
-                </p>
-                <p *ngIf="column.property === 'etat' && row[column.property] === fermer">
-                    <span class="badge badge-danger">{{ row[column.property]}}</span>
-                </p>
-                <p *ngIf="column.property === 'ajoutePar'">
-                  {{ (row.matricule + ' | ' + row.prenom + ' ' + row.nom + ' - ' + row.fonction) | titlecase }}
-                </p>
-                <p *ngIf="column.property === 'noteMinistere' && row.noteMinistere">
-                  <span> Disponible </span>
-                </p>
-                <p *ngIf="column.property === 'demandeProspection' && row.demandeProspection">
-                  <span>Disponible</span>
-                </p>
-                <p *ngIf="column.property === 'noteInformation' && row.noteInformation">
-                  <span>Disponible</span>
-                </p>               
-                <p *ngIf="column.property === 'noteInstruction' && row.noteInstruction">
-                  <span>Disponible</span>
-                </p>
-                <p *ngIf="column.property === 'rapportProspection' && row.rapportProspection">
-                  <span>Disponible</span>
-                </p>
-                <p *ngIf="column.property === 'rapportMission' && row.rapportMission">
-                  <span>Disponible</span>
-                </p>
-                <p *ngIf="column.property !== 'etat' && column.property !== 'rapportMission' && column.property !== 'rapportProspection' && column.property !== 'noteInstruction' && column.property !== 'noteInformation' && column.property !== 'demandeProspection' && column.property !== 'noteMinistere'">
-                  <span>{{ row[column.property]}}</span>
-              </p>
-              </td>
-            </ng-container>
-          </ng-container>
-  
-          <!-- Actions Column -->
-          <ng-container matColumnDef="actions">
-            <th mat-header-cell *matHeaderCellDef class="actions-cell"></th>
-            <td mat-cell *matCellDef="let row" class="actions-cell">
-              <button mat-icon-button [matMenuTriggerFor]="actionsMenu" (click)="$event.stopPropagation()">
-                <mat-icon>more_horiz</mat-icon>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef class="actions-cell"></th>
+          <td mat-cell *matCellDef="let row" class="actions-cell">
+            <button mat-icon-button [matMenuTriggerFor]="actionsMenu" (click)="$event.stopPropagation()">
+              <mat-icon>more_horiz</mat-icon>
+            </button>
+            <mat-menu #actionsMenu="matMenu">
+              <button mat-menu-item (click)="updateDossierColonie(row)" [disabled]="!hasAnyRole(['MENU_DOTATION']) || row.etat === 'fermer'">
+                <mat-icon>edit</mat-icon>
+                <span>MODIFIER</span>
               </button>
-              <mat-menu #actionsMenu="matMenu">
-                <button mat-menu-item (click)="updateDossierColonie(row)" [disabled]="!hasAnyRole(['MENU_DOTATION']) || row.etat == ouvert">
-                  <mat-icon>edit</mat-icon>
-                  <span>MODIFIER</span>
+              <button mat-menu-item (click)="deleteDossierColonie(row)" [disabled]="!hasAnyRole(['MENU_DOTATION']) || row.etat === 'fermer'">
+                <mat-icon>delete_sweep</mat-icon>
+                <span>SUPPRIMER</span>
+              </button>
+              <button mat-menu-item (click)="fermerDossierColonie(row)" [disabled]="!hasAnyRole(['MENU_DOTATION']) || row.etat === 'fermer' || row.etat === 'saisi'">
+                <mat-icon>close</mat-icon>
+                <span>FERMER</span>
+              </button>
+              <button mat-menu-item [matMenuTriggerFor]="fileMenu" [disabled]="row.etat === 'fermer'">
+                <mat-icon>visibility</mat-icon>
+                <span>AFFICHER FICHIER</span>
+              </button>
+              <mat-menu #fileMenu="matMenu">
+                <button mat-menu-item (click)="onCellClick('noteMinistere', row)"[disabled]="!hasAnyRole(['MENU_DOTATION']) || row.etat === 'fermer' || !row.noteMinistere">
+                  <span>Note Ministère</span>
                 </button>
-                <button mat-menu-item (click)="deleteDossierColonie(row)" [disabled]="!hasAnyRole(['MENU_DOTATION']) || row.etat !== saisi">
-                  <mat-icon>delete_sweep</mat-icon>
-                  <span>SUPPRIMER</span>
+                <button mat-menu-item (click)="onCellClick('demandeProspection', row)"[disabled]="!hasAnyRole(['MENU_DOTATION']) || row.etat === 'fermer' || !row.demandeProspection">
+                  <span>Demande Prospection</span>
                 </button>
-                <button mat-menu-item (click)="fermerDossierColonie(row)" [disabled]="!hasAnyRole(['MENU_DOTATION']) || row.etat === fermer || row.etat === saisi">
-                  <mat-icon>close</mat-icon>
-                  <span>FERMER</span>
+                <button mat-menu-item (click)="onCellClick('noteInformation', row)"[disabled]="!hasAnyRole(['MENU_DOTATION']) || row.etat === 'fermer' || !row.noteInformation">
+                  <span>Note Information</span>
+                </button>
+                <button mat-menu-item (click)="onCellClick('noteInstruction', row)"[disabled]="!hasAnyRole(['MENU_DOTATION']) || row.etat === 'fermer' || !row.noteInstruction">
+                  <span>Note Instruction</span>
+                </button>
+                <button mat-menu-item (click)="onCellClick('rapportMission', row)"[disabled]="!hasAnyRole(['MENU_DOTATION']) || row.etat === 'fermer' || !row.rapportMission">
+                  <span>Rapport Mission</span>
                 </button>
               </mat-menu>
-            </td>
-          </ng-container>
-  
-          <!-- Table Header and Rows -->
-          <tr mat-header-row *matHeaderRowDef="visibleColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: visibleColumns" (click)="detailsDossierColonie(row)" class="clickable route-animations-elements "></tr>
-        </table>
-  
-        <mat-paginator [pageSize]="pageSize" class="paginator"></mat-paginator>
-      </fury-list>
-  
-      <div *ngIf="dossierColonies.length === 0 && showProgressBar === true" class="card text-center">
-        <div class="card-header">
-          <span class="badge badge-info">INFORMATION</span>
-        </div>
-        <div class="card-body">
-          <h5 class="card-title">DOSSIER COLONIE VIDE</h5>
-          <p class="card-text">Ajouter un nouveau dossier colonie</p>
-          <button mat-mini-fab color="primary" *ngIf="hasAnyRole(['MENU_DOTATION'])" (click)="createDossierColonie()">
-            <mat-icon>add</mat-icon>
-          </button>
-        </div>
-        <div class="card-footer text-muted">
-          {{date | date : 'dd/MMM/yyyy HH:mm:ss'}}
-        </div>
+            </mat-menu>
+          </td>
+        </ng-container>
+
+        <!-- Table Header and Rows -->
+        <tr mat-header-row *matHeaderRowDef="visibleColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: visibleColumns" (click)="detailsDossierColonie(row)" class="clickable route-animations-elements "></tr>
+      </table>
+      <mat-paginator [pageSize]="pageSize" class="paginator"></mat-paginator>
+    </fury-list>
+    <div *ngIf="afficherDoc">
+      <fury-read-file-dossier [dossier]="dossierSelectionne" [fileType]="fileType" ></fury-read-file-dossier>
+    </div>
+    <div *ngIf="dossierColonies.length === 0 && showProgressBar === true" class="card text-center">
+      <div class="card-header">
+        <span class="badge badge-info">INFORMATION</span>
       </div>
-  
-      <mat-progress-bar *ngIf="showProgressBar === false" mode="query" color="primary"></mat-progress-bar>
-    </fury-page-layout-content>
-  </fury-page-layout>
-  
+      <div class="card-body">
+        <h5 class="card-title">DOSSIER COLONIE VIDE</h5>
+        <p class="card-text">Ajouter un nouveau dossier colonie</p>
+        <button mat-mini-fab color="primary" *ngIf="hasAnyRole(['MENU_DOTATION'])" (click)="createDossierColonie()">
+          <mat-icon>add</mat-icon>
+        </button>
+      </div>
+      <div class="card-footer text-muted">
+        {{ date | date: 'dd/MMM/yyyy HH:mm:ss' }}
+      </div>
+    </div>
+
+    <mat-progress-bar *ngIf="showProgressBar === false" mode="query" color="primary"></mat-progress-bar>
+  </fury-page-layout-content>
+</fury-page-layout>
