@@ -191,6 +191,7 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
   deleteDossierColonie(dossierColonie: DossierColonie) {
     this.dialogConfirmationService.confirmationDialog().subscribe(action => {
       if (action === DialogUtil.confirmer) {
+        console.log("id: "+dossierColonie.id);
         this.dossierColonieService.delete(dossierColonie.id).subscribe(
           () => {
             this.dossierColonies.splice(
@@ -240,16 +241,31 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
 
   }
   deleteAllParticipants(): void {
-    this.participantService.deleteAllParticipants().subscribe(
-      () => {
-        this.notificationService.success('Tous les participants ont été supprimés avec succès');
+    this.participantService.getAllParticipants().subscribe(
+      response => {
+        const participants = response.body;
+        if (participants && participants.length === 0) {
+          this.notificationService.warn('Aucun participant à supprimer');
+        } else {
+          this.participantService.deleteAllParticipants().subscribe(
+            () => {
+              this.notificationService.success('Tous les participants ont été supprimés avec succès');
+            },
+            error => {
+              this.notificationService.warn('Échec de la suppression des participants');
+              console.error('Error deleting participants:', error);
+            }
+          );
+        }
       },
       error => {
-        this.notificationService.warn('Échec de la suppression des participants');
-        console.error('Error deleting participants:', error);
+        this.notificationService.warn('Erreur lors de la vérification des participants');
+        console.error('Error retrieving participants:', error);
       }
     );
   }
+  
+  
   ngOnDestroy() { }
 
  

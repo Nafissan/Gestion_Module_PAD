@@ -30,9 +30,9 @@ public class DossierColonieServiceImpl implements DossierColonieService {
         try {
             List<DossierColonieDTO> dtoList = dossiers.stream()
                     .map(dossierColonie -> {
-                        DossierColonieDTO dto = modelMapper.map(dossierColonie, DossierColonieDTO.class);
-
+                        DossierColonieDTO dto = mapToDto(dossierColonie);
                         convertBytesFieldsToBase64(dto);
+                        System.out.print(" Dossier Colonies" + dto.getNoteMinistere());
                         return dto;
                     })
                     .collect(Collectors.toList());
@@ -44,11 +44,49 @@ public class DossierColonieServiceImpl implements DossierColonieService {
     }
 
 
+    private DossierColonieDTO mapToDto(DossierColonie dossierColonie) {
+        DossierColonieDTO dto = new DossierColonieDTO();
+        
+        // Mapping des champs simples
+        dto.setId(dossierColonie.getId());
+        dto.setCode(dossierColonie.getCode());
+        dto.setAnnee(dossierColonie.getAnnee());
+        dto.setDescription(dossierColonie.getDescription());
+        dto.setEtat(dossierColonie.getEtat());
+        dto.setMatricule(dossierColonie.getMatricule());
+        dto.setPrenom(dossierColonie.getPrenom());
+        dto.setNom(dossierColonie.getNom());
+        dto.setFonction(dossierColonie.getFonction());
+        dto.setCreatedAt(dossierColonie.getCreatedAt());
+        dto.setUpdatedAt(dossierColonie.getUpdatedAt());
+        dto.setFormulaireSatisfactionDTO(dossierColonie.getFormulaireSatisfaction());
+        dto.setColons(dossierColonie.getColons());
+        dto.setRapportProspection(dossierColonie.getRapportProspection());
+        if (dossierColonie.getNoteMinistere() != null) {
+            dto.setNoteMinistereBytes(dossierColonie.getNoteMinistere());
+        }
+        if (dossierColonie.getDemandeProspection() != null) {
+            dto.setDemandeProspectionBytes(dossierColonie.getDemandeProspection());
+        }
+        if (dossierColonie.getNoteInformation() != null) {
+            dto.setNoteInformationBytes(dossierColonie.getNoteInformation());
+        }
+        if (dossierColonie.getNoteInstruction() != null) {
+            dto.setNoteInstructionBytes(dossierColonie.getNoteInstruction());
+        }
+        if (dossierColonie.getRapportMission() != null) {
+            dto.setRapportMissionBytes(dossierColonie.getRapportMission());
+        }
+        System.out.print(dto.getNoteMinistereBytes());
+        return dto;
+    }
+
+
     @Override
     public DossierColonieDTO getDossierColonieByAnnee(String annee) {
         DossierColonie dossierColonie = dossierColonieRepository.findByAnnee(annee)
                 .orElseThrow(() -> new ResourceNotFoundException("DossierColonie not found with annee: " + annee));
-        DossierColonieDTO dto = modelMapper.map(dossierColonie, DossierColonieDTO.class);
+        DossierColonieDTO dto = mapToDto(dossierColonie);
         convertBytesFieldsToBase64(dto);
         return dto;
     }

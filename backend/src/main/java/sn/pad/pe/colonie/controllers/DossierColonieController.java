@@ -80,19 +80,23 @@ public class DossierColonieController {
 
 
     @ApiOperation(value = "Suppression d'un dossier colonie", response = ResponseEntity.class)
-    @ApiResponses(value = { 
-        @ApiResponse(code = 200, message = "Objet supprimé avec succès"),
-        @ApiResponse(code = 401, message = "Vous n'êtes pas autorisé à voir la ressource"),
-        @ApiResponse(code = 403, message = "L'accès à la ressource que vous tentiez d'atteindre est interdit"),
-        @ApiResponse(code = 404, message = "La ressource que vous tentiez d'atteindre est introuvable.") 
-    })
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Message> deleteDossierColonie(@PathVariable Long id) {
-        if (dossierColonieService.deleteDossierColonieById(id)) {
-            message = new Message(new Date(), "DossierColonie with id " + id + " deleted.", "uri=/dossiersColonies/" + id);
-            return ResponseEntity.ok().body(message);
-        }
+@ApiResponses(value = { 
+    @ApiResponse(code = 200, message = "Objet supprimé avec succès"),
+    @ApiResponse(code = 401, message = "Vous n'êtes pas autorisé à voir la ressource"),
+    @ApiResponse(code = 403, message = "L'accès à la ressource que vous tentiez d'atteindre est interdit"),
+    @ApiResponse(code = 404, message = "La ressource que vous tentiez d'atteindre est introuvable.") 
+})
+@DeleteMapping("/dossiersColonies/{id}")
+public ResponseEntity<Message> deleteDossierColonie(@PathVariable Long id) {
+    boolean isDeleted = dossierColonieService.deleteDossierColonieById(id);
+    Message message;
+    if (isDeleted) {
+        message = new Message(new Date(), "DossierColonie with id " + id + " deleted.", "uri=/dossiersColonies/" + id);
+        return ResponseEntity.ok().body(message);
+    } else {
         message = new Message(new Date(), "DossierColonie with id " + id + " not found.", "uri=/dossiersColonies/" + id);
         return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
     }
+}
+
 }
