@@ -37,8 +37,10 @@ public class DossierColonieController {
             @ApiResponse(code = 403, message = "L'accès à la ressource que vous tentez d'atteindre est interdit"),
             @ApiResponse(code = 404, message = "La ressource que vous tentez d'atteindre est introuvable.") })
     @GetMapping("/dossiersColonies")
-    public List<DossierColonieDTO> getDossierColonies() {
-        return dossierColonieService.getDossierColonies();
+    public ResponseEntity<List<DossierColonieDTO>> getDossierColonies() {
+        List<DossierColonieDTO> liste =  dossierColonieService.getDossierColonies();
+        return ResponseEntity.status(HttpStatus.OK).body(liste);
+
     }
     @ApiOperation(value = "Récupération d'un dossier colonie par année", response = DossierColonieDTO.class)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Objet récupéré avec succès"),
@@ -47,7 +49,8 @@ public class DossierColonieController {
             @ApiResponse(code = 404, message = "La ressource que vous tentiez d'atteindre est introuvable.") })
     @GetMapping("/dossiersColonies/annee/{annee}")
     public ResponseEntity<DossierColonieDTO> getDossierColonieByAnnee(@PathVariable String annee) {
-        return ResponseEntity.ok().body(dossierColonieService.getDossierColonieByAnnee(annee));
+        DossierColonieDTO dossier = dossierColonieService.getDossierColonieByAnnee(annee);
+        return ResponseEntity.status(HttpStatus.OK).body(dossier);
     }
 
     @ApiOperation(value = "Création d'un dossier colonie", response = ResponseEntity.class)
@@ -58,7 +61,8 @@ public class DossierColonieController {
     @ApiResponse(code = 404, message = "La ressource que vous tentiez d'atteindre est introuvable.") })
     @PostMapping("/dossiersColonies")
     public ResponseEntity<DossierColonieDTO> createDossierColonie(@RequestBody DossierColonieDTO dossierColonieDTO) {
-        return ResponseEntity.ok().body(dossierColonieService.createDossierColonie(dossierColonieDTO));
+       DossierColonieDTO dossier = dossierColonieService.createDossierColonie(dossierColonieDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(dossier);
     }
 
 
@@ -70,7 +74,8 @@ public class DossierColonieController {
     @ApiResponse(code = 404, message = "La ressource que vous tentiez d'atteindre est introuvable.") })
     @PutMapping("/dossiersColonies")
     public ResponseEntity<Message> updateDossierColonie(@RequestBody DossierColonieDTO dossierColonieDTO) {
-        if (dossierColonieService.updateDossierColonie(dossierColonieDTO)) {
+        boolean isUpdated = dossierColonieService.updateDossierColonie(dossierColonieDTO);
+        if (isUpdated) {
             message = new Message(new Date(), "DossierColonie with id " + dossierColonieDTO.getId() + " updated.", "uri=/dossiersColonies/" + dossierColonieDTO.getId());
             return ResponseEntity.ok().body(message);
         }
@@ -86,15 +91,14 @@ public class DossierColonieController {
     @ApiResponse(code = 403, message = "L'accès à la ressource que vous tentiez d'atteindre est interdit"),
     @ApiResponse(code = 404, message = "La ressource que vous tentiez d'atteindre est introuvable.") 
 })
-@DeleteMapping("/dossiersColonies/{id}")
-public ResponseEntity<Message> deleteDossierColonie(@PathVariable Long id) {
-    boolean isDeleted = dossierColonieService.deleteDossierColonieById(id);
-    Message message;
+@DeleteMapping("/dossiersColonies")
+public ResponseEntity<Message> deleteDossierColonie(@RequestBody DossierColonieDTO dossierColonieDTO) {
+    boolean isDeleted = dossierColonieService.deleteDossierColonie(dossierColonieDTO);
     if (isDeleted) {
-        message = new Message(new Date(), "DossierColonie with id " + id + " deleted.", "uri=/dossiersColonies/" + id);
+        message = new Message(new Date(), "DossierColonie with id " + dossierColonieDTO.getId() + " deleted.", "uri=/dossiersColonies/" + dossierColonieDTO.getId());
         return ResponseEntity.ok().body(message);
     } else {
-        message = new Message(new Date(), "DossierColonie with id " + id + " not found.", "uri=/dossiersColonies/" + id);
+        message = new Message(new Date(), "DossierColonie with id " + dossierColonieDTO.getId() + " not found.", "uri=/dossiersColonies/" + dossierColonieDTO.getId());
         return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
     }
 }

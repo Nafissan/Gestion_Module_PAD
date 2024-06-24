@@ -20,7 +20,6 @@ sn\pad\pe\dotation\dto\SuiviStockDTO.class
 sn\pad\pe\partenariat\services\EvenementService.class
 sn\pad\pe\configurations\exception\FileStorageException.class
 sn\pad\pe\partenariat\bo\Convention.class
-sn\pad\pe\colonie\dto\ParticipantDTO.class
 sn\pad\pe\pss\controllers\DossierInterimController.class
 sn\pad\pe\pss\repositories\PasswordTokenRepository.class
 sn\pad\pe\colonie\services\impl\QuestionServiceImpl.class
@@ -58,7 +57,6 @@ sn\pad\pe\dotation\services\FournisseurService.class
 sn\pad\pe\pss\bo\PlanningConge.class
 sn\pad\pe\colonie\repositories\ParticipantColonieRepository.class
 sn\pad\pe\dotation\services\StockService.class
-sn\pad\pe\colonie\dto\SexeDTO.class
 sn\pad\pe\pss\dto\UniteOrganisationnelleDTO.class
 sn\pad\pe\configurations\security\SecurityParams.class
 sn\pad\pe\colonie\bo\DossierColonie.class
@@ -99,7 +97,6 @@ sn\pad\pe\partenariat\repositories\BesoinRepository.class
 sn\pad\pe\dotation\controllers\MarqueController.class
 sn\pad\pe\dotation\services\impl\SuiviDotationServiceImpl.class
 sn\pad\pe\partenariat\services\SuiviProspectService.class
-sn\pad\pe\colonie\dto\GroupeSanguinDTO.class
 sn\pad\pe\partenariat\dto\PaysDTO.class
 sn\pad\pe\colonie\bo\Sexe.class
 sn\pad\pe\pss\dto\FileMetaDataDTO.class
@@ -109,7 +106,6 @@ sn\pad\pe\partenariat\controllers\BesoinController.class
 sn\pad\pe\partenariat\repositories\PointFocalRepository.class
 sn\pad\pe\partenariat\controllers\ZoneController.class
 sn\pad\pe\pss\controllers\DossierCongeController.class
-sn\pad\pe\colonie\bo\Participant.class
 sn\pad\pe\dotation\dto\MarqueDTO.class
 sn\pad\pe\pss\controllers\NiveauHierarchiqueController.class
 sn\pad\pe\pss\dto\PlanningDirectionDTO.class
@@ -285,7 +281,6 @@ sn\pad\pe\dotation\repositories\NotificationRepository.class
 sn\pad\pe\dotation\repositories\SuiviStockRepository.class
 sn\pad\pe\pss\repositories\MotifRepository.class
 sn\pad\pe\pss\services\FonctionService.class
-sn\pad\pe\colonie\services\ParticipantService.class
 sn\pad\pe\dotation\repositories\EnfantRepository.class
 sn\pad\pe\pss\dto\MouvementAgentDTO.class
 sn\pad\pe\partenariat\bo\Prospect.class
@@ -307,7 +302,6 @@ sn\pad\pe\pss\controllers\RessourceController.class
 sn\pad\pe\dotation\bo\CategorieLait.class
 sn\pad\pe\dotation\controllers\SuiviDotationController.class
 sn\pad\pe\configurations\mail\EmailMessage.class
-sn\pad\pe\colonie\services\impl\ParticipantServiceImpl.class
 sn\pad\pe\pss\services\helpers\GenerationCode.class
 sn\pad\pe\pss\services\impl\AbsenceServiceImpl.class
 sn\pad\pe\dotation\services\impl\MarqueServiceImpl.class
@@ -333,7 +327,6 @@ sn\pad\pe\partenariat\controllers\ParticipantController.class
 sn\pad\pe\pss\repositories\ProcessusValidationRepository.class
 sn\pad\pe\partenariat\repositories\PaysRepository.class
 sn\pad\pe\dotation\controllers\DotationController.class
-sn\pad\pe\colonie\services\impl\DossierColonieServiceImpl$1.class
 sn\pad\pe\pss\bo\EtapeInterim.class
 sn\pad\pe\pss\repositories\FileMetaDataRepository.class
 sn\pad\pe\partenariat\dto\PointFocalDTO.class

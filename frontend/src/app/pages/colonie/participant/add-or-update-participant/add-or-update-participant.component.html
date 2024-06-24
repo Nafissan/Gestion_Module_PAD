@@ -16,21 +16,17 @@
                     </mat-option>
                   </mat-select>
             </mat-form-field>
-            <mat-form-field fxFlex *ngIf="mode === 'update'">
-                <mat-label>Code</mat-label>
-                <input matInput formControlName="codeDossier" [disabled]="isUpdateMode()">
-            </mat-form-field>
         </div>
 
         <!-- Enfant Information -->
         <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
             <mat-form-field fxFlex>
                 <mat-label>Nom Enfant</mat-label>
-                <input type="text" formControlName="nom" matInput required>
+                <input type="text" formControlName="nomEnfant" matInput required>
             </mat-form-field>
             <mat-form-field fxFlex>
                 <mat-label>Prénom Enfant</mat-label>
-                <input type="text" formControlName="prenom" matInput required>
+                <input type="text" formControlName="prenomEnfant" matInput required>
             </mat-form-field>
         </div>
 
@@ -39,21 +35,21 @@
             <mat-form-field fxFlex>
                 <mat-label>Groupe Sanguin</mat-label>
                 <mat-select formControlName="groupeSanguin" required>
-                    <mat-option value="A+">A+</mat-option>
-                    <mat-option value="A-">A-</mat-option>
-                    <mat-option value="B+">B+</mat-option>
-                    <mat-option value="B-">B-</mat-option>
-                    <mat-option value="AB+">AB+</mat-option>
-                    <mat-option value="AB-">AB-</mat-option>
-                    <mat-option value="O+">O+</mat-option>
-                    <mat-option value="O-">O-</mat-option>
+                    <mat-option value="A_POSITIF">A+</mat-option>
+                    <mat-option value="A_NEGATIF">A-</mat-option>
+                    <mat-option value="B_POSITIF">B+</mat-option>
+                    <mat-option value="B_NEGATIF">B-</mat-option>
+                    <mat-option value="AB_POSITIF">AB+</mat-option>
+                    <mat-option value="AB_NEGATIF">AB-</mat-option>
+                    <mat-option value="O_POSITIF">O+</mat-option>
+                    <mat-option value="O_NEGATIF">O-</mat-option>
                 </mat-select>
             </mat-form-field>
         </div>
 
         <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
             <!-- Date de Naissance -->
-            <mat-form-field fxFlex>
+            <mat-form-field fxFlex *ngIf="mode === 'create'">
                 <mat-label>Date de Naissance Enfant</mat-label>
                 <input [matDatepicker]="picker1" formControlName="dateNaissance" matInput required>
                 <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
@@ -78,10 +74,17 @@
         </div>
 
         <!-- Fiche Sociale -->
-        <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
-                <mat-label>Fiche Sociale</mat-label>
+        <div fxLayout="column" fxLayout.gt-sm="column" fxLayoutGap.gt-sm="34px">
+            <mat-label  *ngIf="mode === 'create'">Fiche Sociale</mat-label>
+            <div class="file-upload"  *ngIf="mode === 'create'">    
                 <input type="file" (change)="handleFicheSociale($event.target.files)"  required>
-        </div>
+            </div>
+
+                <mat-label>Autres documents</mat-label>
+                <div class="file-upload">    
+                <input type="file" (change)="handleDocument($event.target.files)"  >
+            </div>
+            </div>
     </mat-dialog-content>
 
     <mat-dialog-actions fxLayout="row" fxLayoutAlign="end center">

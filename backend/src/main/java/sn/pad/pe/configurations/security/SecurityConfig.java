@@ -40,7 +40,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				"/etapevalidations/**", "/continent", "/continents/**", "/pays/**", "/typesPartenariat/**",
 				"/villes/**", "/zones/**", "/partenaires/**", "/conventions/**", "/typesDotation/**", "/stocks/**",
 				"/suivi-stocks/**", "/typesDotation/**", "/dotations/**", "/colons", "/dossiersColonies/**","/formulairesSatisfaction/**","/questions",
-				"/colonie", "/conjoints/**", "/enfants/**","/rapportsProspection/**",
+				"/participantsColonie/**", "/conjoints/**", "/enfants/**","/rapportsProspection/**",
 				"/suivi-dotations/**", "/activites/**", "/evenements/**", "/fournisseurs/**", "/marques/**",
 				"/planprospection/**", "/prospects/**", "/suivis/**", "/participants/**", "/etats/**",
 				"/entreprises/**", "/details/**", "/comite/**", "/pointFocal/**", "/besoins/**", "/suiviplan/**",

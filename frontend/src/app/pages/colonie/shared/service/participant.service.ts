@@ -2,13 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpHeaders, HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { Participant } from '../model/participant.model';
+import { Participant } from '../model/participant-colonie.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ParticipantService {
-  private url = '/pss-backend/participants';
+  private url = '/pss-backend/participantsColonie';
 
   private httpOptions = {
     headers: new HttpHeaders({
@@ -25,9 +25,8 @@ export class ParticipantService {
       })
       .pipe(catchError(this.errorHandler));
   }
-  // Récupérer tous les participants
-  getAllParticipants(): Observable<HttpResponse<Participant[]>> {
-    return this.httpClient.get<Participant[]>(this.url, { observe: 'response' })
+  getAll(): Observable<HttpResponse<any>> {
+    return this.httpClient.get<any>(this.url, { observe: 'response' })
       .pipe(catchError(this.errorHandler));
   }
   deleteAllParticipants(): Observable<HttpResponse<any>> {
@@ -41,24 +40,23 @@ export class ParticipantService {
 
 
   // Mettre à jour un participant
-  updateParticipant(id: number, participant: Participant): Observable<HttpResponse<any>> {
-    const updateUrl = `${this.url}/${id}`;
-    return this.httpClient.put<any>(updateUrl, participant, { headers: this.httpOptions.headers, observe: 'response' })
-      .pipe(catchError(this.errorHandler));
-  }
-
-  // Mettre à jour le statut d'un participant
-  updateParticipantStatus(id: number, newStatus: string): Observable<HttpResponse<any>> {
-    const updateStatusUrl = `${this.url}/${id}/status/${newStatus}`;
-    return this.httpClient.put<any>(updateStatusUrl, null, { observe: 'response' })
-      .pipe(catchError(this.errorHandler));
+  updateParticipant(participant: Participant): Observable<HttpResponse<any>> {
+    return this.httpClient
+    .put<any>(this.url, JSON.stringify(participant), {
+      headers: this.httpOptions.headers,
+      observe: 'response',
+    })
+    .pipe(catchError(this.errorHandler));
   }
 
   // Supprimer un participant
-  deleteParticipant(id: number): Observable<HttpResponse<any>> {
-    const deleteUrl = `${this.url}/${id}`;
-    return this.httpClient.delete<any>(deleteUrl, { observe: 'response' })
-      .pipe(catchError(this.errorHandler));
+  deleteParticipant(participant: Participant): Observable<HttpResponse<any>> {
+    const httpOptions = {
+      headers: this.httpOptions.headers,
+      body:participant,
+    };
+    return this.httpClient.delete<any>(this.url, httpOptions);
+
   }
 
   // Gérer les erreurs HTTP

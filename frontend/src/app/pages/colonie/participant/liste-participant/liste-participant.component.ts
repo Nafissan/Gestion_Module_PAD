@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { fadeInRightAnimation } from 'src/@fury/animations/fade-in-right.animation';
 import { fadeInUpAnimation } from 'src/@fury/animations/fade-in-up.animation';
-import { Participant } from '../../shared/model/participant.model';
+import { Participant } from '../../shared/model/participant-colonie.model';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -20,6 +20,8 @@ import { filter, map } from 'rxjs/operators';
 import { Route, Router } from '@angular/router';
 import { Colon } from '../../shared/model/colon.model';
 import { DossierColonieService } from '../../shared/service/dossier-colonie.service';
+import { DetailsParticipantComponent } from '../details-participant/details-participant.component';
+import { EtatDossierColonie } from '../../shared/util/util';
 
 @Component({
   selector: 'fury-liste-participant',
@@ -41,7 +43,7 @@ export class ListeParticipantComponent implements OnInit {
   participantSelectionne: Participant;
   afficherDocument : boolean =false;
   fileType: 'ficheSocial' | 'document'; // New property to indicate file type
-
+  disable: boolean=false;
   
   private paginator: MatPaginator;
   private sort: MatSort;
@@ -62,21 +64,21 @@ export class ListeParticipantComponent implements OnInit {
    // -------------------------------------------------------------
    @Input()
    columns: ListColumn[] = [
-     { name: "Checkbox", property: "checkbox", visible: true },
+     { name: "Checkbox", property: "checkbox", visible: false },
      { name: "Code Dossier", property: "codeDossier", visible: true, isModelProperty: true },
-     { name: "Matricule Parent", property: "matriculeParent", visible: true, isModelProperty: true },
-     { name: "Nom Parent", property: "nomParent", visible: true, isModelProperty: true },
-     { name: "Prenom Parent", property: "prenomParent", visible: true, isModelProperty: true },
+     { name: "Matricule Parent", property: "matriculeParent", visible: false, isModelProperty: true },
+     { name: "Nom Parent", property: "nomParent", visible: false, isModelProperty: true },
+     { name: "Prenom Parent", property: "prenomParent", visible: false, isModelProperty: true },
     
      {
        name: "Nom Enfant",
-       property: "nom", 
+       property: "nomEnfant", 
        visible: true,   
        isModelProperty: true,
      },
      {
        name: "Prenom Enfant",
-       property: "prenom", 
+       property: "prenomEnfant", 
        visible: true,   
        isModelProperty: true,
      },
@@ -101,7 +103,8 @@ export class ListeParticipantComponent implements OnInit {
 
   ) {}
 
-  ngOnInit(): void {
+  ngOnInit() {
+    this.canAddParticipant();
     this.getParticipants();
     this.dataSource = new MatTableDataSource();
     this.data$.pipe(filter((data) => !!data)).subscribe((participant) => {
@@ -111,7 +114,6 @@ export class ListeParticipantComponent implements OnInit {
     });
   }
   ngAfterViewInit() {
-    this.setDataSourceAttributes();
   }
 
   get visibleColumns() {
@@ -127,15 +129,17 @@ export class ListeParticipantComponent implements OnInit {
     this.dataSource.filterPredicate = (data: any, value) => { const dataStr =JSON.stringify(data).toLowerCase(); return dataStr.indexOf(value) != -1; }
   }
   getParticipants(){
-    this.participantService.getAllParticipants()
+    this.participantService.getAll()
       .subscribe((response) => {
         this.participants = response.body;
         console.log(this.participants);
-      this.participantSelected = this.participants.find(e => e.id ===1);
-        this.subject$.next(this.participants);
-        this.showProgressBar = true;
+        
       },(err) => {
         console.error('Error loading participant colonies:', err); // Debugging output
+      },
+      () => {
+        this.subject$.next(this.participants);
+        this.showProgressBar = true;
       }
     
     );
@@ -166,7 +170,7 @@ export class ListeParticipantComponent implements OnInit {
     this.dialog.open(AddOrUpdateParticipantComponent)
     .afterClosed().subscribe((participant: any) => {
   if(participant) {
-    this.participants.unshift(participant);
+    this.participants.unshift(new Participant(participant));
     this.subject$.next(this.participants);
   } 
   });
@@ -177,34 +181,48 @@ export class ListeParticipantComponent implements OnInit {
     })
     .afterClosed()
     .subscribe((participant)=> {
-      this.getParticipants();
       if(participant){
         const index = this.participants.findIndex(
           (existingParticipant) =>
             existingParticipant.id === participant.id
         );
-        this.participants[index] = participant;
+        this.participants[index] = new Participant(participant);
         this.subject$.next(this.participants);
-        console.log(participant);
+        console.log("Apres update"+ this.participants);
       }
     })
   }
-  canAddParticipant(): boolean {
+  canAddParticipant(): void {
      this.dossierColonieService.getAll().pipe(map(response => {
       const dossiers = response.body;
-      const dossierToUpdate = dossiers.find(dossier => dossier.etat === 'ouvert' || dossier.etat === 'saisi');
-      return !!dossierToUpdate;
+      const dossierToUpdate = dossiers.find(dossier => 
+        dossier.etat === EtatDossierColonie.ouvert || dossier.etat === EtatDossierColonie.saisi
+      );
+      if(dossierToUpdate!==null) this.disable=true;
     }));
-    return false;
   }
 
   hasAnyRole(roles: string[]) {
     return this.authentificationService.hasAnyRole(roles);
   }
+  detailsParticipant(participant: Participant){
+    this.dialog
+    .open(DetailsParticipantComponent, {data: participant})
+    .afterClosed()
+    .subscribe((participant)=>{
+      if(participant){
+        const index = this.participants.findIndex(
+          (existingParticipant) => existingParticipant.id === participant.id
+          );
+          this.participants[index] = new Participant(participant);
+          this.subject$.next(this.participants);
+      }
+    });
+  }
   deleteParticipant(participant: Participant){
     this.dialogConfirmationService.confirmationDialog().subscribe(action => {
       if (action === DialogUtil.confirmer) {
-        this.participantService.deleteParticipant(participant.id).subscribe((response) => {
+        this.participantService.deleteParticipant(participant).subscribe((response) => {
           this.participants.splice(
             this.participants.findIndex(
               (existingParticipant) => existingParticipant.id === participant.id
@@ -221,13 +239,13 @@ export class ListeParticipantComponent implements OnInit {
     })
   }
   validerParticipant(participant: Participant) {
-    const status = 'VALIDER';
-    this.participantService.updateParticipantStatus(participant.id, status).subscribe(() => {
+    participant.status = 'VALIDER';
+    this.participantService.updateParticipant(participant).subscribe(() => {
       this.notificationService.success('Participant validé avec succès');
       
       const colon: Colon = {
-        nom: participant.nom,
-        prenom: participant.prenom,
+        nomEnfant: participant.nomEnfant,
+        prenomEnfant: participant.prenomEnfant,
         dateNaissance: participant.dateNaissance,
         ficheSocial: participant.ficheSocial,
         document: participant.document,
@@ -277,8 +295,8 @@ export class ListeParticipantComponent implements OnInit {
   }
   
   rejeterParticipant(participant: Participant) {
-    const status = 'REJETER';
-    this.participantService.updateParticipantStatus(participant.id,status).subscribe(() => {
+    participant.status = 'REJETER';
+    this.participantService.updateParticipant(participant).subscribe(() => {
       this.notificationService.success('Participant rejeté avec succès');
     }, () => {
       this.notificationService.warn('Échec de rejection du participant');
@@ -299,11 +317,17 @@ export class ListeParticipantComponent implements OnInit {
   }
 
 onCellClick(property: string, row: Participant) {
+  this.participantSelectionne = row;
   if (property === 'ficheSocial') {
-    this.afficherFicheSocial(row);
-  } else if (property === 'document') {
-    this.afficherDoc(row);
+    this.afficherFicheSociale = true;
+    this.afficherDocument = false; 
+    this.fileType = 'ficheSocial';  
+   } else if (property === 'document') {
+    this.afficherFicheSociale = false;
+    this.afficherDocument = true;
+    this.fileType = 'document';   
   }
+  console.log(row);
 }
  
 }

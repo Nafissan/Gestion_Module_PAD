@@ -14,10 +14,11 @@ import { ListModule } from 'src/@fury/shared/list/list.module';
 import { MaterialModule } from 'src/@fury/shared/material-components.module';
 import { PageLayoutDemoContentModule } from '../../page-layouts/components/page-layout-content/page-layout-demo-content.module';
 import { ReadFileParticipantComponent } from './read-file-participant/read-file-participant.component';
+import { DetailsParticipantComponent } from './details-participant/details-participant.component';
 
 
 @NgModule({
-  declarations: [ListeParticipantComponent, AddOrUpdateParticipantComponent, ReadFileParticipantComponent],
+  declarations: [ListeParticipantComponent, AddOrUpdateParticipantComponent, ReadFileParticipantComponent, DetailsParticipantComponent],
   imports: [
     CommonModule,
     ParticipantRoutingModule,

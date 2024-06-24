@@ -52,12 +52,12 @@ export class DossierColonieService {
       .pipe(catchError(this.errorHandler));
   }
 
-  delete(id: number): Observable<HttpResponse<any>> {
-    return this.httpClient
-      .delete<any>(`${this.url}/${id}`, {
-        observe: 'response',
-      })
-      .pipe(catchError(this.errorHandler));
+  delete(dossier: DossierColonie): Observable<HttpResponse<any>> {
+    const httpOptions = {
+      headers: this.httpOptions.headers,
+      body:dossier,
+    };
+    return this.httpClient.delete<any>(this.url, httpOptions);
   }
 
   errorHandler(error: any) {

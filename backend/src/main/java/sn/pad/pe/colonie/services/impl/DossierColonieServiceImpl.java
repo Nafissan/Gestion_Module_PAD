@@ -1,5 +1,6 @@
 package sn.pad.pe.colonie.services.impl;
 
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
@@ -32,7 +33,6 @@ public class DossierColonieServiceImpl implements DossierColonieService {
                     .map(dossierColonie -> {
                         DossierColonieDTO dto = mapToDto(dossierColonie);
                         convertBytesFieldsToBase64(dto);
-                        System.out.print(" Dossier Colonies" + dto.getNoteMinistere());
                         return dto;
                     })
                     .collect(Collectors.toList());
@@ -77,7 +77,7 @@ public class DossierColonieServiceImpl implements DossierColonieService {
         if (dossierColonie.getRapportMission() != null) {
             dto.setRapportMissionBytes(dossierColonie.getRapportMission());
         }
-        System.out.print(dto.getNoteMinistereBytes());
+        System.out.print(Arrays.toString(dto.getNoteMinistereBytes()));
         return dto;
     }
 
@@ -113,10 +113,11 @@ public class DossierColonieServiceImpl implements DossierColonieService {
     }
 
     @Override
-    public boolean deleteDossierColonieById(Long id) {
-        Optional<DossierColonie> dossier = dossierColonieRepository.findById(id);
+    public boolean deleteDossierColonie(DossierColonieDTO dossierColonieDTO) {
+        Optional<DossierColonie> dossier = dossierColonieRepository.findById(dossierColonieDTO.getId());
         if (dossier.isPresent()) {
-            dossierColonieRepository.deleteById(id);
+            DossierColonie dossierDel = dossier.get();
+            dossierColonieRepository.delete(dossierDel);
             return true;
         }
         return false;

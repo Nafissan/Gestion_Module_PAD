@@ -15,7 +15,7 @@ export class ReadFileDossierComponent implements OnInit {
 
   constructor(private sanitizer: DomSanitizer) {}
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.loadFile();
   }
   loadFile(): void {

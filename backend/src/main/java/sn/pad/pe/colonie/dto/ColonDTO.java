@@ -2,6 +2,9 @@ package sn.pad.pe.colonie.dto;
 
 import java.util.Date;
 
+import sn.pad.pe.colonie.bo.GroupeSanguin;
+import sn.pad.pe.colonie.bo.Sexe;
+
 
 
 
@@ -13,8 +16,8 @@ public class ColonDTO {
     private String prenomEnfant;
     private Date dateNaissance;
     private String lieuNaissance;
-    private GroupeSanguinDTO groupeSanguin;
-    private SexeDTO sexe;
+    private GroupeSanguin groupeSanguin;
+    private Sexe sexe;
     //parent
     private String matriculeParent;
     private String nomParent;
@@ -72,16 +75,16 @@ public class ColonDTO {
     public void setLieuNaissance(String lieuNaissance) {
         this.lieuNaissance = lieuNaissance;
     }
-    public GroupeSanguinDTO getGroupeSanguin() {
+    public GroupeSanguin getGroupeSanguin() {
         return groupeSanguin;
     }
-    public void setGroupeSanguin(GroupeSanguinDTO groupeSanguin) {
+    public void setGroupeSanguin(GroupeSanguin groupeSanguin) {
         this.groupeSanguin = groupeSanguin;
     }
-    public SexeDTO getSexe() {
+    public Sexe getSexe() {
         return sexe;
     }
-    public void setSexe(SexeDTO sexe) {
+    public void setSexe(Sexe sexe) {
         this.sexe = sexe;
     }
     public String getMatriculeParent() {

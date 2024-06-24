@@ -104,7 +104,6 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
   }
 
   ngAfterViewInit() {
-    this.setDataSourceAttributes();
   }
 
   get visibleColumns() {
@@ -128,17 +127,18 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
       (response) => {
         this.dossierColonies = response.body;
         console.log('Dossier Colonies:', this.dossierColonies); 
-        this.showProgressBar = true;
-        const filteredDossierColonies = this.dossierColonies.filter(dossier => 
+        this.currentDossierColonie  = this.dossierColonies.find(dossier => 
           dossier.etat === EtatDossierColonie.ouvert || dossier.etat === EtatDossierColonie.saisi
         );
-        this.dataSource.data = filteredDossierColonies; // Ensure dataSource is updated correctly
-        this.subject$.next(filteredDossierColonies);
-        console.log('Filtered Dossier Colonies:', filteredDossierColonies); 
       },
       (err) => {
         console.error('Error loading dossier colonies:', err); 
-        this.showProgressBar = false;
+      },()=> {
+        this.subject$.next(this.dossierColonies.filter(dossier => 
+          dossier.etat === EtatDossierColonie.ouvert || dossier.etat === EtatDossierColonie.saisi
+        ));
+        this.showProgressBar = true;
+
       }
     );
   }
@@ -151,6 +151,8 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
         if (dossierColonie) {
           this.dossierColonies.unshift(new DossierColonie(dossierColonie));
           this.subject$.next(this.dossierColonies);
+          this.refreshDossierColonies(); // Actualise les données après la création
+
         }
       });
   }
@@ -167,7 +169,8 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
             (existingDossierColonie) => existingDossierColonie.id === updatedDossierColonie.id
           );
             this.dossierColonies[index] = new DossierColonie(updatedDossierColonie);
-            this.subject$.next([...this.dossierColonies]); // Notify subscribers
+            this.subject$.next(this.dossierColonies); 
+            this.refreshDossierColonies(); 
             console.log("Apres update", this.dossierColonies);
         }
       });
@@ -187,18 +190,22 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
         }
       });
   }
-
+  refreshDossierColonies() {
+    this.getDossierColonies();
+  }
+  
   deleteDossierColonie(dossierColonie: DossierColonie) {
     this.dialogConfirmationService.confirmationDialog().subscribe(action => {
       if (action === DialogUtil.confirmer) {
-        console.log("id: "+dossierColonie.id);
-        this.dossierColonieService.delete(dossierColonie.id).subscribe(
+        this.dossierColonieService.delete(dossierColonie).subscribe(
           () => {
             this.dossierColonies.splice(
               this.dossierColonies.findIndex((existingDossierColonie) => existingDossierColonie.id === dossierColonie.id), 1
             );
-            this.subject$.next([...this.dossierColonies]); // Notify subscribers
+            this.subject$.next(this.dossierColonies);
             this.notificationService.success(NotificationUtil.suppression);
+            this.refreshDossierColonies(); // Actualise les données après la création
+
           },
           err => {
             this.notificationService.warn(NotificationUtil.echec);
@@ -218,12 +225,11 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
       if (action === DialogUtil.confirmer) {
         dossierColonie.etat = this.fermer;
         this.dossierColonieService.update(dossierColonie).subscribe(
-          (response) => { this.dossierColonies.splice(
-            this.dossierColonies.findIndex((existingDossierColonie) => existingDossierColonie.id === dossierColonie.id), 1
-          );
-          this.subject$.next([...this.dossierColonies]); // Notify subscribers
+          (response) => { 
           this.notificationService.success(NotificationUtil.fermetureDossier);
             this.deleteAllParticipants();
+            this.refreshDossierColonies(); // Actualise les données après la création
+
           },
           err => {
             this.notificationService.warn(NotificationUtil.echec);
@@ -241,11 +247,10 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
 
   }
   deleteAllParticipants(): void {
-    this.participantService.getAllParticipants().subscribe(
+    this.participantService.getAll().subscribe(
       response => {
         const participants = response.body;
         if (participants && participants.length === 0) {
-          this.notificationService.warn('Aucun participant à supprimer');
         } else {
           this.participantService.deleteAllParticipants().subscribe(
             () => {
@@ -264,8 +269,6 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
       }
     );
   }
-  
-  
   ngOnDestroy() { }
 
  

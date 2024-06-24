@@ -123,7 +123,7 @@ export const MY_FORMATS = {
     if (files.length > 0) {
       this.notePersonnels = await this.convertFileToBase64(files[0]);
 
-      if (!this.emailSentForNoteInformation) {
+      /*if (!this.emailSentForNoteInformation) {
         this.sendEmail(
           'New Note Information Uploaded',
           'A new Note Information file has been uploaded.',
@@ -131,7 +131,7 @@ export const MY_FORMATS = {
           this.notePersonnels
         );
         this.emailSentForNoteInformation = true;
-      }
+      }*/
     }
   }
 
@@ -139,7 +139,7 @@ export const MY_FORMATS = {
     if (files.length > 0) {
       this.notePelerins = await this.convertFileToBase64(files[0]);
 
-      if (!this.emailSentForNoteInstruction) {
+      /*if (!this.emailSentForNoteInstruction) {
         this.sendEmail(
           'New Note Instruction Uploaded',
           'A new Note Instruction file has been uploaded.',
@@ -147,7 +147,7 @@ export const MY_FORMATS = {
           this.notePelerins
         );
         this.emailSentForNoteInstruction = true;
-      }
+      }*/
     }
   }
 
@@ -224,7 +224,7 @@ export const MY_FORMATS = {
     formData.rapportProspection = this.defaults.rapportProspection;
     formData.rapportMission = this.rapport;
     formData.formulaireSatisfaction = this.defaults.formulaireSatisfaction;
-    formData.colons = [...this.defaults.colons];
+    formData.colons = this.defaults.colons;
     formData.createdAt = this.defaults.createdAt;
     formData.updatedAt = new Date();
     this.dialogConfirmationService.confirmationDialog().subscribe(action => {

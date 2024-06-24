@@ -14,7 +14,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
 @Entity
-public class Participant implements Serializable{
+public class ParticipantColonie implements Serializable{
     private static final long serialVersionUID = 1L;
      @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

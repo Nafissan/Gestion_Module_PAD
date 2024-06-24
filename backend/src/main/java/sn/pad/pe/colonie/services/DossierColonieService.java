@@ -13,6 +13,6 @@ public interface DossierColonieService {
 
 	public boolean updateDossierColonie(DossierColonieDTO dossierColonieDTODossierColonieDTO);
 
-	public     boolean deleteDossierColonieById(Long id);
+	public     boolean deleteDossierColonie(DossierColonieDTO dossierColonieDTODossierColonieDTO);
 
 }

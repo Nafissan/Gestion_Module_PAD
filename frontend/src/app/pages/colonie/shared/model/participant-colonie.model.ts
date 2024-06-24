@@ -3,8 +3,8 @@ import { DossierColonie } from "./dossier-colonie.model";
 export class Participant {
     id: number;
     codeDossier: DossierColonie;
-    nom: string;
-    prenom: string;
+    nomEnfant: string;
+    prenomEnfant: string;
     dateNaissance: Date;
     lieuNaissance: string;
     groupeSanguin: string;
@@ -18,12 +18,13 @@ export class Participant {
     nomAgent: string;
     prenomAgent: string;
     document: string;
+   
 
-    constructor(participant: any) {
+    constructor(participant: Participant) {
         this.id = participant.id ;
         this.codeDossier = participant.codeDossier;
-        this.nom = participant.nom ;
-        this.prenom = participant.prenom ;
+        this.nomEnfant = participant.nomEnfant ;
+        this.prenomEnfant = participant.prenomEnfant ;
         this.dateNaissance = participant.dateNaissance ;
         this.lieuNaissance = participant.lieuNaissance ;
         this.groupeSanguin = participant.groupeSanguin;

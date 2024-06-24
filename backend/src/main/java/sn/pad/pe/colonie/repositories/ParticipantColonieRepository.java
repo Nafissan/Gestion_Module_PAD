@@ -2,8 +2,8 @@ package sn.pad.pe.colonie.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import sn.pad.pe.colonie.bo.Participant;
+import sn.pad.pe.colonie.bo.ParticipantColonie;
 
-public interface ParticipantColonieRepository extends JpaRepository<Participant, Long>{
+public interface ParticipantColonieRepository extends JpaRepository<ParticipantColonie, Long>{
 
 }

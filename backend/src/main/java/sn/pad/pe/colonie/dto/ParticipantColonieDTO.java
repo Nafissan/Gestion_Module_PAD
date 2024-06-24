@@ -2,15 +2,19 @@ package sn.pad.pe.colonie.dto;
 
 import java.util.Date;
 
-public class ParticipantDTO {
+import sn.pad.pe.colonie.bo.DossierColonie;
+import sn.pad.pe.colonie.bo.GroupeSanguin;
+import sn.pad.pe.colonie.bo.Sexe;
+
+public class ParticipantColonieDTO {
     private Long id;
-    private DossierColonieDTO codeDossier;
+    private DossierColonie codeDossier;
     private String nomEnfant;
     private String prenomEnfant;
     private Date dateNaissance;
     private String lieuNaissance;
-    private GroupeSanguinDTO groupeSanguin;
-    private SexeDTO sexe;
+    private GroupeSanguin groupeSanguin;
+    private Sexe sexe;
     private String matriculeParent;
     private String nomParent;
     private String prenomParent;
@@ -18,10 +22,10 @@ public class ParticipantDTO {
     private String matriculeAgent;
     private String nomAgent;
     private String prenomAgent;
-    private String ficheSocial; // Base64 representation
-    private String document; // Base64 representation
+    private String ficheSocial; 
+    private String document; 
 
-    private byte[] ficheSocialBytes; // byte array for internal use
+    private byte[] ficheSocialBytes; 
     private byte[] documentBytes; 
     public Long getId() {
         return id;
@@ -29,11 +33,11 @@ public class ParticipantDTO {
     public void setId(Long id) {
         this.id = id;
     }
-    public DossierColonieDTO getCodeDossier() {
+    public DossierColonie getCodeDossier() {
         return codeDossier;
     }
-    public void setCodeDossier(DossierColonieDTO codeDossier) {
-        this.codeDossier = codeDossier;
+    public void setCodeDossier(DossierColonie dossierColonie) {
+        this.codeDossier = dossierColonie;
     }
     public String getNomEnfant() {
         return nomEnfant;
@@ -59,17 +63,17 @@ public class ParticipantDTO {
     public void setLieuNaissance(String lieuNaissance) {
         this.lieuNaissance = lieuNaissance;
     }
-    public GroupeSanguinDTO getGroupeSanguin() {
+    public GroupeSanguin getGroupeSanguin() {
         return groupeSanguin;
     }
-    public void setGroupeSanguin(GroupeSanguinDTO groupeSanguin) {
-        this.groupeSanguin = groupeSanguin;
+    public void setGroupeSanguin(GroupeSanguin groupeSanguin2) {
+        this.groupeSanguin = groupeSanguin2;
     }
-    public SexeDTO getSexe() {
+    public Sexe getSexe() {
         return sexe;
     }
-    public void setSexe(SexeDTO sexe) {
-        this.sexe = sexe;
+    public void setSexe(Sexe sexe2) {
+        this.sexe = sexe2;
     }
     public String getMatriculeParent() {
         return matriculeParent;
