@@ -174,7 +174,6 @@ export const MY_FORMATS = {
     formData.demandeProspection   = null; 
     formData.noteInformation   = null;
     formData.noteInstruction   = null;
-    formData.rapportProspection = null;
     formData.rapportMission = null;
     formData.matricule            = this.agent.matricule;
     formData.prenom               = this.agent.prenom;
@@ -183,8 +182,6 @@ export const MY_FORMATS = {
 
     formData.createdAt = new Date();
     formData.updatedAt = null;
-    formData.formulaireSatisfaction = null;
-    formData.colons= null;
     this.dialogConfirmationService.confirmationDialog().subscribe(action => {
       if (action === DialogUtil.confirmer) {
         this.dossierColonieService.create(formData).subscribe(response => {
@@ -221,10 +218,7 @@ export const MY_FORMATS = {
     formData.demandeProspection = this.demandeProspection;
     formData.noteInformation = this.notePersonnels;
     formData.noteInstruction = this.notePelerins;
-    formData.rapportProspection = this.defaults.rapportProspection;
     formData.rapportMission = this.rapport;
-    formData.formulaireSatisfaction = this.defaults.formulaireSatisfaction;
-    formData.colons = this.defaults.colons;
     formData.createdAt = this.defaults.createdAt;
     formData.updatedAt = new Date();
     this.dialogConfirmationService.confirmationDialog().subscribe(action => {

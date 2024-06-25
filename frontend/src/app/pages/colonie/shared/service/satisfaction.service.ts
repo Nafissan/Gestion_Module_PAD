@@ -35,10 +35,12 @@ export class SatisfactionService {
       .pipe(catchError(this.errorHandler));
   }
 
-  deleteSatisfaction(id: number): Observable<HttpResponse<any>> {
-    return this.httpClient
-      .delete<any>(`${this.url}/${id}`, { observe: 'response' })
-      .pipe(catchError(this.errorHandler));
+  deleteSatisfaction(satisfaction: Satisfaction): Observable<HttpResponse<any>> {
+    const httpOptions = {
+      headers: this.httpOptions.headers,
+      body:satisfaction,
+    };
+    return this.httpClient.delete<any>(this.url, httpOptions);
   }
 
   private errorHandler(error) {

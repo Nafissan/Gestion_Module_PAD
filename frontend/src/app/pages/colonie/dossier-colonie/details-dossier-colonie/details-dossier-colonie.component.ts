@@ -4,7 +4,6 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
 import { AddDossierCongeComponent } from 'src/app/pages/gestion-conge/dossier-conge/add-dossier-conge/add-dossier-conge.component';
 import { EtatDossierColonie } from '../../shared/util/util';
-import { DossierColonieService } from '../../shared/service/dossier-colonie.service';
 
 @Component({
   selector: 'fury-details-dossier-colonie',
@@ -22,7 +21,6 @@ export class DetailsDossierColonieComponent implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public defaults: DossierColonie,
     private dialogRef: MatDialogRef<AddDossierCongeComponent>,
-    private dossierColonieService: DossierColonieService
   ) { }
 
   ngOnInit(): void {

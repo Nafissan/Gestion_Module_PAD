@@ -1,7 +1,6 @@
 import {DossierColonie} from '../model/dossier-colonie.model';
 export class Colon {
     id: number;
-    codeDossier: DossierColonie;
     nomEnfant : string;
     prenomEnfant: string;
     dateNaissance: Date;
@@ -20,7 +19,6 @@ export class Colon {
 
     constructor(colon: Colon) {
         this.id = colon.id ;
-        this.codeDossier = colon.codeDossier;
         this.nomEnfant = colon.nomEnfant ;
         this.prenomEnfant = colon.prenomEnfant ;
         this.dateNaissance = colon.dateNaissance ;

@@ -22,6 +22,7 @@ import { Agent } from "src/app/shared/model/agent.model";
 import { DossierColonieService } from "../../shared/service/dossier-colonie.service";
 import { Mail } from "src/app/shared/model/mail.model";
 import { MailService } from "src/app/shared/services/mail.service";
+import { EtatDossierColonie } from "../../shared/util/util";
 
 @Component({
   selector: "fury-liste-rapport-prospection",
@@ -65,10 +66,11 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
     { name: "Checkbox", property: "checkbox", visible: false },
     { name: "Code Dossier", property: "codeDossierColonie", visible: true, isModelProperty: true },
     { name: "Date de création", property: "dateCreation", visible: true, isModelProperty: true },
+    { name: "Date de validation/rejet", property: "dateValidation", visible: false, isModelProperty: true },
     { name: "État", property: "etat", visible: true, isModelProperty: true },
     { name: "Rapport Prospection", property: "rapportProspection", visible: true, isModelProperty: true },
     { name: "Ajoute par", property: "agentAjout", visible: true },
-    { name: "Valide/Rejeter par", property: "agentModif", visible: true },
+    { name: "Valide/Rejeter par", property: "agentModif", visible: false },
     { name: "Actions", property: "actions", visible: true },
   ] as ListColumn[];
 
@@ -86,6 +88,7 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
   ) { }
 
   ngOnInit() {
+    this.canAddRapportProspection();
     this.username = this.authService.getUsername();
 
     this.compteService.getByUsername(this.username).subscribe((response) => {
@@ -108,7 +111,8 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
   canAddRapportProspection(): boolean {
      this.dossierColonieService.getAll().pipe(map(response => {
       const dossiers = response.body;
-      const dossierToUpdate = dossiers.find(dossier => dossier.etat === 'ouvert' || dossier.etat === 'saisi');
+      const dossierToUpdate = dossiers.find(dossier => dossier.etat === EtatDossierColonie.ouvert || dossier.etat === EtatDossierColonie.saisi
+      );
       const existingReport = this.rapports.find(rapport => dossierToUpdate && rapport.codeDossierColonie.id === dossierToUpdate.id);
       return !!dossierToUpdate && !existingReport;
     }));
@@ -136,13 +140,15 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
       (response) => {
         this.rapports = response.body;
         this.currentRapport = this.rapports.find(e => e.etat === 'A VALIDER');
-        this.subject$.next(this.rapports);
-        this.showProgressBar=true;
         console.log(this.rapports);
       },
       (err) => {        
          console.error('Error loading rapport prospection colonies:', err); 
 
+      },
+      () => {
+        this.subject$.next(this.rapports);
+        this.showProgressBar=true;
       }
     );
   }
@@ -168,7 +174,7 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
           const index = this.rapports.findIndex(
             (existingrapport) => existingrapport.id === rapport.id
           );
-          this.rapports[index] = rapport;
+          this.rapports[index] = new RapportProspection(rapport);
           this.subject$.next(this.rapports);
         }
       });
@@ -180,13 +186,13 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
   deleteDossierColonie(rapport: RapportProspection) {
     this.dialogConfirmationService.confirmationDialog().subscribe(action => {
       if (action === DialogUtil.confirmer) {
-        this.rapportService.deleteRapportProspection(rapport.id).subscribe(
+        this.rapportService.deleteRapportProspection(rapport).subscribe(
           () => {
             this.rapports.splice(
               this.rapports.findIndex((existingrapport) => existingrapport.id === rapport.id), 1
             );
-            this.subject$.next(this.rapports);
             this.notificationService.success(NotificationUtil.suppression);
+            this.subject$.next(this.rapports);
           },
           err => {
             this.notificationService.warn(NotificationUtil.echec);
@@ -209,32 +215,17 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
     mail.destinataires = ["nnafissa27@gmail.com"];
     this.rapportService.updateRapportProspection(rapport).subscribe(() => {
       this.notificationService.success('Rapport de prospection validé avec succès');
-
-      this.dossierColonieService.getAll().subscribe(response => {
-        const dossiers = response.body;
-        const dossierToUpdate = dossiers.find(dossier => dossier.id === rapport.codeDossierColonie.id);
-        if (dossierToUpdate) {
-          dossierToUpdate.rapportProspection = rapport;
-          this.dossierColonieService.update(dossierToUpdate).subscribe(() => {
-            this.notificationService.success('Dossier mis à jour avec succès');
-          }, err => {
-            this.notificationService.warn('Échec de la mise à jour du dossier');
-          });
-        }
-      }, err => {
-        this.notificationService.warn('Échec de la récupération des dossiers');
-      });
     }, err => {
       this.notificationService.warn('Échec de la validation du rapport'+err);
     }, () => {
-      this.mailService.sendMailByDirections(mail).subscribe(
+      /*this.mailService.sendMailByDirections(mail).subscribe(
         response => {
         }, err => {
           this.notificationService.warn(NotificationUtil.echec);
         },
         () => {
           this.notificationService.success(NotificationUtil.envoyeDossier);
-        });
+        });*/
     });
 }
 
@@ -243,6 +234,7 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
     rapport.matriculeAgent=this.agent.matricule;
     rapport.nomAgent=this.agent.nom;
     rapport.prenomAgent=this.agent.prenom;
+    rapport.dateValidation = new Date();
     let mail = new Mail();
     mail.objet = "Rapport_Prospection";
     mail.contenu ="Le rapport de Prospection du dossier colonie a ete rejete";
@@ -254,14 +246,14 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
     },err => {
       this.notificationService.warn('Echac de rejection du rapport'+err);
     }, () => {
-      this.mailService.sendMailByDirections(mail).subscribe(
+      /*this.mailService.sendMailByDirections(mail).subscribe(
         response => {
         }, err => {
           this.notificationService.warn(NotificationUtil.echec);
         },
         () => {
           this.notificationService.success(NotificationUtil.envoyeDossier);
-        });
+        });*/
     });
   }
   afficherRapportProspection(rapport:RapportProspection){

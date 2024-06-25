@@ -1,6 +1,3 @@
-import { RapportProspection } from "./rapport-prospection.model";
-import { Satisfaction } from "./satisfaction.model";
-import { Colon } from "./colon.model";
 
 export class DossierColonie {
 	id: number;
@@ -12,7 +9,6 @@ export class DossierColonie {
 	demandeProspection: string;
 	noteInformation: string;
 	noteInstruction: string;
-	rapportProspection: RapportProspection;
 	rapportMission: string;
 	matricule: string;
 	prenom: string;
@@ -20,8 +16,6 @@ export class DossierColonie {
 	fonction: string;
 	createdAt: Date;
 	updatedAt: Date;
-	formulaireSatisfaction: Satisfaction;
-    colons: Colon[];
   
 	constructor(dossiercolonie: DossierColonie) {
 	  this.id = dossiercolonie.id;
@@ -34,15 +28,12 @@ export class DossierColonie {
 	  this.noteInformation = dossiercolonie.noteInformation;
 	  this.noteInstruction = dossiercolonie.noteInstruction;
 	  this.rapportMission = dossiercolonie.rapportMission;
-	  this.rapportProspection = dossiercolonie.rapportProspection;
 	  this.matricule = dossiercolonie.matricule;
 	  this.nom = dossiercolonie.nom;
 	  this.prenom = dossiercolonie.prenom;
 	  this.fonction = dossiercolonie.fonction;
 	  this.createdAt = dossiercolonie.createdAt;
 	  this.updatedAt = dossiercolonie.updatedAt;
-	  this.colons = dossiercolonie.colons;
-	  this.formulaireSatisfaction =dossiercolonie.formulaireSatisfaction;
 	}
 
   }

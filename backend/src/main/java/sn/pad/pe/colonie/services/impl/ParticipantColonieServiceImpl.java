@@ -46,7 +46,6 @@ public List<ParticipantColonieDTO> getAllParticipants() {
                 return dto;
             })
             .collect(Collectors.toList());
-        System.out.println("recup : " + dtos.get(0));
         return dtos;
     } catch (Exception e) {
         System.out.print("Error retrieving Participants: " + e.getMessage());

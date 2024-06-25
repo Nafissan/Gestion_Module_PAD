@@ -2,6 +2,8 @@ package sn.pad.pe.colonie.dto;
 
 import java.util.Date;
 
+import sn.pad.pe.colonie.bo.DossierColonie;
+
 
 public class RapportProspectionDTO {
    
@@ -13,7 +15,7 @@ public class RapportProspectionDTO {
     private Date dateCreation;
     private Date dateValidation;
     private String etat;
-    private DossierColonieDTO codeDossier;
+    private DossierColonie codeDossierColonie;
     private String matriculeAgent;
     private String nomAgent;
     private String prenomAgent;
@@ -66,11 +68,11 @@ public class RapportProspectionDTO {
     public void setEtat(String etat) {
         this.etat = etat;
     }
-    public DossierColonieDTO getCodeDossier() {
-        return codeDossier;
+    public DossierColonie getCodeDossierColonie() {
+        return codeDossierColonie;
     }
-    public void setCodeDossier(DossierColonieDTO codeDossier) {
-        this.codeDossier = codeDossier;
+    public void setCodeDossierColonie(DossierColonie codeDossier) {
+        this.codeDossierColonie = codeDossier;
     }
     public String getMatriculeAgent() {
         return matriculeAgent;

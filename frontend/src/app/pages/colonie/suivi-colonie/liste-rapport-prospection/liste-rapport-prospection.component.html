@@ -22,7 +22,7 @@
           </ng-container>
   
           <ng-container *ngFor="let column of columns">
-            <ng-container *ngIf="column.isModelProperty" [matColumnDef]="column.property">
+            <ng-container *ngIf="column.isModelProperty || column.property === 'agentAjout' || column.property === 'agentModif'" [matColumnDef]="column.property">
               <th *matHeaderCellDef mat-header-cell mat-sort-header> {{ column.name }} </th>
               <td *matCellDef="let row" mat-cell>
                 <p *ngIf="column.property === 'dateCreation'">
@@ -39,8 +39,14 @@
                     <span *ngIf="row?.etat === 'REJETER'" class="badge badge-danger">{{ 'rejetée' }}
                     </span>
                 </p>
-                <p *ngIf="column.property == 'rapport' && row[column.property]" > {{ row[column.property].name }}</p>
-                <p *ngIf="column.name !== 'dateCreation' && column.name !== 'Ajoute par'  && column.name !== 'Etat' && column.property !== 'rapport'">
+                <p *ngIf="column.property == 'rapport' && row[column.property]" >Disponible</p>
+                <p *ngIf="column.name === 'Valide/Rejeter par'">
+                  {{ (row.matriculeAgent + ' | ' + row.prenomAgent + ' ' + row.nomAgent) | titlecase }}
+                </p>
+                <p *ngIf="column.property === 'dateValidation'">
+                  {{ row[column.property] | date: 'dd-MM-yyyy' }}
+                </p>
+                <p *ngIf="column.name !== 'dateCreation' && column.name !== 'dateValidation' && column.name !== 'Valide/Rejeter par' && column.name !== 'Ajoute par' && column.name !== 'Etat' && column.property !== 'rapport'">
                   {{ row[column.property] }}
                 </p>
               </td>

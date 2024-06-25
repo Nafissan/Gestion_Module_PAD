@@ -6,17 +6,6 @@
 
 <form [formGroup]="form" (ngSubmit)="save()">
     <mat-dialog-content>
-        <!-- Satisfaction Questions -->
-        <div *ngFor="let question of questions; let i = index" fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
-            <mat-form-field fxFlex>
-                <mat-label>{{ question }}</mat-label>
-                <mat-select [formControlName]="question" required>
-                    <mat-option [value]="true">Oui</mat-option>
-                    <mat-option [value]="false">Non</mat-option>
-                </mat-select>
-            </mat-form-field>
-        </div>
-
         <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
             <mat-form-field fxFlex *ngIf="mode === 'update'">
                 <mat-label>Code Dossier Colonie</mat-label>
@@ -27,8 +16,16 @@
                 <input type="text" formControlName="commentaire" matInput required>
             </mat-form-field>
         </div>
-    </mat-dialog-content>
-
+        <div *ngFor="let question of questions; let i = index" fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
+            <mat-form-field fxFlex>
+                <mat-label>{{ question.texte }}</mat-label>
+                <mat-select formControlName="question.texte" required>
+                    <mat-option [value]="true">Oui</mat-option>
+                    <mat-option [value]="false">Non</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+    </mat-dialog-content>        
     <mat-dialog-actions fxLayout="row" fxLayoutAlign="end center">
         <button mat-button type="button" mat-dialog-close class="cancel">Annuler</button>
         <button mat-button type="submit" [disabled]="form.invalid" class="save">

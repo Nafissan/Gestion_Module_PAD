@@ -4,11 +4,11 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import io.swagger.annotations.*;
-import sn.pad.pe.colonie.dto.DossierColonieDTO;
 import sn.pad.pe.colonie.dto.FormulaireSatisfactionDTO;
 import sn.pad.pe.colonie.services.FormulaireSatisfactionService;
 import sn.pad.pe.configurations.exception.Message;
@@ -28,28 +28,9 @@ public class FormulaireSatisfactionController {
             @ApiResponse(code = 403, message = "L'accès à la ressource que vous tentez d'atteindre est interdit"),
             @ApiResponse(code = 404, message = "La ressource que vous tentez d'atteindre est introuvable.") })
     @GetMapping("/formulairesSatisfaction")
-    public List<FormulaireSatisfactionDTO> getAllFormulaires() {
-        return formulaireSatisfactionService.getAllFormulaires();
-    }
-
-    @ApiOperation(value = "Récupération d'un formulaire par ID", response = FormulaireSatisfactionDTO.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Objet récupéré avec succès"),
-            @ApiResponse(code = 401, message = "Vous n'êtes pas autorisé à voir la ressource"),
-            @ApiResponse(code = 403, message = "L'accès à la ressource que vous tentiez d'atteindre est interdit"),
-            @ApiResponse(code = 404, message = "La ressource que vous tentiez d'atteindre est introuvable.") })
-    @GetMapping("/formulairesSatisfaction/{id}")
-    public ResponseEntity<FormulaireSatisfactionDTO> getFormulaireById(@PathVariable Long id) {
-        return ResponseEntity.ok().body(formulaireSatisfactionService.getFormulaireById(id));
-    }
-
-    @ApiOperation(value = "Récupération d'un formulaire par code dossier", response = FormulaireSatisfactionDTO.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Objet récupéré avec succès"),
-            @ApiResponse(code = 401, message = "Vous n'êtes pas autorisé à voir la ressource"),
-            @ApiResponse(code = 403, message = "L'accès à la ressource que vous tentiez d'atteindre est interdit"),
-            @ApiResponse(code = 404, message = "La ressource que vous tentiez d'atteindre est introuvable.") })
-    @GetMapping("/formulairesSatisfaction/codeDossier/{code}")
-    public ResponseEntity<FormulaireSatisfactionDTO> getFormulaireByCodeDossier(@RequestBody DossierColonieDTO dossierColonieDTO) {
-        return ResponseEntity.ok().body(formulaireSatisfactionService.getFormulaireByCodeDossier(dossierColonieDTO));
+    public ResponseEntity<List<FormulaireSatisfactionDTO>> getAllFormulaires() {
+        List<FormulaireSatisfactionDTO> liste =  formulaireSatisfactionService.getAllFormulaires();
+                return ResponseEntity.status(HttpStatus.OK).body(liste);
     }
 
     @ApiOperation(value = "Création d'un formulaire de satisfaction", response = ResponseEntity.class)
@@ -60,7 +41,8 @@ public class FormulaireSatisfactionController {
     @ApiResponse(code = 404, message = "La ressource que vous tentiez d'atteindre est introuvable.") })
     @PostMapping("/formulairesSatisfaction")
     public ResponseEntity<FormulaireSatisfactionDTO> saveFormulaire(@RequestBody FormulaireSatisfactionDTO formulaire) {
-        return ResponseEntity.ok().body(formulaireSatisfactionService.saveFormulaire(formulaire));
+        FormulaireSatisfactionDTO formulairedDTO = formulaireSatisfactionService.saveFormulaire(formulaire);
+        return ResponseEntity.status(HttpStatus.CREATED).body(formulairedDTO);
     }
 
     @ApiOperation(value = "Suppression d'un formulaire de satisfaction", response = ResponseEntity.class)
@@ -69,9 +51,12 @@ public class FormulaireSatisfactionController {
     @ApiResponse(code = 403, message = "L'accès à la ressource que vous tentiez d'atteindre est interdit"),
     @ApiResponse(code = 404, message = "La ressource que vous tentiez d'atteindre est introuvable.") })
     @DeleteMapping("/formulairesSatisfaction/{id}")
-    public ResponseEntity<Message> deleteFormulaire(@PathVariable Long id) {
-        formulaireSatisfactionService.deleteFormulaire(id);
-        message = new Message(new Date(), "FormulaireSatisfaction with id " + id + " deleted.", "uri=/formulairesSatisfaction/" + id);
+    public ResponseEntity<Message> deleteFormulaire(@RequestBody FormulaireSatisfactionDTO formulaire) {
+        if(formulaireSatisfactionService.deleteFormulaire(formulaire)){
+        message = new Message(new Date(), "FormulaireSatisfaction with id " + formulaire.getId() + " deleted.", "uri=/formulairesSatisfaction/" + formulaire.getId());
         return ResponseEntity.ok().body(message);
+        }
+        message = new Message(new Date(), "FormulaireSatisfaction with id " + formulaire.getId() + " nt found.", "uri=/formulairesSatisfaction/" + formulaire.getId());
+        return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
     }
 }

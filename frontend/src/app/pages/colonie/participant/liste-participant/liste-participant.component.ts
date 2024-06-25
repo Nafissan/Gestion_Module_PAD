@@ -43,7 +43,6 @@ export class ListeParticipantComponent implements OnInit {
   participantSelectionne: Participant;
   afficherDocument : boolean =false;
   fileType: 'ficheSocial' | 'document'; // New property to indicate file type
-  disable: boolean=false;
   
   private paginator: MatPaginator;
   private sort: MatSort;
@@ -145,6 +144,9 @@ export class ListeParticipantComponent implements OnInit {
     );
     
   }
+  refreshListe(){
+    this.getParticipants();
+  }
   getProperty(row: any, property: string) {
     return property.split('.').reduce((acc, part) => acc && acc[part], row);
   }
@@ -172,6 +174,7 @@ export class ListeParticipantComponent implements OnInit {
   if(participant) {
     this.participants.unshift(new Participant(participant));
     this.subject$.next(this.participants);
+    this.refreshListe();
   } 
   });
   }
@@ -189,17 +192,19 @@ export class ListeParticipantComponent implements OnInit {
         this.participants[index] = new Participant(participant);
         this.subject$.next(this.participants);
         console.log("Apres update"+ this.participants);
+        this.refreshListe();
       }
     })
   }
-  canAddParticipant(): void {
+  canAddParticipant(): boolean {
      this.dossierColonieService.getAll().pipe(map(response => {
       const dossiers = response.body;
       const dossierToUpdate = dossiers.find(dossier => 
         dossier.etat === EtatDossierColonie.ouvert || dossier.etat === EtatDossierColonie.saisi
       );
-      if(dossierToUpdate!==null) this.disable=true;
+      return !! dossierToUpdate;
     }));
+    return false;
   }
 
   hasAnyRole(roles: string[]) {
@@ -216,6 +221,7 @@ export class ListeParticipantComponent implements OnInit {
           );
           this.participants[index] = new Participant(participant);
           this.subject$.next(this.participants);
+          this.refreshListe();
       }
     });
   }
@@ -231,6 +237,7 @@ export class ListeParticipantComponent implements OnInit {
           );
           this.notificationService.success(NotificationUtil.suppression)
           this.subject$.next(this.participants);
+          this.refreshListe();
         }
         ,err => {
           this.notificationService.warn(NotificationUtil.echec);
@@ -249,7 +256,6 @@ export class ListeParticipantComponent implements OnInit {
         dateNaissance: participant.dateNaissance,
         ficheSocial: participant.ficheSocial,
         document: participant.document,
-        codeDossier: participant.codeDossier,
         lieuNaissance: participant.lieuNaissance,
         groupeSanguin: participant.groupeSanguin,
         sexe: participant.sexe,
@@ -264,27 +270,8 @@ export class ListeParticipantComponent implements OnInit {
       };
   
       this.colonService.create(colon).subscribe((response) => {
-        this.notificationService.success('Colon créé avec succès');
-        
-        const newColon = response.body;
-        this.dossierColonieService.getAll().subscribe(dossiersResponse => {
-          const dossiers = dossiersResponse.body;
-          const dossierColonie = dossiers.find(dossier => dossier.code === participant.codeDossier.code);
-          if (dossierColonie) {
-            dossierColonie.colons = dossierColonie.colons || [];
-            dossierColonie.colons.push(newColon);
-  
-            this.dossierColonieService.update(dossierColonie).subscribe(
-              updateResponse => {
-                this.notificationService.success('Dossier mis à jour avec le nouveau colon');
-              },
-              updateError => {
-                this.notificationService.warn('Échec de la mise à jour du dossier avec le nouveau colon');
-              }
-            );
-          }
-        });
-  
+        this.notificationService.success('Colon créé avec succès'); 
+        this.refreshListe();      
       }, () => {
         this.notificationService.warn('Échec de la création du colon');
       });
@@ -298,6 +285,7 @@ export class ListeParticipantComponent implements OnInit {
     participant.status = 'REJETER';
     this.participantService.updateParticipant(participant).subscribe(() => {
       this.notificationService.success('Participant rejeté avec succès');
+      this.refreshListe();
     }, () => {
       this.notificationService.warn('Échec de rejection du participant');
     });

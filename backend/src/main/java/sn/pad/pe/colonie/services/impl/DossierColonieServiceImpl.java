@@ -47,7 +47,6 @@ public class DossierColonieServiceImpl implements DossierColonieService {
     private DossierColonieDTO mapToDto(DossierColonie dossierColonie) {
         DossierColonieDTO dto = new DossierColonieDTO();
         
-        // Mapping des champs simples
         dto.setId(dossierColonie.getId());
         dto.setCode(dossierColonie.getCode());
         dto.setAnnee(dossierColonie.getAnnee());
@@ -59,9 +58,6 @@ public class DossierColonieServiceImpl implements DossierColonieService {
         dto.setFonction(dossierColonie.getFonction());
         dto.setCreatedAt(dossierColonie.getCreatedAt());
         dto.setUpdatedAt(dossierColonie.getUpdatedAt());
-        dto.setFormulaireSatisfactionDTO(dossierColonie.getFormulaireSatisfaction());
-        dto.setColons(dossierColonie.getColons());
-        dto.setRapportProspection(dossierColonie.getRapportProspection());
         if (dossierColonie.getNoteMinistere() != null) {
             dto.setNoteMinistereBytes(dossierColonie.getNoteMinistere());
         }

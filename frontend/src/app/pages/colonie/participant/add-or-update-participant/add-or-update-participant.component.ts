@@ -188,7 +188,7 @@ export class AddOrUpdateParticipantComponent implements OnInit {
 
   updateParticipant() {
     let formData: Participant = this.form.value;
-    formData.ficheSocial = this.ficheSocial;
+    formData.ficheSocial = this.defaults.ficheSocial;
     formData.id = this.defaults.id;
     formData.document = this.document;
     formData.status = this.defaults.status;

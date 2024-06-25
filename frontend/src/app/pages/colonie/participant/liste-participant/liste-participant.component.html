@@ -6,7 +6,7 @@
     <fury-page-layout-content [@fadeInUp]>
       <fury-list *ngIf="participants.length !== 0 && showProgressBar === true" name="Participants" [columns]="columns" (filterChange)="onFilterChange($event)">
         <div class="actions">
-          <button class="create" (click)="createParticipant()" [disabled]="disable" type="button" mat-mini-fab color="primary">
+          <button class="create" (click)="createParticipant()" [disabled]="canAddParticipant()" type="button" mat-mini-fab color="primary">
             <mat-icon>add</mat-icon>
           </button>
         </div>

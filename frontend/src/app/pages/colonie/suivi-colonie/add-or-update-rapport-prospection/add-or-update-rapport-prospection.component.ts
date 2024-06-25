@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, FormGroup, Validators, FormControl } from "@angular/forms";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { AuthenticationService } from "../../../../shared/services/authentification.service";
 import { Agent } from "../../../../shared/model/agent.model";
@@ -8,10 +8,10 @@ import { RapportProspectionService } from "../../shared/service/rapport-prospect
 import { DialogConfirmationService } from "../../../../shared/services/dialog-confirmation.service";
 import { NotificationService } from "../../../../shared/services/notification.service";
 import { DialogUtil, NotificationUtil } from "src/app/shared/util/util";
-import * as moment from "moment";
 import { Compte } from "src/app/pages/gestion-utilisateurs/shared/model/compte.model";
 import { CompteService } from "src/app/pages/gestion-utilisateurs/shared/services/compte.service";
 import { DossierColonieService } from "../../shared/service/dossier-colonie.service";
+import { EtatDossierColonie } from "../../shared/util/util";
 
 @Component({
   selector: "app-add-update-rapport-prospection",
@@ -38,25 +38,33 @@ export class AddOrUpdateRapportProspectionComponent implements OnInit {
     private dialogConfirmationService: DialogConfirmationService,
     private notificationService: NotificationService,
     private dossierColonieService: DossierColonieService 
-  ) {}
+  ) {this.form = this.fb.group({
+    codeDossierColonie: [null],
+  });}
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.username = this.authService.getUsername();
 
-    this.compteService.getByUsername(this.username).subscribe((response) => {
+    try {
+      const response = await this.compteService.getByUsername(this.username).toPromise();
       this.compte = response.body;
       this.agent = this.compte.agent;
-    });
-    if (this.defaults) {
-      this.mode = "update";
-    } else {
-      this.defaults = {} as RapportProspection;
-    }
 
-    this.form = this.fb.group({
-      dateCreation: [this.defaults.dateCreation || this.currentDate, Validators.required],
-      codeDossier: [ this.defaults.codeDossierColonie.code || "", Validators.required],
-      etat: [ "A VALIDER" ],
+      if (this.defaults) {
+        this.mode = "update";
+      } else {
+        this.defaults = {} as RapportProspection;
+      }
+
+      this.initForm();
+    } catch (error) {
+      console.error('Failed to fetch user data', error);
+    }
+  }
+
+  initForm(): void {
+    this.form.patchValue({
+      codeDossierColonie: this.defaults.codeDossierColonie?.code || null, 
     });
 
     // Désactiver le champ dateCreation en mode de mise à jour
@@ -64,20 +72,11 @@ export class AddOrUpdateRapportProspectionComponent implements OnInit {
       this.form.get("dateCreation").disable();
     }
   }
+
   async handleRapportProspection(files: FileList): Promise<void> {
     if (files.length > 0) {
-    this.fileRapportProspection = await this.convertFileToBase64(files[0]);
+      this.fileRapportProspection = await this.convertFileToBase64(files[0]);
     }
-  }
-  save(): void {
-  
-      if (this.mode === "create") {
-        this.createRapport();
-      } else if (this.mode === "update") {
-       this.updateRapportProspection();
-      }
-
-    
   }
   async convertFileToBase64(file: File): Promise<string> {
     return new Promise((resolve, reject) => {
@@ -87,74 +86,103 @@ export class AddOrUpdateRapportProspectionComponent implements OnInit {
       const reader = new FileReader();
       reader.onload = () => {
         const base64String = reader.result as string;
-        resolve(base64String);
+        const base64Content = base64String.split(',')[1];
+        resolve(base64Content);      
       };
       reader.onerror = error => reject(error);
       reader.readAsDataURL(file);
     });
   }
-createRapport(){
-  if (this.form.valid) {
-    const formData: RapportProspection = this.form.value;
-  formData.dateCreation = this.currentDate; 
-  formData.matricule = this.agent.matricule; 
-  formData.nom = this.agent.nom;
-  formData.prenom = this.agent.prenom;
-  formData.rapportProspection= this.fileRapportProspection;
-  formData.prenomAgent = '';
-  formData.nomAgent= '';
-  formData.matriculeAgent= '';
-  this.dossierColonieService.getAll().subscribe(dossiersResponse => {
-    const dossiers = dossiersResponse.body;
-    const openOrSaisiDossier = dossiers.find(dossier => dossier.etat === 'ouvert' || dossier.etat === 'saisi');
-    if (openOrSaisiDossier) {
-      formData.codeDossierColonie = openOrSaisiDossier;
-    }});
-  console.log(formData);
-  this.dialogConfirmationService.confirmationDialog().subscribe(action => {
-    if (action === DialogUtil.confirmer) {
-  this.rapportProspectionService.saveRapportProspection(formData).subscribe((response) => {
-    if(response.body.id != null){
-      this.notificationService.success(NotificationUtil.ajout);
-      this.dialogRef.close(formData);
-
-    }else{
-      this.notificationService.warn("Erreur dans l'ajout du formulaire");
-      this.dialogRef.close();
+  async save(): Promise<void> {
+    if (this.mode === "create") {
+      this.createRapport();
+    } else if (this.mode === "update") {
+      this.updateRapportProspection();
     }
-  },err => {
-    this.notificationService.warn(NotificationUtil.echec);
-  });
-} else {
-  this.dialogRef.close();
-}
-});
-
-}
-}
-updateRapportProspection(){
-  if (this.form.valid) {
-    const formData: RapportProspection = this.form.value;
-  formData.id = this.defaults.id; 
-  formData.matriculeAgent = this.agent.matricule;
-  formData.nomAgent=this.agent.nom;
-  formData.prenomAgent=this.agent.prenom;
-  this.dialogConfirmationService.confirmationDialog().subscribe(action => {
-    if (action === DialogUtil.confirmer) {
-  this.rapportProspectionService.updateRapportProspection(formData).subscribe(() => {
-    this.notificationService.success(NotificationUtil.modification);
-
-    this.dialogRef.close(formData);
-  },err => {
-    this.notificationService.warn(NotificationUtil.echec);
-},
-() => {})
- } else{
-  this.dialogRef.close();
- }
-})
   }
-}
+
+  async createRapport(): Promise<void> {
+    if (this.form.valid) {
+      const formData: RapportProspection = {
+        ...this.form.value,
+        dateCreation: this.currentDate,
+        matricule: this.agent.matricule,
+        nom: this.agent.nom,
+        prenom: this.agent.prenom,
+        rapportProspection: this.fileRapportProspection,
+        prenomAgent: '',
+        nomAgent: '',
+        matriculeAgent: '',
+        dateValidation: null,
+        etat: "A VALIDER"
+      };
+
+      try {
+        const dossiersResponse = await this.dossierColonieService.getAll().toPromise();
+        const dossiers = dossiersResponse.body;
+        const openOrSaisiDossier = dossiers.find(dossier => dossier.etat === EtatDossierColonie.ouvert || dossier.etat === EtatDossierColonie.saisi);
+
+        if (openOrSaisiDossier) {
+          formData.codeDossierColonie = openOrSaisiDossier;
+          console.log(formData);
+
+          this.dialogConfirmationService.confirmationDialog().subscribe(action => {
+            if (action === DialogUtil.confirmer) {
+              this.rapportProspectionService.saveRapportProspection(formData).subscribe(response => {
+                if (response.body.id != null) {
+                  this.notificationService.success(NotificationUtil.ajout);
+                  this.dialogRef.close(formData);
+                } else {
+                  this.notificationService.warn("Erreur dans l'ajout du formulaire");
+                  this.dialogRef.close();
+                }
+              }, err => {
+                this.notificationService.warn(NotificationUtil.echec);
+              });
+            } else {
+              this.dialogRef.close();
+            }
+          });
+        } else {
+          this.notificationService.warn("No open or saisie dossier found");
+          this.dialogRef.close();
+        }
+      } catch (error) {
+        console.error('Failed to fetch dossiers', error);
+      }
+    }
+  }
+
+   updateRapportProspection() {
+    if (this.form.valid) {
+      const formData: RapportProspection = {
+        ...this.form.value,
+        id: this.defaults.id,
+        matriculeAgent: this.agent.matricule,
+        matricule: this.defaults.matricule,
+        nom: this.defaults.nom,
+        prenom: this.defaults.prenom,
+        rapportProspection: this.defaults.rapportProspection,
+        dateValidation: this.defaults.dateValidation,
+        nomAgent: this.agent.nom,
+        prenomAgent: this.agent.prenom
+      };
+
+      this.dialogConfirmationService.confirmationDialog().subscribe(action => {
+        if (action === DialogUtil.confirmer) {
+          this.rapportProspectionService.updateRapportProspection(formData).subscribe(() => {
+            this.notificationService.success(NotificationUtil.modification);
+            this.dialogRef.close(formData);
+          }, err => {
+            this.notificationService.warn(NotificationUtil.echec);
+          });
+        } else {
+          this.dialogRef.close();
+        }
+      });
+    }
+  }
+
   isCreateMode(): boolean {
     return this.mode === "create";
   }

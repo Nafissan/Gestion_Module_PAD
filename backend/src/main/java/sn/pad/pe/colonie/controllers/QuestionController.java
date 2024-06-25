@@ -3,6 +3,8 @@ package sn.pad.pe.colonie.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import io.swagger.annotations.*;
@@ -23,8 +25,9 @@ public class QuestionController {
             @ApiResponse(code = 403, message = "L'accès à la ressource que vous tentez d'atteindre est interdit"),
             @ApiResponse(code = 404, message = "La ressource que vous tentez d'atteindre est introuvable.") })
     @GetMapping("/questions")
-    public List<QuestionDTO> getAllQuestions() {
-        return questionService.getAllQuestions();
+    public ResponseEntity<List<QuestionDTO>> getAllQuestions() {
+        List<QuestionDTO> liste = questionService.getAllQuestions();
+        return ResponseEntity.status(HttpStatus.OK).body(liste);
     }
 
 }

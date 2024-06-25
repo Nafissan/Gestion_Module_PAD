@@ -70,7 +70,7 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
     { name: "Annee", property: "annee", visible: true, isModelProperty: true },
     { name: "Description", property: "description", visible: true, isModelProperty: true },
     { name: "Etat", property: "etat", visible: true, isModelProperty: true },
-    { name: "Ajoute par", property: "ajoutePar", visible: true }, // New combined column
+    { name: "Ajoute par", property: "ajoutePar", visible: true }, 
 
     { name: "Note du Ministere", property: "noteMinistere", visible: true, isModelProperty: true },
     { name: "Demande de Prospection", property: "demandeProspection", visible: false, isModelProperty: true },

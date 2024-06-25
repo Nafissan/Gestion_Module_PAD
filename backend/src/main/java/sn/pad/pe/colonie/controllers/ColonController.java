@@ -3,6 +3,7 @@ package sn.pad.pe.colonie.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,8 +31,9 @@ public class ColonController {
             @ApiResponse(code = 403, message = "L'accès à la ressource que vous tentez d'atteindre est interdit"),
             @ApiResponse(code = 404, message = "La ressource que vous tentez d'atteindre est introuvable.") })
     @GetMapping("/colons")
-    public List<ColonDTO> getColons() {
-        return colonService.getColons();
+    public ResponseEntity<List<ColonDTO>> getColons() {
+        List<ColonDTO> liste = colonService.getColons();
+        return ResponseEntity.status(HttpStatus.OK).body(liste);
     }
 
 
@@ -42,8 +44,9 @@ public class ColonController {
             @ApiResponse(code = 403, message = "L'accès à la ressource que vous tentiez d'atteindre est interdit"),
             @ApiResponse(code = 404, message = "La ressource que vous tentiez d'atteindre est introuvable.") })
     @PostMapping("/colons")
-    public ResponseEntity<ColonDTO> saveColon(@RequestBody ColonDTO colonDTO) {
-        return ResponseEntity.ok().body(colonService.saveColon(colonDTO));
+    public ResponseEntity<ColonDTO> createColon(@RequestBody ColonDTO colonDTO) {
+        ColonDTO dto = colonService.saveColon(colonDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
 
 }

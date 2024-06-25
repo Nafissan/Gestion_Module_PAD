@@ -11,6 +11,6 @@ public interface RapportProspectionService {
 
     boolean updateRapportProspection(RapportProspectionDTO rapportProspectionDTO);
 
-    boolean deleteRapportProspection(Long id);
+    boolean deleteRapportProspection(RapportProspectionDTO rapportProspectionDTO);
 
 }

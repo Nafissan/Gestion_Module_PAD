@@ -18,25 +18,31 @@ export class RapportProspectionService {
 
   constructor(private httpClient: HttpClient) {}
 
-  getAllRapportsProspection(): Observable<HttpResponse<RapportProspection[]>> {
-    return this.httpClient.get<RapportProspection[]>(this.url, { observe: 'response' })
+  getAllRapportsProspection(): Observable<HttpResponse<any>> {
+    return this.httpClient.get<any>(this.url, { observe: 'response' })
       .pipe(catchError(this.errorHandler));
   }
 
-  saveRapportProspection(rapportProspection: RapportProspection): Observable<HttpResponse<RapportProspection>> {
-    return this.httpClient.post<RapportProspection>(this.url, rapportProspection, { observe: 'response' })
+  saveRapportProspection(rapportProspection: RapportProspection): Observable<HttpResponse<any>> {
+    return this.httpClient.post<any>(this.url, JSON.stringify(rapportProspection), { 
+      headers: this.httpOptions.headers,
+      observe: 'response' })
       .pipe(catchError(this.errorHandler));
   }
 
   updateRapportProspection(rapportProspection: RapportProspection): Observable<HttpResponse<any>> {
-    return this.httpClient.put<any>(this.url, rapportProspection, { headers: this.httpOptions.headers, observe: 'response' })
+    return this.httpClient.put<any>(this.url, JSON.stringify(rapportProspection), {
+       headers: this.httpOptions.headers, 
+       observe: 'response' })
       .pipe(catchError(this.errorHandler));
   }
 
-  deleteRapportProspection(id: number): Observable<HttpResponse<any>> {
-    const deleteUrl = `${this.url}/${id}`;
-    return this.httpClient.delete<any>(deleteUrl, { observe: 'response' })
-      .pipe(catchError(this.errorHandler));
+  deleteRapportProspection(rapportProspection: RapportProspection): Observable<HttpResponse<any>> {
+    const httpOptions = {
+      headers: this.httpOptions.headers,
+      body:rapportProspection,
+    };
+    return this.httpClient.delete<any>(this.url, httpOptions);
   }
 
   private errorHandler(error: any) {

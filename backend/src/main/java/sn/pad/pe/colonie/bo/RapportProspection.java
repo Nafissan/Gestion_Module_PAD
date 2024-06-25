@@ -10,6 +10,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 public class RapportProspection implements Serializable{
@@ -23,12 +28,16 @@ public class RapportProspection implements Serializable{
     private String matricule;
     private String nom;
     private String prenom;
+    @Temporal(TemporalType.TIMESTAMP)
+	@CreationTimestamp
     private Date dateCreation;
+     @Temporal(TemporalType.TIMESTAMP)
+	@UpdateTimestamp
     private Date dateValidation;
     private String etat;
     @OneToOne    
     @JoinColumn(name = "CODE_DOSSIER_COLONIE", referencedColumnName = "id" ,nullable = false)
-    private DossierColonie codeDossier;
+    private DossierColonie codeDossierColonie;
     //agent qui valide le rapport
     private String matriculeAgent;
     private String nomAgent;
@@ -81,11 +90,11 @@ public class RapportProspection implements Serializable{
     public void setEtat(String etat) {
         this.etat = etat;
     }
-    public DossierColonie getCodeDossier() {
-        return codeDossier;
+    public DossierColonie getCodeDossierColonie() {
+        return codeDossierColonie;
     }
-    public void setCodeDossier(DossierColonie codeDossier) {
-        this.codeDossier = codeDossier;
+    public void setCodeDossierColonie(DossierColonie codeDossier) {
+        this.codeDossierColonie = codeDossier;
     }
     public String getMatriculeAgent() {
         return matriculeAgent;

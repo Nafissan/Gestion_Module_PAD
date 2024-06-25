@@ -30,7 +30,6 @@ export class ReadFileDossierComponent implements OnInit {
         const blob = new Blob([byteNumbers], { type: 'application/pdf' });
         this.pdfDataUrl = this.sanitizer.bypassSecurityTrustResourceUrl(URL.createObjectURL(blob));
         console.log(this.pdfDataUrl);
-        throw new Error('Invalid base64 string');
       }
     } catch (error) {
       console.error('Error decoding base64 string:', error);

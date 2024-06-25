@@ -26,6 +26,7 @@ public class RapportProspectionServiceImpl implements RapportProspectionService 
 
     @Override
     public RapportProspectionDTO saveRapportProspection(RapportProspectionDTO rapportProspectionDTO) {
+        System.out.print(rapportProspectionDTO.getCodeDossierColonie());
         convertBase64FieldsToBytes(rapportProspectionDTO);
         RapportProspection rapportProspection = modelMapper.map(rapportProspectionDTO, RapportProspection.class);
         RapportProspection savedRapportProspection = rapportProspectionRepository.save(rapportProspection);
@@ -37,15 +38,36 @@ public class RapportProspectionServiceImpl implements RapportProspectionService 
     @Override
     public List<RapportProspectionDTO> getAllRapportsProspection() {
         List<RapportProspection> rapportsProspection = rapportProspectionRepository.findAll();
-        return rapportsProspection.stream()
-                .map(rapportProspection ->{
-                     RapportProspectionDTO rapport= modelMapper.map(rapportProspection, RapportProspectionDTO.class);
-                     convertBytesFieldsToBase64(rapport);
-                     return rapport;
-                })
-                .collect(Collectors.toList());
+        try {
+            List<RapportProspectionDTO> dtos = rapportsProspection.stream()
+            .map(rapportProspection ->{
+                 RapportProspectionDTO rapport= mapToDto(rapportProspection);
+                 convertBytesFieldsToBase64(rapport);
+                 return rapport;
+            })
+            .collect(Collectors.toList());
+            return dtos;
+        } catch (Exception e) {
+            System.out.print("Error retrieving rapports: " + e.getMessage());
+            throw new RuntimeException("Failed to retrieve rapports", e);
+        }    
     }
-
+        public RapportProspectionDTO mapToDto(RapportProspection rapport) {
+            RapportProspectionDTO dto = new RapportProspectionDTO();
+            dto.setId(rapport.getId());
+            dto.setRapportProspectionByte(rapport.getRapportProspection());
+            dto.setMatricule(rapport.getMatricule());
+            dto.setNom(rapport.getNom());
+            dto.setPrenom(rapport.getPrenom());
+            dto.setDateCreation(rapport.getDateCreation());
+            dto.setDateValidation(rapport.getDateValidation());
+            dto.setEtat(rapport.getEtat());
+            dto.setCodeDossierColonie(rapport.getCodeDossierColonie());
+            dto.setMatriculeAgent(rapport.getMatriculeAgent());
+            dto.setNomAgent(rapport.getNomAgent());
+            dto.setPrenomAgent(rapport.getPrenomAgent());
+            return dto;
+        }
     @Override
     public boolean updateRapportProspection(RapportProspectionDTO rapportProspectionDTO) {
         Optional<RapportProspection> rapport = rapportProspectionRepository.findById(rapportProspectionDTO.getId());
@@ -59,19 +81,30 @@ public class RapportProspectionServiceImpl implements RapportProspectionService 
     }
     
     @Override
-    public boolean deleteRapportProspection(Long id) {
-        if (rapportProspectionRepository.existsById(id)) {
-            rapportProspectionRepository.deleteById(id);
+    public boolean deleteRapportProspection(RapportProspectionDTO rapportProspectionDTO) {
+        Optional<RapportProspection> rapport = rapportProspectionRepository.findById(rapportProspectionDTO.getId());
+        if (rapport.isPresent()) {
+            rapportProspectionRepository.delete(rapport.get());
             return true;
         }
         return false;
     }
     private void convertBase64FieldsToBytes(RapportProspectionDTO rapport) {
         if (rapport.getRapportProspection() != null) {
-            rapport.setRapportProspectionByte(Base64.getDecoder().decode(rapport.getRapportProspection()));
+            if (isValidBase64(rapport.getRapportProspection())) {
+                rapport.setRapportProspectionByte(Base64.getDecoder().decode(rapport.getRapportProspection()));
+                }else {
+                    System.err.println("Invalid Base64 string for rapport prospection: ");
+                }        }
+    }
+    private boolean isValidBase64(String base64) {
+        try {
+            Base64.getDecoder().decode(base64);
+            return true;
+        } catch (IllegalArgumentException e) {
+            return false;
         }
     }
-
     private void convertBytesFieldsToBase64(RapportProspectionDTO rapport) {
         if (rapport.getRapportProspectionByte() != null) {
             rapport.setRapportProspection(Base64.getEncoder().encodeToString(rapport.getRapportProspectionByte()));

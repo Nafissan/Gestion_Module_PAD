@@ -1,5 +1,6 @@
 package sn.pad.pe.colonie.bo;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -18,6 +19,9 @@ import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
 public class DossierColonie implements Serializable {
 
@@ -56,10 +60,11 @@ public class DossierColonie implements Serializable {
 	private Date updatedAt;
     @OneToOne(fetch = FetchType.LAZY,mappedBy = "codeDossier", cascade = CascadeType.ALL, orphanRemoval = true)
     private FormulaireSatisfaction formulaireSatisfaction;
-     @OneToOne(fetch = FetchType.LAZY,mappedBy = "codeDossier", cascade = CascadeType.ALL, orphanRemoval = true)
+     @OneToOne(fetch = FetchType.LAZY,mappedBy = "codeDossierColonie", cascade = CascadeType.ALL, orphanRemoval = true)
     private RapportProspection rapportProspection;
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "codeDossier", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Colon> colons;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "codeDossier", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Colon> colons = new ArrayList<Colon>(0);
 
     public Long getId() {
         return id;

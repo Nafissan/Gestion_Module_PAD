@@ -16,6 +16,7 @@ import { AuthenticationService } from 'src/app/shared/services/authentification.
 import { SelectionModel } from '@angular/cdk/collections';
 import { DetailsSatisfactionComponent } from '../details-satisfaction/details-satisfaction.component';
 import { DossierColonieService } from '../../shared/service/dossier-colonie.service';
+import { EtatDossierColonie } from '../../shared/util/util';
 
 @Component({
   selector: 'fury-liste-satisfaction',
@@ -62,6 +63,7 @@ export class ListeSatisfactionComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.canAddSatisfaction();
     this.getSatisfactions();
     this.dataSource = new MatTableDataSource();
     this.data$.pipe(filter((data) => !!data)).subscribe((satisfaction) => {
@@ -88,7 +90,8 @@ export class ListeSatisfactionComponent implements OnInit {
   canAddSatisfaction(): boolean {
      this.dossierColonieService.getAll().pipe(map(response => {
       const dossiers = response.body;
-      const dossierToUpdate = dossiers.find(dossier => dossier.etat === 'ouvert' || dossier.etat === 'saisi');
+      const dossierToUpdate = dossiers.find(dossier => dossier.etat === EtatDossierColonie.ouvert || dossier.etat === EtatDossierColonie.saisi
+      );
       const existingSatisfaction = this.satisfactions.find(rapport => dossierToUpdate && rapport.codeDossier.id === dossierToUpdate.id);
       return !!dossierToUpdate && !existingSatisfaction;
     }));
@@ -99,10 +102,17 @@ export class ListeSatisfactionComponent implements OnInit {
     this.satisfactionService.getAllSatisfactions().subscribe((response) => {
       this.satisfactions = response.body;
       this.satisfactionSelected = this.satisfactions.find(e => e.id ===1);
-      this.subject$.next(this.satisfactions);
-      this.showProgressBar = true;
+      
     console.log(this.satisfactions); 
-   });
+   },
+   (err) => {        
+      console.error('Error loading formulaire colonies:', err); 
+
+   },
+   () => {
+    this.subject$.next(this.satisfactions);
+    this.showProgressBar = true;
+  });
   }
   onFilterChange(value) {
     if (!this.dataSource) {
@@ -129,7 +139,8 @@ export class ListeSatisfactionComponent implements OnInit {
     return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.id + 1}`;
   }
   createSatisfaction(){
-    this.dialog.open(AddOrUpdateSatisfactionComponent)
+    this.dialog
+    .open(AddOrUpdateSatisfactionComponent)
     .afterClosed().subscribe((satisfaction: any) => {
   if(satisfaction) {
     this.satisfactions.unshift(satisfaction);
@@ -138,7 +149,8 @@ export class ListeSatisfactionComponent implements OnInit {
   });
   }
   updateStaisfaction(satisfaction: Satisfaction){
-    this.dialog.open(AddOrUpdateSatisfactionComponent, {
+    this.dialog
+    .open(AddOrUpdateSatisfactionComponent, {
       data: satisfaction,
     })
     .afterClosed()
@@ -149,7 +161,7 @@ export class ListeSatisfactionComponent implements OnInit {
           (existingsatisfaction) =>
             existingsatisfaction.id === satisfaction.id
         );
-        this.satisfactions[index] = satisfaction;
+        this.satisfactions[index] = new Satisfaction(satisfaction);
         this.subject$.next(this.satisfactions);
         console.log("update"+this.satisfactions);
       }
@@ -158,7 +170,7 @@ export class ListeSatisfactionComponent implements OnInit {
   deleteSatisfaction(satisfaction: Satisfaction) {
     this.dialogConfirmationService.confirmationDialog().subscribe(action => {
       if (action === DialogUtil.confirmer) {
-        this.satisfactionService.deleteSatisfaction(satisfaction.id).subscribe((response) => {
+        this.satisfactionService.deleteSatisfaction(satisfaction).subscribe((response) => {
           this.satisfactions.splice(
             this.satisfactions.findIndex(
               (existingsatisfaction) => existingsatisfaction.id === satisfaction.id

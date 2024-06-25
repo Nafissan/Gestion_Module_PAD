@@ -28,7 +28,6 @@ export class ReadFileParticipantComponent implements OnInit, OnDestroy {
         const blob = new Blob([byteNumbers], { type: 'application/pdf' });
         this.pdfDataUrl = this.sanitizer.bypassSecurityTrustResourceUrl(URL.createObjectURL(blob));
         console.log(this.pdfDataUrl);
-        throw new Error('Invalid base64 string');
       }
     }
   } catch (error) {

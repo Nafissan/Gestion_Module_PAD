@@ -11,7 +11,6 @@ import sn.pad.pe.colonie.bo.Sexe;
 
 public class ColonDTO {
     private Long id;
-    private DossierColonieDTO codeDossier;
     private String nomEnfant;
     private String prenomEnfant;
     private Date dateNaissance;
@@ -44,12 +43,6 @@ public class ColonDTO {
     }
     public void setId(Long id) {
         this.id = id;
-    }
-    public DossierColonieDTO getCodeDossier() {
-        return codeDossier;
-    }
-    public void setCodeDossier(DossierColonieDTO codeDossier) {
-        this.codeDossier = codeDossier;
     }
     public String getNomEnfant() {
         return nomEnfant;
