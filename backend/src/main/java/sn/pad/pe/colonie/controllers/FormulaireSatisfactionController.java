@@ -50,7 +50,7 @@ public class FormulaireSatisfactionController {
     @ApiResponse(code = 401, message = "Vous n'êtes pas autorisé à voir la ressource"),
     @ApiResponse(code = 403, message = "L'accès à la ressource que vous tentiez d'atteindre est interdit"),
     @ApiResponse(code = 404, message = "La ressource que vous tentiez d'atteindre est introuvable.") })
-    @DeleteMapping("/formulairesSatisfaction/{id}")
+    @DeleteMapping("/formulairesSatisfaction")
     public ResponseEntity<Message> deleteFormulaire(@RequestBody FormulaireSatisfactionDTO formulaire) {
         if(formulaireSatisfactionService.deleteFormulaire(formulaire)){
         message = new Message(new Date(), "FormulaireSatisfaction with id " + formulaire.getId() + " deleted.", "uri=/formulairesSatisfaction/" + formulaire.getId());

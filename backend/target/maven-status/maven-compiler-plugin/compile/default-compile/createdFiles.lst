@@ -39,6 +39,8 @@ sn\pad\pe\dotation\services\TypeDotationService.class
 sn\pad\pe\pss\dto\NiveauHierarchiqueDTO.class
 sn\pad\pe\pss\bo\FileMetaData.class
 sn\pad\pe\pss\controllers\EtapePlanningDirectionController.class
+sn\pad\pe\colonie\services\impl\ParticipantColonieServiceImpl.class
+sn\pad\pe\colonie\services\ParticipantColonieService.class
 sn\pad\pe\pss\dto\RessourceDTO.class
 sn\pad\pe\pss\services\impl\PlanningAbsenceServiceImpl.class
 sn\pad\pe\partenariat\dto\ParticipantDTO.class
@@ -66,6 +68,7 @@ sn\pad\pe\pss\services\impl\RessourceServiceImpl.class
 sn\pad\pe\partenariat\repositories\ContinentRepository.class
 sn\pad\pe\partenariat\controllers\EntrepriseController.class
 sn\pad\pe\partenariat\repositories\PlanprospectionRepository.class
+sn\pad\pe\colonie\dto\ParticipantColonieDTO.class
 sn\pad\pe\partenariat\dto\SuiviProspectDTO.class
 sn\pad\pe\partenariat\services\ZoneService.class
 sn\pad\pe\pss\repositories\CompteRepository.class
@@ -364,6 +367,7 @@ sn\pad\pe\pss\controllers\PlanningAbsenceController.class
 sn\pad\pe\pss\bo\EtapePlanningDirection.class
 sn\pad\pe\partenariat\services\impl\ProspectServiceImpl.class
 sn\pad\pe\partenariat\services\impl\ConventionServiceImpl.class
+sn\pad\pe\colonie\bo\ParticipantColonie.class
 sn\pad\pe\dotation\controllers\TypeDotationController.class
 sn\pad\pe\partenariat\services\impl\EvenementServiceImpl.class
 sn\pad\pe\partenariat\services\impl\TypePartenariatServiceImpl.class

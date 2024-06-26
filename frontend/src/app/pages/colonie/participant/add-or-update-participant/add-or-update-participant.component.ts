@@ -13,6 +13,7 @@ import { NotificationService } from "src/app/shared/services/notification.servic
 import { AgentService } from "src/app/shared/services/agent.service";
 import { DossierColonieService } from "../../shared/service/dossier-colonie.service";
 import { EtatDossierColonie } from "../../shared/util/util";
+import { DossierColonie } from "../../shared/model/dossier-colonie.model";
 
 @Component({
   selector: "app-add-update-participant-colonie",
@@ -28,7 +29,7 @@ export class AddOrUpdateParticipantComponent implements OnInit {
   compte: Compte;
   username: string;
   agents: any[] = [];
-
+  dossierColonie: DossierColonie;
   constructor(
     @Inject(MAT_DIALOG_DATA) public defaults: Participant,
     private dialogRef: MatDialogRef<AddOrUpdateParticipantComponent>,
@@ -63,7 +64,7 @@ export class AddOrUpdateParticipantComponent implements OnInit {
     });
 
     this.getAgents();
-
+    this.getDossierColonie();
     if (this.defaults) {
       this.mode = "update";
     } else {
@@ -136,7 +137,17 @@ export class AddOrUpdateParticipantComponent implements OnInit {
       }
     );
   }
-
+  getDossierColonie(){
+    this.dossierColonieService.getAll().subscribe((dossiersResponse) => {
+      const dossiers = dossiersResponse.body;
+      const openOrSaisiDossier = dossiers.find(dossier => 
+        dossier.etat === EtatDossierColonie.ouvert || dossier.etat === EtatDossierColonie.saisi
+      );
+      if (openOrSaisiDossier) {
+        this.dossierColonie = openOrSaisiDossier;
+      }
+    });
+  }
   createParticipant() {
     let formData: Participant = this.form.value;
     formData.ficheSocial = this.ficheSocial;
@@ -151,17 +162,7 @@ export class AddOrUpdateParticipantComponent implements OnInit {
       formData.nomParent = selectedAgent.nom;
       formData.prenomParent = selectedAgent.prenom;
     }
-
-    this.dossierColonieService.getAll().subscribe((dossiersResponse) => {
-      const dossiers = dossiersResponse.body;
-      const openOrSaisiDossier = dossiers.find(dossier => 
-        dossier.etat === EtatDossierColonie.ouvert || dossier.etat === EtatDossierColonie.saisi
-      );
-      if (openOrSaisiDossier) {
-        formData.codeDossier = openOrSaisiDossier;
-      }
-    });
-
+    formData.codeDossier = this.dossierColonie;
     console.log(formData);
     this.dialogConfirmationService.confirmationDialog().subscribe((action) => {
       if (action === DialogUtil.confirmer) {

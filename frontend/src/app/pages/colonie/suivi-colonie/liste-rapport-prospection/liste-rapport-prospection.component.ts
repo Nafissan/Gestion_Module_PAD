@@ -64,7 +64,7 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
   @Input()
   columns: ListColumn[] = [
     { name: "Checkbox", property: "checkbox", visible: false },
-    { name: "Code Dossier", property: "codeDossierColonie", visible: true, isModelProperty: true },
+    { name: "Code Dossier", property: "codeDossierColonie.code", visible: true, isModelProperty: true },
     { name: "Date de création", property: "dateCreation", visible: true, isModelProperty: true },
     { name: "Date de validation/rejet", property: "dateValidation", visible: false, isModelProperty: true },
     { name: "État", property: "etat", visible: true, isModelProperty: true },
@@ -138,17 +138,19 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
   getRapportProspections() {
     this.rapportService.getAllRapportsProspection().subscribe(
       (response) => {
-        this.rapports = response.body;
+        this.rapports = response.body.filter(
+          (rapport) => 
+            rapport.codeDossierColonie.etat === EtatDossierColonie.ouvert || rapport.codeDossierColonie.etat === EtatDossierColonie.saisi
+        );
         this.currentRapport = this.rapports.find(e => e.etat === 'A VALIDER');
         console.log(this.rapports);
       },
       (err) => {        
          console.error('Error loading rapport prospection colonies:', err); 
-
       },
       () => {
         this.subject$.next(this.rapports);
-        this.showProgressBar=true;
+        this.showProgressBar = true;
       }
     );
   }

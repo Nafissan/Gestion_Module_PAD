@@ -17,6 +17,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { DetailsSatisfactionComponent } from '../details-satisfaction/details-satisfaction.component';
 import { DossierColonieService } from '../../shared/service/dossier-colonie.service';
 import { EtatDossierColonie } from '../../shared/util/util';
+import { DossierColonie } from '../../shared/model/dossier-colonie.model';
 
 @Component({
   selector: 'fury-liste-satisfaction',
@@ -32,7 +33,9 @@ export class ListeSatisfactionComponent implements OnInit {
   showProgressBar: boolean = false;
   selection = new SelectionModel<Satisfaction>(true, []);
   satisfactionSelected: Satisfaction;
-
+  canAdd: boolean = false;
+ dossierColonies: DossierColonie;
+ filteredSatisfaction: Satisfaction[]=[];
   private paginator: MatPaginator;
   private sort: MatSort;
 
@@ -63,8 +66,8 @@ export class ListeSatisfactionComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.canAddSatisfaction();
     this.getSatisfactions();
+    this.checkCanAddSatisfaction();
     this.dataSource = new MatTableDataSource();
     this.data$.pipe(filter((data) => !!data)).subscribe((satisfaction) => {
       this.satisfactions = satisfaction;
@@ -87,33 +90,48 @@ export class ListeSatisfactionComponent implements OnInit {
   get visibleColumns() {
     return this.columns.filter((column) => column.visible).map((column) => column.property);
   }
-  canAddSatisfaction(): boolean {
-     this.dossierColonieService.getAll().pipe(map(response => {
+  checkCanAddSatisfaction() {
+    this.dossierColonieService.getAll().subscribe((response) => {
       const dossiers = response.body;
-      const dossierToUpdate = dossiers.find(dossier => dossier.etat === EtatDossierColonie.ouvert || dossier.etat === EtatDossierColonie.saisi
+      const dossierToUpdate = dossiers.find(
+        (dossier) => dossier.etat === EtatDossierColonie.ouvert || dossier.etat === EtatDossierColonie.saisi
       );
-      const existingSatisfaction = this.satisfactions.find(rapport => dossierToUpdate && rapport.codeDossier.id === dossierToUpdate.id);
-      return !!dossierToUpdate && !existingSatisfaction;
-    }));
-    return false;
+      const existingSatisfaction = this.satisfactions.find(
+        (rapport) => dossierToUpdate && rapport.codeDossier.id === dossierToUpdate.id
+      );
+      this.canAdd = !!dossierToUpdate && !existingSatisfaction;
+    });
   }
 
   getSatisfactions() {
-    this.satisfactionService.getAllSatisfactions().subscribe((response) => {
-      this.satisfactions = response.body;
-      this.satisfactionSelected = this.satisfactions.find(e => e.id ===1);
-      
-    console.log(this.satisfactions); 
-   },
-   (err) => {        
-      console.error('Error loading formulaire colonies:', err); 
-
-   },
-   () => {
-    this.subject$.next(this.satisfactions);
-    this.showProgressBar = true;
-  });
-  }
+      this.dossierColonieService.getAll().pipe(
+        map(response => response.body)
+      ).subscribe(dossiers => {
+        this.dossierColonies = dossiers;
+        const openOrSaisiDossiers = dossiers.filter(dossier => dossier.etat === EtatDossierColonie.ouvert || dossier.etat === EtatDossierColonie.saisi);        
+        this.satisfactionService.getAllSatisfactions().subscribe(response => {
+          this.satisfactions = response.body;
+          
+          this.filteredSatisfaction = this.satisfactions.filter(participant => 
+            openOrSaisiDossiers.some(dossier => dossier.id === participant.codeDossier.id)
+          );
+    
+          // Log the filtered participants for debugging
+          console.log("Filtered Participants: ", this.filteredSatisfaction);
+          
+        }, err => {
+          console.error('Error loading participant colonies:', err);
+        },()=>{
+          this.subject$.next(this.filteredSatisfaction);
+          this.showProgressBar = true;
+        });
+      });
+    }
+    
+    refresh(){
+      this.getSatisfactions();
+      this.checkCanAddSatisfaction();
+    }
   onFilterChange(value) {
     if (!this.dataSource) {
       return;
@@ -145,6 +163,7 @@ export class ListeSatisfactionComponent implements OnInit {
   if(satisfaction) {
     this.satisfactions.unshift(satisfaction);
     this.subject$.next(this.satisfactions);
+    this.refresh();
   } 
   });
   }
@@ -164,10 +183,12 @@ export class ListeSatisfactionComponent implements OnInit {
         this.satisfactions[index] = new Satisfaction(satisfaction);
         this.subject$.next(this.satisfactions);
         console.log("update"+this.satisfactions);
+        this.refresh();
       }
     })
   }
   deleteSatisfaction(satisfaction: Satisfaction) {
+    console.log(satisfaction);
     this.dialogConfirmationService.confirmationDialog().subscribe(action => {
       if (action === DialogUtil.confirmer) {
         this.satisfactionService.deleteSatisfaction(satisfaction).subscribe((response) => {
@@ -179,6 +200,7 @@ export class ListeSatisfactionComponent implements OnInit {
           );          
           this.notificationService.success(NotificationUtil.suppression)
           this.subject$.next(this.satisfactions);
+          this.refresh();
         }
         ,err => {
           this.notificationService.warn(NotificationUtil.echec);

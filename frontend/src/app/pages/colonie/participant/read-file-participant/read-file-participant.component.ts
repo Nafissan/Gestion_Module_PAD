@@ -9,7 +9,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 })
 export class ReadFileParticipantComponent implements OnInit, OnDestroy {
   @Input() participant: Participant;
-  @Input() fileType: 'ficheSocial' | 'document'; // New input to specify file type
+  @Input() fileType: 'ficheSocial' | 'document'; // New input to specify file typ
   pdfDataUrl: SafeResourceUrl; // Safe URL for the PDF file
   showFrame: boolean = true; // Boolean to control the frame display
 

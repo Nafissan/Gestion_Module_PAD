@@ -22,6 +22,7 @@ import { Colon } from '../../shared/model/colon.model';
 import { DossierColonieService } from '../../shared/service/dossier-colonie.service';
 import { DetailsParticipantComponent } from '../details-participant/details-participant.component';
 import { EtatDossierColonie } from '../../shared/util/util';
+import { DossierColonie } from '../../shared/model/dossier-colonie.model';
 
 @Component({
   selector: 'fury-liste-participant',
@@ -34,16 +35,18 @@ export class ListeParticipantComponent implements OnInit {
   showProgressBar: boolean = false;
   participantSelected: Participant;
   participants: Participant[]=[];
+  filteredParticipant: Participant[]=[];
   subject$: ReplaySubject<Participant[]> = new ReplaySubject<Participant[]>(1);
   data$: Observable<Participant[]> = this.subject$.asObservable();
   pageSize = 4;
+  openOrSaisiDossier:DossierColonie;
   dataSource: MatTableDataSource<Participant> | null;
   selection = new SelectionModel<Participant>(true, []);
   afficherFicheSociale: boolean = false;
   participantSelectionne: Participant;
   afficherDocument : boolean =false;
   fileType: 'ficheSocial' | 'document'; // New property to indicate file type
-  
+  dossierColonie : DossierColonie[]=[];
   private paginator: MatPaginator;
   private sort: MatSort;
   @ViewChild(MatSort) set matSort(ms: MatSort) {
@@ -103,8 +106,7 @@ export class ListeParticipantComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.canAddParticipant();
-    this.getParticipants();
+    this.fetchDossiersAndParticipants();
     this.dataSource = new MatTableDataSource();
     this.data$.pipe(filter((data) => !!data)).subscribe((participant) => {
       this.participants = participant;
@@ -127,25 +129,37 @@ export class ListeParticipantComponent implements OnInit {
     this.dataSource.filter = value;
     this.dataSource.filterPredicate = (data: any, value) => { const dataStr =JSON.stringify(data).toLowerCase(); return dataStr.indexOf(value) != -1; }
   }
-  getParticipants(){
-    this.participantService.getAll()
-      .subscribe((response) => {
+  fetchDossiersAndParticipants() {
+    this.dossierColonieService.getAll().pipe(
+      map(response => response.body)
+    ).subscribe(dossiers => {
+      this.dossierColonie = dossiers;
+      // Filter dossiers to only include 'ouvert' or 'saisi' states
+      const openOrSaisiDossiers = dossiers.filter(dossier => dossier.etat === EtatDossierColonie.ouvert || dossier.etat === EtatDossierColonie.saisi);
+      
+      // Get all participants
+      this.participantService.getAll().subscribe(response => {
         this.participants = response.body;
-        console.log(this.participants);
         
-      },(err) => {
-        console.error('Error loading participant colonies:', err); // Debugging output
-      },
-      () => {
-        this.subject$.next(this.participants);
+        // Filter participants whose codeDossier matches the id of openOrSaisiDossiers
+        this.filteredParticipant = this.participants.filter(participant => 
+          openOrSaisiDossiers.some(dossier => dossier.id === participant.codeDossier.id)
+        );
+  
+        // Log the filtered participants for debugging
+        console.log("Filtered Participants: ", this.filteredParticipant);
+        
+        
+      }, err => {
+        console.error('Error loading participant colonies:', err);
+      },()=>{
+        this.subject$.next(this.filteredParticipant);
         this.showProgressBar = true;
-      }
-    
-    );
-    
+      });
+    });
   }
   refreshListe(){
-    this.getParticipants();
+    this.fetchDossiersAndParticipants();
   }
   getProperty(row: any, property: string) {
     return property.split('.').reduce((acc, part) => acc && acc[part], row);
@@ -197,14 +211,8 @@ export class ListeParticipantComponent implements OnInit {
     })
   }
   canAddParticipant(): boolean {
-     this.dossierColonieService.getAll().pipe(map(response => {
-      const dossiers = response.body;
-      const dossierToUpdate = dossiers.find(dossier => 
-        dossier.etat === EtatDossierColonie.ouvert || dossier.etat === EtatDossierColonie.saisi
-      );
-      return !! dossierToUpdate;
-    }));
-    return false;
+    const add= this.dossierColonie.some(dossier => dossier.etat === EtatDossierColonie.ouvert || dossier.etat === EtatDossierColonie.saisi);
+    return !add;
   }
 
   hasAnyRole(roles: string[]) {

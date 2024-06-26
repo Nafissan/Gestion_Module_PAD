@@ -46,7 +46,7 @@
                 <p *ngIf="column.property === 'dateValidation'">
                   {{ row[column.property] | date: 'dd-MM-yyyy' }}
                 </p>
-                <p *ngIf="column.name !== 'dateCreation' && column.name !== 'dateValidation' && column.name !== 'Valide/Rejeter par' && column.name !== 'Ajoute par' && column.name !== 'Etat' && column.property !== 'rapport'">
+                <p *ngIf="column.property !== 'dateCreation' && column.property !== 'dateValidation' && column.name !== 'Valide/Rejeter par' && column.name !== 'Ajoute par' && column.name !== 'Etat' && column.property !== 'rapport'">
                   {{ row[column.property] }}
                 </p>
               </td>

@@ -4,16 +4,19 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import sn.pad.pe.colonie.bo.DossierColonie;
+import sn.pad.pe.colonie.bo.Question;
+
 public class FormulaireSatisfactionDTO {
   
     private Long id;
 
-    private DossierColonieDTO  codeDossier;
+    private DossierColonie  codeDossier;
 
     private Date dateCreation;
 
    
-    private Map<QuestionDTO, String> reponses = new HashMap<>();
+    private Map<Question, String> reponses = new HashMap<>();
 
     private String commentaire;
     //agent qui cree le formulaire
@@ -25,11 +28,11 @@ public class FormulaireSatisfactionDTO {
         return id;
     }
 
-    public DossierColonieDTO  getCodeDossier() {
+    public DossierColonie  getCodeDossier() {
         return codeDossier;
     }
 
-    public void setCodeDossier(DossierColonieDTO  codeDossier) {
+    public void setCodeDossier(DossierColonie  codeDossier) {
         this.codeDossier = codeDossier;
     }
 
@@ -41,15 +44,15 @@ public class FormulaireSatisfactionDTO {
         this.dateCreation = dateCreation;
     }
 
-    public Map<QuestionDTO, String> getReponses() {
+    public Map<Question, String> getReponses() {
         return reponses;
     }
 
-    public void setReponses(Map<QuestionDTO, String> reponses) {
+    public void setReponses(Map<Question, String> reponses) {
         this.reponses = reponses;
     }
 
-    public void ajouterReponse(QuestionDTO question, String reponse) {
+    public void ajouterReponse(Question question, String reponse) {
         this.reponses.put(question, reponse);
     }
 

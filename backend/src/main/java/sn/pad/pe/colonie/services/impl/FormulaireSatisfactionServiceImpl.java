@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import sn.pad.pe.colonie.bo.FormulaireSatisfaction;
 import sn.pad.pe.colonie.bo.Question;
 import sn.pad.pe.colonie.dto.FormulaireSatisfactionDTO;
-import sn.pad.pe.colonie.dto.QuestionDTO;
 import sn.pad.pe.colonie.repositories.FormulaireSatisfactionRepository;
 import sn.pad.pe.colonie.repositories.QuestionRepository;
 import sn.pad.pe.colonie.services.FormulaireSatisfactionService;
@@ -39,42 +38,60 @@ public class FormulaireSatisfactionServiceImpl implements FormulaireSatisfaction
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
+    
     private FormulaireSatisfactionDTO convertToDto(FormulaireSatisfaction formulaire) {
         FormulaireSatisfactionDTO dto = modelMapper.map(formulaire, FormulaireSatisfactionDTO.class);
-        dto.setReponses(formulaire.getReponses().entrySet().stream()
-                .collect(Collectors.toMap(
-                        entry -> modelMapper.map(entry.getKey(), QuestionDTO.class),
-                        Map.Entry::getValue
-                )));
+        
+        // Créer une nouvelle Map compatible avec FormulaireSatisfactionDTO
+        Map<Question, String> reponsesDto = new HashMap<>();
+        formulaire.getReponses().forEach((question, reponse) -> {
+            reponsesDto.put(question, reponse);
+        });
+        
+        dto.setReponses(reponsesDto);
+        
         return dto;
     }
+    
     @Override
+    @Transactional
     public boolean deleteFormulaire(FormulaireSatisfactionDTO formulaireDTO) {
-        Optional<FormulaireSatisfaction> formulaire = formulaireSatisfactionRepository.findById(formulaireDTO.getId());
-        if(formulaire.isPresent()){
-            formulaireSatisfactionRepository.delete(formulaire.get());
+        Optional<FormulaireSatisfaction> formulaireOptional = formulaireSatisfactionRepository.findById(formulaireDTO.getId());
+        
+        if (formulaireOptional.isPresent()) {
+            System.out.print(formulaireOptional.get());
+            FormulaireSatisfaction formulaire = formulaireOptional.get();            
+            formulaire.getReponses().clear();            
+            formulaireSatisfactionRepository.delete(formulaire);
+            
             return true;
         }
+        
         return false;
     }
+    
 
     @Override
     @Transactional
     public FormulaireSatisfactionDTO saveFormulaire(FormulaireSatisfactionDTO formulaireDTO) {
         FormulaireSatisfaction formulaire = modelMapper.map(formulaireDTO, FormulaireSatisfaction.class);
+    
         Map<Question, String> reponses = new HashMap<>();
         for (Map.Entry<Question, String> entry : formulaire.getReponses().entrySet()) {
             Question question = entry.getKey();
-            if (question.getId() == null) {
-                question = questionRepository.save(question);
-            }
+            question = questionRepository.findById(question.getId()).orElse(null); // Récupération de la question existante
+            
             reponses.put(question, entry.getValue());
         }
         formulaire.setReponses(reponses);
-
+    
+        // Sauvegarde du formulaire de satisfaction avec les réponses associées
         FormulaireSatisfaction savedFormulaire = formulaireSatisfactionRepository.save(formulaire);
+    
+        // Mapping et retour du DTO sauvegardé
         return modelMapper.map(savedFormulaire, FormulaireSatisfactionDTO.class);
     }
+    
 
 
 }

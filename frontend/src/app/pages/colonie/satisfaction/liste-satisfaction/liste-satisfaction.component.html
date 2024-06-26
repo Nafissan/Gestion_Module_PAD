@@ -6,7 +6,7 @@
     <fury-page-layout-content [@fadeInUp]>
         <fury-list *ngIf="satisfactions.length !== 0 && showProgressBar === true" name="Satisfactions" [columns]="columns" (filterChange)="onFilterChange($event)">
             <div class="actions">
-                <button class="create" (click)="createSatisfaction()" [disabled]="canAddSatisfaction()" type="button" mat-mini-fab color="primary">
+                <button class="create" (click)="createSatisfaction()" [disabled]="!canAdd" type="button" mat-mini-fab color="primary">
                     <mat-icon>add</mat-icon>
                   </button>            </div>
             <table [dataSource]="dataSource" mat-table matSort>
@@ -22,12 +22,13 @@
 
                 <!-- Dynamic Columns -->
                 <ng-container *ngFor="let column of columns">
-                    <ng-container *ngIf="column.isModelProperty" [matColumnDef]="column.property">
+                    <ng-container *ngIf="column.isModelProperty || column.property ==='traitePar'" [matColumnDef]="column.property">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ column.name }} </th>
                         <td mat-cell *matCellDef="let row">
-                            <p *ngIf="column.property == 'codeDossier' " > {{ row[column.property].code }} </p>
-                            <p *ngIf="column.property == 'traitePar' " > {{ (row.matricule + ' | ' + row.prenom + ' ' + row.nom) | titlecase }} </p>
-                            <p *ngIf="column.property !== 'traitePar' && column.property !== 'codeDossier'" >  {{ row[column.property] }} </p>
+                            <p *ngIf="column.property === 'codeDossier' " > {{ row[column.property].code }} </p>
+                            <p *ngIf="column.property === 'dateCreation'" > {{ row[column.property] | date: 'dd-MMM-yyyy' }}</p>
+                            <p *ngIf="column.property === 'traitePar' " > {{ (row.matricule + ' | ' + row.prenom + ' ' + row.nom) | titlecase }} </p>
+                            <p *ngIf="column.property !== 'traitePar' && column.property !== 'codeDossier' && column.property !== 'dateCreation'" >  {{ row[column.property] }} </p>
                            </td>
                     </ng-container>
                 </ng-container>
@@ -67,7 +68,7 @@
             <div class="card-body">
                 <h5 class="card-title">LISTE DES FORMULAIRES SATISFACTIONS VIDE</h5>
                 <p class="card-text">Ajouter un nouveau formulaire satisfactions</p>
-                <button mat-mini-fab color="primary" (click)="createSatisfaction()" [disabled]="canAddSatisfaction()">
+                <button mat-mini-fab color="primary" (click)="createSatisfaction()" [disabled]="!canAdd">
                   <mat-icon>add</mat-icon>
                 </button>            </div>
             <div class="card-footer text-muted">

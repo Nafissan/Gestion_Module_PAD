@@ -945,7 +945,7 @@ export let menus = [
   },
     {
       id: 67,
-      name: "Participant Colonie",
+      name: "Inscription Colonie",
       routeOrFunction: "/colonie/participant",
       // icon: "list",
       position: 5,
