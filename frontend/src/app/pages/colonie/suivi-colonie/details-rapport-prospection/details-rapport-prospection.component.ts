@@ -3,21 +3,21 @@ import { RapportProspection } from '../../shared/model/rapport-prospection.model
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
-  selector: 'app-details-rapport-prospection',
+  selector: 'fury-details-rapport-prospection',
   templateUrl: './details-rapport-prospection.component.html',
   styleUrls: ['./details-rapport-prospection.component.scss']
 })
 export class DetailsRapportProspectionComponent implements OnInit, OnDestroy {
-  @Input() rapportProspection: RapportProspection;
+  @Input() rapport: RapportProspection;
   pdfDataUrl: SafeResourceUrl; 
   showFrame: boolean = true; 
 
   constructor(private sanitizer: DomSanitizer) {}
 
-  ngOnInit(): void {
+  ngOnInit() {
     try {
-      if (this.rapportProspection) {
-        const fileBase64 = this.rapportProspection.rapportProspection;
+      if (this.rapport) {
+        const fileBase64 = this.rapport.rapportProspection;
         if (this.isValidBase64(fileBase64)) {
           const binaryString = atob(fileBase64);
           const byteNumbers = new Uint8Array(binaryString.length);

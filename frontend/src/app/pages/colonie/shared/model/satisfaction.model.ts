@@ -1,10 +1,11 @@
 import { DossierColonie } from "./dossier-colonie.model";
+import { Question } from "./question.model";
 
 export class Satisfaction {
   id: number;
   codeDossier: DossierColonie;
   dateCreation: Date;
-  reponses: { [questionId: number]: string };
+  reponses: { [key: number]: string };
   commentaire: string;
   matricule: string;
   nom: string;

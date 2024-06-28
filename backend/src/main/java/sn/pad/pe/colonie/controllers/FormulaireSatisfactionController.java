@@ -6,10 +6,18 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import sn.pad.pe.colonie.dto.FormulaireSatisfactionDTO;
+import sn.pad.pe.colonie.dto.FormulaireSatisfactionRequest;
 import sn.pad.pe.colonie.services.FormulaireSatisfactionService;
 import sn.pad.pe.configurations.exception.Message;
 
@@ -40,8 +48,8 @@ public class FormulaireSatisfactionController {
     @ApiResponse(code = 403, message = "L'accès à la ressource que vous tentiez d'atteindre est interdit"),
     @ApiResponse(code = 404, message = "La ressource que vous tentiez d'atteindre est introuvable.") })
     @PostMapping("/formulairesSatisfaction")
-    public ResponseEntity<FormulaireSatisfactionDTO> saveFormulaire(@RequestBody FormulaireSatisfactionDTO formulaire) {
-        FormulaireSatisfactionDTO formulairedDTO = formulaireSatisfactionService.saveFormulaire(formulaire);
+    public ResponseEntity<FormulaireSatisfactionDTO> saveFormulaire(@RequestBody FormulaireSatisfactionRequest request) {
+        FormulaireSatisfactionDTO formulairedDTO = formulaireSatisfactionService.saveFormulaire(request.getFormulaire(), request.getReponses());
         return ResponseEntity.status(HttpStatus.CREATED).body(formulairedDTO);
     }
 

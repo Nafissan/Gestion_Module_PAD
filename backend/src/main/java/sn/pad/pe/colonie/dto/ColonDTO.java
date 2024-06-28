@@ -2,6 +2,7 @@ package sn.pad.pe.colonie.dto;
 
 import java.util.Date;
 
+import sn.pad.pe.colonie.bo.DossierColonie;
 import sn.pad.pe.colonie.bo.GroupeSanguin;
 import sn.pad.pe.colonie.bo.Sexe;
 
@@ -28,7 +29,7 @@ public class ColonDTO {
     private String prenomAgent;
     private String ficheSocial; // Base64 representation
     private String document; // Base64 representation
-
+    private DossierColonie codeDossier;
     private byte[] ficheSocialBytes; // byte array for internal use
     private byte[] documentBytes; 
     public String getFicheSocial() {
@@ -145,5 +146,13 @@ public class ColonDTO {
 
     public void setDocumentBytes(byte[] documentBytes) {
         this.documentBytes = documentBytes;
+    }
+
+    public DossierColonie getCodeDossier() {
+        return codeDossier;
+    }
+
+    public void setCodeDossier(DossierColonie codeDossier) {
+        this.codeDossier = codeDossier;
     }
 }

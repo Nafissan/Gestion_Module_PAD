@@ -31,16 +31,16 @@ export class ColonService {
       })
       .pipe(catchError(this.errorHandler));
   }
-  errorHandler(error) {
+  private errorHandler(error: any) {
     let errorMessage = '';
     if (error.error instanceof ErrorEvent) {
-      // Get client-side error
+      // Erreur côté client
       errorMessage = error.error.message;
     } else {
-      // Get server-side error
-      errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
+      // Erreur côté serveur
+      errorMessage = `Code d'erreur: ${error.status}\nMessage: ${error.message}`;
     }
-    console.log(errorMessage);
+    console.error(errorMessage);
     return throwError(errorMessage);
   }
 }

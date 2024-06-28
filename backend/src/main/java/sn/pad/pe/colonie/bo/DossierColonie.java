@@ -20,6 +20,7 @@ import javax.persistence.TemporalType;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
@@ -59,11 +60,13 @@ public class DossierColonie implements Serializable {
 	@UpdateTimestamp
 	private Date updatedAt;
     @OneToOne(fetch = FetchType.LAZY,mappedBy = "codeDossier", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private FormulaireSatisfaction formulaireSatisfaction;
      @OneToOne(fetch = FetchType.LAZY,mappedBy = "codeDossierColonie", cascade = CascadeType.ALL, orphanRemoval = true)
+     @JsonManagedReference
     private RapportProspection rapportProspection;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "codeDossier", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    @JsonManagedReference
+    @JsonIgnore
     private List<Colon> colons = new ArrayList<Colon>(0);
 
     public Long getId() {

@@ -227,7 +227,7 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
         this.dossierColonieService.update(dossierColonie).subscribe(
           (response) => { 
           this.notificationService.success(NotificationUtil.fermetureDossier);
-            this.deleteAllParticipants();
+            //this.deleteAllParticipants();
             this.refreshDossierColonies(); // Actualise les données après la création
 
           },

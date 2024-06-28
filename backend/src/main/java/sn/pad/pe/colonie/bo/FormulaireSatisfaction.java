@@ -1,20 +1,20 @@
 package sn.pad.pe.colonie.bo;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.MapKeyJoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 public class FormulaireSatisfaction implements Serializable{
     private static final long serialVersionUID = 1L;
@@ -24,22 +24,19 @@ public class FormulaireSatisfaction implements Serializable{
     private Long id;
     @OneToOne    
     @JoinColumn(name = "CODE_DOSSIER_COLONIE", referencedColumnName = "id", nullable = false)
+    @JsonBackReference 
     private DossierColonie codeDossier;
 
     private Date dateCreation;
 
-    @ElementCollection
-    @CollectionTable(name = "reponses", joinColumns = @JoinColumn(name = "formulaire_id"))
-    @MapKeyJoinColumn(name = "question_id")
-    @Column(name = "reponse")
-    private Map<Question, String> reponses = new HashMap<>();
+    @OneToMany(mappedBy = "formulaire", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Reponse> reponses = new ArrayList<>();
 
     private String commentaire;
-    //agent qui cree le formulaire
     private String matricule;
     private String nom;
     private String prenom;
-    // Constructor, getters and setters
     public Long getId() {
         return id;
     }
@@ -60,18 +57,13 @@ public class FormulaireSatisfaction implements Serializable{
         this.dateCreation = dateCreation;
     }
 
-    public Map<Question, String> getReponses() {
+    public List<Reponse> getReponses() {
         return reponses;
     }
 
-    public void setReponses(Map<Question, String> reponses) {
+    public void setReponses(List<Reponse> reponses) {
         this.reponses = reponses;
     }
-
-    public void ajouterReponse(Question question, String reponse) {
-        this.reponses.put(question, reponse);
-    }
-
     public void setId(Long id) {
         this.id = id;
     }

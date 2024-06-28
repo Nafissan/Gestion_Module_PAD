@@ -961,7 +961,7 @@ export let menus = [
   },
   {
     id: 68,
-    name: "Suivi Satisfaction",
+    name: "Formulaire Satisfaction",
     routeOrFunction: "/colonie/satisfaction",
     // icon: "list",
     position: 5,
@@ -993,6 +993,22 @@ export let menus = [
 },
 {
   id: 70,
+  name: "Liste Colons",
+  routeOrFunction: "/colonie/colon",
+  // icon: "list",
+  position: 5,
+  privilege: "MENU_DOTATION",
+  parent: {
+    id: 65,
+    name: "Colonie",
+    routeOrFunction: "/colonie",
+    icon: "list",
+    position: 5,
+    privilege: "MENU_DOTATION"
+  },
+},
+{
+  id: 71,
   name: "Historique Colonie",
   routeOrFunction: "/colonie/historique-colonie",
   position: 5,
@@ -1007,7 +1023,7 @@ export let menus = [
   },
 },
 {
-  id: 71,
+  id: 72,
   name: "Tableau de bord Colonie",
   routeOrFunction: "/colonie/tableau-statistique",
   position: 5,

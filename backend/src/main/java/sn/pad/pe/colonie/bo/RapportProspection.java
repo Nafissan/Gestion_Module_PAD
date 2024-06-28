@@ -16,6 +16,8 @@ import javax.persistence.TemporalType;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 @Entity
 public class RapportProspection implements Serializable{
     private static final long serialVersionUID = 1L;
@@ -37,6 +39,7 @@ public class RapportProspection implements Serializable{
     private String etat;
     @OneToOne    
     @JoinColumn(name = "CODE_DOSSIER_COLONIE", referencedColumnName = "id" ,nullable = false)
+    @JsonBackReference
     private DossierColonie codeDossierColonie;
     //agent qui valide le rapport
     private String matriculeAgent;

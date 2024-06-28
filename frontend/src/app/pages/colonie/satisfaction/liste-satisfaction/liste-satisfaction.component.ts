@@ -18,11 +18,16 @@ import { DetailsSatisfactionComponent } from '../details-satisfaction/details-sa
 import { DossierColonieService } from '../../shared/service/dossier-colonie.service';
 import { EtatDossierColonie } from '../../shared/util/util';
 import { DossierColonie } from '../../shared/model/dossier-colonie.model';
+import { fadeInRightAnimation } from 'src/@fury/animations/fade-in-right.animation';
+import { fadeInUpAnimation } from 'src/@fury/animations/fade-in-up.animation';
+import { QuestionService } from '../../shared/service/question.service';
+import { Question } from '../../shared/model/question.model';
 
 @Component({
   selector: 'fury-liste-satisfaction',
   templateUrl: './liste-satisfaction.component.html',
   styleUrls: ['./liste-satisfaction.component.scss', "../../../../shared/util/bootstrap4.css"],
+  animations: [fadeInRightAnimation, fadeInUpAnimation]
 })
 export class ListeSatisfactionComponent implements OnInit {
   satisfactions: Satisfaction[] = [];
@@ -34,8 +39,9 @@ export class ListeSatisfactionComponent implements OnInit {
   selection = new SelectionModel<Satisfaction>(true, []);
   satisfactionSelected: Satisfaction;
   canAdd: boolean = false;
- dossierColonies: DossierColonie;
- filteredSatisfaction: Satisfaction[]=[];
+  dossierColonies: DossierColonie;
+  filteredSatisfaction: Satisfaction[] = [];
+  questions: Question[] = [];
   private paginator: MatPaginator;
   private sort: MatSort;
 
@@ -43,7 +49,7 @@ export class ListeSatisfactionComponent implements OnInit {
     this.sort = ms;
     this.setDataSourceAttributes();
   }
-  
+
   @ViewChild(MatPaginator) set matPaginator(mp: MatPaginator) {
     this.paginator = mp;
     this.setDataSourceAttributes();
@@ -52,12 +58,15 @@ export class ListeSatisfactionComponent implements OnInit {
   @Input()
   columns: ListColumn[] = [
     { name: "Checkbox", property: "checkbox", visible: true },
-    { name: "Code Dossier Colonie", property: "codeDossier", visible: true, isModelProperty: true, },
-     { name: "Date de creation", property: "dateCreation", visible: true, isModelProperty: true,},
-     { name: "Ajoute par", property: "traitePar", visible: true, },
-     { name: "Actions", property: "actions", visible: true },
-    ] as ListColumn[];
-  constructor(private satisfactionService: SatisfactionService,
+    { name: "Code Dossier Colonie", property: "codeDossier", visible: true, isModelProperty: true },
+    { name: "Date de creation", property: "dateCreation", visible: true, isModelProperty: true },
+    { name: "Ajoute par", property: "traitePar", visible: true },
+    { name: "Actions", property: "actions", visible: true }
+  ] as ListColumn[];
+
+  constructor(
+    private satisfactionService: SatisfactionService,
+    private questionService: QuestionService,
     private dialog: MatDialog,
     private authentificationService: AuthenticationService,
     private notificationService: NotificationService,
@@ -68,11 +77,12 @@ export class ListeSatisfactionComponent implements OnInit {
   ngOnInit(): void {
     this.getSatisfactions();
     this.checkCanAddSatisfaction();
+    this.getQuestions();
     this.dataSource = new MatTableDataSource();
     this.data$.pipe(filter((data) => !!data)).subscribe((satisfaction) => {
       this.satisfactions = satisfaction;
       this.dataSource.data = satisfaction;
-      console.log('satisfaction Colonies in ngOnInit:', this.satisfactions); 
+      console.log('satisfaction Colonies in ngOnInit:', this.satisfactions);
     });
   }
 
@@ -90,103 +100,126 @@ export class ListeSatisfactionComponent implements OnInit {
   get visibleColumns() {
     return this.columns.filter((column) => column.visible).map((column) => column.property);
   }
+
   checkCanAddSatisfaction() {
     this.dossierColonieService.getAll().subscribe((response) => {
       const dossiers = response.body;
       const dossierToUpdate = dossiers.find(
         (dossier) => dossier.etat === EtatDossierColonie.ouvert || dossier.etat === EtatDossierColonie.saisi
       );
+      console.log('dossierToUpdate:', dossierToUpdate);
+      console.log('this.satisfactions:', this.satisfactions);
+
       const existingSatisfaction = this.satisfactions.find(
         (rapport) => dossierToUpdate && rapport.codeDossier.id === dossierToUpdate.id
       );
+
+      console.log('existingSatisfaction:', existingSatisfaction);
+
       this.canAdd = !!dossierToUpdate && !existingSatisfaction;
     });
   }
 
   getSatisfactions() {
-      this.dossierColonieService.getAll().pipe(
-        map(response => response.body)
-      ).subscribe(dossiers => {
-        this.dossierColonies = dossiers;
-        const openOrSaisiDossiers = dossiers.filter(dossier => dossier.etat === EtatDossierColonie.ouvert || dossier.etat === EtatDossierColonie.saisi);        
-        this.satisfactionService.getAllSatisfactions().subscribe(response => {
-          this.satisfactions = response.body;
-          
-          this.filteredSatisfaction = this.satisfactions.filter(participant => 
-            openOrSaisiDossiers.some(dossier => dossier.id === participant.codeDossier.id)
-          );
-    
-          // Log the filtered participants for debugging
-          console.log("Filtered Participants: ", this.filteredSatisfaction);
-          
-        }, err => {
-          console.error('Error loading participant colonies:', err);
-        },()=>{
-          this.subject$.next(this.filteredSatisfaction);
-          this.showProgressBar = true;
-        });
+    this.dossierColonieService.getAll().pipe(
+      map(response => response.body)
+    ).subscribe(dossiers => {
+      this.dossierColonies = dossiers;
+      const openOrSaisiDossiers = dossiers.filter(dossier => dossier.etat === EtatDossierColonie.ouvert || dossier.etat === EtatDossierColonie.saisi);
+      this.satisfactionService.getAllSatisfactions().subscribe(response => {
+        this.satisfactions = response.body;
+
+        this.filteredSatisfaction = this.satisfactions.filter(participant =>
+          openOrSaisiDossiers.some(dossier => dossier.id === participant.codeDossier.id)
+        );
+
+        // Log the filtered participants for debugging
+        console.log("Filtered satisfaction: ", this.filteredSatisfaction);
+
+      }, err => {
+        console.error('Error loading participant colonies:', err);
+      }, () => {
+        this.subject$.next(this.filteredSatisfaction);
+        this.showProgressBar = true;
       });
-    }
-    
-    refresh(){
-      this.getSatisfactions();
-      this.checkCanAddSatisfaction();
-    }
+    });
+  }
+
+  getQuestions() {
+    this.questionService.getAllQuestions().subscribe(questions => {
+      this.questions = questions.body;
+    });
+  }
+
+  refresh() {
+    this.getSatisfactions();
+    this.checkCanAddSatisfaction();
+  }
+
   onFilterChange(value) {
     if (!this.dataSource) {
       return;
     }
     value = value.trim().toLowerCase();
     this.dataSource.filter = value;
-    this.dataSource.filterPredicate = (data: any, value) => { const dataStr =JSON.stringify(data).toLowerCase(); return dataStr.indexOf(value) != -1; }
+    this.dataSource.filterPredicate = (data: any, value) => {
+      const dataStr = JSON.stringify(data).toLowerCase();
+      return dataStr.indexOf(value) != -1;
+    }
   }
+
   isAllSelected() {
     const numSelected = this.selection.selected.length;
     const numRows = this.dataSource.data.length;
     return numSelected === numRows;
   }
+
   masterToggle() {
     this.isAllSelected() ?
-        this.selection.clear() :
-        this.dataSource.data.forEach(row => this.selection.select(row));
+      this.selection.clear() :
+      this.dataSource.data.forEach(row => this.selection.select(row));
   }
+
   checkboxLabel(row?: Satisfaction): string {
     if (!row) {
       return `${this.isAllSelected() ? 'select' : 'deselect'} all`;
     }
     return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.id + 1}`;
   }
-  createSatisfaction(){
+
+  createSatisfaction() {
     this.dialog
-    .open(AddOrUpdateSatisfactionComponent)
-    .afterClosed().subscribe((satisfaction: any) => {
-  if(satisfaction) {
-    this.satisfactions.unshift(satisfaction);
-    this.subject$.next(this.satisfactions);
-    this.refresh();
-  } 
-  });
+      .open(AddOrUpdateSatisfactionComponent)
+      .afterClosed().subscribe((satisfaction: any) => {
+        if (satisfaction) {
+          this.satisfactions.unshift(satisfaction);
+          this.subject$.next(this.satisfactions);
+          this.refresh();
+        }
+      });
   }
-  updateStaisfaction(satisfaction: Satisfaction){
+
+  updateSatisfaction(satisfaction: Satisfaction) {
     this.dialog
-    .open(AddOrUpdateSatisfactionComponent, {
-      data: satisfaction,
-    })
-    .afterClosed()
-    .subscribe((satisfaction)=> {
-      this.getSatisfactions();
-      if(satisfaction){
-        const index = this.satisfactions.findIndex(
-          (existingsatisfaction) =>
-            existingsatisfaction.id === satisfaction.id
-        );
-        this.satisfactions[index] = new Satisfaction(satisfaction);
-        this.subject$.next(this.satisfactions);
-        console.log("update"+this.satisfactions);
-        this.refresh();
-      }
-    })
+      .open(AddOrUpdateSatisfactionComponent, {
+        data: satisfaction,
+      })
+      .afterClosed()
+      .subscribe((satisfaction) => {
+        this.getSatisfactions();
+        if (satisfaction) {
+          const index = this.satisfactions.findIndex(
+            (existingsatisfaction) =>
+              existingsatisfaction.id === satisfaction.id
+          );
+          this.satisfactions[index] = new Satisfaction(satisfaction);
+          this.subject$.next(this.satisfactions);
+          console.log("update" + this.satisfactions);
+          this.refresh();
+        }
+      })
   }
+
   deleteSatisfaction(satisfaction: Satisfaction) {
     console.log(satisfaction);
     this.dialogConfirmationService.confirmationDialog().subscribe(action => {
@@ -197,32 +230,34 @@ export class ListeSatisfactionComponent implements OnInit {
               (existingsatisfaction) => existingsatisfaction.id === satisfaction.id
             ),
             1
-          );          
+          );
           this.notificationService.success(NotificationUtil.suppression)
           this.subject$.next(this.satisfactions);
           this.refresh();
         }
-        ,err => {
-          this.notificationService.warn(NotificationUtil.echec);
-        });
-      }
-    })
-  }  
-  detailsSatisfaction(satisfaction: Satisfaction){
-    console.log(satisfaction);
-    this.dialog
-    .open(DetailsSatisfactionComponent, {data : satisfaction})
-    .afterClosed()
-    .subscribe((satisfaction)=> {
-      if(satisfaction){
-        const index= this.satisfactions.findIndex(
-          (existing) => existing.id === satisfaction.id
-        );
-        this.satisfactions[index] = new Satisfaction(satisfaction);
-        this.subject$.next(this.satisfactions);
+          , err => {
+            this.notificationService.warn(NotificationUtil.echec);
+          });
       }
     })
   }
+
+  detailsSatisfaction(satisfaction: Satisfaction) {
+    console.log(satisfaction);
+    this.dialog
+      .open(DetailsSatisfactionComponent, { data: satisfaction })
+      .afterClosed()
+      .subscribe((satisfaction) => {
+        if (satisfaction) {
+          const index = this.satisfactions.findIndex(
+            (existing) => existing.id === satisfaction.id
+          );
+          this.satisfactions[index] = new Satisfaction(satisfaction);
+          this.subject$.next(this.satisfactions);
+        }
+      })
+  }
+
   hasAnyRole(roles: string[]) {
     return this.authentificationService.hasAnyRole(roles);
   }

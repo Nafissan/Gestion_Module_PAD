@@ -1,22 +1,22 @@
 package sn.pad.pe.colonie.services.impl;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import sn.pad.pe.colonie.bo.FormulaireSatisfaction;
-import sn.pad.pe.colonie.bo.Question;
+import sn.pad.pe.colonie.bo.Reponse;
 import sn.pad.pe.colonie.dto.FormulaireSatisfactionDTO;
 import sn.pad.pe.colonie.repositories.FormulaireSatisfactionRepository;
-import sn.pad.pe.colonie.repositories.QuestionRepository;
 import sn.pad.pe.colonie.services.FormulaireSatisfactionService;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import sn.pad.pe.colonie.services.QuestionService;
+import sn.pad.pe.colonie.services.ReponseService;
 
 @Service
 public class FormulaireSatisfactionServiceImpl implements FormulaireSatisfactionService {
@@ -24,34 +24,24 @@ public class FormulaireSatisfactionServiceImpl implements FormulaireSatisfaction
     @Autowired
     private FormulaireSatisfactionRepository formulaireSatisfactionRepository;
 
-   @Autowired
-    private QuestionRepository questionRepository;
 
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private ReponseService reponseService;
 
+    @Autowired
+    private QuestionService questionService;
 
     @Override
     public List<FormulaireSatisfactionDTO> getAllFormulaires() {
         List<FormulaireSatisfaction> formulaires = formulaireSatisfactionRepository.findAll();
         return formulaires.stream()
-                .map(this::convertToDto)
+                .map(formulaire -> modelMapper.map(formulaire, FormulaireSatisfactionDTO.class))
                 .collect(Collectors.toList());
     }
+
     
-    private FormulaireSatisfactionDTO convertToDto(FormulaireSatisfaction formulaire) {
-        FormulaireSatisfactionDTO dto = modelMapper.map(formulaire, FormulaireSatisfactionDTO.class);
-        
-        // Créer une nouvelle Map compatible avec FormulaireSatisfactionDTO
-        Map<Question, String> reponsesDto = new HashMap<>();
-        formulaire.getReponses().forEach((question, reponse) -> {
-            reponsesDto.put(question, reponse);
-        });
-        
-        dto.setReponses(reponsesDto);
-        
-        return dto;
-    }
     
     @Override
     @Transactional
@@ -59,38 +49,44 @@ public class FormulaireSatisfactionServiceImpl implements FormulaireSatisfaction
         Optional<FormulaireSatisfaction> formulaireOptional = formulaireSatisfactionRepository.findById(formulaireDTO.getId());
         
         if (formulaireOptional.isPresent()) {
-            System.out.print(formulaireOptional.get());
-            FormulaireSatisfaction formulaire = formulaireOptional.get();            
-            formulaire.getReponses().clear();            
+            FormulaireSatisfaction formulaire = formulaireOptional.get();
+            reponseService.deleteReponsesByFormulaireId(formulaire.getId());
             formulaireSatisfactionRepository.delete(formulaire);
-            
             return true;
         }
         
         return false;
     }
     
-
-    @Override
+   @Override
     @Transactional
-    public FormulaireSatisfactionDTO saveFormulaire(FormulaireSatisfactionDTO formulaireDTO) {
+    public FormulaireSatisfactionDTO saveFormulaire(FormulaireSatisfactionDTO formulaireDTO, Map<Long, String> reponsesMap) {
         FormulaireSatisfaction formulaire = modelMapper.map(formulaireDTO, FormulaireSatisfaction.class);
-    
-        Map<Question, String> reponses = new HashMap<>();
-        for (Map.Entry<Question, String> entry : formulaire.getReponses().entrySet()) {
-            Question question = entry.getKey();
-            question = questionRepository.findById(question.getId()).orElse(null); // Récupération de la question existante
-            
-            reponses.put(question, entry.getValue());
-        }
-        formulaire.setReponses(reponses);
-    
-        // Sauvegarde du formulaire de satisfaction avec les réponses associées
+
+        // Sauvegarder le formulaire
         FormulaireSatisfaction savedFormulaire = formulaireSatisfactionRepository.save(formulaire);
-    
-        // Mapping et retour du DTO sauvegardé
+
+        // Supprimer les réponses existantes
+        reponseService.deleteReponsesByFormulaireId(savedFormulaire.getId());
+
+        // Ajouter les nouvelles réponses
+        List<Reponse> reponses = reponsesMap.entrySet().stream()
+                .map(entry -> {
+                    Reponse reponse = new Reponse();
+                    reponse.setFormulaire(savedFormulaire);
+                    reponse.setQuestion(questionService.getQuestion(entry.getKey()));
+                    reponse.setReponse(entry.getValue());
+                    return reponse;
+                }).collect(Collectors.toList());
+
+        reponseService.saveReponses(reponses);
+
         return modelMapper.map(savedFormulaire, FormulaireSatisfactionDTO.class);
     }
+    
+    
+    
+    
     
 
 

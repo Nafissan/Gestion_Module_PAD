@@ -3,6 +3,7 @@ package sn.pad.pe.colonie.services.impl;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import sn.pad.pe.colonie.bo.ParticipantColonie;
 import sn.pad.pe.colonie.dto.ParticipantColonieDTO;
@@ -85,9 +86,17 @@ public List<ParticipantColonieDTO> getAllParticipants() {
         return false;
     }
     @Override
+    @Transactional
     public void deleteAllParticipants() {
-        participantColonieRepository.deleteAll();
+        try {
+            participantColonieRepository.deleteAll();
+            System.out.println("Tous les participants ont été supprimés avec succès.");
+        } catch (Exception e) {
+            System.err.println("Erreur lors de la suppression de tous les participants : " + e.getMessage());
+            throw e; // Assurez-vous que les exceptions sont propagées si nécessaire
+        }
     }
+    
 
     @Override
     public boolean  updateParticipant( ParticipantColonieDTO updatedParticipant) {

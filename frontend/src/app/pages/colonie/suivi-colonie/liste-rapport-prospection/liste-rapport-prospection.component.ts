@@ -44,7 +44,7 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
   username: string;
   compte: Compte;  
   agent: Agent;
-
+  canAdd: boolean=false;
   private paginator: MatPaginator;
   private sort: MatSort;
   @ViewChild(MatSort) set matSort(ms: MatSort) {
@@ -64,7 +64,7 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
   @Input()
   columns: ListColumn[] = [
     { name: "Checkbox", property: "checkbox", visible: false },
-    { name: "Code Dossier", property: "codeDossierColonie.code", visible: true, isModelProperty: true },
+    { name: "Code Dossier", property: "codeDossierColonie", visible: true, isModelProperty: true },
     { name: "Date de création", property: "dateCreation", visible: true, isModelProperty: true },
     { name: "Date de validation/rejet", property: "dateValidation", visible: false, isModelProperty: true },
     { name: "État", property: "etat", visible: true, isModelProperty: true },
@@ -88,9 +88,7 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
   ) { }
 
   ngOnInit() {
-    this.canAddRapportProspection();
     this.username = this.authService.getUsername();
-
     this.compteService.getByUsername(this.username).subscribe((response) => {
       this.compte = response.body;
       this.agent = this.compte.agent;
@@ -103,20 +101,22 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
       console.log('Participants Colonies in ngOnInit:', this.rapports); // Debugging output
 
     });
+    this.canAddRapportProspection();
   }
 
   ngAfterViewInit() {
-    this.setDataSourceAttributes();
   }
-  canAddRapportProspection(): boolean {
-     this.dossierColonieService.getAll().pipe(map(response => {
+  canAddRapportProspection() {
+     this.dossierColonieService.getAll().subscribe((response) => {
       const dossiers = response.body;
       const dossierToUpdate = dossiers.find(dossier => dossier.etat === EtatDossierColonie.ouvert || dossier.etat === EtatDossierColonie.saisi
       );
-      const existingReport = this.rapports.find(rapport => dossierToUpdate && rapport.codeDossierColonie.id === dossierToUpdate.id);
-      return !!dossierToUpdate && !existingReport;
-    }));
-    return false;
+      console.log(dossierToUpdate);
+      console.log(this.rapports);
+      const existingReport = this.rapports.find((rapport) => dossierToUpdate && rapport.codeDossierColonie.id === dossierToUpdate.id);
+      console.log(existingReport);
+      this.canAdd=!!dossierToUpdate && !existingReport;
+    });
   }
 
   get visibleColumns() {
@@ -134,7 +134,10 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
       return dataStr.indexOf(value) != -1;
     };
   }
-
+  refresh(){
+    this.getRapportProspections();
+    this.canAddRapportProspection();
+  }
   getRapportProspections() {
     this.rapportService.getAllRapportsProspection().subscribe(
       (response) => {
@@ -143,7 +146,6 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
             rapport.codeDossierColonie.etat === EtatDossierColonie.ouvert || rapport.codeDossierColonie.etat === EtatDossierColonie.saisi
         );
         this.currentRapport = this.rapports.find(e => e.etat === 'A VALIDER');
-        console.log(this.rapports);
       },
       (err) => {        
          console.error('Error loading rapport prospection colonies:', err); 
@@ -163,6 +165,7 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
         if (rapport) {
           this.rapports.unshift(rapport);
           this.subject$.next(this.rapports);
+          this.refresh();
         }
       });
   }
@@ -178,6 +181,7 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
           );
           this.rapports[index] = new RapportProspection(rapport);
           this.subject$.next(this.rapports);
+          this.refresh();
         }
       });
   }
@@ -195,6 +199,7 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
             );
             this.notificationService.success(NotificationUtil.suppression);
             this.subject$.next(this.rapports);
+            this.refresh();
           },
           err => {
             this.notificationService.warn(NotificationUtil.echec);

@@ -1,12 +1,12 @@
 <fury-page-layout mode="card">
     <fury-page-layout-header>
-      <fury-breadcrumbs [@fadeInRight] [crumbs]="['Prospection Reports']" current="Liste des Rapports de Prospection"></fury-breadcrumbs>
+      <fury-breadcrumbs [@fadeInRight] [crumbs]="['Prospection Reports']" current="Suivi rapport prospection"></fury-breadcrumbs>
     </fury-page-layout-header>
   
     <fury-page-layout-content [@fadeInUp]>
       <fury-list *ngIf="rapports.length !== 0 && showProgressBar === true" name="Prospection Reports" [columns]="columns" (filterChange)="onFilterChange($event)">
         <div class="actions">
-          <button class="create" (click)="createRapportProspection()" [disabled]="canAddRapportProspection()" type="button" mat-mini-fab color="primary">
+          <button class="create" (click)="createRapportProspection()" [disabled]="!canAdd" type="button" mat-mini-fab color="primary">
             <mat-icon>add</mat-icon>
           </button>
         </div>
@@ -31,7 +31,7 @@
                 <p *ngIf="column.name === 'Ajoute par'">
                   {{ (row.matricule + ' | ' + row.prenom + ' ' + row.nom) | titlecase }}
                 </p>
-                <p *ngIf="column.name === 'Etat'">
+                <p *ngIf="column.name === 'État'">
                     <span *ngIf="row?.etat === 'A VALIDER' " class="badge badge-primary">{{ 'A Valider'}}
                     </span>
                     <span *ngIf="row?.etat === 'VALIDER' " class="badge badge-success">{{ 'Validée' }}
@@ -39,14 +39,16 @@
                     <span *ngIf="row?.etat === 'REJETER'" class="badge badge-danger">{{ 'rejetée' }}
                     </span>
                 </p>
-                <p *ngIf="column.property == 'rapport' && row[column.property]" >Disponible</p>
+                <p *ngIf="column.property === 'rapportProspection' && row[column.property]" >Disponible</p>
+                <p *ngIf="column.property === 'codeDossierColonie'" > {{ row[column.property].code }}</p>
                 <p *ngIf="column.name === 'Valide/Rejeter par'">
                   {{ (row.matriculeAgent + ' | ' + row.prenomAgent + ' ' + row.nomAgent) | titlecase }}
                 </p>
                 <p *ngIf="column.property === 'dateValidation'">
+
                   {{ row[column.property] | date: 'dd-MM-yyyy' }}
                 </p>
-                <p *ngIf="column.property !== 'dateCreation' && column.property !== 'dateValidation' && column.name !== 'Valide/Rejeter par' && column.name !== 'Ajoute par' && column.name !== 'Etat' && column.property !== 'rapport'">
+                <p *ngIf="column.property !== 'dateCreation' && column.property !== 'codeDossierColonie' &&column.property !== 'dateValidation' && column.name !== 'Valide/Rejeter par' && column.name !== 'Ajoute par' && column.name !== 'État' && column.property !== 'rapportProspection'">
                   {{ row[column.property] }}
                 </p>
               </td>
@@ -100,7 +102,7 @@
         </div>
         <div class="card-body">
           <h5 class="card-title">PAS DE RAPPORTS DISPONIBLES</h5>
-          <button mat-mini-fab color="primary" (click)="createRapportProspection()" [disabled]="canAddRapportProspection()">
+          <button mat-mini-fab color="primary" (click)="createRapportProspection()" [disabled]="!canAdd">
             <mat-icon>add</mat-icon>
           </button>
         </div>

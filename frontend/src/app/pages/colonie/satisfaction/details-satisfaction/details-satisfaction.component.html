@@ -17,7 +17,7 @@
         </mat-panel-title>
       </mat-expansion-panel-header>
       <div *ngFor="let question of questions">
-        <p>{{ question.texte }}: {{ satisfaction.reponses[question.id] ? satisfaction.reponses[question.id] : 'Non' }}</p>
+        <p>{{ question.texte }}: {{ findReponseForQuestion(question.id) }}</p>
       </div>
     </mat-expansion-panel>
     <mat-expansion-panel>

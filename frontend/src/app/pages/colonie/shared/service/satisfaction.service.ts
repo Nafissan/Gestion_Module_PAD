@@ -24,14 +24,22 @@ export class SatisfactionService {
   }
 
   addSatisfaction(satisfaction: Satisfaction): Observable<HttpResponse<Satisfaction>> {
+    const requestBody = {
+      formulaire: satisfaction,
+      reponses: satisfaction.reponses,
+    };
     return this.httpClient
-      .post<Satisfaction>(this.url, satisfaction, { observe: 'response', headers: this.httpOptions.headers })
+      .post<Satisfaction>(this.url, requestBody, { observe: 'response', headers: this.httpOptions.headers })
       .pipe(catchError(this.errorHandler));
   }
 
   updateSatisfaction(satisfaction: Satisfaction): Observable<HttpResponse<Satisfaction>> {
+    const requestBody = {
+      formulaire: satisfaction,
+      reponses: satisfaction.reponses,
+    };
     return this.httpClient
-      .put<Satisfaction>(`${this.url}/${satisfaction.id}`, satisfaction, { observe: 'response', headers: this.httpOptions.headers })
+      .put<Satisfaction>(`${this.url}/${satisfaction.id}`, requestBody, { observe: 'response', headers: this.httpOptions.headers })
       .pipe(catchError(this.errorHandler));
   }
 

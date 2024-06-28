@@ -1,6 +1,6 @@
 <fury-page-layout mode="card">
     <fury-page-layout-header>
-      <fury-breadcrumbs [@fadeInRight] [crumbs]="['gestion-colonie']" current="dossier-colonie"></fury-breadcrumbs>
+      <fury-breadcrumbs [@fadeInRight] [crumbs]="['gestion-colonie']" current="Historique colonie"></fury-breadcrumbs>
     </fury-page-layout-header>
     <div class="example-container">
       <mat-form-field  appearance="fill">
@@ -31,7 +31,7 @@
   
           <!-- Dynamic Columns -->
           <ng-container *ngFor="let column of columns">
-            <ng-container *ngIf="column.isModelProperty" [matColumnDef]="column.property">
+            <ng-container *ngIf="column.isModelProperty || column.property==='ajoutePar'" [matColumnDef]="column.property">
               <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ column.name }} </th>
               <td *matCellDef="let row" mat-cell>
                 <p *ngIf="column.property === 'etat' && row[column.property] === saisi">
@@ -46,22 +46,22 @@
                 <p *ngIf="column.property === 'ajoutePar'">
                   {{ (row.matricule + ' | ' + row.prenom + ' ' + row.nom + ' - ' + row.fonction) | titlecase }}
                 </p>
-                <p *ngIf="column.property === 'noteMinistere' && row.noteMinistere" (click)="loadFile(row.noteMinistere)">
+                <p *ngIf="column.property === 'noteMinistere' " >
                   <span> Disponible </span>
                 </p>
-                <p *ngIf="column.property === 'demandeProspection' && row.demandeProspection" (click)="loadFile(row.demandeProspection)">
+                <p *ngIf="column.property === 'demandeProspection' " >
                   <span>Disponible</span>
                 </p>
-                <p *ngIf="column.property === 'noteInformation' && row.noteInformation" (click)="loadFile(row.noteInformation)">
+                <p *ngIf="column.property === 'noteInformation' " >
                   <span>Disponible</span>
                 </p>               
-                <p *ngIf="column.property === 'noteInstruction' && row.noteInstruction" (click)="loadFile(row.noteInstruction)">
+                <p *ngIf="column.property === 'noteInstruction' " >
                   <span>Disponible</span>
                 </p>
-                <p *ngIf="column.property === 'rapportProspection' && row.rapportProspection" (click)="loadFile(row.rapportProspection)">
+                <p *ngIf="column.property === 'rapportProspection' " >
                   <span>Disponible</span>
                 </p>
-                <p *ngIf="column.property === 'rapportMission' && row.rapportMission" (click)="loadFile(row.rapportMission)">
+                <p *ngIf="column.property === 'rapportMission'" >
                   <span>Disponible</span>
                 </p>
                 <p *ngIf="column.property !== 'etat' && column.property !== 'rapportMission' && column.property !== 'rapportProspection' && column.property !== 'noteInstruction' && column.property !== 'noteInformation' && column.property !== 'demandeProspection' && column.property !== 'noteMinistere'">

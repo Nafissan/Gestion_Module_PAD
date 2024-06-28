@@ -1,23 +1,89 @@
 <fury-page [fxLayoutGap]="gap" class="dashboard" fxLayout="column">
-    <mat-card>
-        <mat-card-header>
-          <mat-card-title>Nombre de colons par année</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <mat-tab-group>
-            <mat-tab label="Graphique">
-              <div style="height: 300px;">
-    <div>
-        <canvas baseChart
-                [datasets]="barChartData"
-                [labels]="barChartLabels"
-                [options]="barChartOptions"
-                [legend]="barChartLegend"
-                [chartType]="barChartType">
-        </canvas>
+  <div fxFlex="noshrink" fxLayout="column" [fxLayoutGap]="gap" fxLayout.gt-lg="row">
+    <div fxLayout="column" [fxLayoutGap]="gap" [fxFlex]="col(3)" fxLayout.gt-sm="row">
+      <div fxFlex="auto" [fxFlex.gt-sm]="col(4)">
+        <div class="card-body p-3 mb-2 bg-success text-white">
+          <h5 class="card-title card-text text-center">Total Colons</h5>
+          <h1 class="card-text text-center">{{totalColons}}</h1>
+        </div>
+      </div>
+
+      <div fxFlex="auto" [fxFlex.gt-sm]="col(4)">
+        <div class="card-body p-3 mb-2 bg-primary text-white">
+          <h5 class="card-title card-text text-center">Colons Féminin</h5>
+          <h1 class="card-text text-center">{{femaleColons}}</h1>
+        </div>
+      </div>
+
+      <div fxFlex="auto" [fxFlex.gt-sm]="col(4)">
+        <div class="card-body p-3 mb-2 bg-danger text-white">
+          <h5 class="card-title card-text text-center">Colons Masculin</h5>
+          <h1 class="card-text text-center">{{maleColons}}</h1>
+        </div>
       </div>
     </div>
-</mat-tab>
-</mat-tab-group>
-</mat-card-content>
-</mat-card>
+  </div>
+
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Statistique colonie</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-tab-group>
+        <mat-tab label="Graphique">
+          <div style="height: 300px;">
+            <canvas baseChart
+              [datasets]="barChartData"
+              [labels]="barChartLabels"
+              [options]="barChartOptions"
+              [legend]="barChartLegend"
+              [chartType]="barChartType"  
+              [colors]="pieChartColorsSex">
+
+            </canvas>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </mat-card-content>
+  </mat-card>
+
+  <div fxLayout="row" fxLayoutGap="gap">
+    <mat-card fxFlex="50">
+      <mat-card-header>
+        <mat-card-title>Répartition des sexes</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div style="height: 300px;">
+          <canvas baseChart
+            [data]="pieChartDataSex"
+            [labels]="pieChartLabelsSex"
+            [options]="pieChartOptions"
+            [legend]="pieChartLegend"
+            [chartType]="pieChartType"  
+            [colors]="pieChartColorsSex">
+
+          </canvas>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card fxFlex="50">
+      <mat-card-header>
+        <mat-card-title>Répartition par tranches d'âge</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div style="height: 300px;">
+          <canvas baseChart
+            [data]="pieChartDataAge"
+            [labels]="pieChartLabelsAge"
+            [options]="pieChartOptions"
+            [legend]="pieChartLegend"
+            [chartType]="pieChartType"            
+            [colors]="pieChartColorsAge">
+
+          </canvas>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</fury-page>

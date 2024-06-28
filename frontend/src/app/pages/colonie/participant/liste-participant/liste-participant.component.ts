@@ -274,15 +274,20 @@ export class ListeParticipantComponent implements OnInit {
         matriculeAgent: participant.matriculeAgent,
         nomAgent: participant.nomAgent,
         prenomAgent: participant.prenomAgent,
-        id: 0
+        id: 0,
+        codeDossier: participant.codeDossier
       };
   
-      this.colonService.create(colon).subscribe((response) => {
-        this.notificationService.success('Colon créé avec succès'); 
-        this.refreshListe();      
-      }, () => {
-        this.notificationService.warn('Échec de la création du colon');
+      this.colonService.create(colon).subscribe((response: any) => {
+        console.log('Response from server:', response);
+        if (response) {
+          this.notificationService.success('Colon créé avec succès');
+          this.refreshListe();
+        }
+      }, err => {
+        console.log('Error:', err);
       });
+      
   
     }, () => {
       this.notificationService.warn('Échec de la validation du participant');
@@ -323,7 +328,6 @@ onCellClick(property: string, row: Participant) {
     this.afficherDocument = true;
     this.fileType = 'document';   
   }
-  console.log(row);
 }
  
 }

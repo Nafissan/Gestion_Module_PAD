@@ -21,11 +21,15 @@ import { Colon } from '../../shared/model/colon.model';
 import { FormControl } from '@angular/forms';
 import moment from 'moment';
 import { MatDatepicker } from '@angular/material/datepicker';
+import { fadeInRightAnimation } from 'src/@fury/animations/fade-in-right.animation';
+import { fadeInUpAnimation } from 'src/@fury/animations/fade-in-up.animation';
 
 @Component({
   selector: 'fury-liste-historique-colonie',
   templateUrl: './liste-historique-colonie.component.html',
-  styleUrls: ['./liste-historique-colonie.component.scss']
+  styleUrls: ['./liste-historique-colonie.component.scss', "../../../../shared/util/bootstrap4.css"],
+  animations: [fadeInRightAnimation, fadeInUpAnimation]
+
 })
 export class ListeHistoriqueColonieComponent implements OnInit {
   showProgressBar: boolean = false;
@@ -41,6 +45,7 @@ export class ListeHistoriqueColonieComponent implements OnInit {
   dataSource: MatTableDataSource<DossierColonie> | null;
   selectedDossierColonie: DossierColonie | null = null;
   selectedColons: Colon[] = [];
+  filteredDossierColonies: DossierColonie[]=[];
   fileToLoad: File | null = null;
   anneeSelected = "";
   dateV = new FormControl(moment());
@@ -76,7 +81,7 @@ export class ListeHistoriqueColonieComponent implements OnInit {
     { name: "Demande de Prospection", property: "demandeProspection", visible: false, isModelProperty: true },
     { name: "Note d'information", property: "noteInformation", visible: false, isModelProperty: true },
     { name: "Note d'instruction", property: "noteInstruction", visible: false, isModelProperty: true },
-    { name: "Rapport prospection", property: "rapportProspection", visible: false, isModelProperty: true },
+    { name: "Rapport prospection", property: "rapportProspection", visible: false, },
     { name: "Rapport de mission", property: "rapportMission", visible: false, isModelProperty: true },
 
     { name: "Date creation", property: "createAt", visible: false, isModelProperty: true },
@@ -144,16 +149,18 @@ export class ListeHistoriqueColonieComponent implements OnInit {
       (response) => {
         this.dossierColonies = response.body;
         console.log('Dossier Colonies:', this.dossierColonies); 
-        this.showProgressBar = true;
-        const filteredDossierColonies = this.dossierColonies.filter(dossier => 
+        this.filteredDossierColonies = this.dossierColonies.filter(dossier => 
           dossier.etat === EtatDossierColonie.fermer 
         );
-        this.subject$.next(filteredDossierColonies);
-        console.log('Filtered Dossier Colonies:', filteredDossierColonies); 
+        console.log('Filtered Dossier Colonies:', this.filteredDossierColonies); 
       },
       (err) => {
         console.error('Error loading dossier colonies:', err); 
         this.showProgressBar = false;
+      },()=>{
+        this.showProgressBar = true;
+        this.subject$.next(this.filteredDossierColonies);
+
       }
     );
   }

@@ -14,7 +14,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 
 @Entity
@@ -25,7 +26,7 @@ public class Colon implements Serializable{
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CODE_DOSSIER_COLONIE", referencedColumnName = "id" , nullable = false)
-    @JsonBackReference
+    @JsonIgnore
     private DossierColonie codeDossier;
     private String nomEnfant;
     private String prenomEnfant;

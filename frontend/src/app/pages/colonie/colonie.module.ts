@@ -7,6 +7,7 @@ import { SatisfactionModule } from './satisfaction/satisfaction.module';
 import { SuiviColonieModule } from './suivi-colonie/suivi-colonie.module';
 import { HistoriqueColonieModule } from './historique-colonie/historique-colonie.module';
 import { TableauStatistiqueModule } from './tableau-statistique/tableau-statistique.module';
+import { ColonModule } from './colon/colon.module';
 
 
 @NgModule({
@@ -20,7 +21,8 @@ import { TableauStatistiqueModule } from './tableau-statistique/tableau-statisti
     SatisfactionModule,
     SuiviColonieModule,
     HistoriqueColonieModule,
-    TableauStatistiqueModule
+    TableauStatistiqueModule,
+    ColonModule
   ]
 })
 export class ColonieModule { }

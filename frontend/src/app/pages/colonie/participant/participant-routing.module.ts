@@ -4,6 +4,7 @@ import { ListeParticipantComponent } from './liste-participant/liste-participant
 import { AuthGuard } from 'src/app/shared/services/authguard.service';
 import { AddOrUpdateParticipantComponent } from './add-or-update-participant/add-or-update-participant.component';
 import { ReadFileParticipantComponent } from './read-file-participant/read-file-participant.component';
+import { DetailsParticipantComponent } from './details-participant/details-participant.component';
 
 
 const routes: Routes = [
@@ -12,6 +13,9 @@ const routes: Routes = [
   },
   {
     path: 'liste-participant-colonie', component: ListeParticipantComponent, canActivate: [AuthGuard],
+  },
+  {
+    path: 'details-participant-colonie', component: DetailsParticipantComponent, canActivate: [AuthGuard],
   },
   {
     path: 'add-participant-colonie', component: AddOrUpdateParticipantComponent, canActivate: [AuthGuard],

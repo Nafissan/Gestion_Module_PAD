@@ -19,8 +19,8 @@ export class QuestionService {
   constructor(private httpClient: HttpClient) {}
 
   // Récupérer toutes les questions
-  getAllQuestions(): Observable<HttpResponse<Question[]>> {
-    return this.httpClient.get<Question[]>(this.url, { observe: 'response' })
+  getAllQuestions(): Observable<HttpResponse<any>> {
+    return this.httpClient.get<any>(this.url, { observe: 'response' })
       .pipe(catchError(this.errorHandler));
   }
 

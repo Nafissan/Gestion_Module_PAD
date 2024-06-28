@@ -32,6 +32,10 @@ const routes: Routes = [
     loadChildren: () => import('./tableau-statistique/tableau-statistique.module').then(m => m.TableauStatistiqueModule),
     pathMatch: 'full'
   },
+  {
+    path: 'colon',
+    loadChildren: () => import('./colon/colon.module').then(m => m.ColonModule),
+  },
 ];
 
 @NgModule({
