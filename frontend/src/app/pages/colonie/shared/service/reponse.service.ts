@@ -3,6 +3,7 @@ import { HttpHeaders, HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Satisfaction } from '../model/satisfaction.model'
+import { Reponse } from '../model/reponse.model';
 
 @Injectable({
     providedIn: 'root',
@@ -28,7 +29,15 @@ import { Satisfaction } from '../model/satisfaction.model'
             catchError(this.errorHandler));
       }
     
-    
+      addReponse(reponse: Reponse): Observable<HttpResponse<any>>{
+        return this.httpClient.post<any>(this.url, JSON.stringify(reponse),{observe : 'response', headers: this.httpOptions.headers})
+        .pipe(catchError(this.errorHandler));
+      }
+
+      updateReponse(reponse: Reponse): Observable<HttpResponse<any>>{
+        return this.httpClient.post<any>(this.url, JSON.stringify(reponse),{observe : 'response', headers: this.httpOptions.headers})
+        .pipe(catchError(this.errorHandler));
+      }
       // Gérer les erreurs HTTP
       private errorHandler(error: any) {
         let errorMessage = '';

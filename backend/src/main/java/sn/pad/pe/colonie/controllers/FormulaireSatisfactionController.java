@@ -17,7 +17,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import sn.pad.pe.colonie.dto.FormulaireSatisfactionDTO;
-import sn.pad.pe.colonie.dto.FormulaireSatisfactionRequest;
 import sn.pad.pe.colonie.services.FormulaireSatisfactionService;
 import sn.pad.pe.configurations.exception.Message;
 
@@ -48,8 +47,8 @@ public class FormulaireSatisfactionController {
     @ApiResponse(code = 403, message = "L'accès à la ressource que vous tentiez d'atteindre est interdit"),
     @ApiResponse(code = 404, message = "La ressource que vous tentiez d'atteindre est introuvable.") })
     @PostMapping("/formulairesSatisfaction")
-    public ResponseEntity<FormulaireSatisfactionDTO> saveFormulaire(@RequestBody FormulaireSatisfactionRequest request) {
-        FormulaireSatisfactionDTO formulairedDTO = formulaireSatisfactionService.saveFormulaire(request.getFormulaire(), request.getReponses());
+    public ResponseEntity<FormulaireSatisfactionDTO> saveFormulaire(@RequestBody FormulaireSatisfactionDTO request) {
+        FormulaireSatisfactionDTO formulairedDTO = formulaireSatisfactionService.saveFormulaire(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(formulairedDTO);
     }
 

@@ -10,7 +10,9 @@ import { DialogConfirmationService } from "src/app/shared/services/dialog-confir
 import { NotificationService } from 'src/app/shared/services/notification.service';
 import { DossierColonieService } from '../../shared/service/dossier-colonie.service';
 import { QuestionService } from '../../shared/service/question.service';
+import { ReponseService } from '../../shared/service/reponse.service';
 import { Question } from '../../shared/model/question.model';
+import { Reponse } from '../../shared/model/reponse.model';
 import { Agent } from 'src/app/shared/model/agent.model';
 import { EtatDossierColonie } from '../../shared/util/util';
 
@@ -36,7 +38,8 @@ export class AddOrUpdateSatisfactionComponent implements OnInit {
     private dialogConfirmationService: DialogConfirmationService,
     private notificationService: NotificationService,
     private questionService: QuestionService,
-    private dossierColonieService: DossierColonieService
+    private dossierColonieService: DossierColonieService,
+    private reponseService: ReponseService // Inject ReponseService
   ) {
     this.form = this.fb.group({
       questions: this.fb.array([]),
@@ -63,7 +66,7 @@ export class AddOrUpdateSatisfactionComponent implements OnInit {
       return this.fb.group({
         id: [question.id],
         texte: [question.texte],
-        reponse: [this.defaults ? this.defaults.reponses[question.id] : '']
+        reponse: [''] // Initialiser les réponses avec des valeurs vides
       });
     });
 
@@ -74,7 +77,26 @@ export class AddOrUpdateSatisfactionComponent implements OnInit {
         codeDossier: this.defaults.codeDossier.code,
         commentaire: this.defaults.commentaire,
       });
+
     }
+  }
+
+  loadExistingReponses(satisfactionId: Satisfaction): void {
+    this.reponseService.getAllReponses(satisfactionId).subscribe(
+      response => {
+        const reponses = response.body; // Assurez-vous que le service renvoie les réponses correctement
+        this.questionsArray.controls.forEach((group, index) => {
+          const questionId = group.get('id').value;
+          const reponse = reponses.find(r => r.question.id === questionId);
+          if (reponse) {
+            group.get('reponse').setValue(reponse.reponse);
+          }
+        });
+      },
+      error => {
+        console.error('Error fetching responses', error);
+      }
+    );
   }
 
   isCreateMode(): boolean {
@@ -101,27 +123,26 @@ export class AddOrUpdateSatisfactionComponent implements OnInit {
 
   save(): void {
     const formValue = this.form.value;
-    const reponses = formValue.questions.reduce((acc, curr) => {
-      acc[curr.id] = curr.reponse;
-      return acc;
-    }, {});
+    const reponses = formValue.questions.map((q) => ({
+      question: new Question({ id: q.id, texte: q.texte }), // Assurez-vous que les données nécessaires sont passées au constructeur
+      reponse: q.reponse
+    }));
 
     const satisfactionData: Satisfaction = {
       ...this.defaults,
-      reponses: reponses,
       codeDossier: this.defaults ? this.defaults.codeDossier : null,
       commentaire: this.form.get('commentaire').value,
       dateCreation: this.isCreateMode() ? new Date() : this.defaults.dateCreation,
     };
 
     if (this.isCreateMode()) {
-      this.addSatisfaction(satisfactionData);
+      this.addSatisfaction(satisfactionData, reponses);
     } else {
-      this.updateSatisfaction(satisfactionData);
+      this.updateSatisfaction(satisfactionData, reponses);
     }
   }
 
-  addSatisfaction(formData: Satisfaction) {
+  addSatisfaction(formData: Satisfaction, reponses: Reponse[]) {
     formData.nom = this.agentConnecte.nom;
     formData.prenom = this.agentConnecte.prenom;
     formData.matricule = this.agentConnecte.matricule;
@@ -130,14 +151,14 @@ export class AddOrUpdateSatisfactionComponent implements OnInit {
       const openOrSaisiDossier = dossiers.find(dossier => dossier.etat === EtatDossierColonie.ouvert || dossier.etat === EtatDossierColonie.saisi);
       if (openOrSaisiDossier) {
         formData.codeDossier = openOrSaisiDossier;
-        console.log(formData);
+        console.log("reponses : "+reponses);
         this.dialogConfirmationService.confirmationDialog().subscribe(action => {
           if (action === DialogUtil.confirmer) {
             this.satisfactionService.addSatisfaction(formData).subscribe((response) => {
               const newSatisfaction = response.body;
               if (newSatisfaction && newSatisfaction.id != null) {
                 this.notificationService.success(NotificationUtil.ajout);
-                this.dialogRef.close(formData);
+               // this.saveReponses(newSatisfaction, reponses); // Save responses after adding satisfaction
               } else {
                 this.notificationService.warn("Erreur dans l'ajout du formulaire");
                 this.dialogRef.close();
@@ -156,7 +177,7 @@ export class AddOrUpdateSatisfactionComponent implements OnInit {
     });
   }
 
-  updateSatisfaction(formData: Satisfaction) {
+  updateSatisfaction(formData: Satisfaction, reponses: Reponse[]) {
     formData.id = this.defaults.id;
     formData.matricule = this.agentConnecte.matricule;
     formData.nom = this.agentConnecte.nom;
@@ -166,13 +187,35 @@ export class AddOrUpdateSatisfactionComponent implements OnInit {
       if (action === DialogUtil.confirmer) {
         this.satisfactionService.updateSatisfaction(formData).subscribe(() => {
           this.notificationService.success(NotificationUtil.modification);
-          this.dialogRef.close(formData);
+          this.updateReponses(formData, reponses); 
         }, err => {
           this.notificationService.warn(NotificationUtil.echec);
         });
       } else {
         this.dialogRef.close();
       }
+    });
+  }
+
+  saveReponses(satisfaction: Satisfaction, reponses: Reponse[]) {
+    reponses.forEach((reponse) => {
+      reponse.formulaire = satisfaction;
+      this.reponseService.addReponse(reponse).subscribe(() => {
+        this.dialogRef.close(satisfaction);
+      }, err => {
+        this.notificationService.warn(NotificationUtil.echec);
+      });
+    });
+  }
+
+  updateReponses(satisfaction: Satisfaction, reponses: Reponse[]) {
+    reponses.forEach((reponse) => {
+      reponse.formulaire = satisfaction;
+      this.reponseService.updateReponse(reponse).subscribe(() => {
+        this.dialogRef.close(satisfaction);
+      }, err => {
+        this.notificationService.warn(NotificationUtil.echec);
+      });
     });
   }
 }

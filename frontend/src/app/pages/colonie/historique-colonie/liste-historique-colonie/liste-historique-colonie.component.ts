@@ -47,7 +47,7 @@ export class ListeHistoriqueColonieComponent implements OnInit {
   selectedColons: Colon[] = [];
   filteredDossierColonies: DossierColonie[]=[];
   fileToLoad: File | null = null;
-  anneeSelected = "";
+  anneeSelected: string = "";
   dateV = new FormControl(moment());
   @ViewChild(MatDatepicker) picker;
 
@@ -114,20 +114,12 @@ export class ListeHistoriqueColonieComponent implements OnInit {
   }
   yearSelected(params) {
     this.dateV.setValue(params);
-    this.anneeSelected = params.year();
+    this.anneeSelected = params.year().toString();
     this.picker.close();
-    this.getDossierColonieByAnnee(this.anneeSelected)
+    this.getDossierColonies();
   }
-  getDossierColonieByAnnee(anneeSelected: string) {
-    this.dossierColonieService.getByAnnee(anneeSelected).subscribe((response) =>{
-      this.dossierColonies = response.body;
-      this.showProgressBar = true;
-        const filteredDossierColonies = this.dossierColonies.sort((a,b) => 
-          (a.id > b.id ? -1 : 1) 
-        );
-        this.subject$.next(filteredDossierColonies);
-    })  
-}
+  
+  
   get visibleColumns() {
     return this.columns.filter((column) => column.visible).map((column) => column.property);
   }
@@ -149,9 +141,12 @@ export class ListeHistoriqueColonieComponent implements OnInit {
       (response) => {
         this.dossierColonies = response.body;
         console.log('Dossier Colonies:', this.dossierColonies); 
-        this.filteredDossierColonies = this.dossierColonies.filter(dossier => 
-          dossier.etat === EtatDossierColonie.fermer 
-        );
+        this.filteredDossierColonies = this.anneeSelected 
+          ? this.dossierColonies.filter(dossier => 
+              dossier.etat === EtatDossierColonie.fermer && 
+              new Date(dossier.createdAt).getFullYear() === parseInt(this.anneeSelected)
+            ) 
+          : this.dossierColonies.filter(dossier => dossier.etat === EtatDossierColonie.fermer);
         console.log('Filtered Dossier Colonies:', this.filteredDossierColonies); 
       },
       (err) => {
@@ -160,10 +155,10 @@ export class ListeHistoriqueColonieComponent implements OnInit {
       },()=>{
         this.showProgressBar = true;
         this.subject$.next(this.filteredDossierColonies);
-
       }
     );
   }
+  
   afficherListe(dossier: DossierColonie) {
     this.selectedDossierColonie = dossier;
   }

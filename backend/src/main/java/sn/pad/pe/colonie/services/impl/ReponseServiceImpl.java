@@ -20,8 +20,16 @@ public class ReponseServiceImpl implements ReponseService{
     private ReponseColonieRepository reponseRepository;
 
      @Override
-    public List<Reponse> saveReponses(List<Reponse> reponses) {
-        return reponseRepository.saveAll(reponses);
+     public List<ReponseDTO> saveReponses(List<ReponseDTO> reponseDTOs) {
+        List<Reponse> reponses = reponseDTOs.stream()
+                .map(reponseDTO -> mapper.map(reponseDTO, Reponse.class))
+                .collect(Collectors.toList());
+
+        List<Reponse> updatedReponses = reponseRepository.saveAll(reponses);
+
+        return updatedReponses.stream()
+                .map(reponse -> mapper.map(reponse, ReponseDTO.class))
+                .collect(Collectors.toList());
     }
     @Override
     public void deleteReponsesByFormulaireId(Long formulaireId) {
@@ -36,5 +44,16 @@ public class ReponseServiceImpl implements ReponseService{
                 )
                 .collect(Collectors.toList());
     }
+    @Override
+    public List<ReponseDTO> updateReponses(List<ReponseDTO> reponseDTOs) {
+        List<Reponse> reponses = reponseDTOs.stream()
+                .map(reponseDTO -> mapper.map(reponseDTO, Reponse.class))
+                .collect(Collectors.toList());
 
+        List<Reponse> updatedReponses = reponseRepository.saveAll(reponses);
+
+        return updatedReponses.stream()
+                .map(reponse -> mapper.map(reponse, ReponseDTO.class))
+                .collect(Collectors.toList());
+    }
 }

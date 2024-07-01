@@ -4,6 +4,6 @@ import{Satisfaction} from './satisfaction.model';
 export class Reponse{
     id: number;
     question:Question;
-    fornulaire:Satisfaction;
+    formulaire:Satisfaction;
     reponse: string;
 }

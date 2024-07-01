@@ -10,6 +10,7 @@ import { fadeInUpAnimation } from 'src/@fury/animations/fade-in-up.animation';
 import { ColonService } from '../../shared/service/colon.service';
 import { DossierColonie } from '../../shared/model/dossier-colonie.model';
 import { Colon } from '../../shared/model/colon.model';
+import { DateAdapter } from '@angular/material/core';
 
 @Component({
   selector: 'fury-dashboard-colonie',
@@ -19,10 +20,15 @@ import { Colon } from '../../shared/model/colon.model';
 })
 export class DashboardColonieComponent implements OnInit {
 
-  constructor(private dossierColonieService: DossierColonieService,
-    private colonService: ColonService) {
+  selectedYear: number | null = null;
+  startDate = new Date(this.selectedYear, 0, 1);
 
+  constructor(private dossierColonieService: DossierColonieService,
+              private colonService: ColonService,
+              private dateAdapter: DateAdapter<any>) {
+    this.dateAdapter.setLocale('fr'); // Adapter la locale si nécessaire
   }
+
   barChartOptions: any = {
     scaleShowVerticalLines: false,
     responsive: true
@@ -50,13 +56,13 @@ export class DashboardColonieComponent implements OnInit {
   maleColons: number = 0;
   pieChartColorsSex = [
     {
-      backgroundColor: ['#FFA500', '#0000FF'], // Orange et Bleu
+      backgroundColor: ['#FFA500', '#0000FF'],
     },
   ];
 
   pieChartColorsAge = [
     {
-      backgroundColor: ['#FFA500', '#0000FF', '#FF6384'], // Orange, Bleu et une autre couleur pour la variété
+      backgroundColor: ['#FFA500', '#0000FF', '#FF6384'],
     },
   ];
   private _gap = 16;
@@ -66,16 +72,23 @@ export class DashboardColonieComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadData();
+    this.loadData(this.selectedYear);
   }
 
-  loadData() {
+  onYearChange(event: any) {
+    const selectedDate = event.value;
+    this.selectedYear = selectedDate ? selectedDate.getFullYear() : null;
+    this.loadData(this.selectedYear);
+  }
+  
+
+  loadData(year: number | null) {
     this.dossierColonieService.getAll().subscribe(
       (response) => {
         let dossiersColonies = response.body;
-        const filteredDossierColonies = dossiersColonies.filter(dossier =>
-          dossier.etat === EtatDossierColonie.fermer
-        );
+        const filteredDossierColonies = year
+          ? dossiersColonies.filter(dossier => dossier.etat === EtatDossierColonie.fermer && new Date(dossier.createdAt).getFullYear() === year)
+          : dossiersColonies.filter(dossier => dossier.etat === EtatDossierColonie.fermer);
         this.loadColons(filteredDossierColonies);
       },
       (error) => {
@@ -83,6 +96,7 @@ export class DashboardColonieComponent implements OnInit {
       }
     );
   }
+  
 
   loadColons(dossiersColonies: any[]) {
     this.colonService.getAll().subscribe(
@@ -103,49 +117,47 @@ export class DashboardColonieComponent implements OnInit {
     let age7to12Count = 0;
     let age12to17Count = 0;
     let age17to20Count = 0;
-
+  
     dossiersColonies.forEach(dossier => {
       let year = 0;
       if(dossier.code === 'DCLN-PAD-2023')  { year = 2023;}else{
         year = new Date(dossier.createdAt).getFullYear();
-
       }
       const colonsInDossier = colons.filter(colon => colon.codeDossier.id === dossier.id);
-
+  
       maleCount += colonsInDossier.filter(colon => colon.sexe === 'masculin').length;
       femaleCount += colonsInDossier.filter(colon => colon.sexe === 'feminin').length;
-
+  
       age7to12Count += colonsInDossier.filter(colon => {
         const age = this.calculateAge(colon.dateNaissance);
-        return age >= 5 && age < 12;
+        return age >= 7 && age < 12;
       }).length;
-      console.log("Count"+age7to12Count);
-
+  
       age12to17Count += colonsInDossier.filter(colon => {
         const age = this.calculateAge(colon.dateNaissance);
         return age >= 12 && age < 17;
       }).length;
-
+  
       age17to20Count += colonsInDossier.filter(colon => {
         const age = this.calculateAge(colon.dateNaissance);
         return age >= 17 && age <= 20;
       }).length;
-
+  
       this.updateMap(colonCountsMap, year, colonsInDossier.length);
     });
     this.totalColons = maleCount + femaleCount;
     this.femaleColons = femaleCount;
     this.maleColons = maleCount;
     this.barChartLabels = Array.from(colonCountsMap.keys()).map(year => year.toString()).sort();
-
+  
     this.barChartData = [
       { data: Array.from(colonCountsMap.values()), label: 'Nombre de colons' }
     ];
-
+  
     this.pieChartDataSex = [maleCount, femaleCount];
     this.pieChartDataAge = [age7to12Count, age12to17Count, age17to20Count];
   }
-
+  
   updateMap(map: Map<number, number>, year: number, count: number) {
     if (map.has(year)) {
       map.set(year, map.get(year) + count);
@@ -162,7 +174,6 @@ export class DashboardColonieComponent implements OnInit {
     if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
       age--;
     }
-    console.log("age"+age);
     return age;
   }
 }

@@ -17,29 +17,21 @@ export class SatisfactionService {
 
   constructor(private httpClient: HttpClient) {}
 
-  getAllSatisfactions(): Observable<HttpResponse<Satisfaction[]>> {
+  getAllSatisfactions(): Observable<HttpResponse<any>> {
     return this.httpClient
-      .get<Satisfaction[]>(this.url, { observe: 'response' })
+      .get<any>(this.url, { observe: 'response' })
       .pipe(catchError(this.errorHandler));
   }
 
-  addSatisfaction(satisfaction: Satisfaction): Observable<HttpResponse<Satisfaction>> {
-    const requestBody = {
-      formulaire: satisfaction,
-      reponses: satisfaction.reponses,
-    };
+  addSatisfaction(satisfaction: Satisfaction): Observable<HttpResponse<any>> {
     return this.httpClient
-      .post<Satisfaction>(this.url, requestBody, { observe: 'response', headers: this.httpOptions.headers })
+      .post<any>(this.url, JSON.stringify(satisfaction), { observe: 'response', headers: this.httpOptions.headers })
       .pipe(catchError(this.errorHandler));
   }
 
-  updateSatisfaction(satisfaction: Satisfaction): Observable<HttpResponse<Satisfaction>> {
-    const requestBody = {
-      formulaire: satisfaction,
-      reponses: satisfaction.reponses,
-    };
+  updateSatisfaction(satisfaction: Satisfaction): Observable<HttpResponse<any>> {
     return this.httpClient
-      .put<Satisfaction>(`${this.url}/${satisfaction.id}`, requestBody, { observe: 'response', headers: this.httpOptions.headers })
+      .put<any>(this.url, JSON.stringify(satisfaction), { observe: 'response', headers: this.httpOptions.headers })
       .pipe(catchError(this.errorHandler));
   }
 

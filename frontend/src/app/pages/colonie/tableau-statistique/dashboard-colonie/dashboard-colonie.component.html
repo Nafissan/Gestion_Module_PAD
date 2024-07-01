@@ -23,7 +23,13 @@
       </div>
     </div>
   </div>
-
+  <mat-form-field appearance="fill">
+    <mat-label>Choisir l'année</mat-label>
+    <input matInput [matDatepicker]="picker" (dateChange)="onYearChange($event)" placeholder="Exemple : 2023">
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker startView="multi-year" [startAt]="startDate" panelClass="example-month-picker" (yearSelected)="chosenYearHandler(normalizedYear, picker)" (monthSelected)="chosenMonthHandler(normalizedMonth, picker)"></mat-datepicker>
+  </mat-form-field>
+   
   <mat-card>
     <mat-card-header>
       <mat-card-title>Statistique colonie</mat-card-title>
