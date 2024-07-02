@@ -1,6 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Inject, Input, OnInit } from '@angular/core';
 import { DossierColonie } from '../../shared/model/dossier-colonie.model';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
   selector: 'fury-read-file-dossier',
@@ -8,19 +9,21 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
   styleUrls: ['./read-file-dossier.component.scss']
 })
 export class ReadFileDossierComponent implements OnInit {
-  @Input() dossier: DossierColonie;
-  @Input() fileType: 'noteMinistere' | 'demandeProspection' | 'noteInformation' | 'noteInstruction' | 'rapportMission';
+  dossier: DossierColonie;
+  property: string;
   pdfDataUrl: SafeResourceUrl;
    showFrame: boolean = true; // Initially true
 
-  constructor(private sanitizer: DomSanitizer) {}
+  constructor(private sanitizer: DomSanitizer,    @Inject(MAT_DIALOG_DATA) public data: { dossier: DossierColonie, property: string }
+) { this.dossier = data.dossier;
+  this.property = data.property;}
 
   ngOnInit() {
     this.loadFile();
   }
   loadFile(): void {
     try {
-      const base64String = this.getFileContent(this.fileType);
+      const base64String = this.getFileContent(this.property);
       if (this.isValidBase64(base64String)) {
         const binaryString = atob(base64String);
         const byteNumbers = new Uint8Array(binaryString.length);
@@ -36,8 +39,8 @@ export class ReadFileDossierComponent implements OnInit {
     }
   }
 
-  getFileContent(fileType: string): string {
-    return this.dossier[fileType];
+  getFileContent(property: string): string {
+    return this.dossier[property];
   }
 
   isValidBase64(base64: string): boolean {

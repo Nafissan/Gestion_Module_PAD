@@ -23,7 +23,7 @@ public class Reponse implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "formulaire_id", nullable = false)
-    @JsonBackReference
+    @JsonBackReference(value = "formulaire-reponses")
     private FormulaireSatisfaction formulaire;
 
     @ManyToOne

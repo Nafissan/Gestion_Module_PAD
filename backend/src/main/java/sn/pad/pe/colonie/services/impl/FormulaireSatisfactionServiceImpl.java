@@ -42,17 +42,25 @@ public class FormulaireSatisfactionServiceImpl implements FormulaireSatisfaction
     @Transactional
     public boolean deleteFormulaire(FormulaireSatisfactionDTO formulaireDTO) {
         Optional<FormulaireSatisfaction> formulaireOptional = formulaireSatisfactionRepository.findById(formulaireDTO.getId());
-        
+
         if (formulaireOptional.isPresent()) {
             FormulaireSatisfaction formulaire = formulaireOptional.get();
+            System.out.println("Formulaire trouvé : " + formulaire);
+            
+            // Supprimer les réponses associées
             reponseService.deleteReponsesByFormulaireId(formulaire.getId());
+            
+            // Supprimer le formulaire
             formulaireSatisfactionRepository.delete(formulaire);
+            System.out.println("Formulaire supprimé : " + formulaire);
+            
             return true;
+        } else {
+            System.out.println("Formulaire non trouvé pour l'ID : " + formulaireDTO.getId());
         }
-        
+
         return false;
     }
-    
    @Override
     @Transactional
     public FormulaireSatisfactionDTO saveFormulaire(FormulaireSatisfactionDTO formulaireDTO) {

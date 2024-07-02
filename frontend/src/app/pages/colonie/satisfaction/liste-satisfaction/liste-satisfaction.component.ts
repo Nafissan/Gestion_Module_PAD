@@ -44,7 +44,7 @@ export class ListeSatisfactionComponent implements OnInit {
   questions: Question[] = [];
   private paginator: MatPaginator;
   private sort: MatSort;
-
+  openOrSaisiDossiers : DossierColonie []=[];
   @ViewChild(MatSort) set matSort(ms: MatSort) {
     this.sort = ms;
     this.setDataSourceAttributes();
@@ -76,7 +76,6 @@ export class ListeSatisfactionComponent implements OnInit {
 
   ngOnInit(): void {
     this.getSatisfactions();
-    this.checkCanAddSatisfaction();
     this.getQuestions();
     this.dataSource = new MatTableDataSource();
     this.data$.pipe(filter((data) => !!data)).subscribe((satisfaction) => {
@@ -101,39 +100,21 @@ export class ListeSatisfactionComponent implements OnInit {
     return this.columns.filter((column) => column.visible).map((column) => column.property);
   }
 
-  checkCanAddSatisfaction() {
-    this.dossierColonieService.getAll().subscribe((response) => {
-      const dossiers = response.body;
-      const dossierToUpdate = dossiers.find(
-        (dossier) => dossier.etat === EtatDossierColonie.ouvert || dossier.etat === EtatDossierColonie.saisi
-      );
-      console.log('dossierToUpdate:', dossierToUpdate);
-      console.log('this.satisfactions:', this.satisfactions);
-
-      const existingSatisfaction = this.satisfactions.find(
-        (rapport) => dossierToUpdate && rapport.codeDossier.id === dossierToUpdate.id
-      );
-
-      console.log('existingSatisfaction:', existingSatisfaction);
-
-      this.canAdd = !!dossierToUpdate && !existingSatisfaction;
-    });
-  }
+  
 
   getSatisfactions() {
     this.dossierColonieService.getAll().pipe(
       map(response => response.body)
     ).subscribe(dossiers => {
       this.dossierColonies = dossiers;
-      const openOrSaisiDossiers = dossiers.filter(dossier => dossier.etat === EtatDossierColonie.ouvert || dossier.etat === EtatDossierColonie.saisi);
+      this.openOrSaisiDossiers = dossiers.filter(dossier => dossier.etat === EtatDossierColonie.ouvert || dossier.etat === EtatDossierColonie.saisi);
       this.satisfactionService.getAllSatisfactions().subscribe(response => {
         this.satisfactions = response.body;
 
         this.filteredSatisfaction = this.satisfactions.filter(participant =>
-          openOrSaisiDossiers.some(dossier => dossier.id === participant.codeDossier.id)
+          this.openOrSaisiDossiers.some(dossier => dossier.id === participant.codeDossier.id)
         );
 
-        // Log the filtered participants for debugging
         console.log("Filtered satisfaction: ", this.filteredSatisfaction);
 
       }, err => {
@@ -153,7 +134,6 @@ export class ListeSatisfactionComponent implements OnInit {
 
   refresh() {
     this.getSatisfactions();
-    this.checkCanAddSatisfaction();
   }
 
   onFilterChange(value) {
@@ -233,7 +213,6 @@ export class ListeSatisfactionComponent implements OnInit {
           );
           this.notificationService.success(NotificationUtil.suppression)
           this.subject$.next(this.satisfactions);
-          this.refresh();
         }
           , err => {
             this.notificationService.warn(NotificationUtil.echec);

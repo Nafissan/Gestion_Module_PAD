@@ -6,16 +6,17 @@
 
 <form [formGroup]="form" (ngSubmit)="save()">
     <mat-dialog-content>
-        
-        <div *ngFor="let question of questions; let i = index" fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
+      <div formArrayName="questions">
+        <div *ngFor="let question of questionsArray.controls; let i = index" [formGroupName]="i">
           <mat-form-field fxFlex>
             <mat-label>{{ questions[i].texte }}</mat-label>
-          <mat-select formControlName="reponse" required>
-            <mat-option [value]="true">Oui</mat-option>
-            <mat-option [value]="false">Non</mat-option>
-          </mat-select>     
+            <mat-select formControlName="reponse" required>
+              <mat-option [value]="true">Oui</mat-option>
+              <mat-option [value]="false">Non</mat-option>
+            </mat-select>
           </mat-form-field>
         </div>
+      </div>
         <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
             <mat-form-field fxFlex *ngIf="mode === 'update'">
               <mat-label>Code Dossier Colonie</mat-label>

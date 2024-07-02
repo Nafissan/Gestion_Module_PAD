@@ -11,6 +11,9 @@ import { ColonService } from '../../shared/service/colon.service';
 import { DossierColonie } from '../../shared/model/dossier-colonie.model';
 import { Colon } from '../../shared/model/colon.model';
 import { DateAdapter } from '@angular/material/core';
+import * as moment from 'moment';
+import { MatDatepicker } from '@angular/material/datepicker';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'fury-dashboard-colonie',
@@ -19,6 +22,7 @@ import { DateAdapter } from '@angular/material/core';
   animations: [fadeInRightAnimation, fadeInUpAnimation]
 })
 export class DashboardColonieComponent implements OnInit {
+  dateV = new FormControl(moment());
 
   selectedYear: number | null = null;
   startDate = new Date(this.selectedYear, 0, 1);
@@ -109,7 +113,13 @@ export class DashboardColonieComponent implements OnInit {
       }
     );
   }
-
+  chosenYearHandler( datepicker: MatDatepicker<moment.Moment>) {
+    const ctrlValue = this.dateV.value;
+    //ctrlValue.year(normalizedYear.year());
+    this.dateV.setValue(ctrlValue);
+    datepicker.close();
+    //this.onYearChange(normalizedYear.year());
+  }
   processData(dossiersColonies: DossierColonie[], colons: Colon[]) {
     const colonCountsMap = new Map<number, number>();
     let maleCount = 0;

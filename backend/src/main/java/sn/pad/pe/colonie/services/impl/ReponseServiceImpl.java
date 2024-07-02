@@ -24,7 +24,7 @@ public class ReponseServiceImpl implements ReponseService{
         List<Reponse> reponses = reponseDTOs.stream()
                 .map(reponseDTO -> mapper.map(reponseDTO, Reponse.class))
                 .collect(Collectors.toList());
-
+        System.out.print("Liste "+reponses);
         List<Reponse> updatedReponses = reponseRepository.saveAll(reponses);
 
         return updatedReponses.stream()

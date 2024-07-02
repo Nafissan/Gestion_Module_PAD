@@ -303,6 +303,7 @@ sn\pad\pe\pss\controllers\CompteController.class
 sn\pad\pe\dotation\services\impl\CategorieLaitServiceImpl.class
 sn\pad\pe\dotation\repositories\DotationRepository.class
 sn\pad\pe\partenariat\repositories\DomaineRepository.class
+sn\pad\pe\colonie\repositories\ReponseColonieRepository.class
 sn\pad\pe\pss\bo\EtapeValidation.class
 sn\pad\pe\pss\controllers\RessourceController.class
 sn\pad\pe\dotation\bo\CategorieLait.class
@@ -313,7 +314,6 @@ sn\pad\pe\pss\services\impl\AbsenceServiceImpl.class
 sn\pad\pe\dotation\services\impl\MarqueServiceImpl.class
 sn\pad\pe\pss\services\impl\NiveauHierarchiqueServiceImpl.class
 sn\pad\pe\pss\controllers\EtapeInterimController.class
-sn\pad\pe\colonie\dto\FormulaireSatisfactionRequest.class
 sn\pad\pe\dotation\bo\SuiviDotation.class
 sn\pad\pe\colonie\controllers\ColonController.class
 sn\pad\pe\partenariat\controllers\ActiviteController.class

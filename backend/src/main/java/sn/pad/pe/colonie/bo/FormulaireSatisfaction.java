@@ -14,7 +14,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 @Entity
 public class FormulaireSatisfaction implements Serializable{
     private static final long serialVersionUID = 1L;
@@ -30,7 +30,7 @@ public class FormulaireSatisfaction implements Serializable{
     private Date dateCreation;
 
     @OneToMany(mappedBy = "formulaire", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
+    @JsonManagedReference(value = "formulaire-reponses")
     private List<Reponse> reponses = new ArrayList<>();
 
     private String commentaire;

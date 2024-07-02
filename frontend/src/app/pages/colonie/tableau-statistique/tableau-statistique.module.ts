@@ -1,5 +1,9 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 import { TableauStatistiqueRoutingModule } from './tableau-statistique-routing.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -33,13 +37,14 @@ import { SalesSummaryWidgetModule } from '../../dashboard/widgets/sales-summary-
   imports: [
     FormsModule,
     ReactiveFormsModule,
+    MatDatepickerModule,
 
     MaterialModule,
     FurySharedModule,
     ChartModule,
     FuryCardModule,
-    // Widgets
-    BarChartWidgetModule,
+MatNativeDateModule,    
+BarChartWidgetModule,
     LineChartWidgetModule,
     DonutChartWidgetModule,
     SalesSummaryWidgetModule,
@@ -51,15 +56,15 @@ import { SalesSummaryWidgetModule } from '../../dashboard/widgets/sales-summary-
     MapsWidgetModule,
     MarketWidgetModule,
     ChartsModule,
-
+    MatInputModule,
     //Table
     MatTabsModule,
     PageLayoutDemoContentModule,
     MatExpansionModule,
-    // Core
+    MatFormFieldModule,
     ListModule,
     BreadcrumbsModule,
-
+    CommonModule,
     //export table
     MatTableExporterModule,
     TableauStatistiqueRoutingModule

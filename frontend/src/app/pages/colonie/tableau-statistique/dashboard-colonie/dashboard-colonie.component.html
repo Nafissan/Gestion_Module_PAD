@@ -27,7 +27,7 @@
     <mat-label>Choisir l'année</mat-label>
     <input matInput [matDatepicker]="picker" (dateChange)="onYearChange($event)" placeholder="Exemple : 2023">
     <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-    <mat-datepicker #picker startView="multi-year" [startAt]="startDate" panelClass="example-month-picker" (yearSelected)="chosenYearHandler(normalizedYear, picker)" (monthSelected)="chosenMonthHandler(normalizedMonth, picker)"></mat-datepicker>
+    <mat-datepicker #picker startView="multi-year" [startAt]="startDate" panelClass="example-month-picker" (yearSelected)="chosenYearHandler( picker)"></mat-datepicker>
   </mat-form-field>
    
   <mat-card>

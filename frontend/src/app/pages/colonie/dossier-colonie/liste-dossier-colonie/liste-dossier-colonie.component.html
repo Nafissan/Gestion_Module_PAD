@@ -38,19 +38,19 @@
               <p *ngIf="column.property === 'ajoutePar'">
                 {{ (row.matricule + ' | ' + row.prenom + ' ' + row.nom + ' - ' + row.fonction) | titlecase }}
               </p>
-              <p *ngIf="column.property === 'noteMinistere' && row.noteMinistere" (click)="onCellClick(column.property, row)">
+              <p *ngIf="column.property === 'noteMinistere' && row.noteMinistere" >
                 <span>Disponible</span>
               </p>
-              <p *ngIf="column.property === 'demandeProspection' && row.demandeProspection" (click)="onCellClick(column.property, row)">
+              <p *ngIf="column.property === 'demandeProspection' && row.demandeProspection" >
                 <span>Disponible</span>
               </p>
-              <p *ngIf="column.property === 'noteInformation' && row.noteInformation" (click)="onCellClick(column.property, row)">
+              <p *ngIf="column.property === 'noteInformation' && row.noteInformation" >
                 <span>Disponible</span>
               </p>
-              <p *ngIf="column.property === 'noteInstruction' && row.noteInstruction" (click)="onCellClick(column.property, row)">
+              <p *ngIf="column.property === 'noteInstruction' && row.noteInstruction" >
                 <span>Disponible</span>
               </p>
-              <p *ngIf="column.property === 'rapportMission' && row.rapportMission" (click)="onCellClick(column.property, row)">
+              <p *ngIf="column.property === 'rapportMission' && row.rapportMission" >
                 <span>Disponible</span>
               </p>
               <p *ngIf="column.property !== 'etat' && column.property !== 'rapportMission'  && column.property !== 'noteInstruction' && column.property !== 'noteInformation' && column.property !== 'demandeProspection' && column.property !== 'noteMinistere'">
@@ -111,9 +111,6 @@
       </table>
       <mat-paginator [pageSize]="pageSize" class="paginator"></mat-paginator>
     </fury-list>
-    <div *ngIf="afficherDoc">
-      <fury-read-file-dossier [dossier]="dossierSelectionne" [fileType]="fileType" ></fury-read-file-dossier>
-    </div>
     <div *ngIf="dossierColonies.length === 0 && showProgressBar === true" class="card text-center">
       <div class="card-header">
         <span class="badge badge-info">INFORMATION</span>

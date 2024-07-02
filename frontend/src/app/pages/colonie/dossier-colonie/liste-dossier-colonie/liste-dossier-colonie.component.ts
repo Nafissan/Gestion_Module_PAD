@@ -21,6 +21,7 @@ import { MailService } from "../../../../shared/services/mail.service";
 import { Agent } from "../../../../shared/model/agent.model";
 import { Mail } from "src/app/shared/model/mail.model";
 import { ParticipantService } from "../../shared/service/participant.service";
+import { ReadFileDossierComponent } from "../read-file-dossier/read-file-dossier.component";
 
 @Component({
   selector: "fury-liste-dossier-colonie",
@@ -42,9 +43,7 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
   data$: Observable<DossierColonie[]> = this.subject$.asObservable();
   pageSize = 4;
   dataSource: MatTableDataSource<DossierColonie> | null;
-  afficherDoc: boolean = false;
-  dossierSelectionne: DossierColonie;
-  fileType: 'noteMinistere' | 'demandeProspection' | 'noteInformation' | 'noteInstruction' | 'rapportMission';
+ 
 
   private paginator: MatPaginator;
   private sort: MatSort;
@@ -239,13 +238,24 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
     });
   }
   onCellClick(property: string, row: DossierColonie): void {
-    this.dossierSelectionne = row;
-    this.fileType = property as 'noteMinistere' | 'demandeProspection' | 'noteInformation' | 'noteInstruction'  | 'rapportMission';
-    this.afficherDoc = true;
-    console.log(this.dossierSelectionne);
-    console.log(this.fileType);
-
+    const dialogRef = this.dialog.open(ReadFileDossierComponent, {
+      data: { dossier: row, property: property },
+      width: '80%',
+      height: '80%',
+      maxWidth: '100vw', 
+      maxHeight: '100vh', 
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('Le dialogue a été fermé', result);
+      const index = this.dossierColonies.findIndex(
+        (existingDossierColonie) => existingDossierColonie.id === row.id
+      );
+      this.dossierColonies[index] = new DossierColonie(row);
+      this.subject$.next(this.dossierColonies);
+    });
   }
+  
   deleteAllParticipants(): void {
     this.participantService.getAll().subscribe(
       response => {

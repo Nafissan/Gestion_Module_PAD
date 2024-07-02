@@ -27,6 +27,7 @@ export class AddOrUpdateSatisfactionComponent implements OnInit {
   agentConnecte: Agent;
   questions: Question[] = [];
   mode: "create" | "update" = "create";
+  reponses: Reponse[] = []; // Ajout de la variable reponses pour stocker les réponses fournies
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public defaults: Satisfaction,
@@ -39,7 +40,7 @@ export class AddOrUpdateSatisfactionComponent implements OnInit {
     private notificationService: NotificationService,
     private questionService: QuestionService,
     private dossierColonieService: DossierColonieService,
-    private reponseService: ReponseService // Inject ReponseService
+    private reponseService: ReponseService
   ) {
     this.form = this.fb.group({
       questions: this.fb.array([]),
@@ -66,7 +67,7 @@ export class AddOrUpdateSatisfactionComponent implements OnInit {
       return this.fb.group({
         id: [question.id],
         texte: [question.texte],
-        reponse: [''] // Initialiser les réponses avec des valeurs vides
+        reponse: ['']
       });
     });
 
@@ -77,26 +78,8 @@ export class AddOrUpdateSatisfactionComponent implements OnInit {
         codeDossier: this.defaults.codeDossier.code,
         commentaire: this.defaults.commentaire,
       });
-
+      this.loadExistingReponses(this.defaults);
     }
-  }
-
-  loadExistingReponses(satisfactionId: Satisfaction): void {
-    this.reponseService.getAllReponses(satisfactionId).subscribe(
-      response => {
-        const reponses = response.body; // Assurez-vous que le service renvoie les réponses correctement
-        this.questionsArray.controls.forEach((group, index) => {
-          const questionId = group.get('id').value;
-          const reponse = reponses.find(r => r.question.id === questionId);
-          if (reponse) {
-            group.get('reponse').setValue(reponse.reponse);
-          }
-        });
-      },
-      error => {
-        console.error('Error fetching responses', error);
-      }
-    );
   }
 
   isCreateMode(): boolean {
@@ -120,11 +103,28 @@ export class AddOrUpdateSatisfactionComponent implements OnInit {
       console.error('Failed to get the connected agent', err);
     });
   }
-
+  loadExistingReponses(satisfactionId: Satisfaction): void {
+    this.reponseService.getAllReponses(satisfactionId).subscribe(
+      response => {
+        const reponses = response.body;
+        this.questionsArray.controls.forEach((group, index) => {
+          const questionId = group.get('id').value;
+          const reponse = reponses.find(r => r.question.id === questionId);
+          if (reponse) {
+            group.get('reponse').setValue(reponse.reponse);
+          }
+        });
+      },
+      error => {
+        console.error('Error fetching responses', error);
+      }
+    );
+  }
+  
   save(): void {
     const formValue = this.form.value;
-    const reponses = formValue.questions.map((q) => ({
-      question: new Question({ id: q.id, texte: q.texte }), // Assurez-vous que les données nécessaires sont passées au constructeur
+    this.reponses = formValue.questions.map((q) => ({
+      question: new Question({ id: q.id, texte: q.texte }),
       reponse: q.reponse
     }));
 
@@ -136,9 +136,9 @@ export class AddOrUpdateSatisfactionComponent implements OnInit {
     };
 
     if (this.isCreateMode()) {
-      this.addSatisfaction(satisfactionData, reponses);
+      this.addSatisfaction(satisfactionData, this.reponses);
     } else {
-      this.updateSatisfaction(satisfactionData, reponses);
+      this.updateSatisfaction(satisfactionData, this.reponses);
     }
   }
 
@@ -151,14 +151,24 @@ export class AddOrUpdateSatisfactionComponent implements OnInit {
       const openOrSaisiDossier = dossiers.find(dossier => dossier.etat === EtatDossierColonie.ouvert || dossier.etat === EtatDossierColonie.saisi);
       if (openOrSaisiDossier) {
         formData.codeDossier = openOrSaisiDossier;
-        console.log("reponses : "+reponses);
+        
+        if (reponses && reponses.length > 0) {
+          console.log("Les réponses sont valides et contiennent des données.");
+          reponses.forEach((reponse, index) => {
+            console.log(`Réponse ${index + 1}:`, reponse);
+          });
+        } else {
+          console.warn("Aucune réponse trouvée ou les réponses sont invalides.");
+        }
+  
         this.dialogConfirmationService.confirmationDialog().subscribe(action => {
           if (action === DialogUtil.confirmer) {
             this.satisfactionService.addSatisfaction(formData).subscribe((response) => {
               const newSatisfaction = response.body;
               if (newSatisfaction && newSatisfaction.id != null) {
                 this.notificationService.success(NotificationUtil.ajout);
-               // this.saveReponses(newSatisfaction, reponses); // Save responses after adding satisfaction
+                this.saveReponses(newSatisfaction, reponses);
+                this.dialogRef.close(formData);
               } else {
                 this.notificationService.warn("Erreur dans l'ajout du formulaire");
                 this.dialogRef.close();
