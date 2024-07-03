@@ -27,32 +27,35 @@ export class DetailsSatisfactionComponent implements OnInit {
 
   ngOnInit(): void {
     this.satisfaction = this.data;
-    this.getQuestions();
     this.getReponses();
   }
 
-  getQuestions(): void {
-    this.questionService.getAllQuestions().subscribe(
-      response => {
-        this.questions = response.body;
-      },
-      error => {
-        console.error('Error fetching questions', error);
-      }
-    );
-  }
+
 
   getReponses(): void {
-    this.reponseService.getAllReponses(this.satisfaction).subscribe(
+    console.log("formulaire: " + this.satisfaction.id);
+    this.reponseService.getAllReponses().subscribe(
       response => {
-        this.reponses = response.body;
+        this.reponses = response.body.filter(reponse => reponse.formulaire.id === this.satisfaction.id);
+        console.log("Filtered responses: ", this.reponses);
+        this.extractQuestionsFromReponses();
+
       },
       error => {
         console.error('Error fetching responses', error);
       }
     );
   }
-
+  extractQuestionsFromReponses(): void {
+    const questionMap = new Map<number, Question>();
+    this.reponses.forEach(reponse => {
+      if (!questionMap.has(reponse.question.id)) {
+        questionMap.set(reponse.question.id, reponse.question);
+      }
+    });
+    this.questions = Array.from(questionMap.values());
+    console.log("Extracted questions: ", this.questions);
+  }
   findReponseForQuestion(questionId: number): string {
     const foundReponse = this.reponses.find(reponse => reponse.question.id === questionId);
     return foundReponse ? foundReponse.reponse : 'Non';

@@ -40,15 +40,16 @@ export class AddOrUpdateRapportProspectionComponent implements OnInit {
     private dossierColonieService: DossierColonieService 
   ) {this.form = this.fb.group({
     codeDossierColonie: [null],
+    rapport: [null]
   });}
 
   async ngOnInit(): Promise<void> {
     this.username = this.authService.getUsername();
 
-    try {
-      const response = await this.compteService.getByUsername(this.username).toPromise();
+    this.compteService.getByUsername(this.username).subscribe((response) => {
       this.compte = response.body;
       this.agent = this.compte.agent;
+    });
 
       if (this.defaults) {
         this.mode = "update";
@@ -57,19 +58,17 @@ export class AddOrUpdateRapportProspectionComponent implements OnInit {
       }
 
       this.initForm();
-    } catch (error) {
-      console.error('Failed to fetch user data', error);
-    }
+    
   }
 
   initForm(): void {
     this.form.patchValue({
-      codeDossierColonie: this.defaults.codeDossierColonie?.code || null, 
+      codeDossierColonie: this.defaults.codeDossierColonie.code || null, 
+      rapport: this.defaults.rapportProspection || this.rapportProspection
     });
 
-    // Désactiver le champ dateCreation en mode de mise à jour
     if (this.mode === "update") {
-      this.form.get("dateCreation").disable();
+      this.form.get("codeDossierColonie").disable();
     }
   }
 
@@ -162,10 +161,12 @@ export class AddOrUpdateRapportProspectionComponent implements OnInit {
         matricule: this.defaults.matricule,
         nom: this.defaults.nom,
         prenom: this.defaults.prenom,
-        rapportProspection: this.defaults.rapportProspection,
+        rapportProspection: this.rapportProspection ? this.rapportProspection : this.defaults.rapportProspection,
         dateValidation: this.defaults.dateValidation,
         nomAgent: this.agent.nom,
-        prenomAgent: this.agent.prenom
+        prenomAgent: this.agent.prenom,
+        dateCreation: this.defaults.dateCreation,
+        etat: this.defaults.etat
       };
 
       this.dialogConfirmationService.confirmationDialog().subscribe(action => {

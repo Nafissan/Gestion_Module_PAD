@@ -69,6 +69,16 @@ public class FormulaireSatisfactionServiceImpl implements FormulaireSatisfaction
 
         return modelMapper.map(savedFormulaire, FormulaireSatisfactionDTO.class);
     }
+
+
+
+@Override
+public FormulaireSatisfactionDTO updateFormulaire(FormulaireSatisfactionDTO formulaireDTO) {
+    FormulaireSatisfaction formulaire = modelMapper.map(formulaireDTO, FormulaireSatisfaction.class);
+    FormulaireSatisfaction savedFormulaire = formulaireSatisfactionRepository.save(formulaire);
+
+    return modelMapper.map(savedFormulaire, FormulaireSatisfactionDTO.class);
+}
     
     
     

@@ -1,6 +1,7 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, Inject } from '@angular/core';
 import { RapportProspection } from '../../shared/model/rapport-prospection.model';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
   selector: 'fury-details-rapport-prospection',
@@ -8,16 +9,15 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
   styleUrls: ['./details-rapport-prospection.component.scss']
 })
 export class DetailsRapportProspectionComponent implements OnInit, OnDestroy {
-  @Input() rapport: RapportProspection;
   pdfDataUrl: SafeResourceUrl; 
   showFrame: boolean = true; 
 
-  constructor(private sanitizer: DomSanitizer) {}
+  constructor(private sanitizer: DomSanitizer,@Inject(MAT_DIALOG_DATA) public data: RapportProspection) {}
 
   ngOnInit() {
     try {
-      if (this.rapport) {
-        const fileBase64 = this.rapport.rapportProspection;
+      if (this.data) {
+        const fileBase64 = this.data.rapportProspection;
         if (this.isValidBase64(fileBase64)) {
           const binaryString = atob(fileBase64);
           const byteNumbers = new Uint8Array(binaryString.length);

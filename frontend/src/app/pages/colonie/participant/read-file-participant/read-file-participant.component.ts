@@ -1,6 +1,7 @@
 import { Component, Inject, Input, OnInit, OnDestroy } from '@angular/core';
 import { Participant } from '../../shared/model/participant-colonie.model';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
   selector: 'fury-read-file-participant',
@@ -8,12 +9,12 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
   styleUrls: ['./read-file-participant.component.scss'],
 })
 export class ReadFileParticipantComponent implements OnInit, OnDestroy {
-  @Input() participant: Participant;
-  @Input() fileType: 'ficheSocial' | 'document'; // New input to specify file typ
+  participant: Participant;
+ fileType: string; // New input to specify file typ
   pdfDataUrl: SafeResourceUrl; // Safe URL for the PDF file
   showFrame: boolean = true; // Boolean to control the frame display
 
-  constructor(private sanitizer: DomSanitizer) { }
+  constructor(private sanitizer: DomSanitizer,    @Inject(MAT_DIALOG_DATA) public data: { participant: Participant, property: string }){this.participant= data.participant; this.fileType=data.property}
 
   ngOnInit() {
     try {

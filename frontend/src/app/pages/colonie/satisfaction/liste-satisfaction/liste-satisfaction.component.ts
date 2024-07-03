@@ -22,6 +22,7 @@ import { fadeInRightAnimation } from 'src/@fury/animations/fade-in-right.animati
 import { fadeInUpAnimation } from 'src/@fury/animations/fade-in-up.animation';
 import { QuestionService } from '../../shared/service/question.service';
 import { Question } from '../../shared/model/question.model';
+import { columnSelectionBegin } from '@syncfusion/ej2-angular-grids';
 
 @Component({
   selector: 'fury-liste-satisfaction',
@@ -108,15 +109,20 @@ export class ListeSatisfactionComponent implements OnInit {
     ).subscribe(dossiers => {
       this.dossierColonies = dossiers;
       this.openOrSaisiDossiers = dossiers.filter(dossier => dossier.etat === EtatDossierColonie.ouvert || dossier.etat === EtatDossierColonie.saisi);
+  
       this.satisfactionService.getAllSatisfactions().subscribe(response => {
         this.satisfactions = response.body;
-
+  
         this.filteredSatisfaction = this.satisfactions.filter(participant =>
           this.openOrSaisiDossiers.some(dossier => dossier.id === participant.codeDossier.id)
         );
-
+  
+        if (this.openOrSaisiDossiers.length > 0 && this.filteredSatisfaction.length === 0) {
+          this.canAdd = true;
+        }
+  
         console.log("Filtered satisfaction: ", this.filteredSatisfaction);
-
+        console.log("canAdd: ", this.canAdd);
       }, err => {
         console.error('Error loading participant colonies:', err);
       }, () => {
@@ -125,6 +131,7 @@ export class ListeSatisfactionComponent implements OnInit {
       });
     });
   }
+  
 
   getQuestions() {
     this.questionService.getAllQuestions().subscribe(questions => {
@@ -133,7 +140,7 @@ export class ListeSatisfactionComponent implements OnInit {
   }
 
   refresh() {
-    this.getSatisfactions();
+    this.ngOnInit();
   }
 
   onFilterChange(value) {
@@ -174,9 +181,9 @@ export class ListeSatisfactionComponent implements OnInit {
         if (satisfaction) {
           this.satisfactions.unshift(satisfaction);
           this.subject$.next(this.satisfactions);
-          this.refresh();
         }
       });
+      this.refresh();
   }
 
   updateSatisfaction(satisfaction: Satisfaction) {

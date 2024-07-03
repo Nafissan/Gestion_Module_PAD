@@ -23,6 +23,7 @@ import { DossierColonieService } from '../../shared/service/dossier-colonie.serv
 import { DetailsParticipantComponent } from '../details-participant/details-participant.component';
 import { EtatDossierColonie } from '../../shared/util/util';
 import { DossierColonie } from '../../shared/model/dossier-colonie.model';
+import { ReadFileParticipantComponent } from '../read-file-participant/read-file-participant.component';
 
 @Component({
   selector: 'fury-liste-participant',
@@ -42,10 +43,6 @@ export class ListeParticipantComponent implements OnInit {
   openOrSaisiDossier:DossierColonie;
   dataSource: MatTableDataSource<Participant> | null;
   selection = new SelectionModel<Participant>(true, []);
-  afficherFicheSociale: boolean = false;
-  participantSelectionne: Participant;
-  afficherDocument : boolean =false;
-  fileType: 'ficheSocial' | 'document'; // New property to indicate file type
   dossierColonie : DossierColonie[]=[];
   private paginator: MatPaginator;
   private sort: MatSort;
@@ -303,31 +300,25 @@ export class ListeParticipantComponent implements OnInit {
       this.notificationService.warn('Échec de rejection du participant');
     });
   }
-  afficherFicheSocial(participant: Participant): void {
-    this.participantSelectionne = participant;
-    this.afficherFicheSociale = true;
-    this.afficherDocument = false; 
-    this.fileType = 'ficheSocial'; 
-  }
 
-  afficherDoc(participant: Participant): void {
-    this.participantSelectionne = participant;
-    this.afficherFicheSociale = false;
-    this.afficherDocument = true;
-    this.fileType = 'document'; 
-  }
 
 onCellClick(property: string, row: Participant) {
-  this.participantSelectionne = row;
-  if (property === 'ficheSocial') {
-    this.afficherFicheSociale = true;
-    this.afficherDocument = false; 
-    this.fileType = 'ficheSocial';  
-   } else if (property === 'document') {
-    this.afficherFicheSociale = false;
-    this.afficherDocument = true;
-    this.fileType = 'document';   
-  }
+  const dialogRef = this.dialog.open(ReadFileParticipantComponent, {
+    data: { participant: row, property: property },
+    width: '80%',
+    height: '80%',
+    maxWidth: '100vw', 
+    maxHeight: '100vh', 
+  });
+
+  dialogRef.afterClosed().subscribe(result => {
+    console.log('Le dialogue a été fermé', result);
+    const index = this.participants.findIndex(
+      (existingParticipant) => existingParticipant.id === row.id
+    );
+    this.participants[index] = new Participant(row);
+    this.subject$.next(this.participants);
+  }); 
 }
  
 }

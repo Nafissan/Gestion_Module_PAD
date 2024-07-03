@@ -62,11 +62,11 @@
                   <span>SUPPRIMER</span>
                 </button>
                 <button mat-menu-item (click)="validerParticipant(row)">
-                  <mat-icon>edit</mat-icon>
+                  <mat-icon>check_circle_outline</mat-icon>
                   <span>VALIDER</span>
                 </button>
                 <button mat-menu-item (click)="rejeterParticipant(row)">
-                  <mat-icon>edit</mat-icon>
+                  <mat-icon>check_circle_outline</mat-icon>
                   <span>REJETER</span>
                 </button>
                 <button mat-menu-item [matMenuTriggerFor]="fileMenu">
@@ -92,9 +92,6 @@
   
         <mat-paginator [pageSize]="pageSize" class="paginator"></mat-paginator>
       </fury-list>
-      <div *ngIf="afficherFicheSociale || afficherDocument">
-        <fury-read-file-participant [participant]="participantSelectionne" [fileType]="fileType"></fury-read-file-participant>
-      </div>
       <div *ngIf="participants.length === 0 && showProgressBar === true" class="card text-center">
         <div class="card-header">
           <span class="badge badge-info">INFORMATION</span>

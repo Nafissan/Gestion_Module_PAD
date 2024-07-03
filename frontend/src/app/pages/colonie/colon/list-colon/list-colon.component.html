@@ -71,9 +71,6 @@
   
         <mat-paginator [pageSize]="pageSize" class="paginator"></mat-paginator>
       </fury-list>
-      <div *ngIf="afficherFicheSociale || afficherDocument">
-        <fury-read-file-colon [colon]="colonSelectionne" [fileType]="fileType"></fury-read-file-colon>
-      </div>
       <div *ngIf="colon.length === 0 && showProgressBar === true" class="card text-center">
         <div class="card-header">
           <span class="badge badge-info">INFORMATION</span>

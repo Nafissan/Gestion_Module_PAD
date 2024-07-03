@@ -23,6 +23,7 @@ import { DossierColonieService } from "../../shared/service/dossier-colonie.serv
 import { Mail } from "src/app/shared/model/mail.model";
 import { MailService } from "src/app/shared/services/mail.service";
 import { EtatDossierColonie } from "../../shared/util/util";
+import { DetailsRapportProspectionComponent } from "../details-rapport-prospection/details-rapport-prospection.component";
 
 @Component({
   selector: "fury-liste-rapport-prospection",
@@ -264,8 +265,21 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
     });
   }
   afficherRapportProspection(rapport:RapportProspection){
-    this.rapportSelectionne = rapport;
-    this.afficherRapport=true;
+    const dialogRef = this.dialog.open(DetailsRapportProspectionComponent, {
+      data: rapport,
+      width: '80%',
+      height: '80%',
+      maxWidth: '100vw', 
+      maxHeight: '100vh', 
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('Le dialogue a été fermé', result);
+      const index = this.rapports.findIndex(
+        (existingDossierColonie) => existingDossierColonie.id === rapport.id
+      );
+      this.rapports[index] = new RapportProspection(rapport);
+      this.subject$.next(this.rapports);
+    });
   }
   ngOnDestroy() { }
 }

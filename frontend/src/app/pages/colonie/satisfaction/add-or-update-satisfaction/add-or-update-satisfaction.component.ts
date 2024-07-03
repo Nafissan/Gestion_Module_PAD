@@ -52,15 +52,22 @@ export class AddOrUpdateSatisfactionComponent implements OnInit {
   ngOnInit(): void {
     this.questionService.getAllQuestions().subscribe(
       response => {
-        this.questions = response.body.map(q => new Question(q));
-        this.initForm();
+        const questionsFromBody = response.body; // Assurez-vous que response.body est correctement typé
+        this.questions = questionsFromBody.map((q, index) => ({
+          id: index + 1, // Affectation des IDs de 1 à 4
+          texte: q.texte, // Utilisation du champ texte récupéré
+          // Ajoutez d'autres propriétés si nécessaire, par exemple q.autrePropriete
+        }));
+        this.initForm(); // Initialisation du formulaire une fois les questions chargées
       },
       error => {
-        console.error('Error fetching questions', error);
+        console.error('Erreur lors du chargement des questions', error);
       }
     );
-    this.getAgentConnecte();
+  
+    this.getAgentConnecte(); // Appel pour récupérer l'agent connecté
   }
+  
 
   initForm(): void {
     const questionGroups = this.questions.map((question) => {
@@ -104,9 +111,9 @@ export class AddOrUpdateSatisfactionComponent implements OnInit {
     });
   }
   loadExistingReponses(satisfactionId: Satisfaction): void {
-    this.reponseService.getAllReponses(satisfactionId).subscribe(
+    this.reponseService.getAllReponses().subscribe(
       response => {
-        const reponses = response.body;
+        const reponses = response.body.filter(reponse => reponse.formulaire.id === satisfactionId.id);
         this.questionsArray.controls.forEach((group, index) => {
           const questionId = group.get('id').value;
           const reponse = reponses.find(r => r.question.id === questionId);
@@ -210,6 +217,7 @@ export class AddOrUpdateSatisfactionComponent implements OnInit {
   saveReponses(satisfaction: Satisfaction, reponses: Reponse[]) {
     reponses.forEach((reponse) => {
       reponse.formulaire = satisfaction;
+      console.log("Apres ajout formulaire"+reponse)
       this.reponseService.addReponse(reponse).subscribe(() => {
         this.dialogRef.close(satisfaction);
       }, err => {

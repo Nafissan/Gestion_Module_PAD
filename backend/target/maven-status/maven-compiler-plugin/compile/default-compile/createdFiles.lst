@@ -2,6 +2,7 @@ sn\pad\pe\colonie\services\impl\FormulaireSatisfactionServiceImpl.class
 sn\pad\pe\partenariat\repositories\VilleRepository.class
 sn\pad\pe\pss\services\impl\PlanningCongeServiceImpl.class
 sn\pad\pe\dotation\services\CategorieLaitService.class
+sn\pad\pe\colonie\controllers\ReponseController.class
 sn\pad\pe\partenariat\services\PointFocalService.class
 sn\pad\pe\partenariat\services\PlanprospectionService.class
 sn\pad\pe\colonie\services\impl\ReponseServiceImpl.class
@@ -415,7 +416,6 @@ sn\pad\pe\colonie\bo\RapportProspection.class
 sn\pad\pe\dotation\services\impl\TypeDotationServiceImpl.class
 sn\pad\pe\pss\controllers\ProcessusValidationController.class
 sn\pad\pe\colonie\repositories\FormulaireSatisfactionRepository.class
-sn\pad\pe\colonie\controllers\ReponseRepository.class
 sn\pad\pe\partenariat\controllers\VilleController.class
 sn\pad\pe\assurance\services\impl\MembreFamilleServiceImpl.class
 sn\pad\pe\colonie\services\DossierColonieService.class

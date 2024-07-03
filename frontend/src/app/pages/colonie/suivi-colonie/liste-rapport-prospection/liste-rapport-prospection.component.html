@@ -93,15 +93,12 @@
   
         <mat-paginator class="paginator" [pageSize]="pageSize"></mat-paginator>
       </fury-list>
-      <div *ngIf="afficherRapport">
-        <fury-details-rapport-prospection [rapport]="rapportSelectionne"></fury-details-rapport-prospection>
-    </div>
       <div *ngIf="rapports.length === 0 && showProgressBar === true" class="card text-center">
         <div class="card-header">
           <span class="badge badge-info">INFORMATION</span>
         </div>
         <div class="card-body">
-          <h5 class="card-title">PAS DE RAPPORTS DISPONIBLES</h5>
+          <h5 class="card-title">PAS DE RAPPORT DISPONIBLE</h5>
           <button mat-mini-fab color="primary" (click)="createRapportProspection()" [disabled]="!canAdd">
             <mat-icon>add</mat-icon>
           </button>

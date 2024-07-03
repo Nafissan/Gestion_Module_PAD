@@ -6,6 +6,7 @@ import sn.pad.pe.colonie.dto.FormulaireSatisfactionDTO;
 public interface FormulaireSatisfactionService {
     
     public FormulaireSatisfactionDTO saveFormulaire(FormulaireSatisfactionDTO formulaire);
+    public FormulaireSatisfactionDTO updateFormulaire(FormulaireSatisfactionDTO formulaire);
 
     public List<FormulaireSatisfactionDTO> getAllFormulaires();
 

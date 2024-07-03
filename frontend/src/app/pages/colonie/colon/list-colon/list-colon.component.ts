@@ -16,6 +16,7 @@ import { filter, map } from 'rxjs/operators';
 import { ReplaySubject, Observable } from 'rxjs';
 import { SelectionModel } from '@angular/cdk/collections';
 import { DetailsColonComponent } from '../details-colon/details-colon.component';
+import { ReadFileColonComponent } from '../read-file-colon/read-file-colon.component';
 
 @Component({
   selector: 'fury-list-colon',
@@ -34,10 +35,6 @@ export class ListColonComponent implements OnInit {
   selection = new SelectionModel<Colon>(true, []);
   private sort: MatSort;
   showProgressBar: boolean=false;
-  afficherFicheSociale: boolean = false;
-  colonSelectionne: Colon;
-  afficherDocument : boolean =false;
-  fileType: 'ficheSocial' | 'document';
   @ViewChild(MatSort) set matSort(ms: MatSort) {
     this.sort = ms;
     this.setDataSourceAttributes();
@@ -156,31 +153,26 @@ export class ListColonComponent implements OnInit {
     });
   }
   onCellClick(property: string, row: Colon) {
-    this.colonSelectionne = row;
-    if (property === 'ficheSocial') {
-      this.afficherFicheSociale = true;
-      this.afficherDocument = false; 
-      this.fileType = 'ficheSocial';  
-     } else if (property === 'document') {
-      this.afficherFicheSociale = false;
-      this.afficherDocument = true;
-      this.fileType = 'document';   
-    }
-    console.log(row);
+    const dialogRef = this.dialog.open(ReadFileColonComponent, {
+      data: { colon: row, property: property },
+      width: '80%',
+      height: '80%',
+      maxWidth: '100vw', 
+      maxHeight: '100vh', 
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('Le dialogue a été fermé', result);
+      const index = this.colon.findIndex(
+        (existingParticipant) => existingParticipant.id === row.id
+      );
+      this.colon[index] = new Colon(row);
+      this.subject$.next(this.colon);
+    }); 
   }
-  afficherFicheSocial(colon: Colon): void {
-    this.colonSelectionne = colon;
-    this.afficherFicheSociale = true;
-    this.afficherDocument = false; 
-    this.fileType = 'ficheSocial'; 
-  }
+  
   hasAnyRole(roles: string[]) {
     return this.authentificationService.hasAnyRole(roles);
   }
-  afficherDoc(colon: Colon): void {
-    this.colonSelectionne = colon;
-    this.afficherFicheSociale = false;
-    this.afficherDocument = true;
-    this.fileType = 'document'; 
-  }
+ 
 }

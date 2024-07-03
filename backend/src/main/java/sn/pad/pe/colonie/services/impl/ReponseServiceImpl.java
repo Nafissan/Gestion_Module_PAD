@@ -7,7 +7,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import sn.pad.pe.colonie.bo.FormulaireSatisfaction;
 import sn.pad.pe.colonie.bo.Reponse;
 import sn.pad.pe.colonie.dto.ReponseDTO;
 import sn.pad.pe.colonie.repositories.ReponseColonieRepository;
@@ -16,44 +15,38 @@ import sn.pad.pe.colonie.services.ReponseService;
 public class ReponseServiceImpl implements ReponseService{
     @Autowired
     private ModelMapper mapper;
+    
      @Autowired
     private ReponseColonieRepository reponseRepository;
+    @Override
+    public ReponseDTO saveReponse(ReponseDTO reponseDTO) {
+    Reponse reponse = mapper.map(reponseDTO, Reponse.class);
 
-     @Override
-     public List<ReponseDTO> saveReponses(List<ReponseDTO> reponseDTOs) {
-        List<Reponse> reponses = reponseDTOs.stream()
-                .map(reponseDTO -> mapper.map(reponseDTO, Reponse.class))
-                .collect(Collectors.toList());
-        System.out.print("Liste "+reponses);
-        List<Reponse> updatedReponses = reponseRepository.saveAll(reponses);
+    Reponse savedReponse = reponseRepository.save(reponse); 
 
-        return updatedReponses.stream()
-                .map(reponse -> mapper.map(reponse, ReponseDTO.class))
-                .collect(Collectors.toList());
-    }
+    return mapper.map(savedReponse, ReponseDTO.class); 
+}
+
+
     @Override
     public void deleteReponsesByFormulaireId(Long formulaireId) {
-        reponseRepository.deleteByFormulaireId(formulaireId);
+        reponseRepository.deleteByFormulaire_Id(formulaireId);
     }
-     @Override
-    public List<ReponseDTO> getReponsesByFormulaireId(FormulaireSatisfaction formulaireId) {
-        List<Reponse> reponses = reponseRepository.findByFormulaireId(formulaireId.getId());
+
+    @Override
+    public List<ReponseDTO> getReponses() {
+        List<Reponse> reponses = reponseRepository.findAll(); 
+        System.out.print("Contenu "+reponses.isEmpty());
         return reponses.stream()
-                .map(reponse->
-                    mapper.map(reponse, ReponseDTO.class)
-                )
-                .collect(Collectors.toList());
+                               .map(reponse -> mapper.map(reponse, ReponseDTO.class))
+                               .collect(Collectors.toList());
     }
     @Override
-    public List<ReponseDTO> updateReponses(List<ReponseDTO> reponseDTOs) {
-        List<Reponse> reponses = reponseDTOs.stream()
-                .map(reponseDTO -> mapper.map(reponseDTO, Reponse.class))
-                .collect(Collectors.toList());
+    public ReponseDTO updateReponses(ReponseDTO reponseDTOs) {
+        Reponse reponse = mapper.map(reponseDTOs, Reponse.class);
 
-        List<Reponse> updatedReponses = reponseRepository.saveAll(reponses);
-
-        return updatedReponses.stream()
-                .map(reponse -> mapper.map(reponse, ReponseDTO.class))
-                .collect(Collectors.toList());
+        Reponse savedReponse = reponseRepository.save(reponse); 
+    
+        return mapper.map(savedReponse, ReponseDTO.class); 
     }
 }

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpHeaders, HttpClient, HttpResponse } from '@angular/common/http';
+import { HttpHeaders, HttpClient, HttpResponse, HttpParams } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Satisfaction } from '../model/satisfaction.model'
@@ -19,15 +19,10 @@ import { Reponse } from '../model/reponse.model';
   
     constructor(private httpClient: HttpClient) {}
 
-    getAllReponses(satisfaction: Satisfaction): Observable<HttpResponse<any>> {
-        const httpOptions = {
-            headers: this.httpOptions.headers,
-            body:satisfaction,
-          };
-          return this.httpClient.get<any>(this.url, httpOptions)
-          .pipe(
-            catchError(this.errorHandler));
-      }
+    getAllReponses():Observable<HttpResponse<any>> {
+      return this.httpClient.get<any>(this.url, { observe: 'response' })
+        .pipe(catchError(this.errorHandler));
+    }
     
       addReponse(reponse: Reponse): Observable<HttpResponse<any>>{
         return this.httpClient.post<any>(this.url, JSON.stringify(reponse),{observe : 'response', headers: this.httpOptions.headers})
@@ -35,7 +30,7 @@ import { Reponse } from '../model/reponse.model';
       }
 
       updateReponse(reponse: Reponse): Observable<HttpResponse<any>>{
-        return this.httpClient.post<any>(this.url, JSON.stringify(reponse),{observe : 'response', headers: this.httpOptions.headers})
+        return this.httpClient.put<any>(this.url, JSON.stringify(reponse),{observe : 'response', headers: this.httpOptions.headers})
         .pipe(catchError(this.errorHandler));
       }
       // Gérer les erreurs HTTP

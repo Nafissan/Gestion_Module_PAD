@@ -932,7 +932,7 @@ export let menus = [
     name: "Dossier Colonie",
     routeOrFunction: "/colonie/dossier-colonie",
     // icon: "list",
-    position: 5,
+    position: 1,
     privilege: "MENU_DOTATION",
     parent: {
       id: 65,
@@ -948,7 +948,7 @@ export let menus = [
       name: "Inscription Colonie",
       routeOrFunction: "/colonie/participant",
       // icon: "list",
-      position: 5,
+      position: 3,
       privilege: "MENU_DOTATION",
       parent: {
         id: 65,
@@ -977,10 +977,10 @@ export let menus = [
 },
 {
   id: 69,
-  name: "Suivi Dossier",
+  name: "Suivi Rapport Prospection",
   routeOrFunction: "/colonie/suivi-colonie",
   // icon: "list",
-  position: 5,
+  position: 2,
   privilege: "MENU_DOTATION",
   parent: {
     id: 65,
@@ -996,7 +996,7 @@ export let menus = [
   name: "Liste Colons",
   routeOrFunction: "/colonie/colon",
   // icon: "list",
-  position: 5,
+  position: 4,
   privilege: "MENU_DOTATION",
   parent: {
     id: 65,
@@ -1011,7 +1011,7 @@ export let menus = [
   id: 71,
   name: "Historique Colonie",
   routeOrFunction: "/colonie/historique-colonie",
-  position: 5,
+  position: 7,
   privilege: "MENU_DOTATION",
   parent: {
     id: 65,
@@ -1024,9 +1024,9 @@ export let menus = [
 },
 {
   id: 72,
-  name: "Tableau de bord Colonie",
+  name: "Statistique Colonie",
   routeOrFunction: "/colonie/tableau-statistique",
-  position: 5,
+  position: 6,
   privilege: "MENU_DOTATION",
   parent: {
     id: 65,

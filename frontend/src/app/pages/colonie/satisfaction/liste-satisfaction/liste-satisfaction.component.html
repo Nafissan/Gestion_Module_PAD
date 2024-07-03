@@ -6,7 +6,7 @@
     <fury-page-layout-content [@fadeInUp]>
         <fury-list *ngIf="satisfactions.length !== 0 && showProgressBar === true" name="Satisfactions" [columns]="columns" (filterChange)="onFilterChange($event)">
             <div class="actions">
-                <button class="create" (click)="createSatisfaction()" [disabled]="!openOrSaisiDossiers && !!filteredSatisfaction"  mat-mini-fab color="primary">
+                <button class="create" (click)="createSatisfaction()" [disabled]="!canAdd"  mat-mini-fab color="primary">
                     <mat-icon>add</mat-icon>
                   </button>            </div>
             <table [dataSource]="dataSource" mat-table matSort>
@@ -41,7 +41,7 @@
                             <mat-icon>more_horiz</mat-icon>
                           </button>
                           <mat-menu #actionsMenu="matMenu">
-                            <button mat-menu-item (click)="updateStaisfaction(row)">
+                            <button mat-menu-item (click)="updateSatisfaction(row)">
                               <mat-icon>edit</mat-icon>
                               <span>MODIFIER</span>
                             </button>
@@ -68,7 +68,7 @@
             <div class="card-body">
                 <h5 class="card-title">PAS DE FORMULAIRE SATISFACTION</h5>
                 <p class="card-text">Ajouter un nouveau formulaire satisfactions</p>
-                <button mat-mini-fab color="primary" (click)="createSatisfaction()" [disabled]="!openOrSaisiDossiers && filteredSatisfaction">
+                <button mat-mini-fab color="primary" (click)="createSatisfaction()" [disabled]="!canAdd">
                   <mat-icon>add</mat-icon>
                 </button>            </div>
             <div class="card-footer text-muted">

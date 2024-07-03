@@ -102,57 +102,58 @@ export const MY_FORMATS = {
       ]),
       code: new FormControl({ value: this.defaults.code, disabled: true }),
     });
+    console.log("default "+this.defaults.noteInstruction);
   }
 
  
  
   async handleNoteMinistereFileInput(files: FileList) {
-    if (files.length > 0) {
+    if (files.length > 0 ) {
       this.noteMinistere = await this.convertFileToBase64(files[0]);
       this.selectedFileName = files[0].name;
     }
   }
 
   async handleDemandeProspectionFileInput(files: FileList) {
-    if (files.length > 0) {
+    if (files.length > 0 ) {
       this.demandeProspection = await this.convertFileToBase64(files[0]);
     }
   }
 
   async handleNotePersonels(files: FileList) {
-    if (files.length > 0) {
+    if (files.length > 0  ) {
       this.notePersonnels = await this.convertFileToBase64(files[0]);
 
-      /*if (!this.emailSentForNoteInformation) {
-        this.sendEmail(
-          'New Note Information Uploaded',
-          'A new Note Information file has been uploaded.',
-          ['nnafissa27@gmail.com'],
-          this.notePersonnels
-        );
-        this.emailSentForNoteInformation = true;
-      }*/
+      
+    }
+    if (!this.emailSentForNoteInformation) {
+      this.sendEmail(
+        'New Note Information Uploaded',
+        'A new Note Information file has been uploaded.',
+        ['aliounebada.ndoye@portdakar.sn'],
+        this.notePersonnels
+      );
+      this.emailSentForNoteInformation = true;
     }
   }
 
   async handleNotePelerins(files: FileList) {
-    if (files.length > 0) {
+    if (files.length > 0  ) {
       this.notePelerins = await this.convertFileToBase64(files[0]);
-
-      /*if (!this.emailSentForNoteInstruction) {
-        this.sendEmail(
-          'New Note Instruction Uploaded',
-          'A new Note Instruction file has been uploaded.',
-          ['nnafissa27@gmail.com'],
-          this.notePelerins
-        );
-        this.emailSentForNoteInstruction = true;
-      }*/
+    }
+    if (!this.emailSentForNoteInstruction) {
+      this.sendEmail(
+        'New Note Instruction Uploaded',
+        'A new Note Instruction file has been uploaded.',
+        ['nnafissa27@gmail.com'],
+        this.notePelerins
+      );
+      this.emailSentForNoteInstruction = true;
     }
   }
 
   async handleRapport(files: FileList) {
-    if (files.length > 0) {
+    if (files.length > 0 ) {
       this.rapport = await this.convertFileToBase64(files[0]);
     }
   }
@@ -215,10 +216,10 @@ export const MY_FORMATS = {
     formData.fonction             = this.defaults.fonction;
 
     formData.noteMinistere = this.defaults.noteMinistere;
-    formData.demandeProspection = this.demandeProspection;
-    formData.noteInformation = this.notePersonnels;
-    formData.noteInstruction = this.notePelerins;
-    formData.rapportMission = this.rapport;
+    formData.demandeProspection = this.demandeProspection ? this.demandeProspection : this.defaults.demandeProspection;
+    formData.noteInformation = this.notePersonnels ? this.notePersonnels : this.defaults.noteInformation;
+    formData.noteInstruction = this.notePelerins ? this.notePelerins : this.defaults.noteInstruction;
+    formData.rapportMission = this.rapport ? this.rapport : this.defaults.rapportMission;
     formData.createdAt = this.defaults.createdAt;
     formData.updatedAt = new Date();
     this.dialogConfirmationService.confirmationDialog().subscribe(action => {
