@@ -13,12 +13,12 @@
         </div>
         <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
             <mat-label>Rapport de prospection</mat-label>
-            <input type="file" formControlName="rapport" (change)="handleRapportProspection($event.target.files)">
+            <input type="file" (change)="handleRapportProspection($event.target.files)">
 </div>
 
     </mat-dialog-content>
     <mat-dialog-actions fxLayout="row" fxLayoutAlign="end center">
         <button *ngIf="isCreateMode()" mat-button [disabled]="!form.valid" [ngClass]="{'bg-blue-100': !form.valid, 'bg-blue-400': form.valid}">AJOUTER</button>
-        <button *ngIf="isUpdateMode()" mat-button [disabled]="!form.valid">MODIFIER</button>
+        <button *ngIf="isUpdateMode()" mat-button >MODIFIER</button>
     </mat-dialog-actions>
 </form>

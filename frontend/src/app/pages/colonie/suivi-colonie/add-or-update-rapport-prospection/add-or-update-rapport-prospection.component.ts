@@ -40,7 +40,6 @@ export class AddOrUpdateRapportProspectionComponent implements OnInit {
     private dossierColonieService: DossierColonieService 
   ) {this.form = this.fb.group({
     codeDossierColonie: [null],
-    rapport: [null]
   });}
 
   async ngOnInit(): Promise<void> {
@@ -63,8 +62,7 @@ export class AddOrUpdateRapportProspectionComponent implements OnInit {
 
   initForm(): void {
     this.form.patchValue({
-      codeDossierColonie: this.defaults.codeDossierColonie.code || null, 
-      rapport: this.defaults.rapportProspection || this.rapportProspection
+      codeDossierColonie: this.defaults.codeDossierColonie.code, 
     });
 
     if (this.mode === "update") {
@@ -153,15 +151,15 @@ export class AddOrUpdateRapportProspectionComponent implements OnInit {
   }
 
    updateRapportProspection() {
-    if (this.form.valid) {
-      const formData: RapportProspection = {
-        ...this.form.value,
+console.log(this.form) ;     
+const formData: RapportProspection = {
         id: this.defaults.id,
         matriculeAgent: this.agent.matricule,
         matricule: this.defaults.matricule,
         nom: this.defaults.nom,
         prenom: this.defaults.prenom,
-        rapportProspection: this.rapportProspection ? this.rapportProspection : this.defaults.rapportProspection,
+        codeDossierColonie: this.defaults.codeDossierColonie,
+        rapportProspection: this.fileRapportProspection ? this.fileRapportProspection : this.defaults.rapportProspection,
         dateValidation: this.defaults.dateValidation,
         nomAgent: this.agent.nom,
         prenomAgent: this.agent.prenom,
@@ -181,7 +179,6 @@ export class AddOrUpdateRapportProspectionComponent implements OnInit {
           this.dialogRef.close();
         }
       });
-    }
   }
 
   isCreateMode(): boolean {

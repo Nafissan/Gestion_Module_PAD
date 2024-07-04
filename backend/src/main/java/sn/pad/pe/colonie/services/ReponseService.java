@@ -2,13 +2,14 @@ package sn.pad.pe.colonie.services;
 
 import java.util.List;
 
+import sn.pad.pe.colonie.bo.Reponse;
 import sn.pad.pe.colonie.dto.ReponseDTO;
 
 public interface  ReponseService {
     
     public ReponseDTO saveReponse(ReponseDTO reponses);
 
-    public void deleteReponsesByFormulaireId(Long formulaireId);
+    public void deleteReponse(Reponse formulaireId);
     public ReponseDTO updateReponses(ReponseDTO reponses);
 
     public List<ReponseDTO> getReponses();

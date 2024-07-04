@@ -83,8 +83,10 @@ public class RapportProspectionServiceImpl implements RapportProspectionService 
     @Override
     public boolean deleteRapportProspection(RapportProspectionDTO rapportProspectionDTO) {
         Optional<RapportProspection> rapport = rapportProspectionRepository.findById(rapportProspectionDTO.getId());
+        System.out.print("contains "+ rapport.isPresent());
         if (rapport.isPresent()) {
-            rapportProspectionRepository.delete(rapport.get());
+            RapportProspection rapportpProspection = rapport.get();
+            rapportProspectionRepository.delete(rapportpProspection);
             return true;
         }
         return false;

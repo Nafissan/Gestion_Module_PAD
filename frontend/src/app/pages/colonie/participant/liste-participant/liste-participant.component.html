@@ -61,11 +61,11 @@
                   <mat-icon>delete_sweep</mat-icon>
                   <span>SUPPRIMER</span>
                 </button>
-                <button mat-menu-item (click)="validerParticipant(row)">
+                <button *ngIf="row.status === 'A VALIDER'" mat-menu-item (click)="validerParticipant(row)">
                   <mat-icon>check_circle_outline</mat-icon>
                   <span>VALIDER</span>
                 </button>
-                <button mat-menu-item (click)="rejeterParticipant(row)">
+                <button *ngIf="row.status === 'A VALIDER'" mat-menu-item (click)="rejeterParticipant(row)">
                   <mat-icon>check_circle_outline</mat-icon>
                   <span>REJETER</span>
                 </button>

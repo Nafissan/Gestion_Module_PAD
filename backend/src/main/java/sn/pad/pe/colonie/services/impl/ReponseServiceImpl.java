@@ -29,8 +29,8 @@ public class ReponseServiceImpl implements ReponseService{
 
 
     @Override
-    public void deleteReponsesByFormulaireId(Long formulaireId) {
-        reponseRepository.deleteByFormulaire_Id(formulaireId);
+    public void deleteReponse(Reponse formulaireId) {
+        reponseRepository.delete(formulaireId);
     }
 
     @Override

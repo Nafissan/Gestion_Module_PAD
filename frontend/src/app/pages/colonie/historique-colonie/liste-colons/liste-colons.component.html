@@ -36,18 +36,6 @@
   
         <mat-paginator [pageSize]="pageSize" class="paginator"></mat-paginator>
       </fury-list>
-      <div *ngIf="colons.length === 0 && showProgressBar === true" class="card text-center">
-        <div class="card-header">
-          <span class="badge badge-info">INFORMATION</span>
-        </div>
-        <div class="card-body">
-          <h5 class="card-title">LISTE DES COLONS VIDE</h5>
-        </div>
-        <div class="card-footer text-muted">
-          {{date | date : 'dd/MMM/yyyy HH:mm:ss'}}
-        </div>
-      </div>
-  
       <mat-progress-bar *ngIf="showProgressBar === false" mode="query" color="primary"></mat-progress-bar>
     </fury-page-layout-content>
   </fury-page-layout>
