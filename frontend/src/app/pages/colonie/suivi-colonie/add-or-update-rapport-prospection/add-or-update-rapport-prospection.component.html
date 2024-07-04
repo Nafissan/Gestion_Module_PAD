@@ -3,6 +3,8 @@
 </div>
 <div mat-dialog-title class="titre_modal_add" *ngIf="isCreateMode()">Nouveau Rapport de Prospection</div>
 <div mat-dialog-title class="titre_modal_add" *ngIf="isUpdateMode()">Mise à jour Rapport de Prospection</div>
+<div mat-dialog-title class="titre_modal_add" *ngIf="isCloseMode()">Rejection Rapport de Prospection</div>
+
 <form [formGroup]="form" (ngSubmit)="save()">
     <mat-dialog-content>
         <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
@@ -11,14 +13,22 @@
                     <input matInput formControlName="codeDossierColonie">
                 </mat-form-field>
         </div>
-        <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
+        <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px" *ngIf="mode === 'update' || mode === 'create'">
             <mat-label>Rapport de prospection</mat-label>
             <input type="file" (change)="handleRapportProspection($event.target.files)">
-</div>
+        </div>
+        <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
+            <mat-form-field fxFlex *ngIf="mode === 'rejeter'">
+                    <mat-label>Commentaire</mat-label>
+                    <input matInput formControlName="commentaire">
+                </mat-form-field>
+        </div>
 
     </mat-dialog-content>
     <mat-dialog-actions fxLayout="row" fxLayoutAlign="end center">
         <button *ngIf="isCreateMode()" mat-button [disabled]="!form.valid" [ngClass]="{'bg-blue-100': !form.valid, 'bg-blue-400': form.valid}">AJOUTER</button>
         <button *ngIf="isUpdateMode()" mat-button >MODIFIER</button>
+        <button *ngIf="isCloseMode()" mat-button >REJETER</button>
+
     </mat-dialog-actions>
 </form>

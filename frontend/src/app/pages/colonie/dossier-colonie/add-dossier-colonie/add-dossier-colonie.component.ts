@@ -11,7 +11,7 @@ import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from "@angular/materia
 import { MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter } from "@angular/material-moment-adapter";
 import { Compte } from "src/app/pages/gestion-utilisateurs/shared/model/compte.model";
 import { EtatDossierColonie } from "../../shared/util/util";
-import { DialogUtil, NotificationUtil } from "src/app/shared/util/util";
+import { DialogUtil, MailDossierColonie, NotificationUtil } from "src/app/shared/util/util";
 import * as moment from "moment";
 import { DossierColonieService } from "../../shared/service/dossier-colonie.service";
 import { MailService } from "src/app/shared/services/mail.service";
@@ -50,13 +50,13 @@ export const MY_FORMATS = {
   agent: Agent;
   compte: Compte;
   form: FormGroup;
-  mode: "create" | "update" = "create";
+  mode: "create" | "update" | "fermer" = "create";
   colonieDossier: DossierColonie;
   etatDossierColonie: EtatDossierColonie = new EtatDossierColonie();
   selectedFileName: string = '';
   emailSentForNoteInformation: boolean = false;
   emailSentForNoteInstruction: boolean = false;
-
+defaults: DossierColonie;
   // Autres propriétés nécessaires
   noteMinistere: string | null = null;
   demandeProspection: string | null = null;
@@ -65,7 +65,7 @@ export const MY_FORMATS = {
   rapport: string | null = null;
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public defaults: DossierColonie,
+    @Inject(MAT_DIALOG_DATA) public data : { dossier: DossierColonie, property: string },
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<AddDossierColonieComponent>,
     private authService: AuthenticationService,
@@ -75,7 +75,8 @@ export const MY_FORMATS = {
      private mailService: MailService,
     private dialogConfirmationService: DialogConfirmationService,
     private notificationService: NotificationService
-  ) {}
+  ) {  
+  }
 
   ngOnInit(): void {
     this.username = this.authService.getUsername();
@@ -85,11 +86,14 @@ export const MY_FORMATS = {
       this.agent = this.compte.agent;
     });
 
-    if (this.defaults) {
+    if (this.data && this.data.dossier && this.data.property==="update") {
+      this.defaults = this.data.dossier;
       this.mode = "update";
-      this.emailSentForNoteInformation = !!this.defaults.noteInformation;
-      this.emailSentForNoteInstruction = !!this.defaults.noteInstruction;
-    } else {
+    } else if(this.data && this.data.property==="fermer") { 
+      this.mode = "fermer";
+      this.defaults = this.data.dossier;
+    }
+    else{
       this.defaults = {} as DossierColonie;
     }
 
@@ -100,9 +104,9 @@ export const MY_FORMATS = {
       description: new FormControl(this.defaults.description || "", [
         Validators.required,
       ]),
+      commentaire: new FormControl(this.defaults.commentaire || "", ),
       code: new FormControl({ value: this.defaults.code, disabled: true }),
     });
-    console.log("default "+this.defaults.noteInstruction);
   }
 
  
@@ -123,32 +127,13 @@ export const MY_FORMATS = {
   async handleNotePersonels(files: FileList) {
     if (files.length > 0  ) {
       this.notePersonnels = await this.convertFileToBase64(files[0]);
-
-      
     }
-    if (!this.emailSentForNoteInformation) {
-      this.sendEmail(
-        'New Note Information Uploaded',
-        'A new Note Information file has been uploaded.',
-        ['aliounebada.ndoye@portdakar.sn'],
-        this.notePersonnels
-      );
-      this.emailSentForNoteInformation = true;
-    }
+    
   }
 
   async handleNotePelerins(files: FileList) {
     if (files.length > 0  ) {
       this.notePelerins = await this.convertFileToBase64(files[0]);
-    }
-    if (!this.emailSentForNoteInstruction) {
-      this.sendEmail(
-        'New Note Instruction Uploaded',
-        'A new Note Instruction file has been uploaded.',
-        ['nnafissa27@gmail.com'],
-        this.notePelerins
-      );
-      this.emailSentForNoteInstruction = true;
     }
   }
 
@@ -163,12 +148,13 @@ export const MY_FORMATS = {
       this.createDossierColonie();
     } else if (this.mode === "update") {
       this.updateDossierColonie();
-    }
+    }else if (this.mode === "fermer"){      this.fermerDossier();
+    } 
   }
 
   createDossierColonie(): void {
     let formData: DossierColonie   = this.form.value;
-    formData.annee                = new Date(this.dateCreation.value).getFullYear().toString();
+    formData.annee                = "2022";
     formData.code                 = 'DCLN' + '-' + 'PAD' + '-' + formData.annee;
     formData.etat                 = EtatDossierColonie.ouvert; 
     formData.noteMinistere        = this.noteMinistere;
@@ -228,6 +214,22 @@ export const MY_FORMATS = {
         this.dossierColonieService.update(formData).subscribe(reponse => {
           this.notificationService.success(NotificationUtil.modification);
           this.dialogRef.close(reponse);
+          if(this.notePersonnels){
+            this.sendEmail(
+              "Note d'information",
+              "Ci-joint la note d'information sur les colonies de vacances",
+              ['aliounebada.ndoye@portdakar.sn'],
+              this.notePersonnels
+            );
+          }
+          if(this.notePelerins){
+            this.sendEmail(
+              'Note Instruction ',
+              "Ci-joint la note d'instruction sur les colonies de vacances",
+              ['aliounebada.ndoye@portdakar.sn'],
+              this.notePelerins
+            );
+          }
         }, err => {
           this.notificationService.warn(NotificationUtil.echec);},
         () => { })
@@ -244,7 +246,6 @@ export const MY_FORMATS = {
       const reader = new FileReader();
       reader.onload = () => {
         const base64String = reader.result as string;
-        // Remove the data URL prefix to get only the Base64 string
         const base64Content = base64String.split(',')[1];
         resolve(base64Content);
       };
@@ -269,12 +270,65 @@ export const MY_FORMATS = {
       }
     );
   }
+  fermerDossier(){
+    const formData: DossierColonie = this.form.value ;
+    formData.id                   = this.defaults.id;
+    formData.annee                = this.defaults.annee;
+    formData.code                 = this.defaults.code;
+    formData.etat                 = this.defaults.etat;  
+
+    formData.matricule            = this.defaults.matricule;
+    formData.prenom               = this.defaults.prenom;
+    formData.nom                  = this.defaults.nom;
+    formData.fonction             = this.defaults.fonction;
+    formData.noteMinistere = this.defaults.noteMinistere;
+    formData.demandeProspection = this.defaults.demandeProspection;
+    formData.noteInformation = this.defaults.noteInformation;
+    formData.noteInstruction =  this.defaults.noteInstruction;
+    formData.rapportMission = this.defaults.rapportMission;
+    formData.createdAt = this.defaults.createdAt;
+    formData.updatedAt = new Date();
+    let mail = new Mail();
+    mail.objet = MailDossierColonie.objet;
+    mail.contenu = MailDossierColonie.content;
+    mail.lien = "";
+    mail.emetteur = "";
+    mail.destinataires = ["aliounebada.ndoye@portdakar.sn"];
+    this.dialogConfirmationService.confirmationDialog().subscribe(action => {
+      if (action === DialogUtil.confirmer) {
+        this.dossierColonieService.update(formData).subscribe(reponse => {
+          this.notificationService.success(NotificationUtil.fermetureDossier);
+          this.dialogRef.close(reponse);
+        }, err => {
+          this.notificationService.warn(NotificationUtil.echec);},
+        () => {           
+          this.mailService.sendMailByDirections(mail).subscribe(
+            response => {
+              this.notificationService.success('Email sent successfully');
+              },
+              error => {
+                this.notificationService.warn('Failed to send email');
+                },
+                () => {
+                  this.notificationService.success(NotificationUtil.envoyeDossier);
+                }
+                );
+          this.dialogRef.close();
+        })
+      }else {
+        this.dialogRef.close();
+      }
+    })
+  }
   isCreateMode() {
     return this.mode === "create";
   }
 
   isUpdateMode() {
     return this.mode === "update";
+  }
+  isCloseMode() {
+    return this.mode === "fermer";
   }
   chosenYearHandler(normalizedYear: moment.Moment) {
     const ctrlValue = this.dateCreation.value;

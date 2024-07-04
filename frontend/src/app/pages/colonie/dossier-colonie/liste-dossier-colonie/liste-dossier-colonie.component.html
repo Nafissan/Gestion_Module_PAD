@@ -53,7 +53,8 @@
               <p *ngIf="column.property === 'rapportMission' && row.rapportMission" >
                 <span>Disponible</span>
               </p>
-              <p *ngIf="column.property !== 'etat' && column.property !== 'rapportMission'  && column.property !== 'noteInstruction' && column.property !== 'noteInformation' && column.property !== 'demandeProspection' && column.property !== 'noteMinistere'">
+              <p *ngIf="column.property == 'createdAt'" > {{ row.createdAt | date: 'dd-MMM-yyyy' }}</p>
+              <p *ngIf="column.property !== 'etat' && column.property !== 'rapportMission' && column.property !== 'createdAt' && column.property !== 'noteInstruction' && column.property !== 'noteInformation' && column.property !== 'demandeProspection' && column.property !== 'noteMinistere'">
                 <span>{{ row[column.property]}}</span>
             </p>
             </td>

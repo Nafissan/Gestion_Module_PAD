@@ -2,7 +2,7 @@
 import { ChartDataSets, ChartOptions } from 'chart.js';
 import { ChartType } from 'chart.js';
 
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { DossierColonieService } from '../../shared/service/dossier-colonie.service';
 import { EtatDossierColonie } from '../../shared/util/util';
 import { fadeInRightAnimation } from 'src/@fury/animations/fade-in-right.animation';
@@ -14,6 +14,15 @@ import { DateAdapter } from '@angular/material/core';
 import * as moment from 'moment';
 import { MatDatepicker } from '@angular/material/datepicker';
 import { FormControl } from '@angular/forms';
+import { ListColumn } from 'src/@fury/shared/list/list-column.model';
+import { MatTableDataSource } from '@angular/material/table';
+import { ReplaySubject, Observable } from 'rxjs';
+import { Satisfaction } from '../../shared/model/satisfaction.model';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { SatisfactionService } from '../../shared/service/satisfaction.service';
+import { DetailsSatisfactionComponent } from '../details-satisfaction/details-satisfaction.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'fury-dashboard-colonie',
@@ -23,14 +32,50 @@ import { FormControl } from '@angular/forms';
 })
 export class DashboardColonieComponent implements OnInit {
   dateV = new FormControl(moment());
-
+  satisfactions: Satisfaction[] = [];
+  subject$: ReplaySubject<Satisfaction[]> = new ReplaySubject<Satisfaction[]>(1);
+  data$: Observable<Satisfaction[]> = this.subject$.asObservable();
+  pageSize = 10;
+  dataSource: MatTableDataSource<Satisfaction> | null;
+  showProgressBar: boolean = false;
   selectedYear: number | null = null;
   startDate = new Date(this.selectedYear, 0, 1);
+  private paginator: MatPaginator;
+  private sort: MatSort;  filteredSatisfaction: Satisfaction[] = [];
 
-  constructor(private dossierColonieService: DossierColonieService,
+  constructor(private dossierColonieService: DossierColonieService,    private satisfactionService: SatisfactionService,
+    private dialog: MatDialog,
+
               private colonService: ColonService,
               private dateAdapter: DateAdapter<any>) {
     this.dateAdapter.setLocale('fr'); // Adapter la locale si nécessaire
+  }
+  @ViewChild(MatSort) set matSort(ms: MatSort) {
+    this.sort = ms;
+    this.setDataSourceAttributes();
+  }
+
+  @ViewChild(MatPaginator) set matPaginator(mp: MatPaginator) {
+    this.paginator = mp;
+    this.setDataSourceAttributes();
+  }
+  @Input()
+  columns: ListColumn[] = [
+    { name: "Checkbox", property: "checkbox", visible: true },
+    { name: "Code Dossier Colonie", property: "codeDossier", visible: true, isModelProperty: true },
+    { name: "Date de creation", property: "dateCreation", visible: true, isModelProperty: true },
+    { name: "Ajoute par", property: "traitePar", visible: true },
+  ] as ListColumn[];
+  
+  setDataSourceAttributes() {
+    if (this.dataSource) {
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    }
+  }
+
+  get visibleColumns() {
+    return this.columns.filter((column) => column.visible).map((column) => column.property);
   }
 
   barChartOptions: any = {
@@ -100,13 +145,21 @@ export class DashboardColonieComponent implements OnInit {
       }
     );
   }
+  getSatisfactions(dossiersColonies: any[],colons: any[]) {
+    this.satisfactionService.getAllSatisfactions().subscribe(response => {
+     this.satisfactions=response.body;
+     this.processData(dossiersColonies, colons,this.satisfactions);
+    }, err => {
+        console.error('Error loading participant colonies:', err);
+      })
+  }
   
 
   loadColons(dossiersColonies: any[]) {
     this.colonService.getAll().subscribe(
       (response) => {
         let colons = response.body;
-        this.processData(dossiersColonies, colons);
+        this.getSatisfactions(dossiersColonies,colons);
       },
       (error) => {
         console.error('Error fetching colons:', error);
@@ -115,12 +168,10 @@ export class DashboardColonieComponent implements OnInit {
   }
   chosenYearHandler( datepicker: MatDatepicker<moment.Moment>) {
     const ctrlValue = this.dateV.value;
-    //ctrlValue.year(normalizedYear.year());
     this.dateV.setValue(ctrlValue);
     datepicker.close();
-    //this.onYearChange(normalizedYear.year());
   }
-  processData(dossiersColonies: DossierColonie[], colons: Colon[]) {
+  processData(dossiersColonies: DossierColonie[], colons: Colon[],satisfaction:Satisfaction[]) {
     const colonCountsMap = new Map<number, number>();
     let maleCount = 0;
     let femaleCount = 0;
@@ -134,7 +185,7 @@ export class DashboardColonieComponent implements OnInit {
         year = new Date(dossier.createdAt).getFullYear();
       }
       const colonsInDossier = colons.filter(colon => colon.codeDossier.id === dossier.id);
-  
+    this.filteredSatisfaction = this.satisfactions.filter(satisfaction=> satisfaction.codeDossier.id === dossier.id);
       maleCount += colonsInDossier.filter(colon => colon.sexe === 'masculin').length;
       femaleCount += colonsInDossier.filter(colon => colon.sexe === 'feminin').length;
   
@@ -163,7 +214,8 @@ export class DashboardColonieComponent implements OnInit {
     this.barChartData = [
       { data: Array.from(colonCountsMap.values()), label: 'Nombre de colons' }
     ];
-  
+    this.subject$.next(this.filteredSatisfaction);
+    this.showProgressBar = true;
     this.pieChartDataSex = [maleCount, femaleCount];
     this.pieChartDataAge = [age7to12Count, age12to17Count, age17to20Count];
   }
@@ -175,6 +227,20 @@ export class DashboardColonieComponent implements OnInit {
       map.set(year, count);
     }
   }
+ detailsSatisfaction(row: Satisfaction){
+  this.dialog
+  .open(DetailsSatisfactionComponent, { data: row })
+  .afterClosed()
+  .subscribe((satisfaction) => {
+    if (satisfaction) {
+      const index = this.satisfactions.findIndex(
+        (existing) => existing.id === satisfaction.id
+      );
+      this.satisfactions[index] = new Satisfaction(satisfaction);
+      this.subject$.next(this.satisfactions);
+    }
+  })
+ } 
 
   calculateAge(dateNaissance: Date): number {
     const birthDate = new Date(dateNaissance);

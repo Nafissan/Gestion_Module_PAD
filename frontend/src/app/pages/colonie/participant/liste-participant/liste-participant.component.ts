@@ -108,7 +108,6 @@ export class ListeParticipantComponent implements OnInit {
     this.data$.pipe(filter((data) => !!data)).subscribe((participant) => {
       this.participants = participant;
       this.dataSource.data = participant;
-      console.log('Participants Colonies in ngOnInit:', this.participants); // Debugging output
     });
   }
   ngAfterViewInit() {
@@ -131,21 +130,14 @@ export class ListeParticipantComponent implements OnInit {
       map(response => response.body)
     ).subscribe(dossiers => {
       this.dossierColonie = dossiers;
-      // Filter dossiers to only include 'ouvert' or 'saisi' states
       const openOrSaisiDossiers = dossiers.filter(dossier => dossier.etat === EtatDossierColonie.ouvert || dossier.etat === EtatDossierColonie.saisi);
       
-      // Get all participants
       this.participantService.getAll().subscribe(response => {
         this.participants = response.body;
         
-        // Filter participants whose codeDossier matches the id of openOrSaisiDossiers
         this.filteredParticipant = this.participants.filter(participant => 
           openOrSaisiDossiers.some(dossier => dossier.id === participant.codeDossier.id)
-        );
-  
-        // Log the filtered participants for debugging
-        console.log("Filtered Participants: ", this.filteredParticipant);
-        
+        );        
         
       }, err => {
         console.error('Error loading participant colonies:', err);
@@ -155,8 +147,7 @@ export class ListeParticipantComponent implements OnInit {
       });
     });
   }
-  refreshListe(){
-    this.fetchDossiersAndParticipants();
+  refreshListe(){     this.fetchDossiersAndParticipants();
   }
   getProperty(row: any, property: string) {
     return property.split('.').reduce((acc, part) => acc && acc[part], row);
@@ -202,7 +193,6 @@ export class ListeParticipantComponent implements OnInit {
         );
         this.participants[index] = new Participant(participant);
         this.subject$.next(this.participants);
-        console.log("Apres update"+ this.participants);
         this.refreshListe();
       }
     })
@@ -276,7 +266,6 @@ export class ListeParticipantComponent implements OnInit {
       };
   
       this.colonService.create(colon).subscribe((response: any) => {
-        console.log('Response from server:', response);
         if (response) {
           this.notificationService.success('Colon créé avec succès');
           this.refreshListe();
@@ -312,7 +301,6 @@ onCellClick(property: string, row: Participant) {
   });
 
   dialogRef.afterClosed().subscribe(result => {
-    console.log('Le dialogue a été fermé', result);
     const index = this.participants.findIndex(
       (existingParticipant) => existingParticipant.id === row.id
     );

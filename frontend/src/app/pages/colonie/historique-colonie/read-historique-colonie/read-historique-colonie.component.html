@@ -1,6 +1,7 @@
-<div *ngIf="fileContent" class="file-content">
-    <pre *ngIf="file && file.type.startsWith('text')">{{ fileContent }}</pre>
-    <!-- PDF content will be displayed in a new window -->
-    <p *ngIf="fileContent && !file.type.startsWith('text')">{{ fileContent }}</p>
-  </div>
-  
+<div *ngIf="pdfDataUrl && showFrame">
+
+  <iframe [src]="pdfDataUrl" frameborder="0" style="width: 100%; height: 600px;"></iframe>
+</div>
+<div *ngIf="!pdfDataUrl">
+  <p>Impossible d'afficher le fichier. Le contenu du fichier pourrait être invalide.</p>
+</div>

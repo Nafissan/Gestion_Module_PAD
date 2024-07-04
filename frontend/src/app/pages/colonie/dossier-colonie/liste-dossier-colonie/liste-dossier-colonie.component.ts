@@ -22,6 +22,7 @@ import { Agent } from "../../../../shared/model/agent.model";
 import { Mail } from "src/app/shared/model/mail.model";
 import { ParticipantService } from "../../shared/service/participant.service";
 import { ReadFileDossierComponent } from "../read-file-dossier/read-file-dossier.component";
+import { Participant } from "../../shared/model/participant-colonie.model";
 
 @Component({
   selector: "fury-liste-dossier-colonie",
@@ -98,7 +99,6 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
     this.data$.pipe(filter((data) => !!data)).subscribe((dossierColonies) => {
       this.dossierColonies = dossierColonies;
       this.dataSource.data = dossierColonies;
-      console.log('Dossier Colonies in ngOnInit:', this.dossierColonies); 
     });
   }
 
@@ -160,7 +160,7 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
   }
   updateDossierColonie(dossierColonie: DossierColonie) {
     this.dialog
-      .open(AddDossierColonieComponent, { data: dossierColonie })
+      .open(AddDossierColonieComponent, { data:  { dossier: dossierColonie, property: "update" }, })
       .afterClosed()
       .subscribe((updatedDossierColonie) => {
         if (updatedDossierColonie) {
@@ -170,7 +170,6 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
             this.dossierColonies[index] = new DossierColonie(updatedDossierColonie);
             this.subject$.next(this.dossierColonies); 
             this.refreshDossierColonies(); 
-            console.log("Apres update", this.dossierColonies);
         }
       });
   }
@@ -189,13 +188,12 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
         }
       });
   }
-  refreshDossierColonies() {
-    this.getDossierColonies();
-  }
+  refreshDossierColonies() { this.getDossierColonies(); }
   
   deleteDossierColonie(dossierColonie: DossierColonie) {
     this.dialogConfirmationService.confirmationDialog().subscribe(action => {
       if (action === DialogUtil.confirmer) {
+       
         this.dossierColonieService.delete(dossierColonie).subscribe(
           () => {
             this.dossierColonies.splice(
@@ -214,28 +212,22 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
     })
   }
   fermerDossierColonie(dossierColonie: DossierColonie) {
-    this.dialogConfirmationService.confirmationDialog().subscribe(action => {
-      let mail = new Mail();
-      mail.objet = MailDossierColonie.objet;
-      mail.contenu = MailDossierColonie.content;
-      mail.lien = "";
-      mail.emetteur = "";
-      mail.destinataires = ["nnafissa27@gmail.com"];
-      if (action === DialogUtil.confirmer) {
         dossierColonie.etat = this.fermer;
-        this.dossierColonieService.update(dossierColonie).subscribe(
-          (response) => { 
-          this.notificationService.success(NotificationUtil.fermetureDossier);
-            //this.deleteAllParticipants();
-            this.refreshDossierColonies(); // Actualise les données après la création
-
-          },
-          err => {
-            this.notificationService.warn(NotificationUtil.echec);
-          }, () => {
-          });
-      }
-    });
+        this.dialog
+        .open(AddDossierColonieComponent, { data:  { dossier: dossierColonie, property: "fermer" }, })
+        .afterClosed()
+        .subscribe((updatedDossierColonie) => {
+          if (updatedDossierColonie) {
+            const index = this.dossierColonies.findIndex(
+              (existingDossierColonie) => existingDossierColonie.id === updatedDossierColonie.id
+            );
+              this.dossierColonies[index] = new DossierColonie(updatedDossierColonie);
+              this.subject$.next(this.dossierColonies); 
+              this.deleteAllParticipants();
+          }
+        });
+        this.refreshDossierColonies(); 
+   
   }
   onCellClick(property: string, row: DossierColonie): void {
     const dialogRef = this.dialog.open(ReadFileDossierComponent, {
@@ -247,7 +239,6 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
     });
   
     dialogRef.afterClosed().subscribe(result => {
-      console.log('Le dialogue a été fermé', result);
       const index = this.dossierColonies.findIndex(
         (existingDossierColonie) => existingDossierColonie.id === row.id
       );
@@ -259,26 +250,35 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
   deleteAllParticipants(): void {
     this.participantService.getAll().subscribe(
       response => {
-        const participants = response.body;
+        const participants = response.body as Participant[];
         if (participants && participants.length === 0) {
+          this.notificationService.warn('Aucun participant à supprimer');
         } else {
-          this.participantService.deleteAllParticipants().subscribe(
-            () => {
-              this.notificationService.success('Tous les participants ont été supprimés avec succès');
-            },
-            error => {
-              this.notificationService.warn('Échec de la suppression des participants');
-              console.error('Error deleting participants:', error);
-            }
-          );
+          let deleteCount = 0;
+          let deleteFailed = false;
+  
+          participants.forEach(participant => {
+            this.participantService.deleteParticipant(participant).subscribe(
+              () => {
+                deleteCount++;
+                if (deleteCount === participants.length) {
+                  this.notificationService.success('Tous les participants ont été supprimés avec succès');
+                }
+              },
+              error => {
+                deleteFailed = true;
+                this.notificationService.warn('Échec de la suppression de certains participants'+error);
+              }
+            );
+          });
         }
       },
       error => {
-        this.notificationService.warn('Erreur lors de la vérification des participants');
-        console.error('Error retrieving participants:', error);
+        this.notificationService.warn('Erreur lors de la vérification des participants'+error);
       }
     );
   }
+  
   ngOnDestroy() { }
 
  

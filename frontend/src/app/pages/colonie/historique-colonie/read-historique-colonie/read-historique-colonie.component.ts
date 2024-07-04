@@ -1,4 +1,8 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Inject, Input, OnInit } from '@angular/core';
+import { Colon } from '../../shared/model/colon.model';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { DossierColonie } from '../../shared/model/dossier-colonie.model';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
   selector: 'fury-read-historique-colonie',
@@ -6,60 +10,64 @@ import { Component, Input, OnInit } from '@angular/core';
   styleUrls: ['./read-historique-colonie.component.scss']
 })
 export class ReadHistoriqueColonieComponent implements OnInit {
-    @Input() base64String: string | null = null;
-    file: File | null = null;
-    fileContent: string | null = null;
+    colon:Colon;
+    dossier: DossierColonie;
+    property: string;
+    pdfDataUrl: SafeResourceUrl;
+     showFrame: boolean = true; // Initially true
   
-    constructor() {}
+    constructor(private sanitizer: DomSanitizer,    @Inject(MAT_DIALOG_DATA) public data: { dossier?: DossierColonie, colon?: Colon, property: string }) {
+      if(data.dossier) this.dossier = data.dossier;
+      if(data.colon) this.colon = data.colon;
+      this.property = data.property;
+    }
   
     ngOnInit(): void {
-      if (this.base64String) {
-        // Example usage with base64toFile function
-        this.file = this.base64toFile(this.base64String, 'application/pdf', 'fichier.pdf');
         this.loadFileContent();
-      }
     }
   
 
     loadFileContent(): void {
-      if (this.file) {
-        const reader = new FileReader();
-  
-        reader.onload = () => {
-          if (this.file && this.file.type.startsWith('text')) {
-            this.fileContent = reader.result as string;
-          } else if (this.file && this.file.type === 'application/pdf') {
-            const pdfWindow = window.open("");
-            pdfWindow.document.write(
-              "<iframe width='100%' height='100%' src='" + encodeURI(reader.result as string) + "'></iframe>"
-            );
-          } else {
-            this.fileContent = 'Type de fichier non pris en charge pour l\'affichage.';
+      try {
+        const base64String = this.getFileContent(this.property);
+        if (this.isValidBase64(base64String)) {
+          const binaryString = atob(base64String);
+          const byteNumbers = new Uint8Array(binaryString.length);
+          for (let i = 0; i < binaryString.length; i++) {
+            byteNumbers[i] = binaryString.charCodeAt(i);
           }
-        };
-  
-        reader.readAsDataURL(this.file); 
-      }
-    }
-    base64toBlob(base64Data: string, contentType: string): Blob {
-      const sliceSize = 512;
-      const byteCharacters = atob(base64Data);
-      const byteArrays: Uint8Array[] = [];
-  
-      for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-        const slice = byteCharacters.slice(offset, offset + sliceSize);
-        const byteNumbers = new Array(slice.length);
-        for (let i = 0; i < slice.length; i++) {
-          byteNumbers[i] = slice.charCodeAt(i);
+          const blob = new Blob([byteNumbers], { type: 'application/pdf' });
+          this.pdfDataUrl = this.sanitizer.bypassSecurityTrustResourceUrl(URL.createObjectURL(blob));
+          console.log(this.pdfDataUrl);
         }
-        const byteArray = new Uint8Array(byteNumbers);
-        byteArrays.push(byteArray);
+      } catch (error) {
+        console.error('Error decoding base64 string:', error);
       }
-  
-      return new Blob(byteArrays, { type: contentType });
+      }
+      getFileContent(property: string): string {
+        if(this.dossier)  return this.dossier[property];
+        if(this.colon)  return this.colon[property];
+
+      }
+    
+      isValidBase64(base64: string): boolean {
+        try {
+          atob(base64);
+          return true;
+        } catch (e) {
+          return false;
+        }
+      }
+      ngOnDestroy(): void {
+        if (this.pdfDataUrl) {
+          const objectUrl = this.pdfDataUrl as string;
+          URL.revokeObjectURL(objectUrl);
+        }
+      }
+    
+      closeFrame(): void {
+        this.showFrame = false;
+      }
+    
     }
-    base64toFile(base64Data: string, contentType: string, fileName: string): File {
-      const blob = this.base64toBlob(base64Data, contentType);
-      return new File([blob], fileName, { type: contentType });
-    }
-}
+   

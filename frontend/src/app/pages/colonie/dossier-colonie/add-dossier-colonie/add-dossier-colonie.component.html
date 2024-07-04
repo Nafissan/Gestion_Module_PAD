@@ -3,11 +3,12 @@
 </div>
 <div mat-dialog-title class="titre_modal_add" *ngIf="isCreateMode()">Nouveau Dossier</div>
 <div mat-dialog-title class="titre_modal_add" *ngIf="isUpdateMode()">Mise à jour Dossier</div>
+<div mat-dialog-title class="titre_modal_add" *ngIf="isCloseMode()">Fermeture Dossier</div>
 <form [formGroup]="form" (ngSubmit)="save()">
     <mat-dialog-content>
         <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
         <!-- Description -->
-        <mat-form-field fxFlex >
+        <mat-form-field fxFlex  *ngIf="mode === 'update' || mode === 'create'">
             <mat-label>Description</mat-label>
             <input type="text" formControlName="description" matInput>
         </mat-form-field>
@@ -16,6 +17,10 @@
             <input matInput formControlName="code">
         </mat-form-field>
         </div>
+        <mat-form-field fxFlex *ngIf="mode === 'fermer'">
+          <mat-label>Commentaire</mat-label>
+          <input matInput formControlName="commentaire">
+      </mat-form-field>
         <div fxLayout="column" fxLayout.gt-sm="column" fxLayoutGap.gt-sm="34px">
         
 
@@ -24,16 +29,16 @@
                 <div class="file-upload"  *ngIf="mode === 'create'">
                   <input type="file" class="form-control-file border" id="fileInput" multiple="false"  (change)="handleNoteMinistereFileInput($event.target.files)">
                 </div>
-                <mat-label  *ngIf="mode === 'update'">Demande de prospection</mat-label>
+                <mat-label  *ngIf="mode === 'update' ">Demande de prospection</mat-label>
                 <div class="file-upload"  *ngIf="mode === 'update'">
                   <input type="file" class="form-control-file border" id="fileInput" multiple="false"  (change)="handleDemandeProspectionFileInput($event.target.files)" >
                 </div>
-                <mat-label  *ngIf="mode === 'update'">Note d'information </mat-label>
-                <div class="file-upload"  *ngIf="mode === 'update'">
+                <mat-label  *ngIf="mode === 'update' && !defaults.noteInformation">Note d'information </mat-label>
+                <div class="file-upload"  *ngIf="mode === 'update'&& !defaults.noteInformation ">
                   <input type="file" class="form-control-file border" id="fileInput" multiple="false"  (change)="handleNotePersonels($event.target.files)" >
                 </div>
-                <mat-label  *ngIf="mode === 'update'">Note d'instruction colonie</mat-label>
-                <div class="file-upload"  *ngIf="mode === 'update'">
+                <mat-label  *ngIf="mode === 'update' && !defaults.noteInstruction">Note d'instruction colonie</mat-label>
+                <div class="file-upload"  *ngIf="mode === 'update' && !defaults.noteInstruction">
                   <input type="file" class="form-control-file border" id="fileInput" multiple="false" (change)="handleNotePelerins($event.target.files)" >
                 </div>
                 <mat-label  *ngIf="mode === 'update'">Rapport de mission</mat-label>
@@ -48,5 +53,6 @@
         <button *ngIf="isCreateMode()" mat-button [disabled]="!form.valid 
             ">CREER</button>
         <button *ngIf="isUpdateMode()" mat-button [disabled]="!form.valid">MODIFIER</button>
+        <button *ngIf="isCloseMode()" mat-button [disabled]="!form.valid">FERMER</button>
     </mat-dialog-actions>
 </form>

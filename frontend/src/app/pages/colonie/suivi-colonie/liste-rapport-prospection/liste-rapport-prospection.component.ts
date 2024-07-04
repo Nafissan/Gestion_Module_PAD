@@ -24,6 +24,7 @@ import { Mail } from "src/app/shared/model/mail.model";
 import { MailService } from "src/app/shared/services/mail.service";
 import { EtatDossierColonie } from "../../shared/util/util";
 import { DetailsRapportProspectionComponent } from "../details-rapport-prospection/details-rapport-prospection.component";
+import { property } from "lodash-es";
 
 @Component({
   selector: "fury-liste-rapport-prospection",
@@ -89,37 +90,23 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
   ) { }
 
   ngOnInit() {
+    this.getRapportProspections();
     this.username = this.authService.getUsername();
     this.compteService.getByUsername(this.username).subscribe((response) => {
       this.compte = response.body;
       this.agent = this.compte.agent;
     });
-    this.getRapportProspections();
+    
     this.dataSource = new MatTableDataSource();
     this.data$.pipe(filter((data) => !!data)).subscribe((rapports) => {
       this.rapports = rapports;
       this.dataSource.data = rapports;
-      console.log('Participants Colonies in ngOnInit:', this.rapports); // Debugging output
 
     });
-    this.canAddRapportProspection();
   }
 
   ngAfterViewInit() {
   }
-  canAddRapportProspection() {
-     this.dossierColonieService.getAll().subscribe((response) => {
-      const dossiers = response.body;
-      const dossierToUpdate = dossiers.find(dossier => dossier.etat === EtatDossierColonie.ouvert || dossier.etat === EtatDossierColonie.saisi
-      );
-      console.log(dossierToUpdate);
-      console.log(this.rapports);
-      const existingReport = this.rapports.find((rapport) => dossierToUpdate && rapport.codeDossierColonie.id === dossierToUpdate.id);
-      console.log(existingReport);
-      this.canAdd=!!dossierToUpdate && !existingReport;
-    });
-  }
-
   get visibleColumns() {
     return this.columns.filter((column) => column.visible).map((column) => column.property);
   }
@@ -136,27 +123,34 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
     };
   }
   refresh(){
-    this.getRapportProspections();
-    this.canAddRapportProspection();
-  }
+this.getRapportProspections();  }
   getRapportProspections() {
-    this.rapportService.getAllRapportsProspection().subscribe(
-      (response) => {
-        this.rapports = response.body.filter(
-          (rapport) => 
-            rapport.codeDossierColonie.etat === EtatDossierColonie.ouvert || rapport.codeDossierColonie.etat === EtatDossierColonie.saisi
-        );
-        this.currentRapport = this.rapports.find(e => e.etat === 'A VALIDER');
-      },
-      (err) => {        
-         console.error('Error loading rapport prospection colonies:', err); 
-      },
-      () => {
-        this.subject$.next(this.rapports);
-        this.showProgressBar = true;
-      }
-    );
+    this.dossierColonieService.getAll().subscribe((response) => {
+      const dossiers = response.body;
+      const dossierToUpdate = dossiers.find(dossier => dossier.etat === EtatDossierColonie.ouvert || dossier.etat === EtatDossierColonie.saisi
+      );
+      this.rapportService.getAllRapportsProspection().subscribe(
+        (response) => {
+          this.rapports = response.body.filter(
+            (rapport) => 
+              rapport.codeDossierColonie.etat === EtatDossierColonie.ouvert || rapport.codeDossierColonie.etat === EtatDossierColonie.saisi
+          );
+          const existingReport = this.rapports.find((rapport) => dossierToUpdate && rapport.codeDossierColonie.id === dossierToUpdate.id);
+          this.currentRapport = this.rapports.find(e => e.etat === 'A VALIDER');
+          this.canAdd=!!dossierToUpdate && !existingReport;
+
+        },
+        (err) => {        
+           console.error('Error loading rapport prospection colonies:', err); 
+        },
+        () => {
+          this.subject$.next(this.rapports);
+          this.showProgressBar = true;
+        }
+      );
+    });
   }
+   
 
   createRapportProspection() {
     this.dialog
@@ -171,9 +165,9 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
       });
   }
 
-  updateDossierColonie(rapport: DossierColonie) {
+  updateDossierColonie(rapportProspection: RapportProspection) {
     this.dialog
-      .open(AddOrUpdateRapportProspectionComponent, { data: rapport })
+      .open(AddOrUpdateRapportProspectionComponent, { data: {rapport: rapportProspection , property: "update" } })
       .afterClosed()
       .subscribe((rapport) => {
         if (rapport) {
@@ -217,23 +211,23 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
     rapport.dateValidation = new Date();
     let mail = new Mail();
     mail.objet = "Rapport_Prospection";
-    mail.contenu ="Le rapport de Prospection du dossier colonie est valide";
+    mail.contenu ="Le rapport de Prospection du dossier colonie est validé";
     mail.lien = "";
     mail.emetteur = "";
-    mail.destinataires = ["nnafissa27@gmail.com"];
+    mail.destinataires = ["aliounebada.ndoye@portdakar.sn"];
     this.rapportService.updateRapportProspection(rapport).subscribe(() => {
       this.notificationService.success('Rapport de prospection validé avec succès');
     }, err => {
       this.notificationService.warn('Échec de la validation du rapport'+err);
     }, () => {
-      /*this.mailService.sendMailByDirections(mail).subscribe(
+      this.mailService.sendMailByDirections(mail).subscribe(
         response => {
         }, err => {
           this.notificationService.warn(NotificationUtil.echec);
         },
         () => {
           this.notificationService.success(NotificationUtil.envoyeDossier);
-        });*/
+        });
     });
 }
 
@@ -243,26 +237,19 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
     rapport.nomAgent=this.agent.nom;
     rapport.prenomAgent=this.agent.prenom;
     rapport.dateValidation = new Date();
-    let mail = new Mail();
-    mail.objet = "Rapport_Prospection";
-    mail.contenu ="Le rapport de Prospection du dossier colonie a ete rejete";
-    mail.lien = "";
-    mail.emetteur = "";
-    mail.destinataires = ["nnafissa27@gmail.com"];
-    this.rapportService.updateRapportProspection(rapport).subscribe(()=>{
-      this.notificationService.success('Rapport de prospection rejete avec succes');
-    },err => {
-      this.notificationService.warn('Echac de rejection du rapport'+err);
-    }, () => {
-      /*this.mailService.sendMailByDirections(mail).subscribe(
-        response => {
-        }, err => {
-          this.notificationService.warn(NotificationUtil.echec);
-        },
-        () => {
-          this.notificationService.success(NotificationUtil.envoyeDossier);
-        });*/
-    });
+    this.dialog
+      .open(AddOrUpdateRapportProspectionComponent, { data: {rapport: rapport , property: "rejeter" }})
+      .afterClosed()
+      .subscribe((rapport) => {
+        if (rapport) {
+          const index = this.rapports.findIndex(
+            (existingrapport) => existingrapport.id === rapport.id
+          );
+          this.rapports[index] = new RapportProspection(rapport);
+          this.subject$.next(this.rapports);
+          this.refresh();
+        }
+      })
   }
   afficherRapportProspection(rapport:RapportProspection){
     const dialogRef = this.dialog.open(DetailsRapportProspectionComponent, {
@@ -273,7 +260,6 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
       maxHeight: '100vh', 
     });
     dialogRef.afterClosed().subscribe(result => {
-      console.log('Le dialogue a été fermé', result);
       const index = this.rapports.findIndex(
         (existingDossierColonie) => existingDossierColonie.id === rapport.id
       );

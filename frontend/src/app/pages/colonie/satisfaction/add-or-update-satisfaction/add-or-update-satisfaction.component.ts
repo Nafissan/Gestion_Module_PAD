@@ -52,20 +52,19 @@ export class AddOrUpdateSatisfactionComponent implements OnInit {
   ngOnInit(): void {
     this.questionService.getAllQuestions().subscribe(
       response => {
-        const questionsFromBody = response.body; // Assurez-vous que response.body est correctement typé
+        const questionsFromBody = response.body; 
         this.questions = questionsFromBody.map((q, index) => ({
-          id: index + 1, // Affectation des IDs de 1 à 4
-          texte: q.texte, // Utilisation du champ texte récupéré
-          // Ajoutez d'autres propriétés si nécessaire, par exemple q.autrePropriete
+          id: index + 1, 
+          texte: q.texte, 
         }));
-        this.initForm(); // Initialisation du formulaire une fois les questions chargées
+        this.initForm(); 
       },
       error => {
         console.error('Erreur lors du chargement des questions', error);
       }
     );
   
-    this.getAgentConnecte(); // Appel pour récupérer l'agent connecté
+    this.getAgentConnecte(); 
   }
   
 
@@ -158,15 +157,6 @@ export class AddOrUpdateSatisfactionComponent implements OnInit {
       const openOrSaisiDossier = dossiers.find(dossier => dossier.etat === EtatDossierColonie.ouvert || dossier.etat === EtatDossierColonie.saisi);
       if (openOrSaisiDossier) {
         formData.codeDossier = openOrSaisiDossier;
-        
-        if (reponses && reponses.length > 0) {
-          console.log("Les réponses sont valides et contiennent des données.");
-          reponses.forEach((reponse, index) => {
-            console.log(`Réponse ${index + 1}:`, reponse);
-          });
-        } else {
-          console.warn("Aucune réponse trouvée ou les réponses sont invalides.");
-        }
   
         this.dialogConfirmationService.confirmationDialog().subscribe(action => {
           if (action === DialogUtil.confirmer) {
@@ -217,7 +207,6 @@ export class AddOrUpdateSatisfactionComponent implements OnInit {
   saveReponses(satisfaction: Satisfaction, reponses: Reponse[]) {
     reponses.forEach((reponse) => {
       reponse.formulaire = satisfaction;
-      console.log("Apres ajout formulaire"+reponse)
       this.reponseService.addReponse(reponse).subscribe(() => {
         this.dialogRef.close(satisfaction);
       }, err => {

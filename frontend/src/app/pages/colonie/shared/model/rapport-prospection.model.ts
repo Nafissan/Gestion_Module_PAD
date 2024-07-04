@@ -13,6 +13,7 @@ export class RapportProspection {
   matriculeAgent: string;
   nomAgent: string;
   prenomAgent: string;
+  commentaire:string;
  constructor(rapprt: RapportProspection){
   this.id = rapprt.id;
   this.rapportProspection = rapprt.rapportProspection;
@@ -26,5 +27,6 @@ export class RapportProspection {
   this.matriculeAgent = rapprt.matriculeAgent;
   this.nomAgent = rapprt.nomAgent;
   this.prenomAgent = rapprt.prenomAgent;
+  this.commentaire = rapprt.commentaire;
  }
 }

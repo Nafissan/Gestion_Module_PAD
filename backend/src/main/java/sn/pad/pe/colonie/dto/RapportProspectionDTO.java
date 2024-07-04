@@ -19,7 +19,8 @@ public class RapportProspectionDTO {
     private String matriculeAgent;
     private String nomAgent;
     private String prenomAgent;
-    private byte[] rapportProspectionByte;
+    private byte[] rapportProspectionByte;    private String commentaire;
+
     public Long getId() {
         return id;
     }
@@ -99,6 +100,14 @@ public class RapportProspectionDTO {
 
     public void setRapportProspectionByte(byte[] rapportProspectionByte) {
         this.rapportProspectionByte = rapportProspectionByte;
+    }
+
+    public String getCommentaire() {
+        return commentaire;
+    }
+
+    public void setCommentaire(String commentaire) {
+        this.commentaire = commentaire;
     }
 
 }

@@ -4,7 +4,6 @@ import { CommonModule } from '@angular/common';
 import { HistoriqueColonieRoutingModule } from './historique-colonie-routing.module';
 import { ListeHistoriqueColonieComponent } from './liste-historique-colonie/liste-historique-colonie.component';
 import { ReadHistoriqueColonieComponent } from './read-historique-colonie/read-historique-colonie.component';
-import { ListeColonsComponent } from './liste-colons/liste-colons.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -17,7 +16,7 @@ import { PageLayoutDemoContentModule } from '../../page-layouts/components/page-
 
 
 @NgModule({
-  declarations: [ListeHistoriqueColonieComponent, ReadHistoriqueColonieComponent, ListeColonsComponent],
+  declarations: [ListeHistoriqueColonieComponent, ReadHistoriqueColonieComponent],
   imports: [
     CommonModule,
     FormsModule,

@@ -17,6 +17,8 @@ import { ReplaySubject, Observable } from 'rxjs';
 import { SelectionModel } from '@angular/cdk/collections';
 import { DetailsColonComponent } from '../details-colon/details-colon.component';
 import { ReadFileColonComponent } from '../read-file-colon/read-file-colon.component';
+import { DossierColonie } from '../../shared/model/dossier-colonie.model';
+import { EtatDossierColonie } from '../../shared/util/util';
 
 @Component({
   selector: 'fury-list-colon',
@@ -26,6 +28,7 @@ import { ReadFileColonComponent } from '../read-file-colon/read-file-colon.compo
 
 })
 export class ListColonComponent implements OnInit {
+  dossierColonie : DossierColonie[]=[];
   dataSource: MatTableDataSource<Colon> | null;
   private paginator: MatPaginator;
   colon: Colon[]=[];
@@ -34,6 +37,7 @@ export class ListColonComponent implements OnInit {
   pageSize = 4;
   selection = new SelectionModel<Colon>(true, []);
   private sort: MatSort;
+  filteredColon: Colon[]=[];
   showProgressBar: boolean=false;
   @ViewChild(MatSort) set matSort(ms: MatSort) {
     this.sort = ms;
@@ -84,7 +88,9 @@ export class ListColonComponent implements OnInit {
     private notificationService: NotificationService,
     private dialogConfirmationService: DialogConfirmationService,
     private authentificationService: AuthenticationService,
-    private colonService: ColonService,
+    private colonService: ColonService,    
+    private dossierColonieService: DossierColonieService 
+
   ) { }
 
   ngOnInit() {
@@ -93,17 +99,28 @@ export class ListColonComponent implements OnInit {
     this.data$.pipe(filter((data) => !!data)).subscribe((participant) => {
       this.colon = participant;
       this.dataSource.data = participant;
-      console.log('Colons Colonies in ngOnInit:', this.colon); // Debugging output
     });
   }
   getColons() {
-    this.colonService.getAll().subscribe(response=>{
-      this.colon=response.body;
-    }, err => {
-      console.error('Error loading colon colonies:', err);
-    },()=>{
-      this.subject$.next(this.colon);
-      this.showProgressBar = true;
+    this.dossierColonieService.getAll().pipe(
+      map(response => response.body)
+    ).subscribe(dossiers => {
+      this.dossierColonie = dossiers;
+      const openOrSaisiDossiers = dossiers.filter(dossier => dossier.etat === EtatDossierColonie.ouvert || dossier.etat === EtatDossierColonie.saisi);
+      
+      this.colonService.getAll().subscribe(response => {
+        this.colon = response.body;
+        
+        this.filteredColon = this.colon.filter(colon => 
+          openOrSaisiDossiers.some(dossier => dossier.id === colon.codeDossier.id)
+        );        
+        
+      }, err => {
+        console.error('Error loading participant colonies:', err);
+      },()=>{
+        this.subject$.next(this.filteredColon);
+        this.showProgressBar = true;
+      });
     });
   }
   ngAfterViewInit() {
@@ -162,7 +179,6 @@ export class ListColonComponent implements OnInit {
     });
   
     dialogRef.afterClosed().subscribe(result => {
-      console.log('Le dialogue a été fermé', result);
       const index = this.colon.findIndex(
         (existingParticipant) => existingParticipant.id === row.id
       );

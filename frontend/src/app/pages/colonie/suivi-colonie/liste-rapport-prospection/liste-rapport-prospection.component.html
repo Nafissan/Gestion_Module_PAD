@@ -63,11 +63,11 @@
                 <mat-icon>more_horiz</mat-icon>
               </button>
               <mat-menu #actionsMenu="matMenu" yPosition="below" xPosition="before">
-                <button (click)="updateDossierColonie(row)" mat-menu-item matTooltip="Modifier le Rapport">
+                <button *ngIf="row.etat !== 'VALIDER'" (click)="updateDossierColonie(row)" mat-menu-item matTooltip="Modifier le Rapport">
                   <mat-icon>edit</mat-icon>
                   <span>MODIFIER</span>
                 </button>
-                <button (click)="deleteDossierColonie(row)" mat-menu-item matTooltip="Supprimer le Rapport">
+                <button *ngIf="row.etat !== 'VALIDER'" (click)="deleteDossierColonie(row)" mat-menu-item matTooltip="Supprimer le Rapport">
                   <mat-icon>delete</mat-icon>
                   <span>SUPPRIMER</span>
                 </button>

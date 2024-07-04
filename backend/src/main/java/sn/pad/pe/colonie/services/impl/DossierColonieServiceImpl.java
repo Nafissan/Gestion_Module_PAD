@@ -51,6 +51,7 @@ public class DossierColonieServiceImpl implements DossierColonieService {
         dto.setCode(dossierColonie.getCode());
         dto.setAnnee(dossierColonie.getAnnee());
         dto.setDescription(dossierColonie.getDescription());
+        dto.setCommentaire(dossierColonie.getCommentaire());
         dto.setEtat(dossierColonie.getEtat());
         dto.setMatricule(dossierColonie.getMatricule());
         dto.setPrenom(dossierColonie.getPrenom());

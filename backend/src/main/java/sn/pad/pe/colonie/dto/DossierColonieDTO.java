@@ -10,7 +10,8 @@ public class DossierColonieDTO  {
     private String code;
     
     private String annee;
-    
+    private String commentaire;
+
     private String description;
     private String etat;
     //document
@@ -199,5 +200,13 @@ public class DossierColonieDTO  {
 
     public void setRapportMissionBytes(byte[] rapportMissionBytes) {
         this.rapportMissionBytes = rapportMissionBytes;
+    }
+
+    public String getCommentaire() {
+        return commentaire;
+    }
+
+    public void setCommentaire(String commentaire) {
+        this.commentaire = commentaire;
     }
 }

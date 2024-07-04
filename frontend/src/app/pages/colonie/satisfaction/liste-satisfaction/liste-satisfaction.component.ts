@@ -82,7 +82,6 @@ export class ListeSatisfactionComponent implements OnInit {
     this.data$.pipe(filter((data) => !!data)).subscribe((satisfaction) => {
       this.satisfactions = satisfaction;
       this.dataSource.data = satisfaction;
-      console.log('satisfaction Colonies in ngOnInit:', this.satisfactions);
     });
   }
 
@@ -120,9 +119,7 @@ export class ListeSatisfactionComponent implements OnInit {
         if (this.openOrSaisiDossiers.length > 0 && this.filteredSatisfaction.length === 0) {
           this.canAdd = true;
         }
-  
-        console.log("Filtered satisfaction: ", this.filteredSatisfaction);
-        console.log("canAdd: ", this.canAdd);
+
       }, err => {
         console.error('Error loading participant colonies:', err);
       }, () => {
@@ -140,7 +137,7 @@ export class ListeSatisfactionComponent implements OnInit {
   }
 
   refresh() {
-    this.ngOnInit();
+    this.getSatisfactions();
   }
 
   onFilterChange(value) {
@@ -201,14 +198,12 @@ export class ListeSatisfactionComponent implements OnInit {
           );
           this.satisfactions[index] = new Satisfaction(satisfaction);
           this.subject$.next(this.satisfactions);
-          console.log("update" + this.satisfactions);
           this.refresh();
         }
       })
   }
 
   deleteSatisfaction(satisfaction: Satisfaction) {
-    console.log(satisfaction);
     this.dialogConfirmationService.confirmationDialog().subscribe(action => {
       if (action === DialogUtil.confirmer) {
         this.satisfactionService.deleteSatisfaction(satisfaction).subscribe((response) => {
@@ -229,7 +224,6 @@ export class ListeSatisfactionComponent implements OnInit {
   }
 
   detailsSatisfaction(satisfaction: Satisfaction) {
-    console.log(satisfaction);
     this.dialog
       .open(DetailsSatisfactionComponent, { data: satisfaction })
       .afterClosed()

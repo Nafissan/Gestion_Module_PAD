@@ -7,11 +7,13 @@ import { RapportProspection } from "../../shared/model/rapport-prospection.model
 import { RapportProspectionService } from "../../shared/service/rapport-prospection.service";
 import { DialogConfirmationService } from "../../../../shared/services/dialog-confirmation.service";
 import { NotificationService } from "../../../../shared/services/notification.service";
-import { DialogUtil, NotificationUtil } from "src/app/shared/util/util";
+import { DialogUtil, MailDossierColonie, NotificationUtil } from "src/app/shared/util/util";
 import { Compte } from "src/app/pages/gestion-utilisateurs/shared/model/compte.model";
 import { CompteService } from "src/app/pages/gestion-utilisateurs/shared/services/compte.service";
 import { DossierColonieService } from "../../shared/service/dossier-colonie.service";
 import { EtatDossierColonie } from "../../shared/util/util";
+import { Mail } from "src/app/shared/model/mail.model";
+import { MailService } from "src/app/shared/services/mail.service";
 
 @Component({
   selector: "app-add-update-rapport-prospection",
@@ -21,25 +23,27 @@ import { EtatDossierColonie } from "../../shared/util/util";
 export class AddOrUpdateRapportProspectionComponent implements OnInit {
   form: FormGroup;
   agent: Agent;
-  mode: "create" | "update" = "create";
+  mode: "create" | "update" | "rejeter" = "create";
   rapportProspection: RapportProspection;
   currentDate: Date = new Date();
   username: string;
   compte: Compte;
   fileRapportProspection: string | null = null;
-
+defaults:RapportProspection;
   constructor(
-    @Inject(MAT_DIALOG_DATA) public defaults: RapportProspection,
+    @Inject(MAT_DIALOG_DATA) public data: {rapport: RapportProspection , property: string },
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<AddOrUpdateRapportProspectionComponent>,
     private authService: AuthenticationService,    
     private compteService: CompteService,
     private rapportProspectionService: RapportProspectionService,
     private dialogConfirmationService: DialogConfirmationService,
-    private notificationService: NotificationService,
+    private notificationService: NotificationService,     private mailService: MailService,
+
     private dossierColonieService: DossierColonieService 
   ) {this.form = this.fb.group({
     codeDossierColonie: [null],
+    commentaire:[""],
   });}
 
   async ngOnInit(): Promise<void> {
@@ -50,8 +54,12 @@ export class AddOrUpdateRapportProspectionComponent implements OnInit {
       this.agent = this.compte.agent;
     });
 
-      if (this.defaults) {
+      if (this.data && this.data.rapport && this.data.property ==="update") {
         this.mode = "update";
+        this.defaults=this.data.rapport;
+      }else if(this.data && this.data.property==="rejeter"){
+        this.mode= "rejeter";
+        this.defaults=this.data.rapport;
       } else {
         this.defaults = {} as RapportProspection;
       }
@@ -62,7 +70,8 @@ export class AddOrUpdateRapportProspectionComponent implements OnInit {
 
   initForm(): void {
     this.form.patchValue({
-      codeDossierColonie: this.defaults.codeDossierColonie.code, 
+      codeDossierColonie: this.defaults.codeDossierColonie?.code, 
+      commentaire: this.defaults.commentaire,
     });
 
     if (this.mode === "update") {
@@ -95,9 +104,10 @@ export class AddOrUpdateRapportProspectionComponent implements OnInit {
       this.createRapport();
     } else if (this.mode === "update") {
       this.updateRapportProspection();
+    }else if(this.mode === "rejeter"){
+      this.closeRapportProspection();
     }
   }
-
   async createRapport(): Promise<void> {
     if (this.form.valid) {
       const formData: RapportProspection = {
@@ -149,10 +159,58 @@ export class AddOrUpdateRapportProspectionComponent implements OnInit {
       }
     }
   }
+  closeRapportProspection() {
+    const formData: RapportProspection = {
+      ...this.form.value,
+      id: this.defaults.id,
+      matriculeAgent: this.defaults.matriculeAgent,
+      matricule: this.defaults.matricule,
+      nom: this.defaults.nom,
+      prenom: this.defaults.prenom,
+      codeDossierColonie: this.defaults.codeDossierColonie,
+      rapportProspection:  this.defaults.rapportProspection,
+      dateValidation: this.defaults.dateValidation,
+      nomAgent: this.defaults.nomAgent,
+      prenomAgent: this.defaults.prenomAgent,
+      dateCreation: this.defaults.dateCreation,
+      etat: this.defaults.etat
+    }; 
+    let mail = new Mail();
+    mail.objet = "Rapport prospection colonie";
+    mail.contenu = "Le rapport de prospection a ete rejete. Voici les raisons : "+formData.commentaire;
+    mail.lien = "";
+    mail.emetteur = "";
+    mail.destinataires = ["aliounebada.ndoye@portdakar.sn"];
+    this.dialogConfirmationService.confirmationDialog().subscribe(action => {
+      if (action === DialogUtil.confirmer) {
+        this.rapportProspectionService.updateRapportProspection(formData).subscribe(() => {
+          this.notificationService.success(NotificationUtil.fermetureDossier);
+          this.dialogRef.close(formData);
+        }, err => {
+          this.notificationService.warn(NotificationUtil.echec);
+        },
+        () => {           
+          this.mailService.sendMailByDirections(mail).subscribe(
+            response => {
+              this.notificationService.success('Email sent successfully');
+              },
+              error => {
+                this.notificationService.warn('Failed to send email');
+                },
+                () => {
+                  this.notificationService.success(NotificationUtil.envoyeDossier);
+                }
+                );
+          this.dialogRef.close();});
+      }
+      });
+    
+   }
 
    updateRapportProspection() {
 console.log(this.form) ;     
 const formData: RapportProspection = {
+  ...this.form.value,
         id: this.defaults.id,
         matriculeAgent: this.agent.matricule,
         matricule: this.defaults.matricule,
@@ -164,7 +222,7 @@ const formData: RapportProspection = {
         nomAgent: this.agent.nom,
         prenomAgent: this.agent.prenom,
         dateCreation: this.defaults.dateCreation,
-        etat: this.defaults.etat
+        etat: "A VALIDER"
       };
 
       this.dialogConfirmationService.confirmationDialog().subscribe(action => {
@@ -188,7 +246,9 @@ const formData: RapportProspection = {
   isUpdateMode(): boolean {
     return this.mode === "update";
   }
-
+  isCloseMode(): boolean {
+    return this.mode === "rejeter";
+  }
   resetFormAndCloseDialog(): void {
     this.form.reset();
     this.dialogRef.close();

@@ -34,7 +34,8 @@ public class DossierColonie implements Serializable {
     private String code;
     @Column( unique = true)
     private String annee;
-    
+    private String commentaire;
+
     private String description;
     private String etat;
     @Lob
@@ -59,10 +60,10 @@ public class DossierColonie implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	@UpdateTimestamp
 	private Date updatedAt;
-    @OneToOne(fetch = FetchType.LAZY,mappedBy = "codeDossier", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.LAZY,mappedBy = "codeDossier", cascade = CascadeType.REMOVE, orphanRemoval = true)
     @JsonManagedReference
     private FormulaireSatisfaction formulaireSatisfaction;
-     @OneToOne(fetch = FetchType.LAZY,mappedBy = "codeDossierColonie", cascade = CascadeType.ALL, orphanRemoval = true)
+     @OneToOne(fetch = FetchType.LAZY,mappedBy = "codeDossierColonie", cascade = CascadeType.REMOVE, orphanRemoval = true)
      @JsonManagedReference
     private RapportProspection rapportProspection;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "codeDossier", cascade = CascadeType.REMOVE, orphanRemoval = true)
@@ -217,6 +218,14 @@ public class DossierColonie implements Serializable {
 
     public void setColons(List<Colon> colons) {
         this.colons = colons;
+    }
+
+    public String getCommentaire() {
+        return commentaire;
+    }
+
+    public void setCommentaire(String commentaire) {
+        this.commentaire = commentaire;
     }
 
   

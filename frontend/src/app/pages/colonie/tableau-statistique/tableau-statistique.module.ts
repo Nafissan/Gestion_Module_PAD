@@ -30,10 +30,11 @@ import { QuickInfoWidgetModule } from '../../dashboard/widgets/quick-info-widget
 import { RealtimeUsersWidgetModule } from '../../dashboard/widgets/realtime-users-widget/realtime-users-widget.module';
 import { RecentSalesWidgetModule } from '../../dashboard/widgets/recent-sales-widget/recent-sales-widget.module';
 import { SalesSummaryWidgetModule } from '../../dashboard/widgets/sales-summary-widget/sales-summary-widget.module';
+import { DetailsSatisfactionComponent } from './details-satisfaction/details-satisfaction.component';
 
 
 @NgModule({
-  declarations: [DashboardColonieComponent],
+  declarations: [DashboardColonieComponent, DetailsSatisfactionComponent],
   imports: [
     FormsModule,
     ReactiveFormsModule,

@@ -45,6 +45,8 @@ public class RapportProspection implements Serializable{
     private String matriculeAgent;
     private String nomAgent;
     private String prenomAgent;
+    private String commentaire;
+
     public Long getId() {
         return id;
     }
@@ -116,6 +118,14 @@ public class RapportProspection implements Serializable{
     }
     public void setPrenomAgent(String prenomAgent) {
         this.prenomAgent = prenomAgent;
+    }
+
+    public String getCommentaire() {
+        return commentaire;
+    }
+
+    public void setCommentaire(String commentaire) {
+        this.commentaire = commentaire;
     }
 
 }

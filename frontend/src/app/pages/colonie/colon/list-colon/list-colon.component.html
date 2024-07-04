@@ -31,7 +31,7 @@
                   </span>
               </p>
               <p *ngIf="column.property == 'ajoutePar'" > {{(row.matriculeAgent + ' | ' + row.prenomAgent + ' ' + row.nomAgent) | titlecase }}</p>
-              <p *ngIf="column.property == 'dateNaissance'" > {{ row.dateNaissance | date: 'dd/MMM/yyyy' }}</p>
+              <p *ngIf="column.property == 'dateNaissance'" > {{ row.dateNaissance | date: 'dd-MMM-yyyy' }}</p>
               <p *ngIf="column.property == 'ficheSocial' && row[column.property]" > Disponible</p>
               <p *ngIf="column.property == 'document' && row[column.property]">Disponible</p>
               <p *ngIf="column.name !== 'Status' && column.property !== 'ficheSocial'&& column.property !== 'document' && column.property !== 'ajoutePar'  && column.property !== 'codeDossier'  && column.property !== 'dateNaissance'">

@@ -192,7 +192,7 @@ export class AddOrUpdateParticipantComponent implements OnInit {
     formData.ficheSocial = this.defaults.ficheSocial;
     formData.id = this.defaults.id;
     formData.document = this.document;
-    formData.status = this.defaults.status;
+    formData.status = "A VALIDER";
     formData.nomAgent = this.defaults.nomAgent;
     formData.prenomAgent = this.defaults.prenomAgent;
     formData.matriculeAgent = this.defaults.matriculeAgent;

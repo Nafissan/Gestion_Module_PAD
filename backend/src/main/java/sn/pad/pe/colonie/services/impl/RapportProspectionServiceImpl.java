@@ -1,5 +1,10 @@
 package sn.pad.pe.colonie.services.impl;
 
+import java.util.Base64;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -7,12 +12,6 @@ import org.springframework.stereotype.Service;
 import sn.pad.pe.colonie.bo.RapportProspection;
 import sn.pad.pe.colonie.dto.RapportProspectionDTO;
 import sn.pad.pe.colonie.repositories.RapportProspectionRepository;
-
-import java.util.Base64;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import sn.pad.pe.colonie.services.RapportProspectionService;
 
 @Service
@@ -66,6 +65,7 @@ public class RapportProspectionServiceImpl implements RapportProspectionService 
             dto.setMatriculeAgent(rapport.getMatriculeAgent());
             dto.setNomAgent(rapport.getNomAgent());
             dto.setPrenomAgent(rapport.getPrenomAgent());
+            dto.setCommentaire(rapport.getCommentaire());
             return dto;
         }
     @Override
