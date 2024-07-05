@@ -8,6 +8,5 @@ import sn.pad.pe.colonie.bo.Reponse;
 @Repository
 public interface ReponseColonieRepository extends JpaRepository<Reponse, Long> {
 
-    void deleteByFormulaire_Id(Long formulaireId);
 }
 

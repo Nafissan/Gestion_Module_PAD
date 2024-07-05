@@ -48,6 +48,7 @@ export class ListeHistoriqueColonieComponent implements OnInit {
   colonSubject$: ReplaySubject<Colon[]> = new ReplaySubject<Colon[]>(1);
   colonData$: Observable<Colon[]> = this.colonSubject$.asObservable();
   pageSize = 4;
+  colonPageSize = 4;
   dataSource: MatTableDataSource<DossierColonie> | null;
   colonDataSource: MatTableDataSource<Colon> | null;
   selectedDossierColonie: DossierColonie | null = null;

@@ -11,9 +11,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import sn.pad.pe.colonie.bo.DossierColonie;
+import sn.pad.pe.colonie.bo.FormulaireSatisfaction;
+import sn.pad.pe.colonie.bo.RapportProspection;
 import sn.pad.pe.colonie.dto.DossierColonieDTO;
+import sn.pad.pe.colonie.dto.FormulaireSatisfactionDTO;
+import sn.pad.pe.colonie.dto.RapportProspectionDTO;
 import sn.pad.pe.colonie.repositories.DossierColonieRepository;
 import sn.pad.pe.colonie.services.DossierColonieService;
+import sn.pad.pe.colonie.services.FormulaireSatisfactionService;
+import sn.pad.pe.colonie.services.RapportProspectionService;
 import sn.pad.pe.configurations.exception.ResourceNotFoundException;
 
 @Service
@@ -21,7 +27,10 @@ public class DossierColonieServiceImpl implements DossierColonieService {
 
     @Autowired
     private DossierColonieRepository dossierColonieRepository;
-
+    @Autowired
+    private RapportProspectionService rapportProspectionService;
+    @Autowired
+    private FormulaireSatisfactionService formulaireSatisfactionService;
     @Autowired
     private ModelMapper modelMapper;
 
@@ -102,7 +111,21 @@ public class DossierColonieServiceImpl implements DossierColonieService {
         if (dossierColonieOptional.isPresent()) {
             convertBase64FieldsToBytes(dossierColonieDTO);
             DossierColonie dossierColonie = modelMapper.map(dossierColonieDTO, DossierColonie.class);
-            dossierColonieRepository.save(dossierColonie);
+             List<RapportProspectionDTO> allRapports = rapportProspectionService.getAllRapportsProspection();
+        for (RapportProspectionDTO rapport : allRapports) {
+            if (rapport.getCodeDossierColonie().getId().equals(dossierColonie.getId())) {
+                dossierColonie.setRapportProspection(modelMapper.map(rapport, RapportProspection.class));
+                break;
+            }
+        }
+          List<FormulaireSatisfactionDTO> allFormulaires = formulaireSatisfactionService.getAllFormulaires();
+        for (FormulaireSatisfactionDTO formulaire : allFormulaires) {
+            if (formulaire.getCodeDossier().getId().equals(dossierColonie.getId())) {
+                dossierColonie.setFormulaireSatisfaction(modelMapper.map(formulaire, FormulaireSatisfaction.class));
+                break;
+            }
+        }
+        dossierColonieRepository.save(dossierColonie);
             return true;
         } else {
             return false;

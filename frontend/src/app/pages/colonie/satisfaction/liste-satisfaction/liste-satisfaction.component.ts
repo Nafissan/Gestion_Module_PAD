@@ -137,7 +137,6 @@ export class ListeSatisfactionComponent implements OnInit {
   }
 
   refresh() {
-    this.getSatisfactions();
   }
 
   onFilterChange(value) {
@@ -174,7 +173,7 @@ export class ListeSatisfactionComponent implements OnInit {
   createSatisfaction() {
     this.dialog
       .open(AddOrUpdateSatisfactionComponent)
-      .afterClosed().subscribe((satisfaction: any) => {
+      .afterClosed().subscribe((satisfaction: Satisfaction) => {
         if (satisfaction) {
           this.satisfactions.unshift(satisfaction);
           this.subject$.next(this.satisfactions);
@@ -189,8 +188,7 @@ export class ListeSatisfactionComponent implements OnInit {
         data: satisfaction,
       })
       .afterClosed()
-      .subscribe((satisfaction) => {
-        this.getSatisfactions();
+      .subscribe((satisfaction: Satisfaction) => {
         if (satisfaction) {
           const index = this.satisfactions.findIndex(
             (existingsatisfaction) =>
@@ -227,7 +225,7 @@ export class ListeSatisfactionComponent implements OnInit {
     this.dialog
       .open(DetailsSatisfactionComponent, { data: satisfaction })
       .afterClosed()
-      .subscribe((satisfaction) => {
+      .subscribe((satisfaction: Satisfaction) => {
         if (satisfaction) {
           const index = this.satisfactions.findIndex(
             (existing) => existing.id === satisfaction.id

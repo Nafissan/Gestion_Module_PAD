@@ -136,9 +136,9 @@ defaults:RapportProspection;
           this.dialogConfirmationService.confirmationDialog().subscribe(action => {
             if (action === DialogUtil.confirmer) {
               this.rapportProspectionService.saveRapportProspection(formData).subscribe(response => {
-                if (response.body.id != null) {
+                if (response.body as RapportProspection && response.body.id != null ) {
                   this.notificationService.success(NotificationUtil.ajout);
-                  this.dialogRef.close(formData);
+                  this.dialogRef.close(response.body);
                 } else {
                   this.notificationService.warn("Erreur dans l'ajout du formulaire");
                   this.dialogRef.close();
@@ -183,9 +183,9 @@ defaults:RapportProspection;
     mail.destinataires = ["aliounebada.ndoye@portdakar.sn"];
     this.dialogConfirmationService.confirmationDialog().subscribe(action => {
       if (action === DialogUtil.confirmer) {
-        this.rapportProspectionService.updateRapportProspection(formData).subscribe(() => {
+        this.rapportProspectionService.updateRapportProspection(formData).subscribe((response) => {
           this.notificationService.success(NotificationUtil.fermetureDossier);
-          this.dialogRef.close(formData);
+          this.dialogRef.close(response.body as RapportProspection);
         }, err => {
           this.notificationService.warn(NotificationUtil.echec);
         },
@@ -208,7 +208,6 @@ defaults:RapportProspection;
    }
 
    updateRapportProspection() {
-console.log(this.form) ;     
 const formData: RapportProspection = {
   ...this.form.value,
         id: this.defaults.id,
@@ -227,9 +226,9 @@ const formData: RapportProspection = {
 
       this.dialogConfirmationService.confirmationDialog().subscribe(action => {
         if (action === DialogUtil.confirmer) {
-          this.rapportProspectionService.updateRapportProspection(formData).subscribe(() => {
+          this.rapportProspectionService.updateRapportProspection(formData).subscribe((response) => {
             this.notificationService.success(NotificationUtil.modification);
-            this.dialogRef.close(formData);
+            this.dialogRef.close(response.body as RapportProspection);
           }, err => {
             this.notificationService.warn(NotificationUtil.echec);
           });

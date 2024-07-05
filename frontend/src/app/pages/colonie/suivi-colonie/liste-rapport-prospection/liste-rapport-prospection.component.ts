@@ -122,8 +122,7 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
       return dataStr.indexOf(value) != -1;
     };
   }
-  refresh(){
-this.getRapportProspections();  }
+  refresh(){  }
   getRapportProspections() {
     this.dossierColonieService.getAll().subscribe((response) => {
       const dossiers = response.body;
@@ -156,7 +155,7 @@ this.getRapportProspections();  }
     this.dialog
       .open(AddOrUpdateRapportProspectionComponent)
       .afterClosed()
-      .subscribe((rapport: any) => {
+      .subscribe((rapport: RapportProspection) => {
         if (rapport) {
           this.rapports.unshift(rapport);
           this.subject$.next(this.rapports);
@@ -169,7 +168,7 @@ this.getRapportProspections();  }
     this.dialog
       .open(AddOrUpdateRapportProspectionComponent, { data: {rapport: rapportProspection , property: "update" } })
       .afterClosed()
-      .subscribe((rapport) => {
+      .subscribe((rapport: RapportProspection) => {
         if (rapport) {
           const index = this.rapports.findIndex(
             (existingrapport) => existingrapport.id === rapport.id
@@ -215,8 +214,16 @@ this.getRapportProspections();  }
     mail.lien = "";
     mail.emetteur = "";
     mail.destinataires = ["aliounebada.ndoye@portdakar.sn"];
-    this.rapportService.updateRapportProspection(rapport).subscribe(() => {
+    this.rapportService.updateRapportProspection(rapport).subscribe((response) => {
       this.notificationService.success('Rapport de prospection validé avec succès');
+      if (response.body as RapportProspection) {
+        const index = this.rapports.findIndex(
+          (existingrapport) => existingrapport.id === response.body.id
+        );
+        this.rapports[index] = new RapportProspection(response.body);
+        this.subject$.next(this.rapports);
+        this.refresh();
+      }
     }, err => {
       this.notificationService.warn('Échec de la validation du rapport'+err);
     }, () => {
@@ -240,7 +247,7 @@ this.getRapportProspections();  }
     this.dialog
       .open(AddOrUpdateRapportProspectionComponent, { data: {rapport: rapport , property: "rejeter" }})
       .afterClosed()
-      .subscribe((rapport) => {
+      .subscribe((rapport:RapportProspection) => {
         if (rapport) {
           const index = this.rapports.findIndex(
             (existingrapport) => existingrapport.id === rapport.id

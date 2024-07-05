@@ -165,7 +165,7 @@ export class AddOrUpdateSatisfactionComponent implements OnInit {
               if (newSatisfaction && newSatisfaction.id != null) {
                 this.notificationService.success(NotificationUtil.ajout);
                 this.saveReponses(newSatisfaction, reponses);
-                this.dialogRef.close(formData);
+                this.dialogRef.close(newSatisfaction);
               } else {
                 this.notificationService.warn("Erreur dans l'ajout du formulaire");
                 this.dialogRef.close();
@@ -192,9 +192,10 @@ export class AddOrUpdateSatisfactionComponent implements OnInit {
     formData.dateCreation = this.defaults.dateCreation;
     this.dialogConfirmationService.confirmationDialog().subscribe(action => {
       if (action === DialogUtil.confirmer) {
-        this.satisfactionService.updateSatisfaction(formData).subscribe(() => {
+        this.satisfactionService.updateSatisfaction(formData).subscribe((response) => {
           this.notificationService.success(NotificationUtil.modification);
-          this.updateReponses(formData, reponses); 
+          this.updateReponses(response.body, reponses); 
+          this.dialogRef.close(response.body);
         }, err => {
           this.notificationService.warn(NotificationUtil.echec);
         });

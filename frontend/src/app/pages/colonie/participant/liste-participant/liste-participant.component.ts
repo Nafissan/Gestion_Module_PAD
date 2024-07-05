@@ -147,7 +147,7 @@ export class ListeParticipantComponent implements OnInit {
       });
     });
   }
-  refreshListe(){     this.fetchDossiersAndParticipants();
+  refreshListe(){ 
   }
   getProperty(row: any, property: string) {
     return property.split('.').reduce((acc, part) => acc && acc[part], row);
@@ -172,7 +172,7 @@ export class ListeParticipantComponent implements OnInit {
   createParticipant(){
 
     this.dialog.open(AddOrUpdateParticipantComponent)
-    .afterClosed().subscribe((participant: any) => {
+    .afterClosed().subscribe((participant: Participant) => {
   if(participant) {
     this.participants.unshift(new Participant(participant));
     this.subject$.next(this.participants);
@@ -185,7 +185,7 @@ export class ListeParticipantComponent implements OnInit {
       data: participant,
     })
     .afterClosed()
-    .subscribe((participant)=> {
+    .subscribe((participant: Participant)=> {
       if(participant){
         const index = this.participants.findIndex(
           (existingParticipant) =>
@@ -209,7 +209,7 @@ export class ListeParticipantComponent implements OnInit {
     this.dialog
     .open(DetailsParticipantComponent, {data: participant})
     .afterClosed()
-    .subscribe((participant)=>{
+    .subscribe((participant:Participant)=>{
       if(participant){
         const index = this.participants.findIndex(
           (existingParticipant) => existingParticipant.id === participant.id
@@ -265,11 +265,19 @@ export class ListeParticipantComponent implements OnInit {
         codeDossier: participant.codeDossier
       };
   
-      this.colonService.create(colon).subscribe((response: any) => {
+      this.colonService.create(colon).subscribe((response) => {
         if (response) {
           this.notificationService.success('Colon créé avec succès');
+          if(response.body as Participant){
+            const index = this.participants.findIndex(
+              (existingParticipant) =>
+                existingParticipant.id === response.body.id
+            );
+            this.participants[index] = new Participant(response.body);
+            this.subject$.next(this.participants);
           this.refreshListe();
         }
+      }
       }, err => {
         console.log('Error:', err);
       });
@@ -282,10 +290,17 @@ export class ListeParticipantComponent implements OnInit {
   
   rejeterParticipant(participant: Participant) {
     participant.status = 'REJETER';
-    this.participantService.updateParticipant(participant).subscribe(() => {
+    this.participantService.updateParticipant(participant).subscribe((response) => {
       this.notificationService.success('Participant rejeté avec succès');
+      if(response.body as Participant){
+        const index = this.participants.findIndex(
+          (existingParticipant) =>
+            existingParticipant.id === response.body.id
+        );
+        this.participants[index] = new Participant(response.body);
+        this.subject$.next(this.participants);
       this.refreshListe();
-    }, () => {
+    }    }, () => {
       this.notificationService.warn('Échec de rejection du participant');
     });
   }

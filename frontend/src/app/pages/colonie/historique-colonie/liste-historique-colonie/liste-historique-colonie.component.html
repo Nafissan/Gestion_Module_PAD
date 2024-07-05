@@ -185,7 +185,7 @@
         <tr mat-header-row *matHeaderRowDef="visibleColonColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: visibleColonColumns" class="clickable"></tr>
       </table>
-      <mat-paginator [pageSize]="pageSize" class="paginator"></mat-paginator>
+      <mat-paginator [pageSize]="colonPagesize" class="paginator"></mat-paginator>
     </fury-list>
     <div *ngIf="colon.length === 0 && showProgressBar" class="card text-center">
       <div class="card-header">

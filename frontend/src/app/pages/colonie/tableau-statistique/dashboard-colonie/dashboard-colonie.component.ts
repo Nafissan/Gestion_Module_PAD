@@ -151,6 +151,9 @@ export class DashboardColonieComponent implements OnInit {
      this.processData(dossiersColonies, colons,this.satisfactions);
     }, err => {
         console.error('Error loading participant colonies:', err);
+      },()=>{
+        this.subject$.next(this.filteredSatisfaction);
+        this.showProgressBar = true;
       })
   }
   
@@ -180,13 +183,11 @@ export class DashboardColonieComponent implements OnInit {
     let age17to20Count = 0;
   
     dossiersColonies.forEach(dossier => {
-      let year = 0;
-      if(dossier.code === 'DCLN-PAD-2023')  { year = 2023;}else{
-        year = new Date(dossier.createdAt).getFullYear();
-      }
+      let  year = Number (dossier.annee);
       const colonsInDossier = colons.filter(colon => colon.codeDossier.id === dossier.id);
     this.filteredSatisfaction = this.satisfactions.filter(satisfaction=> satisfaction.codeDossier.id === dossier.id);
-      maleCount += colonsInDossier.filter(colon => colon.sexe === 'masculin').length;
+    console.log(this.filteredSatisfaction);
+    maleCount += colonsInDossier.filter(colon => colon.sexe === 'masculin').length;
       femaleCount += colonsInDossier.filter(colon => colon.sexe === 'feminin').length;
   
       age7to12Count += colonsInDossier.filter(colon => {
@@ -214,8 +215,7 @@ export class DashboardColonieComponent implements OnInit {
     this.barChartData = [
       { data: Array.from(colonCountsMap.values()), label: 'Nombre de colons' }
     ];
-    this.subject$.next(this.filteredSatisfaction);
-    this.showProgressBar = true;
+    
     this.pieChartDataSex = [maleCount, femaleCount];
     this.pieChartDataAge = [age7to12Count, age12to17Count, age17to20Count];
   }

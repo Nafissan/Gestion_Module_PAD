@@ -163,15 +163,14 @@ export class AddOrUpdateParticipantComponent implements OnInit {
       formData.prenomParent = selectedAgent.prenom;
     }
     formData.codeDossier = this.dossierColonie;
-    console.log(formData);
     this.dialogConfirmationService.confirmationDialog().subscribe((action) => {
       if (action === DialogUtil.confirmer) {
         this.participantService.create(formData).subscribe(
           (response) => {
-            let participantTem = response.body;
+            let participantTem = response.body as Participant;
             if (participantTem.id != null) {
               this.notificationService.success(NotificationUtil.ajout);
-              this.dialogRef.close(formData);
+              this.dialogRef.close(participantTem);
             } else {
               this.notificationService.warn("Erreur dans l'ajout du participant");
               this.dialogRef.close();
@@ -201,14 +200,13 @@ export class AddOrUpdateParticipantComponent implements OnInit {
     formData.prenomParent = this.defaults.prenomParent;
     formData.codeDossier = this.defaults.codeDossier;
 
-    console.log(formData);
 
     this.dialogConfirmationService.confirmationDialog().subscribe((action) => {
       if (action === DialogUtil.confirmer) {
         this.participantService.updateParticipant( formData).subscribe(
           (response) => {
             this.notificationService.success(NotificationUtil.modification);
-            this.dialogRef.close(formData);
+            this.dialogRef.close(response.body as Participant);
           },
           (err) => {
             this.notificationService.warn(NotificationUtil.echec);

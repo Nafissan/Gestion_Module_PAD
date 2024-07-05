@@ -124,7 +124,7 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
   getDossierColonies() {
     this.dossierColonieService.getAll().subscribe(
       (response) => {
-        this.dossierColonies = response.body;
+        this.dossierColonies = response.body as DossierColonie[];
         console.log('Dossier Colonies:', this.dossierColonies); 
         this.currentDossierColonie  = this.dossierColonies.find(dossier => 
           dossier.etat === EtatDossierColonie.ouvert || dossier.etat === EtatDossierColonie.saisi
@@ -146,7 +146,7 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
     this.dialog
       .open(AddDossierColonieComponent)
       .afterClosed()
-      .subscribe((dossierColonie: any) => {
+      .subscribe((dossierColonie: DossierColonie) => {
         if (dossierColonie) {
           this.dossierColonies.unshift(new DossierColonie(dossierColonie));
           this.subject$.next(this.dossierColonies);
@@ -162,7 +162,7 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
     this.dialog
       .open(AddDossierColonieComponent, { data:  { dossier: dossierColonie, property: "update" }, })
       .afterClosed()
-      .subscribe((updatedDossierColonie) => {
+      .subscribe((updatedDossierColonie : DossierColonie) => {
         if (updatedDossierColonie) {
           const index = this.dossierColonies.findIndex(
             (existingDossierColonie) => existingDossierColonie.id === updatedDossierColonie.id
@@ -178,7 +178,7 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
     this.dialog
       .open(DetailsDossierColonieComponent, { data: dossierColonie })
       .afterClosed()
-      .subscribe((dossierColonie) => {
+      .subscribe((dossierColonie: DossierColonie) => {
         if (dossierColonie) {
           const index = this.dossierColonies.findIndex(
             (existingDossierColonie) => existingDossierColonie.id === dossierColonie.id
@@ -188,7 +188,7 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
         }
       });
   }
-  refreshDossierColonies() { this.getDossierColonies(); }
+  refreshDossierColonies() { }
   
   deleteDossierColonie(dossierColonie: DossierColonie) {
     this.dialogConfirmationService.confirmationDialog().subscribe(action => {
@@ -216,7 +216,7 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
         this.dialog
         .open(AddDossierColonieComponent, { data:  { dossier: dossierColonie, property: "fermer" }, })
         .afterClosed()
-        .subscribe((updatedDossierColonie) => {
+        .subscribe((updatedDossierColonie: DossierColonie) => {
           if (updatedDossierColonie) {
             const index = this.dossierColonies.findIndex(
               (existingDossierColonie) => existingDossierColonie.id === updatedDossierColonie.id

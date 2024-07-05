@@ -154,7 +154,7 @@ defaults: DossierColonie;
 
   createDossierColonie(): void {
     let formData: DossierColonie   = this.form.value;
-    formData.annee                = "2022";
+    formData.annee                = "2023";
     formData.code                 = 'DCLN' + '-' + 'PAD' + '-' + formData.annee;
     formData.etat                 = EtatDossierColonie.ouvert; 
     formData.noteMinistere        = this.noteMinistere;
@@ -175,7 +175,7 @@ defaults: DossierColonie;
           let existingDossier = response.body;
           if (existingDossier.id != null) {
             this.notificationService.success(NotificationUtil.ajout);
-            this.dialogRef.close(response.body);
+            this.dialogRef.close(response.body as DossierColonie);
           } else {
             this.notificationService.warn(`Le dossier colonie de l'année ${formData.annee} existe déjà`);
             this.dialogRef.close();
@@ -210,10 +210,8 @@ defaults: DossierColonie;
     formData.updatedAt = new Date();
     this.dialogConfirmationService.confirmationDialog().subscribe(action => {
       if (action === DialogUtil.confirmer) {
-        console.log("update dossier "+formData);
         this.dossierColonieService.update(formData).subscribe(reponse => {
           this.notificationService.success(NotificationUtil.modification);
-          this.dialogRef.close(reponse);
           if(this.notePersonnels){
             this.sendEmail(
               "Note d'information",
@@ -230,6 +228,8 @@ defaults: DossierColonie;
               this.notePelerins
             );
           }
+          this.dialogRef.close(reponse.body as DossierColonie);
+
         }, err => {
           this.notificationService.warn(NotificationUtil.echec);},
         () => { })
@@ -275,7 +275,7 @@ defaults: DossierColonie;
     formData.id                   = this.defaults.id;
     formData.annee                = this.defaults.annee;
     formData.code                 = this.defaults.code;
-    formData.etat                 = this.defaults.etat;  
+    formData.etat                 = EtatDossierColonie.fermer;  
 
     formData.matricule            = this.defaults.matricule;
     formData.prenom               = this.defaults.prenom;
@@ -298,7 +298,7 @@ defaults: DossierColonie;
       if (action === DialogUtil.confirmer) {
         this.dossierColonieService.update(formData).subscribe(reponse => {
           this.notificationService.success(NotificationUtil.fermetureDossier);
-          this.dialogRef.close(reponse);
+          this.dialogRef.close(reponse.body);
         }, err => {
           this.notificationService.warn(NotificationUtil.echec);},
         () => {           
