@@ -48,10 +48,9 @@ public class FormulaireSatisfactionServiceImpl implements FormulaireSatisfaction
             FormulaireSatisfaction formulaire = formulaireOptional.get();
             System.out.println("Formulaire trouvé : " + formulaire);
             
-            // Parcourir la liste des réponses et supprimer celles qui correspondent au formulaire
             List<ReponseDTO> liste = reponseService.getReponses();
             for (ReponseDTO reponse : liste) {
-                if (reponse.getFormulaire().equals(formulaire)) {
+                if (reponse.getFormulaire().getId().equals(formulaire.getId())) {
                     Reponse reponse2 = modelMapper.map(reponse, Reponse.class);
                     reponseService.deleteReponse(reponse2);
                     System.out.println("Réponse supprimée : " + reponse);

@@ -38,10 +38,9 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
   date: Date = new Date();
   agentsChefStructure: Agent[] = [];
   agentsChefStructureMail: string[] = [];
-  currentDossierColonie: DossierColonie = undefined;
-  dossierColonies: DossierColonie[] = [];
-  subject$: ReplaySubject<DossierColonie[]> = new ReplaySubject<DossierColonie[]>(1);
-  data$: Observable<DossierColonie[]> = this.subject$.asObservable();
+  dossierColonies: DossierColonie;
+  subject$: ReplaySubject<DossierColonie> = new ReplaySubject<DossierColonie>(1);
+  data$: Observable<DossierColonie> = this.subject$.asObservable();
   pageSize = 4;
   dataSource: MatTableDataSource<DossierColonie> | null;
  
@@ -98,7 +97,7 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
     this.dataSource = new MatTableDataSource();
     this.data$.pipe(filter((data) => !!data)).subscribe((dossierColonies) => {
       this.dossierColonies = dossierColonies;
-      this.dataSource.data = dossierColonies;
+      this.dataSource.data = [dossierColonies];
     });
   }
 
@@ -122,36 +121,33 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
   }
 
   getDossierColonies() {
-    this.dossierColonieService.getAll().subscribe(
+    this.dossierColonieService.getDossier().subscribe(
       (response) => {
-        this.dossierColonies = response.body as DossierColonie[];
+        if(response.body!==null){
+        this.dossierColonies = response.body as DossierColonie;
         console.log('Dossier Colonies:', this.dossierColonies); 
-        this.currentDossierColonie  = this.dossierColonies.find(dossier => 
-          dossier.etat === EtatDossierColonie.ouvert || dossier.etat === EtatDossierColonie.saisi
-        );
+        }
       },
       (err) => {
         console.error('Error loading dossier colonies:', err); 
       },()=> {
-        this.subject$.next(this.dossierColonies.filter(dossier => 
-          dossier.etat === EtatDossierColonie.ouvert || dossier.etat === EtatDossierColonie.saisi
-        ));
+        this.subject$.next(this.dossierColonies);
         this.showProgressBar = true;
 
       }
     );
   }
   
+
   createDossierColonie() {
     this.dialog
       .open(AddDossierColonieComponent)
       .afterClosed()
       .subscribe((dossierColonie: DossierColonie) => {
         if (dossierColonie) {
-          this.dossierColonies.unshift(new DossierColonie(dossierColonie));
+          this.dossierColonies = dossierColonie;
           this.subject$.next(this.dossierColonies);
-          this.refreshDossierColonies(); // Actualise les données après la création
-
+          this.refreshDossierColonies(); 
         }
       });
   }
@@ -164,12 +160,9 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
       .afterClosed()
       .subscribe((updatedDossierColonie : DossierColonie) => {
         if (updatedDossierColonie) {
-          const index = this.dossierColonies.findIndex(
-            (existingDossierColonie) => existingDossierColonie.id === updatedDossierColonie.id
-          );
-            this.dossierColonies[index] = new DossierColonie(updatedDossierColonie);
-            this.subject$.next(this.dossierColonies); 
-            this.refreshDossierColonies(); 
+          this.dossierColonies = updatedDossierColonie;
+          this.subject$.next(this.dossierColonies);
+          this.refreshDossierColonies();
         }
       });
   }
@@ -180,15 +173,13 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
       .afterClosed()
       .subscribe((dossierColonie: DossierColonie) => {
         if (dossierColonie) {
-          const index = this.dossierColonies.findIndex(
-            (existingDossierColonie) => existingDossierColonie.id === dossierColonie.id
-          );
-          this.dossierColonies[index] = new DossierColonie(dossierColonie);
+          this.dossierColonies = dossierColonie;
           this.subject$.next(this.dossierColonies);
+          this.refreshDossierColonies();
         }
       });
   }
-  refreshDossierColonies() { }
+  refreshDossierColonies() { this.getDossierColonies();}
   
   deleteDossierColonie(dossierColonie: DossierColonie) {
     this.dialogConfirmationService.confirmationDialog().subscribe(action => {
@@ -196,13 +187,9 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
        
         this.dossierColonieService.delete(dossierColonie).subscribe(
           () => {
-            this.dossierColonies.splice(
-              this.dossierColonies.findIndex((existingDossierColonie) => existingDossierColonie.id === dossierColonie.id), 1
-            );
             this.subject$.next(this.dossierColonies);
             this.notificationService.success(NotificationUtil.suppression);
-            this.refreshDossierColonies(); // Actualise les données après la création
-
+            this.refreshDossierColonies(); 
           },
           err => {
             this.notificationService.warn(NotificationUtil.echec);
@@ -218,13 +205,10 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
         .afterClosed()
         .subscribe((updatedDossierColonie: DossierColonie) => {
           if (updatedDossierColonie) {
-            const index = this.dossierColonies.findIndex(
-              (existingDossierColonie) => existingDossierColonie.id === updatedDossierColonie.id
-            );
-              this.dossierColonies[index] = new DossierColonie(updatedDossierColonie);
-              this.subject$.next(this.dossierColonies); 
-              this.deleteAllParticipants();
+            this.dossierColonies = updatedDossierColonie;
+            this.subject$.next(this.dossierColonies);
           }
+          this.refreshDossierColonies();
         });
         this.refreshDossierColonies(); 
    
@@ -239,45 +223,11 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
     });
   
     dialogRef.afterClosed().subscribe(result => {
-      const index = this.dossierColonies.findIndex(
-        (existingDossierColonie) => existingDossierColonie.id === row.id
-      );
-      this.dossierColonies[index] = new DossierColonie(row);
+      this.dossierColonies = row;
       this.subject$.next(this.dossierColonies);
     });
   }
-  
-  deleteAllParticipants(): void {
-    this.participantService.getAll().subscribe(
-      response => {
-        const participants = response.body as Participant[];
-        if (participants && participants.length === 0) {
-          this.notificationService.warn('Aucun participant à supprimer');
-        } else {
-          let deleteCount = 0;
-          let deleteFailed = false;
-  
-          participants.forEach(participant => {
-            this.participantService.deleteParticipant(participant).subscribe(
-              () => {
-                deleteCount++;
-                if (deleteCount === participants.length) {
-                  this.notificationService.success('Tous les participants ont été supprimés avec succès');
-                }
-              },
-              error => {
-                deleteFailed = true;
-                this.notificationService.warn('Échec de la suppression de certains participants'+error);
-              }
-            );
-          });
-        }
-      },
-      error => {
-        this.notificationService.warn('Erreur lors de la vérification des participants'+error);
-      }
-    );
-  }
+
   
   ngOnDestroy() { }
 

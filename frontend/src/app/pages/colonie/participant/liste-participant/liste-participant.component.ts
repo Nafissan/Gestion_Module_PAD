@@ -43,7 +43,7 @@ export class ListeParticipantComponent implements OnInit {
   openOrSaisiDossier:DossierColonie;
   dataSource: MatTableDataSource<Participant> | null;
   selection = new SelectionModel<Participant>(true, []);
-  dossierColonie : DossierColonie[]=[];
+  dossierColonie : DossierColonie;
   private paginator: MatPaginator;
   private sort: MatSort;
   @ViewChild(MatSort) set matSort(ms: MatSort) {
@@ -126,18 +126,15 @@ export class ListeParticipantComponent implements OnInit {
     this.dataSource.filterPredicate = (data: any, value) => { const dataStr =JSON.stringify(data).toLowerCase(); return dataStr.indexOf(value) != -1; }
   }
   fetchDossiersAndParticipants() {
-    this.dossierColonieService.getAll().pipe(
-      map(response => response.body)
-    ).subscribe(dossiers => {
-      this.dossierColonie = dossiers;
-      const openOrSaisiDossiers = dossiers.filter(dossier => dossier.etat === EtatDossierColonie.ouvert || dossier.etat === EtatDossierColonie.saisi);
+    this.dossierColonieService.getDossier()
+    .subscribe(dossiers => {
+      this.dossierColonie = dossiers.body as DossierColonie;
       
       this.participantService.getAll().subscribe(response => {
         this.participants = response.body;
         
-        this.filteredParticipant = this.participants.filter(participant => 
-          openOrSaisiDossiers.some(dossier => dossier.id === participant.codeDossier.id)
-        );        
+        this.filteredParticipant = this.participants.filter(participant => this.dossierColonie &&
+           this.dossierColonie.id === participant.codeDossier.id)       
         
       }, err => {
         console.error('Error loading participant colonies:', err);
@@ -147,7 +144,7 @@ export class ListeParticipantComponent implements OnInit {
       });
     });
   }
-  refreshListe(){ 
+  refreshListe(){ this.fetchDossiersAndParticipants();
   }
   getProperty(row: any, property: string) {
     return property.split('.').reduce((acc, part) => acc && acc[part], row);
@@ -198,7 +195,8 @@ export class ListeParticipantComponent implements OnInit {
     })
   }
   canAddParticipant(): boolean {
-    const add= this.dossierColonie.some(dossier => dossier.etat === EtatDossierColonie.ouvert || dossier.etat === EtatDossierColonie.saisi);
+    let add = false;
+    if(this.dossierColonie) add = true;
     return !add;
   }
 
@@ -242,47 +240,17 @@ export class ListeParticipantComponent implements OnInit {
   }
   validerParticipant(participant: Participant) {
     participant.status = 'VALIDER';
-    this.participantService.updateParticipant(participant).subscribe(() => {
+    this.participantService.updateParticipant(participant).subscribe((response) => {
       this.notificationService.success('Participant validé avec succès');
+      if(response.body as Participant){
+        const index = this.participants.findIndex(
+          (existingParticipant) =>
+            existingParticipant.id === response.body.id
+        );
+        this.participants[index] = new Participant(response.body);
+        this.subject$.next(this.participants);
+      this.refreshListe();}
       
-      const colon: Colon = {
-        nomEnfant: participant.nomEnfant,
-        prenomEnfant: participant.prenomEnfant,
-        dateNaissance: participant.dateNaissance,
-        ficheSocial: participant.ficheSocial,
-        document: participant.document,
-        lieuNaissance: participant.lieuNaissance,
-        groupeSanguin: participant.groupeSanguin,
-        sexe: participant.sexe,
-        matriculeParent: participant.matriculeParent,
-        nomParent: participant.nomParent,
-        prenomParent: participant.prenomParent,
-        status: participant.status,
-        matriculeAgent: participant.matriculeAgent,
-        nomAgent: participant.nomAgent,
-        prenomAgent: participant.prenomAgent,
-        id: 0,
-        codeDossier: participant.codeDossier
-      };
-  
-      this.colonService.create(colon).subscribe((response) => {
-        if (response) {
-          this.notificationService.success('Colon créé avec succès');
-          if(response.body as Participant){
-            const index = this.participants.findIndex(
-              (existingParticipant) =>
-                existingParticipant.id === response.body.id
-            );
-            this.participants[index] = new Participant(response.body);
-            this.subject$.next(this.participants);
-          this.refreshListe();
-        }
-      }
-      }, err => {
-        console.log('Error:', err);
-      });
-      
-  
     }, () => {
       this.notificationService.warn('Échec de la validation du participant');
     });

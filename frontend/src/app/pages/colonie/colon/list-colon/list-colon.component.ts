@@ -28,7 +28,7 @@ import { EtatDossierColonie } from '../../shared/util/util';
 
 })
 export class ListColonComponent implements OnInit {
-  dossierColonie : DossierColonie[]=[];
+  dossierColonie : DossierColonie;
   dataSource: MatTableDataSource<Colon> | null;
   private paginator: MatPaginator;
   colon: Colon[]=[];
@@ -102,18 +102,15 @@ export class ListColonComponent implements OnInit {
     });
   }
   getColons() {
-    this.dossierColonieService.getAll().pipe(
-      map(response => response.body)
-    ).subscribe(dossiers => {
-      this.dossierColonie = dossiers;
-      const openOrSaisiDossiers = dossiers.filter(dossier => dossier.etat === EtatDossierColonie.ouvert || dossier.etat === EtatDossierColonie.saisi);
-      
+    this.dossierColonieService.getDossier().subscribe(dossiers => {
+      this.dossierColonie = dossiers.body as DossierColonie;      
       this.colonService.getAll().subscribe(response => {
         this.colon = response.body;
         
-        this.filteredColon = this.colon.filter(colon => 
-          openOrSaisiDossiers.some(dossier => dossier.id === colon.codeDossier.id)
-        );        
+        this.filteredColon = this.colon.filter(colon => this.dossierColonie &&
+          this.dossierColonie.id === colon.codeDossier.id)
+        ;     
+       
         
       }, err => {
         console.error('Error loading participant colonies:', err);

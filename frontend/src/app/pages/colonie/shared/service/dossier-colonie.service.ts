@@ -25,7 +25,13 @@ export class DossierColonieService {
       })
       .pipe(catchError(this.errorHandler));
   }
-
+  getDossier(): Observable<HttpResponse<any>> {
+    return this.httpClient
+      .get<any>(`${this.url}/etatOuvertOuSaisi`, {
+        observe: 'response',
+      })
+      .pipe(catchError(this.errorHandler));
+  }
   create(dossier: DossierColonie): Observable<HttpResponse<any>> {
     return this.httpClient
       .post<any>(this.url, JSON.stringify(dossier), {

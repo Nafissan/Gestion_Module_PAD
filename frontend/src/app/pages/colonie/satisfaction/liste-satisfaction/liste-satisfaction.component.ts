@@ -45,7 +45,6 @@ export class ListeSatisfactionComponent implements OnInit {
   questions: Question[] = [];
   private paginator: MatPaginator;
   private sort: MatSort;
-  openOrSaisiDossiers : DossierColonie []=[];
   @ViewChild(MatSort) set matSort(ms: MatSort) {
     this.sort = ms;
     this.setDataSourceAttributes();
@@ -103,20 +102,15 @@ export class ListeSatisfactionComponent implements OnInit {
   
 
   getSatisfactions() {
-    this.dossierColonieService.getAll().pipe(
-      map(response => response.body)
-    ).subscribe(dossiers => {
-      this.dossierColonies = dossiers;
-      this.openOrSaisiDossiers = dossiers.filter(dossier => dossier.etat === EtatDossierColonie.ouvert || dossier.etat === EtatDossierColonie.saisi);
-  
+    this.dossierColonieService.getDossier().subscribe(dossiers => {
+      this.dossierColonies = dossiers.body as DossierColonie;  
       this.satisfactionService.getAllSatisfactions().subscribe(response => {
         this.satisfactions = response.body;
   
-        this.filteredSatisfaction = this.satisfactions.filter(participant =>
-          this.openOrSaisiDossiers.some(dossier => dossier.id === participant.codeDossier.id)
-        );
+        this.filteredSatisfaction = this.satisfactions.filter(participant => this.dossierColonies &&
+           this.dossierColonies.id === participant.codeDossier.id)
   
-        if (this.openOrSaisiDossiers.length > 0 && this.filteredSatisfaction.length === 0) {
+        if (this.dossierColonies && this.filteredSatisfaction.length === 0) {
           this.canAdd = true;
         }
 
@@ -136,7 +130,7 @@ export class ListeSatisfactionComponent implements OnInit {
     });
   }
 
-  refresh() {
+  refresh() { this.getSatisfactions();
   }
 
   onFilterChange(value) {
@@ -211,7 +205,8 @@ export class ListeSatisfactionComponent implements OnInit {
             ),
             1
           );
-          this.notificationService.success(NotificationUtil.suppression)
+          this.notificationService.success(NotificationUtil.suppression);
+          this.refresh();
           this.subject$.next(this.satisfactions);
         }
           , err => {

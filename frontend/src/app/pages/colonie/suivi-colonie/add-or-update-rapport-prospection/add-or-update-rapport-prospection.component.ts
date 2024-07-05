@@ -14,6 +14,7 @@ import { DossierColonieService } from "../../shared/service/dossier-colonie.serv
 import { EtatDossierColonie } from "../../shared/util/util";
 import { Mail } from "src/app/shared/model/mail.model";
 import { MailService } from "src/app/shared/services/mail.service";
+import { DossierColonie } from "../../shared/model/dossier-colonie.model";
 
 @Component({
   selector: "app-add-update-rapport-prospection",
@@ -125,12 +126,11 @@ defaults:RapportProspection;
       };
 
       try {
-        const dossiersResponse = await this.dossierColonieService.getAll().toPromise();
-        const dossiers = dossiersResponse.body;
-        const openOrSaisiDossier = dossiers.find(dossier => dossier.etat === EtatDossierColonie.ouvert || dossier.etat === EtatDossierColonie.saisi);
+        const dossiersResponse = await this.dossierColonieService.getDossier().toPromise();
+        const dossiers = dossiersResponse.body as DossierColonie;
 
-        if (openOrSaisiDossier) {
-          formData.codeDossierColonie = openOrSaisiDossier;
+        if (dossiers) {
+          formData.codeDossierColonie = dossiers;
           console.log(formData);
 
           this.dialogConfirmationService.confirmationDialog().subscribe(action => {

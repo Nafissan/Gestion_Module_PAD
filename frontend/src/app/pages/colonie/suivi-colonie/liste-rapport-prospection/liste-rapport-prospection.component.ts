@@ -122,21 +122,19 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
       return dataStr.indexOf(value) != -1;
     };
   }
-  refresh(){  }
+  refresh(){ this.getRapportProspections(); }
   getRapportProspections() {
-    this.dossierColonieService.getAll().subscribe((response) => {
-      const dossiers = response.body;
-      const dossierToUpdate = dossiers.find(dossier => dossier.etat === EtatDossierColonie.ouvert || dossier.etat === EtatDossierColonie.saisi
-      );
+    this.dossierColonieService.getDossier().subscribe((response) => {
+      const dossiers = response.body as DossierColonie;
       this.rapportService.getAllRapportsProspection().subscribe(
         (response) => {
           this.rapports = response.body.filter(
             (rapport) => 
               rapport.codeDossierColonie.etat === EtatDossierColonie.ouvert || rapport.codeDossierColonie.etat === EtatDossierColonie.saisi
           );
-          const existingReport = this.rapports.find((rapport) => dossierToUpdate && rapport.codeDossierColonie.id === dossierToUpdate.id);
+          const existingReport = this.rapports.find((rapport) => dossiers && rapport.codeDossierColonie.id === dossiers.id);
           this.currentRapport = this.rapports.find(e => e.etat === 'A VALIDER');
-          this.canAdd=!!dossierToUpdate && !existingReport;
+          this.canAdd=!!dossiers && !existingReport;
 
         },
         (err) => {        

@@ -42,6 +42,11 @@ public class DossierColonieController {
         return ResponseEntity.status(HttpStatus.OK).body(liste);
 
     }
+    @GetMapping("/dossiersColonies/etatOuvertOuSaisi")
+    public ResponseEntity<DossierColonieDTO> getDossierColonieByEtat() {
+        DossierColonieDTO dossier = dossierColonieService.getDossierColonieByEtat();
+        return new ResponseEntity<>(dossier, HttpStatus.OK);
+    }
     @ApiOperation(value = "Récupération d'un dossier colonie par année", response = DossierColonieDTO.class)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Objet récupéré avec succès"),
             @ApiResponse(code = 401, message = "Vous n'êtes pas autorisé à voir la ressource"),

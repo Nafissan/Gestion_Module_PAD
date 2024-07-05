@@ -23,6 +23,7 @@ import { MatSort } from '@angular/material/sort';
 import { SatisfactionService } from '../../shared/service/satisfaction.service';
 import { DetailsSatisfactionComponent } from '../details-satisfaction/details-satisfaction.component';
 import { MatDialog } from '@angular/material/dialog';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'fury-dashboard-colonie',
@@ -35,13 +36,14 @@ export class DashboardColonieComponent implements OnInit {
   satisfactions: Satisfaction[] = [];
   subject$: ReplaySubject<Satisfaction[]> = new ReplaySubject<Satisfaction[]>(1);
   data$: Observable<Satisfaction[]> = this.subject$.asObservable();
-  pageSize = 10;
+  pageSize = 4;
   dataSource: MatTableDataSource<Satisfaction> | null;
   showProgressBar: boolean = false;
   selectedYear: number | null = null;
   startDate = new Date(this.selectedYear, 0, 1);
   private paginator: MatPaginator;
   private sort: MatSort;  filteredSatisfaction: Satisfaction[] = [];
+  @ViewChild(MatDatepicker) picker;
 
   constructor(private dossierColonieService: DossierColonieService,    private satisfactionService: SatisfactionService,
     private dialog: MatDialog,
@@ -80,7 +82,15 @@ export class DashboardColonieComponent implements OnInit {
 
   barChartOptions: any = {
     scaleShowVerticalLines: false,
-    responsive: true
+    responsive: true,
+    scales: {
+      yAxes: [{
+        ticks: {
+          beginAtZero: false,
+          min: 1 // Définit que l'échelle de l'axe y commence à 1
+        }
+      }]
+    }
   };
   barChartLabels: string[] = [];
   barChartType: string = 'bar';
@@ -122,21 +132,31 @@ export class DashboardColonieComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadData(this.selectedYear);
+    this.dataSource = new MatTableDataSource();
+    this.data$.pipe(filter((data) => !!data)).subscribe((satisfaction) => {
+      this.satisfactions = satisfaction;
+      this.dataSource.data = satisfaction;
+    });
   }
 
-  onYearChange(event: any) {
-    const selectedDate = event.value;
-    this.selectedYear = selectedDate ? selectedDate.getFullYear() : null;
-    this.loadData(this.selectedYear);
+
+  onFilterChange(value) {
+    if (!this.dataSource) {
+      return;
+    }
+    value = value.trim().toLowerCase();
+    this.dataSource.filter = value;
+    this.dataSource.filterPredicate = (data: any, value) => { const dataStr =JSON.stringify(data).toLowerCase(); return dataStr.indexOf(value) != -1; }
   }
+   
   
 
   loadData(year: number | null) {
     this.dossierColonieService.getAll().subscribe(
       (response) => {
-        let dossiersColonies = response.body;
+        let dossiersColonies = response.body as DossierColonie[];
         const filteredDossierColonies = year
-          ? dossiersColonies.filter(dossier => dossier.etat === EtatDossierColonie.fermer && new Date(dossier.createdAt).getFullYear() === year)
+          ? dossiersColonies.filter(dossier => dossier.etat === EtatDossierColonie.fermer && dossier.annee === year.toString())
           : dossiersColonies.filter(dossier => dossier.etat === EtatDossierColonie.fermer);
         this.loadColons(filteredDossierColonies);
       },
@@ -147,8 +167,8 @@ export class DashboardColonieComponent implements OnInit {
   }
   getSatisfactions(dossiersColonies: any[],colons: any[]) {
     this.satisfactionService.getAllSatisfactions().subscribe(response => {
-     this.satisfactions=response.body;
-     this.processData(dossiersColonies, colons,this.satisfactions);
+     this.satisfactions=response.body as Satisfaction[];
+     this.processData(dossiersColonies, colons);
     }, err => {
         console.error('Error loading participant colonies:', err);
       },()=>{
@@ -169,12 +189,14 @@ export class DashboardColonieComponent implements OnInit {
       }
     );
   }
-  chosenYearHandler( datepicker: MatDatepicker<moment.Moment>) {
-    const ctrlValue = this.dateV.value;
-    this.dateV.setValue(ctrlValue);
-    datepicker.close();
+  yearSelected(params: Date) {
+    this.dateV.setValue(params);
+    this.selectedYear = params.getFullYear(); 
+    this.picker.close();
+    this.loadData(this.selectedYear);
   }
-  processData(dossiersColonies: DossierColonie[], colons: Colon[],satisfaction:Satisfaction[]) {
+
+  processData(dossiersColonies: DossierColonie[], colons: Colon[]) {
     const colonCountsMap = new Map<number, number>();
     let maleCount = 0;
     let femaleCount = 0;

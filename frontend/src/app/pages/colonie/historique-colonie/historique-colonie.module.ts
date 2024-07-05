@@ -13,10 +13,11 @@ import { FuryCardModule } from 'src/@fury/shared/card/card.module';
 import { ListModule } from 'src/@fury/shared/list/list.module';
 import { MaterialModule } from 'src/@fury/shared/material-components.module';
 import { PageLayoutDemoContentModule } from '../../page-layouts/components/page-layout-content/page-layout-demo-content.module';
+import { DetailsColonComponent } from './details-colon/details-colon.component';
 
 
 @NgModule({
-  declarations: [ListeHistoriqueColonieComponent, ReadHistoriqueColonieComponent],
+  declarations: [ListeHistoriqueColonieComponent, ReadHistoriqueColonieComponent, DetailsColonComponent],
   imports: [
     CommonModule,
     FormsModule,

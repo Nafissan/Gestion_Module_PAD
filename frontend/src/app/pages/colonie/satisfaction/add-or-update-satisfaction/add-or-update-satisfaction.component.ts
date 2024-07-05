@@ -14,7 +14,7 @@ import { ReponseService } from '../../shared/service/reponse.service';
 import { Question } from '../../shared/model/question.model';
 import { Reponse } from '../../shared/model/reponse.model';
 import { Agent } from 'src/app/shared/model/agent.model';
-import { EtatDossierColonie } from '../../shared/util/util';
+import { DossierColonie } from '../../shared/model/dossier-colonie.model';
 
 @Component({
   selector: 'fury-satisfaction-form',
@@ -152,11 +152,10 @@ export class AddOrUpdateSatisfactionComponent implements OnInit {
     formData.nom = this.agentConnecte.nom;
     formData.prenom = this.agentConnecte.prenom;
     formData.matricule = this.agentConnecte.matricule;
-    this.dossierColonieService.getAll().subscribe(dossiersResponse => {
-      const dossiers = dossiersResponse.body;
-      const openOrSaisiDossier = dossiers.find(dossier => dossier.etat === EtatDossierColonie.ouvert || dossier.etat === EtatDossierColonie.saisi);
-      if (openOrSaisiDossier) {
-        formData.codeDossier = openOrSaisiDossier;
+    this.dossierColonieService.getDossier().subscribe(dossiersResponse => {
+      const dossiers = dossiersResponse.body as DossierColonie;
+      if (dossiers) {
+        formData.codeDossier = dossiers;
   
         this.dialogConfirmationService.confirmationDialog().subscribe(action => {
           if (action === DialogUtil.confirmer) {

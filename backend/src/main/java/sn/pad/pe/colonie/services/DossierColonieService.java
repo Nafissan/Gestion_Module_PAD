@@ -11,6 +11,7 @@ public interface DossierColonieService {
 
 	public DossierColonieDTO createDossierColonie(DossierColonieDTO dossierColonieDTODossierColonieDTO);
 
+	public DossierColonieDTO getDossierColonieByEtat();
 	public boolean updateDossierColonie(DossierColonieDTO dossierColonieDTODossierColonieDTO);
 
 	public     boolean deleteDossierColonie(DossierColonieDTO dossierColonieDTODossierColonieDTO);

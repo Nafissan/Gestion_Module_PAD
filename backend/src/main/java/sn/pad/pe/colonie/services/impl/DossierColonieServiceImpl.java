@@ -15,10 +15,12 @@ import sn.pad.pe.colonie.bo.FormulaireSatisfaction;
 import sn.pad.pe.colonie.bo.RapportProspection;
 import sn.pad.pe.colonie.dto.DossierColonieDTO;
 import sn.pad.pe.colonie.dto.FormulaireSatisfactionDTO;
+import sn.pad.pe.colonie.dto.ParticipantColonieDTO;
 import sn.pad.pe.colonie.dto.RapportProspectionDTO;
 import sn.pad.pe.colonie.repositories.DossierColonieRepository;
 import sn.pad.pe.colonie.services.DossierColonieService;
 import sn.pad.pe.colonie.services.FormulaireSatisfactionService;
+import sn.pad.pe.colonie.services.ParticipantColonieService;
 import sn.pad.pe.colonie.services.RapportProspectionService;
 import sn.pad.pe.configurations.exception.ResourceNotFoundException;
 
@@ -33,25 +35,43 @@ public class DossierColonieServiceImpl implements DossierColonieService {
     private FormulaireSatisfactionService formulaireSatisfactionService;
     @Autowired
     private ModelMapper modelMapper;
+  @Autowired
+    private ParticipantColonieService participantColonieService;
 
+  
     @Override
     public List<DossierColonieDTO> getDossierColonies() {
         List<DossierColonie> dossiers = dossierColonieRepository.findAll();
+        return mapAndConvertDossiers(dossiers);
+    }
+
+    @Override
+    public DossierColonieDTO getDossierColonieByEtat() {
+        Optional<DossierColonie> dossier = dossierColonieRepository.findFirstByEtatIn(Arrays.asList("ouvert", "saisi"));
+        if(dossier.isPresent()){
+            return mapAndConvertDossier(dossier.get());
+        }
+        return null;
+    }
+    private List<DossierColonieDTO> mapAndConvertDossiers(List<DossierColonie> dossiers) {
         try {
-            List<DossierColonieDTO> dtoList = dossiers.stream()
+            return dossiers.stream()
                     .map(dossierColonie -> {
                         DossierColonieDTO dto = mapToDto(dossierColonie);
                         convertBytesFieldsToBase64(dto);
                         return dto;
                     })
                     .collect(Collectors.toList());
-            return dtoList;
         } catch (Exception e) {
-            System.out.print("Error retrieving Dossier Colonies" + e);
+            System.out.print("Error retrieving Dossier Colonies: " + e);
             throw new RuntimeException("Failed to retrieve Dossier Colonies", e);
         }
     }
-
+    private DossierColonieDTO mapAndConvertDossier(DossierColonie dossierColonie) {
+        DossierColonieDTO dto = mapToDto(dossierColonie);
+        convertBytesFieldsToBase64(dto);
+        return dto;
+    }
 
     private DossierColonieDTO mapToDto(DossierColonie dossierColonie) {
         DossierColonieDTO dto = new DossierColonieDTO();
@@ -111,27 +131,42 @@ public class DossierColonieServiceImpl implements DossierColonieService {
         if (dossierColonieOptional.isPresent()) {
             convertBase64FieldsToBytes(dossierColonieDTO);
             DossierColonie dossierColonie = modelMapper.map(dossierColonieDTO, DossierColonie.class);
-             List<RapportProspectionDTO> allRapports = rapportProspectionService.getAllRapportsProspection();
-        for (RapportProspectionDTO rapport : allRapports) {
-            if (rapport.getCodeDossierColonie().getId().equals(dossierColonie.getId())) {
-                dossierColonie.setRapportProspection(modelMapper.map(rapport, RapportProspection.class));
-                break;
+
+            List<RapportProspectionDTO> allRapports = rapportProspectionService.getAllRapportsProspection();
+            for (RapportProspectionDTO rapport : allRapports) {
+                if (rapport.getCodeDossierColonie().getId().equals(dossierColonie.getId())) {
+                    dossierColonie.setRapportProspection(modelMapper.map(rapport, RapportProspection.class));
+                    break;
+                }
             }
-        }
-          List<FormulaireSatisfactionDTO> allFormulaires = formulaireSatisfactionService.getAllFormulaires();
-        for (FormulaireSatisfactionDTO formulaire : allFormulaires) {
-            if (formulaire.getCodeDossier().getId().equals(dossierColonie.getId())) {
-                dossierColonie.setFormulaireSatisfaction(modelMapper.map(formulaire, FormulaireSatisfaction.class));
-                break;
+
+            List<FormulaireSatisfactionDTO> allFormulaires = formulaireSatisfactionService.getAllFormulaires();
+            for (FormulaireSatisfactionDTO formulaire : allFormulaires) {
+                if (formulaire.getCodeDossier().getId().equals(dossierColonie.getId())) {
+                    dossierColonie.setFormulaireSatisfaction(modelMapper.map(formulaire, FormulaireSatisfaction.class));
+                    break;
+                }
             }
-        }
-        dossierColonieRepository.save(dossierColonie);
+
+            dossierColonieRepository.save(dossierColonie);
+
+            if ("FERMER".equals(dossierColonieDTO.getEtat())) {
+                deleteAllParticipantsByDossierId(dossierColonieDTO.getId());
+            }
+
             return true;
         } else {
             return false;
         }
     }
-
+    private void deleteAllParticipantsByDossierId(Long dossierId) {
+        List<ParticipantColonieDTO> participants = participantColonieService.getAllParticipants();
+        for (ParticipantColonieDTO participant : participants) {
+            if (participant.getCodeDossier().getId().equals(dossierId)) {
+                participantColonieService.deleteParticipant(participant);
+            }
+        }
+    }
     @Override
     public boolean deleteDossierColonie(DossierColonieDTO dossierColonieDTO) {
         Optional<DossierColonie> dossier = dossierColonieRepository.findById(dossierColonieDTO.getId());

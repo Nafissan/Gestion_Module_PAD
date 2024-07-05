@@ -138,13 +138,10 @@ export class AddOrUpdateParticipantComponent implements OnInit {
     );
   }
   getDossierColonie(){
-    this.dossierColonieService.getAll().subscribe((dossiersResponse) => {
-      const dossiers = dossiersResponse.body;
-      const openOrSaisiDossier = dossiers.find(dossier => 
-        dossier.etat === EtatDossierColonie.ouvert || dossier.etat === EtatDossierColonie.saisi
-      );
-      if (openOrSaisiDossier) {
-        this.dossierColonie = openOrSaisiDossier;
+    this.dossierColonieService.getDossier().subscribe((dossiersResponse) => {
+      const dossiers = dossiersResponse.body as DossierColonie;
+      if (dossiers) {
+        this.dossierColonie = dossiers;
       }
     });
   }

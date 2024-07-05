@@ -25,6 +25,7 @@ import { fadeInRightAnimation } from 'src/@fury/animations/fade-in-right.animati
 import { fadeInUpAnimation } from 'src/@fury/animations/fade-in-up.animation';
 import { ColonService } from '../../shared/service/colon.service';
 import { ReadHistoriqueColonieComponent } from '../read-historique-colonie/read-historique-colonie.component';
+import { DetailsColonComponent } from '../details-colon/details-colon.component';
 
 @Component({
   selector: 'fury-liste-historique-colonie',
@@ -34,6 +35,7 @@ import { ReadHistoriqueColonieComponent } from '../read-historique-colonie/read-
 
 })
 export class ListeHistoriqueColonieComponent implements OnInit {
+
   showProgressBar: boolean = false; 
    colon: Colon[]=[];
 
@@ -58,21 +60,28 @@ export class ListeHistoriqueColonieComponent implements OnInit {
   anneeSelected: string = "";
   dateV = new FormControl(moment());
   @ViewChild(MatDatepicker) picker;
-
+  private colonPaginator: MatPaginator;
+  private colonSort: MatSort;
   private paginator: MatPaginator;
   private sort: MatSort;
   @ViewChild(MatSort) set matSort(ms: MatSort) {
-    this.sort = ms;
+    this.sort = ms; this.colonSort = ms;
     this.setDataSourceAttributes();
   }
+  
   @ViewChild(MatPaginator) set matPaginator(mp: MatPaginator) {
     this.paginator = mp;
+    this.colonPaginator = mp;
     this.setDataSourceAttributes();
   }
   setDataSourceAttributes() {
     if (this.dataSource) {
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
+    }
+    if(this.colonDataSource){
+      this.colonDataSource.paginator = this.colonPaginator;
+      this.colonDataSource.sort = this.colonSort;
     }
   }
   @Input()
@@ -155,13 +164,13 @@ export class ListeHistoriqueColonieComponent implements OnInit {
   ngAfterViewInit() {
     this.setDataSourceAttributes();
   }
-  yearSelected(params) {
+  yearSelected(params: Date) {
     this.dateV.setValue(params);
-    this.anneeSelected = params.year().toString();
+    this.anneeSelected = params.getFullYear().toString(); 
     this.picker.close();
     this.getDossierColonies();
   }
-  
+ 
   get visibleDossierColumns() {
     return this.dossiercolumns.filter((column) => column.visible).map((column) => column.property);
   }
@@ -195,7 +204,7 @@ export class ListeHistoriqueColonieComponent implements OnInit {
         this.filteredDossierColonies = this.anneeSelected 
           ? this.dossierColonies.filter(dossier => 
               dossier.etat === EtatDossierColonie.fermer && 
-              new Date(dossier.createdAt).getFullYear() === parseInt(this.anneeSelected)
+              dossier.annee === this.anneeSelected
             ) 
           : this.dossierColonies.filter(dossier => dossier.etat === EtatDossierColonie.fermer);
         console.log('Filtered Dossier Colonies:', this.filteredDossierColonies); 
@@ -255,10 +264,26 @@ export class ListeHistoriqueColonieComponent implements OnInit {
       );
       this.colon[index] = new Colon(row);
       this.colonSubject$.next(this.colon);
+      this.subject$.next(this.dossierColonies);
     });
   }
   hasAnyRole(roles: string[]) {
     return this.authentificationService.hasAnyRole(roles);
+  }
+  detailsColon(colon: Colon){
+    this.dialog
+    .open(DetailsColonComponent, {data: colon})
+    .afterClosed()
+    .subscribe((colon)=>{
+      if(colon){
+        const index = this.colon.findIndex(
+          (existingcolon) => existingcolon.id === colon.id
+          );
+          this.colon[index] = new Colon(colon);
+          this.colonSubject$.next(this.colon);
+          this.subject$.next(this.dossierColonies);     
+         }
+    });
   }
   ngOnDestroy() { }
   

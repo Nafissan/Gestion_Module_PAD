@@ -1,20 +1,22 @@
 package sn.pad.pe.colonie.services.impl;
 
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import sn.pad.pe.colonie.bo.ParticipantColonie;
+import sn.pad.pe.colonie.dto.ColonDTO;
 import sn.pad.pe.colonie.dto.ParticipantColonieDTO;
 import sn.pad.pe.colonie.repositories.ParticipantColonieRepository;
+import sn.pad.pe.colonie.services.ColonService;
 import sn.pad.pe.colonie.services.ParticipantColonieService;
-
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 @Service
 public class ParticipantColonieServiceImpl implements ParticipantColonieService {
 
@@ -23,7 +25,8 @@ public class ParticipantColonieServiceImpl implements ParticipantColonieService 
 
     @Autowired
     private ModelMapper modelMapper;
-
+ @Autowired
+    private ColonService colonService; 
     @Override
     public ParticipantColonieDTO saveParticipant(ParticipantColonieDTO participantDTO) {
         convertBase64FieldsToBytes(participantDTO);
@@ -98,18 +101,46 @@ public List<ParticipantColonieDTO> getAllParticipants() {
     }
     
 
-    @Override
-    public boolean  updateParticipant( ParticipantColonieDTO updatedParticipant) {
+  @Override
+    public boolean updateParticipant(ParticipantColonieDTO updatedParticipant) {
         Optional<ParticipantColonie> parOptional = participantColonieRepository.findById(updatedParticipant.getId());
         if (parOptional.isPresent()) {
             convertBase64FieldsToBytes(updatedParticipant);
             ParticipantColonie participant = modelMapper.map(updatedParticipant, ParticipantColonie.class);
             participantColonieRepository.save(participant);
+
+            if ("VALIDER".equals(updatedParticipant.getStatus())) {
+                ColonDTO colonDTO = mapToColonDto(updatedParticipant);
+                colonService.saveColon(colonDTO);
+            }
+
             return true;
         } else {
             return false;
         }
-}
+    }
+    private ColonDTO mapToColonDto(ParticipantColonieDTO participantDTO) {
+        ColonDTO colonDTO = new ColonDTO();
+        colonDTO.setCodeDossier(participantDTO.getCodeDossier());
+        colonDTO.setNomEnfant(participantDTO.getNomEnfant());
+        colonDTO.setPrenomEnfant(participantDTO.getPrenomEnfant());
+        colonDTO.setDateNaissance(participantDTO.getDateNaissance());
+        colonDTO.setLieuNaissance(participantDTO.getLieuNaissance());
+        colonDTO.setGroupeSanguin(participantDTO.getGroupeSanguin());
+        colonDTO.setSexe(participantDTO.getSexe());
+        colonDTO.setMatriculeParent(participantDTO.getMatriculeParent());
+        colonDTO.setNomParent(participantDTO.getNomParent());
+        colonDTO.setPrenomParent(participantDTO.getPrenomParent());
+        colonDTO.setStatus(participantDTO.getStatus());
+        colonDTO.setMatriculeAgent(participantDTO.getMatriculeAgent());
+        colonDTO.setNomAgent(participantDTO.getNomAgent());
+        colonDTO.setPrenomAgent(participantDTO.getPrenomAgent());
+        colonDTO.setFicheSocial(participantDTO.getFicheSocial());
+        colonDTO.setDocument(participantDTO.getDocument());
+        return colonDTO;
+    }
+
+
   private void convertBase64FieldsToBytes(ParticipantColonieDTO participantDTO) {
         if (participantDTO.getFicheSocial() != null) {
             if (isValidBase64(participantDTO.getFicheSocial())) {

@@ -4,7 +4,7 @@
   </fury-page-layout-header>
 
   <fury-page-layout-content [@fadeInUp]>
-    <fury-list *ngIf="dossierColonies.length !== 0 && showProgressBar === true" name="Dossier Colonie" [columns]="columns" (filterChange)="onFilterChange($event)">
+    <fury-list *ngIf="dossierColonies && showProgressBar === true" name="Dossier Colonie" [columns]="columns" (filterChange)="onFilterChange($event)">
       <div class="actions">
         <button class="create" (click)="createDossierColonie()" [disabled]="(currentDossierColonie && currentDossierColonie.etat !== 'fermer') || !hasAnyRole(['MENU_DOTATION'])" type="button" mat-mini-fab color="primary">
           <mat-icon>add</mat-icon>
@@ -112,7 +112,7 @@
       </table>
       <mat-paginator [pageSize]="pageSize" class="paginator"></mat-paginator>
     </fury-list>
-    <div *ngIf="dossierColonies.length === 0 && showProgressBar === true" class="card text-center">
+    <div *ngIf="!dossierColonies && showProgressBar === true" class="card text-center">
       <div class="card-header">
         <span class="badge badge-info">INFORMATION</span>
       </div>

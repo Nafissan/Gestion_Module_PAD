@@ -1,0 +1,121 @@
+<div mat-dialog-title class="h1-responsive text-align titre_modal_add">DETAILS COLON</div>
+<mat-dialog-content>
+    <mat-accordion class="example-headers-align" multi>
+        <div class="example-action-buttons">
+            <button *ngIf="showIcon" mat-raised-button color="primary" (click)="accordion.openAll(); showIcon = !showIcon">
+                <mat-icon>expand_more</mat-icon> Afficher
+            </button>
+            <button *ngIf="!showIcon" mat-raised-button color="warn" (click)="accordion.closeAll(); showIcon = !showIcon">
+                <mat-icon>expand_less</mat-icon> Fermer
+            </button>
+        </div>
+
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon>folder_open</mat-icon>
+                    <span> Informations sur l'enfant</span>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-panel-description>
+                <span>Nom : </span>{{ colon.nomEnfant }}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Prénom : </span>{{ colon.prenomEnfant }}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Date de Naissance : </span>{{ colon.dateNaissance | date }}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Lieu de Naissance : </span>{{ colon.lieuNaissance }}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Groupe Sanguin : </span>{{ colon.groupeSanguin }}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Sexe : </span>{{ colon.sexe }}
+            </mat-panel-description>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon>supervisor_account</mat-icon>
+                    <span> Informations sur le Parent</span>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-panel-description>
+                <span>Matricule : </span>{{ colon.matriculeParent }}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Nom : </span>{{ colon.nomParent }}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Prénom : </span>{{ colon.prenomParent }}
+            </mat-panel-description>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon>supervisor_account</mat-icon>
+                    <span> Informations sur l'Agent</span>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-panel-description>
+                <span>Matricule : </span>{{ colon.matriculeAgent }}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Nom : </span>{{ colon.nomAgent }}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Prénom : </span>{{ colon.prenomAgent }}
+            </mat-panel-description>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon>folder_open</mat-icon>
+                    <span> Dossier Colonie</span>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-panel-description>
+                <span>Code : </span>{{ colon.codeDossier?.code }}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Année : </span>{{ colon.codeDossier?.annee }}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Commentaire : </span>{{ colon.codeDossier?.description }}
+            </mat-panel-description>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon>insert_drive_file</mat-icon>
+                    <span> Documents</span>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-panel-description>
+                <span>Fiche Sociale : </span>{{ colon.ficheSocial ? 'Disponible' : 'Aucun fichier sélectionné' }}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Document : </span>{{ colon.document ? 'Disponible' : 'Aucun fichier sélectionné' }}
+            </mat-panel-description>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon>info</mat-icon>
+                    <span>Status</span>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-panel-description>
+                <span>{{ colon.status }}</span>
+            </mat-panel-description>
+        </mat-expansion-panel>
+    </mat-accordion>
+</mat-dialog-content>
