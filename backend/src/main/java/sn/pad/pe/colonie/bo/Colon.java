@@ -49,6 +49,8 @@ public class Colon implements Serializable{
     private byte[] ficheSocial;
     @Lob
     private byte[] document;
+    @Lob
+    private byte[] photo;
 
     public byte[] getFicheSocial() {
         return ficheSocial;
@@ -156,5 +158,13 @@ public class Colon implements Serializable{
 
     public void setMatriculeParent(String matriculeParent) {
         this.matriculeParent = matriculeParent;
+    }
+
+    public byte[] getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(byte[] photo) {
+        this.photo = photo;
     }
 }

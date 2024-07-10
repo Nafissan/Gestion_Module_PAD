@@ -11,11 +11,24 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 export class DetailsColonComponent implements OnInit {
   colon:Colon;
   @ViewChild(MatAccordion) accordion: MatAccordion;
-  showIcon = true;
+  showIcon = true;  photoUrl: string | null = null;
+
   constructor(@Inject(MAT_DIALOG_DATA) public defaults: Colon) { }
 
   ngOnInit(): void {
-    this.colon=this.defaults;
-  }
+    this.colon=this.defaults;    this.convertPhotoToFile(this.colon.photo);
 
+  }
+  convertPhotoToFile(base64Photo: string) {
+    if (base64Photo) {
+      const byteCharacters = atob(base64Photo);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: 'image/png' });
+      this.photoUrl = URL.createObjectURL(blob);
+    }
+  }
 }

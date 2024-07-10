@@ -15,12 +15,10 @@ import sn.pad.pe.colonie.bo.FormulaireSatisfaction;
 import sn.pad.pe.colonie.bo.RapportProspection;
 import sn.pad.pe.colonie.dto.DossierColonieDTO;
 import sn.pad.pe.colonie.dto.FormulaireSatisfactionDTO;
-import sn.pad.pe.colonie.dto.ParticipantColonieDTO;
 import sn.pad.pe.colonie.dto.RapportProspectionDTO;
 import sn.pad.pe.colonie.repositories.DossierColonieRepository;
 import sn.pad.pe.colonie.services.DossierColonieService;
 import sn.pad.pe.colonie.services.FormulaireSatisfactionService;
-import sn.pad.pe.colonie.services.ParticipantColonieService;
 import sn.pad.pe.colonie.services.RapportProspectionService;
 import sn.pad.pe.configurations.exception.ResourceNotFoundException;
 
@@ -35,9 +33,7 @@ public class DossierColonieServiceImpl implements DossierColonieService {
     private FormulaireSatisfactionService formulaireSatisfactionService;
     @Autowired
     private ModelMapper modelMapper;
-  @Autowired
-    private ParticipantColonieService participantColonieService;
-
+ 
   
     @Override
     public List<DossierColonieDTO> getDossierColonies() {
@@ -150,21 +146,9 @@ public class DossierColonieServiceImpl implements DossierColonieService {
 
             dossierColonieRepository.save(dossierColonie);
 
-            if ("FERMER".equals(dossierColonieDTO.getEtat())) {
-                deleteAllParticipantsByDossierId(dossierColonieDTO.getId());
-            }
-
             return true;
         } else {
             return false;
-        }
-    }
-    private void deleteAllParticipantsByDossierId(Long dossierId) {
-        List<ParticipantColonieDTO> participants = participantColonieService.getAllParticipants();
-        for (ParticipantColonieDTO participant : participants) {
-            if (participant.getCodeDossier().getId().equals(dossierId)) {
-                participantColonieService.deleteParticipant(participant);
-            }
         }
     }
     @Override

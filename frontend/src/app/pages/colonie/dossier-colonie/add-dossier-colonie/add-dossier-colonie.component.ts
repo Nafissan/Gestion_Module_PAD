@@ -228,7 +228,7 @@ defaults: DossierColonie;
               this.notePelerins
             );
           }
-          this.dialogRef.close(reponse.body as DossierColonie);
+          this.dialogRef.close(formData);
 
         }, err => {
           this.notificationService.warn(NotificationUtil.echec);},

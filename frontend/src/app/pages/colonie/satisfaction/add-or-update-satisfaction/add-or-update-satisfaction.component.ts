@@ -194,7 +194,7 @@ export class AddOrUpdateSatisfactionComponent implements OnInit {
         this.satisfactionService.updateSatisfaction(formData).subscribe((response) => {
           this.notificationService.success(NotificationUtil.modification);
           this.updateReponses(response.body, reponses); 
-          this.dialogRef.close(response.body);
+          this.dialogRef.close(formData);
         }, err => {
           this.notificationService.warn(NotificationUtil.echec);
         });

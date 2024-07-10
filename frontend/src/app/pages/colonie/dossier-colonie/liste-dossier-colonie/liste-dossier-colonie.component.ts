@@ -208,7 +208,6 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
             this.dossierColonies = updatedDossierColonie;
             this.subject$.next(this.dossierColonies);
           }
-          this.refreshDossierColonies();
         });
         this.refreshDossierColonies(); 
    

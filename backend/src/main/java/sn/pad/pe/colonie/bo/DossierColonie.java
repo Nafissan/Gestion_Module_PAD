@@ -23,6 +23,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+
 @Entity
 public class DossierColonie implements Serializable {
 
@@ -69,6 +70,9 @@ public class DossierColonie implements Serializable {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "codeDossier", cascade = CascadeType.REMOVE, orphanRemoval = true)
     @JsonIgnore
     private List<Colon> colons = new ArrayList<Colon>(0);
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "codeDossier", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @JsonIgnore
+    private List<ParticipantColonie> participants = new ArrayList<ParticipantColonie>(0);
 
     public Long getId() {
         return id;
@@ -226,6 +230,14 @@ public class DossierColonie implements Serializable {
 
     public void setCommentaire(String commentaire) {
         this.commentaire = commentaire;
+    }
+
+    public List<ParticipantColonie> getParticipants() {
+        return participants;
+    }
+
+    public void setParticipants(List<ParticipantColonie> participants) {
+        this.participants = participants;
     }
 
   

@@ -185,7 +185,7 @@ defaults:RapportProspection;
       if (action === DialogUtil.confirmer) {
         this.rapportProspectionService.updateRapportProspection(formData).subscribe((response) => {
           this.notificationService.success(NotificationUtil.fermetureDossier);
-          this.dialogRef.close(response.body as RapportProspection);
+          this.dialogRef.close(formData);
         }, err => {
           this.notificationService.warn(NotificationUtil.echec);
         },
@@ -228,7 +228,7 @@ const formData: RapportProspection = {
         if (action === DialogUtil.confirmer) {
           this.rapportProspectionService.updateRapportProspection(formData).subscribe((response) => {
             this.notificationService.success(NotificationUtil.modification);
-            this.dialogRef.close(response.body as RapportProspection);
+            this.dialogRef.close(formData);
           }, err => {
             this.notificationService.warn(NotificationUtil.echec);
           });

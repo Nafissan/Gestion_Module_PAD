@@ -6,6 +6,12 @@
 
 <form [formGroup]="form" (ngSubmit)="save()">
     <mat-dialog-content>
+        <div fxLayout="column" fxLayout.gt-sm="column" fxLayoutGap.gt-sm="34px">
+            <mat-label>Photo de l'enfant</mat-label>
+            <div class="file-upload">
+                <input type="file" (change)="handlePhoto($event.target.files)" required>
+            </div>
+        </div>
         <!-- Parent Information -->
         <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
             <mat-form-field fxFlex>

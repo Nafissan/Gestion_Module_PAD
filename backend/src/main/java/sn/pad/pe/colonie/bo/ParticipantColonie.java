@@ -41,7 +41,8 @@ public class ParticipantColonie implements Serializable{
     private byte[] ficheSocial;
     @Lob
     private byte[] document;
-
+    @Lob
+    private byte[] photo;
     public Long getId() {
         return id;
     }
@@ -143,6 +144,14 @@ public class ParticipantColonie implements Serializable{
     }
     public void setDocument(byte[] document) {
         this.document = document;
+    }
+
+    public byte[] getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(byte[] photo) {
+        this.photo = photo;
     }
 
 }

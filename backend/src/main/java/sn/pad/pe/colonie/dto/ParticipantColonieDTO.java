@@ -24,6 +24,8 @@ public class ParticipantColonieDTO {
     private String prenomAgent;
     private String ficheSocial; 
     private String document; 
+    private String photo; 
+    private byte[] photoBytes; 
 
     private byte[] ficheSocialBytes; 
     private byte[] documentBytes; 
@@ -144,6 +146,18 @@ public class ParticipantColonieDTO {
 
     public void setDocumentBytes(byte[] documentBytes) {
         this.documentBytes = documentBytes;
+    }
+    public String getPhoto() {
+        return photo;
+    }
+    public void setPhoto(String photo) {
+        this.photo = photo;
+    }
+    public byte[] getPhotoBytes() {
+        return photoBytes;
+    }
+    public void setPhotoBytes(byte[] photoBytes) {
+        this.photoBytes = photoBytes;
     }
 
 }

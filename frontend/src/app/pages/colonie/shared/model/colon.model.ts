@@ -17,7 +17,7 @@ export class Colon {
     prenomAgent: string;
     document: string;
     codeDossier:DossierColonie;
-
+    photo:string;
     constructor(colon: Colon) {
         this.id = colon.id ;
         this.nomEnfant = colon.nomEnfant ;
@@ -36,5 +36,6 @@ export class Colon {
         this.document = colon.document;
         this.status = colon.status;
         this.codeDossier = colon.codeDossier;
+        this.photo = colon.photo;
     }
 }

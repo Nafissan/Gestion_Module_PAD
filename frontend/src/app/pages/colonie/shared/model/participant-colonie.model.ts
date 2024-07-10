@@ -18,7 +18,7 @@ export class Participant {
     nomAgent: string;
     prenomAgent: string;
     document: string;
-   
+    photo: string;
 
     constructor(participant: Participant) {
         this.id = participant.id ;
@@ -38,5 +38,6 @@ export class Participant {
         this.ficheSocial = participant.ficheSocial;
         this.document = participant.document;
         this.status = participant.status;
+        this.photo = participant.photo;
     }
 }

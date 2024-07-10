@@ -30,10 +30,26 @@ public class ParticipantColonieServiceImpl implements ParticipantColonieService 
     @Override
     public ParticipantColonieDTO saveParticipant(ParticipantColonieDTO participantDTO) {
         convertBase64FieldsToBytes(participantDTO);
+    
+        // Vérifier si le participant existe déjà par une combinaison de champs uniques
+    Optional<ParticipantColonie> existingParticipant = participantColonieRepository.findByNomEnfantAndPrenomEnfantAndDateNaissanceAndMatriculeParent(
+        participantDTO.getNomEnfant(), participantDTO.getPrenomEnfant(), participantDTO.getDateNaissance(), participantDTO.getMatriculeParent());
+
+        if (existingParticipant.isPresent()) {
+            if ("VALIDER".equalsIgnoreCase(existingParticipant.get().getStatus())) {
+                throw new IllegalStateException("Ce colon existe déjà");
+            }
+        }
+    
+        // Mapper le DTO vers l'entité
         ParticipantColonie participant = modelMapper.map(participantDTO, ParticipantColonie.class);
+        // Sauvegarder le participant
         ParticipantColonie savedParticipant = participantColonieRepository.save(participant);
+    
+        // Mapper l'entité sauvegardée vers le DTO
         return modelMapper.map(savedParticipant, ParticipantColonieDTO.class);
     }
+    
 
    @Override
 public List<ParticipantColonieDTO> getAllParticipants() {
@@ -64,6 +80,7 @@ public List<ParticipantColonieDTO> getAllParticipants() {
             dto.setDateNaissance(participant.getDateNaissance());
             dto.setDocumentBytes(participant.getDocument());
             dto.setFicheSocialBytes(participant.getFicheSocial());
+            dto.setPhotoBytes(participant.getPhoto());
             dto.setGroupeSanguin(participant.getGroupeSanguin());
             dto.setId(participant.getId());
             dto.setLieuNaissance(participant.getLieuNaissance());
@@ -137,6 +154,7 @@ public List<ParticipantColonieDTO> getAllParticipants() {
         colonDTO.setPrenomAgent(participantDTO.getPrenomAgent());
         colonDTO.setFicheSocial(participantDTO.getFicheSocial());
         colonDTO.setDocument(participantDTO.getDocument());
+        colonDTO.setPhoto(participantDTO.getPhoto());
         return colonDTO;
     }
 
@@ -156,6 +174,13 @@ public List<ParticipantColonieDTO> getAllParticipants() {
             System.err.println("Invalid Base64 string for Document: ");
         }
         }
+        if (participantDTO.getPhoto() != null) {
+            if (isValidBase64(participantDTO.getPhoto())) {
+            participantDTO.setPhotoBytes(Base64.getDecoder().decode(participantDTO.getPhoto()));
+        }else {
+            System.err.println("Invalid Base64 string for Photo: ");
+        }
+        }
     }
     private boolean isValidBase64(String base64) {
         try {
@@ -171,6 +196,9 @@ public List<ParticipantColonieDTO> getAllParticipants() {
         }
         if (participantDTO.getDocumentBytes() != null) {
             participantDTO.setDocument(Base64.getEncoder().encodeToString(participantDTO.getDocumentBytes()));
+        }
+        if (participantDTO.getPhotoBytes() != null) {
+            participantDTO.setPhoto(Base64.getEncoder().encodeToString(participantDTO.getPhotoBytes()));
         }
     }
 }

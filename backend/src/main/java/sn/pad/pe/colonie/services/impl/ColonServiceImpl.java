@@ -66,6 +66,7 @@ public class ColonServiceImpl implements ColonService {
         dto.setPrenomParent(colon.getPrenomParent());
         dto.setSexe(colon.getSexe());
         dto.setStatus(colon.getStatus());
+        dto.setPhotoBytes(colon.getPhoto());
         return dto;
     }
 
@@ -101,6 +102,12 @@ public class ColonServiceImpl implements ColonService {
             }else {
                 System.err.println("Invalid Base64 string for Document: ");
             }        }
+        if (colonDTO.getPhoto() != null) {
+                if (isValidBase64(colonDTO.getPhoto())) {
+                    colonDTO.setPhotoBytes(Base64.getDecoder().decode(colonDTO.getPhoto()));
+                    }else {
+                        System.err.println("Invalid Base64 string for photo: ");
+                        }        }
     }
     private boolean isValidBase64(String base64) {
         try {
@@ -116,6 +123,9 @@ public class ColonServiceImpl implements ColonService {
         }
         if (colonDTO.getDocumentBytes() != null) {
             colonDTO.setDocument(Base64.getEncoder().encodeToString(colonDTO.getDocumentBytes()));
+        }
+        if (colonDTO.getPhotoBytes() != null) {
+            colonDTO.setPhoto(Base64.getEncoder().encodeToString(colonDTO.getPhotoBytes()));
         }
     }
 }

@@ -28,10 +28,14 @@ public class ColonDTO {
     private String nomAgent;
     private String prenomAgent;
     private String ficheSocial; // Base64 representation
-    private String document; // Base64 representation
+    private String document;
+    private String photo; 
+    // Base64 representation
     private DossierColonie codeDossier;
     private byte[] ficheSocialBytes; // byte array for internal use
     private byte[] documentBytes; 
+    private byte[] photoBytes; 
+
     public String getFicheSocial() {
         return ficheSocial;
     }
@@ -154,5 +158,21 @@ public class ColonDTO {
 
     public void setCodeDossier(DossierColonie codeDossier) {
         this.codeDossier = codeDossier;
+    }
+
+    public String getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(String photo) {
+        this.photo = photo;
+    }
+
+    public byte[] getPhotoBytes() {
+        return photoBytes;
+    }
+
+    public void setPhotoBytes(byte[] photoBytes) {
+        this.photoBytes = photoBytes;
     }
 }

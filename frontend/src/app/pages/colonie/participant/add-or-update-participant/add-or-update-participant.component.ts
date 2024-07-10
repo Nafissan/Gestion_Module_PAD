@@ -25,6 +25,7 @@ export class AddOrUpdateParticipantComponent implements OnInit {
   mode: "create" | "update" = "create";
   ficheSocial: string | null = null;
   document: string | null = null;
+  photo: string | null = null;
   agent: Agent;
   compte: Compte;
   username: string;
@@ -80,7 +81,7 @@ export class AddOrUpdateParticipantComponent implements OnInit {
       lieuNaissance: this.defaults.lieuNaissance || "",
       groupeSanguin: this.defaults.groupeSanguin || "",
       codeDossier: this.defaults.codeDossier?.code || null,
-    });
+     });
   }
 
   isCreateMode() {
@@ -100,6 +101,11 @@ export class AddOrUpdateParticipantComponent implements OnInit {
   async handleDocument(files: FileList) {
     if (files.length > 0) {
       this.document = await this.convertFileToBase64(files[0]);
+    }
+  }
+  async handlePhoto(files: FileList): Promise<void> {
+    if (files.length > 0) {
+      this.photo = await this.convertFileToBase64(files[0]);
     }
   }
 
@@ -149,7 +155,8 @@ export class AddOrUpdateParticipantComponent implements OnInit {
     let formData: Participant = this.form.value;
     formData.ficheSocial = this.ficheSocial;
     formData.status = "A VALIDER";
-    formData.document = this.document;
+    formData.document = this.document ?  this.document : null;
+    formData.photo = this.photo ?   this.photo : null;
     formData.nomAgent = this.agent.nom;
     formData.prenomAgent = this.agent.prenom;
     formData.matriculeAgent = this.agent.matricule;
@@ -187,7 +194,8 @@ export class AddOrUpdateParticipantComponent implements OnInit {
     let formData: Participant = this.form.value;
     formData.ficheSocial = this.defaults.ficheSocial;
     formData.id = this.defaults.id;
-    formData.document = this.document;
+    formData.document = this.document ?  this.document : this.defaults.document;
+    formData.photo = this.photo ?   this.photo : this.defaults.photo;
     formData.status = "A VALIDER";
     formData.nomAgent = this.defaults.nomAgent;
     formData.prenomAgent = this.defaults.prenomAgent;
@@ -203,7 +211,7 @@ export class AddOrUpdateParticipantComponent implements OnInit {
         this.participantService.updateParticipant( formData).subscribe(
           (response) => {
             this.notificationService.success(NotificationUtil.modification);
-            this.dialogRef.close(response.body as Participant);
+            this.dialogRef.close(formData);
           },
           (err) => {
             this.notificationService.warn(NotificationUtil.echec);
