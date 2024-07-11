@@ -40,7 +40,11 @@ public class DossierColonieServiceImpl implements DossierColonieService {
         List<DossierColonie> dossiers = dossierColonieRepository.findAll();
         return mapAndConvertDossiers(dossiers);
     }
-
+    @Override
+    public List<DossierColonieDTO> getDossiersColoniesFerme() {
+        List<DossierColonie> dossiers = dossierColonieRepository.findByEtat("FERMER");
+        return mapAndConvertDossiers(dossiers);
+    }
     @Override
     public DossierColonieDTO getDossierColonieByEtat() {
         Optional<DossierColonie> dossier = dossierColonieRepository.findFirstByEtatIn(Arrays.asList("ouvert", "saisi"));

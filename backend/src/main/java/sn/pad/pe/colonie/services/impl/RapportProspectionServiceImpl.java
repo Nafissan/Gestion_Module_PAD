@@ -10,8 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import sn.pad.pe.colonie.bo.RapportProspection;
+import sn.pad.pe.colonie.dto.DossierColonieDTO;
 import sn.pad.pe.colonie.dto.RapportProspectionDTO;
 import sn.pad.pe.colonie.repositories.RapportProspectionRepository;
+import sn.pad.pe.colonie.services.DossierColonieService;
 import sn.pad.pe.colonie.services.RapportProspectionService;
 
 @Service
@@ -22,7 +24,8 @@ public class RapportProspectionServiceImpl implements RapportProspectionService 
 
     @Autowired
     private ModelMapper modelMapper;
-
+ @Autowired
+    private DossierColonieService dossierColonieService;
     @Override
     public RapportProspectionDTO saveRapportProspection(RapportProspectionDTO rapportProspectionDTO) {
         System.out.print(rapportProspectionDTO.getCodeDossierColonie());
@@ -79,7 +82,19 @@ public class RapportProspectionServiceImpl implements RapportProspectionService 
         }
         return false;
     }
-    
+      @Override
+    public RapportProspectionDTO getRapportProspectionByEtat() {
+        DossierColonieDTO dossierColonie = dossierColonieService.getDossierColonieByEtat();
+        if (dossierColonie != null) {
+            Optional<RapportProspection> rapport = rapportProspectionRepository.findByCodeDossierColonie(dossierColonie.getId());
+            if (rapport.isPresent()) {
+                RapportProspectionDTO rapportDTO = mapToDto(rapport.get());
+                convertBytesFieldsToBase64(rapportDTO);
+                return rapportDTO;
+            }
+        }
+        return null;
+    }
     @Override
     public boolean deleteRapportProspection(RapportProspectionDTO rapportProspectionDTO) {
         Optional<RapportProspection> rapport = rapportProspectionRepository.findById(rapportProspectionDTO.getId());

@@ -42,6 +42,20 @@ export class SatisfactionService {
     };
     return this.httpClient.delete<any>(this.url, httpOptions);
   }
+  getFormulaireByDossierEtat(): Observable<HttpResponse<any>> {
+    const url = `${this.url}/dossierEtat`;
+    return this.httpClient
+      .get<any>(url, { observe: 'response' })
+      .pipe(catchError(this.errorHandler));
+  }
+
+  getFormulairesByAnnee(annee: string): Observable<HttpResponse<any[]>> {
+    const url = `${this.url}/annee/${annee}`;
+    return this.httpClient
+      .get<any[]>(url, { observe: 'response' })
+      .pipe(catchError(this.errorHandler));
+  }
+
 
   private errorHandler(error) {
     let errorMessage = '';

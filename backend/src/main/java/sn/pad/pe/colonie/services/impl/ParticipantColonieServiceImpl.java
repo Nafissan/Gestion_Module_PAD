@@ -31,8 +31,7 @@ public class ParticipantColonieServiceImpl implements ParticipantColonieService 
     public ParticipantColonieDTO saveParticipant(ParticipantColonieDTO participantDTO) {
         convertBase64FieldsToBytes(participantDTO);
     
-        // Vérifier si le participant existe déjà par une combinaison de champs uniques
-    Optional<ParticipantColonie> existingParticipant = participantColonieRepository.findByNomEnfantAndPrenomEnfantAndDateNaissanceAndMatriculeParent(
+        Optional<ParticipantColonie> existingParticipant = participantColonieRepository.findByNomEnfantAndPrenomEnfantAndDateNaissanceAndMatriculeParent(
         participantDTO.getNomEnfant(), participantDTO.getPrenomEnfant(), participantDTO.getDateNaissance(), participantDTO.getMatriculeParent());
 
         if (existingParticipant.isPresent()) {
@@ -41,12 +40,9 @@ public class ParticipantColonieServiceImpl implements ParticipantColonieService 
             }
         }
     
-        // Mapper le DTO vers l'entité
         ParticipantColonie participant = modelMapper.map(participantDTO, ParticipantColonie.class);
-        // Sauvegarder le participant
         ParticipantColonie savedParticipant = participantColonieRepository.save(participant);
     
-        // Mapper l'entité sauvegardée vers le DTO
         return modelMapper.map(savedParticipant, ParticipantColonieDTO.class);
     }
     
@@ -73,7 +69,17 @@ public List<ParticipantColonieDTO> getAllParticipants() {
     }
 }
 
-
+@Override
+public List<ParticipantColonieDTO> getParticipantsByDossierId(Long dossierId) {
+    List<ParticipantColonie> participants = participantColonieRepository.findByCodeDossier(dossierId);
+    return participants.stream()
+                       .map(participant -> {
+                        ParticipantColonieDTO dto = mapToDto(participant);
+                        convertBytesFieldsToBase64(dto);
+                        return dto;
+                    })
+                    .collect(Collectors.toList());
+}
         private ParticipantColonieDTO mapToDto(ParticipantColonie participant){
             ParticipantColonieDTO dto =new ParticipantColonieDTO();
             dto.setCodeDossier(participant.getCodeDossier());
@@ -201,4 +207,5 @@ public List<ParticipantColonieDTO> getAllParticipants() {
             participantDTO.setPhoto(Base64.getEncoder().encodeToString(participantDTO.getPhotoBytes()));
         }
     }
+    
 }

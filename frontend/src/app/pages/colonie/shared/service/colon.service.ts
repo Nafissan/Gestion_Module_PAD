@@ -22,7 +22,20 @@ export class ColonService {
       .get<any>(this.url, { observe: 'response' })
       .pipe(catchError(this.errorHandler));
   }
-
+  getColonsByAnnee(annee: string): Observable<HttpResponse<any>> {
+    return this.httpClient
+      .get<any>(`${this.url}/byAnnee`, { params: { annee }, observe: 'response' })
+      .pipe(catchError(this.errorHandler));
+  }
+  getColonsByDossierEtat(): Observable<HttpResponse<any>> {
+    return this.httpClient.get<any>(`${this.url}/dossierEtat`, { observe: 'response' })
+      .pipe(catchError(this.errorHandler));
+  }
+  getColonStatisticsByAnnee(annee: string): Observable<HttpResponse<any>> {
+    return this.httpClient
+      .get<any>(`${this.url}/statisticsByAnnee`, { params: { annee }, observe: 'response' })
+      .pipe(catchError(this.errorHandler));
+  }
   create(colon: Colon): Observable<HttpResponse<any>> {
     return this.httpClient
       .post<any>(this.url, JSON.stringify(colon), {

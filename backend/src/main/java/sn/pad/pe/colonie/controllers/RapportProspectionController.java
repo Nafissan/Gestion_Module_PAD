@@ -75,4 +75,17 @@ public class RapportProspectionController {
         message = new Message(new Date(), "RapportProspection with id " + rapportProspectionDTO.getId() + " not found.", "uri=/rapportsProspection/" + rapportProspectionDTO.getId());
         return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
     }
+
+    @ApiOperation(value = "Récupération d'un rapport de prospection par état", response = RapportProspectionDTO.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Objet récupéré avec succès"),
+        @ApiResponse(code = 401, message = "Vous n'êtes pas autorisé à voir la ressource"),
+        @ApiResponse(code = 403, message = "L'accès à la ressource que vous tentiez d'atteindre est interdit"),
+        @ApiResponse(code = 404, message = "La ressource que vous tentiez d'atteindre est introuvable.")
+    })
+    @GetMapping("/rapportsProspection/etat")
+    public ResponseEntity<RapportProspectionDTO> getRapportProspectionByEtat() {
+        RapportProspectionDTO rapport = rapportProspectionService.getRapportProspectionByEtat();
+        return ResponseEntity.status(HttpStatus.OK).body(rapport);
+    }
 }

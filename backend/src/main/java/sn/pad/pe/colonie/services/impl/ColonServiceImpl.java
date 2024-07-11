@@ -1,8 +1,12 @@
 package sn.pad.pe.colonie.services.impl;
 
 
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,6 +17,7 @@ import org.springframework.stereotype.Service;
 import sn.pad.pe.colonie.bo.Colon;
 import sn.pad.pe.colonie.bo.DossierColonie;
 import sn.pad.pe.colonie.dto.ColonDTO;
+import sn.pad.pe.colonie.dto.ColonStatisticsDTO;
 import sn.pad.pe.colonie.dto.DossierColonieDTO;
 import sn.pad.pe.colonie.repositories.ColonRepository;
 import sn.pad.pe.colonie.services.ColonService;
@@ -128,4 +133,68 @@ public class ColonServiceImpl implements ColonService {
             colonDTO.setPhoto(Base64.getEncoder().encodeToString(colonDTO.getPhotoBytes()));
         }
     }
+
+    @Override
+    public List<ColonDTO> getColonsByAnnee(String annee) {
+        DossierColonieDTO dossier = dossierService.getDossierColonieByAnnee(annee);
+        if (dossier != null) {
+            List<Colon> colonList = colonRepository.findByCodeDossier(dossier.getId());
+            return colonList.stream()
+                    .map(colon -> {
+                        ColonDTO dto = mapToDto(colon);
+                        convertBytesFieldsToBase64(dto);
+                        dto.setCodeDossier(modelMapper.map(dossier, DossierColonie.class));
+                        return dto;
+                    })
+                    .collect(Collectors.toList());
+        }
+        return new ArrayList<>();
+    }
+    @Override
+    public List<ColonDTO> getColonsByDossierEtat() {
+        DossierColonieDTO dossiers = dossierService.getDossierColonieByEtat();
+        if (dossiers != null ) {
+            List<Colon> colonList = colonRepository.findByCodeDossierIn(dossiers.getId());
+            return colonList.stream()
+                    .map(colon -> {
+                        ColonDTO dto = mapToDto(colon);
+                        convertBytesFieldsToBase64(dto);
+                        return dto;
+                    })
+                    .collect(Collectors.toList());
+        }
+        return new ArrayList<>();
+    }
+    
+   @Override
+    public ColonStatisticsDTO getColonStatisticsByAnnee(String annee) {
+        List<ColonDTO> colons;
+        if (annee != null && !annee.isEmpty()) {
+            DossierColonieDTO dossier = dossierService.getDossierColonieByAnnee(annee);
+            if (dossier != null) {
+                List<Colon> colonList = colonRepository.findByCodeDossier(dossier.getId());
+                colons = colonList.stream()
+                    .map(colon -> modelMapper.map(colon, ColonDTO.class))
+                    .collect(Collectors.toList());
+            } else {
+                colons = new ArrayList<>();
+            }
+        } else {
+            colons = getColons();
+        }
+
+        ColonStatisticsDTO statistics = new ColonStatisticsDTO();
+        statistics.setTotalColons((long) colons.size());
+        statistics.setAge7to10(colons.stream().filter(colon -> calculateAge(colon.getDateNaissance()) >= 7 && calculateAge(colon.getDateNaissance()) < 10).count());
+        statistics.setAge10to15(colons.stream().filter(colon -> calculateAge(colon.getDateNaissance()) >= 10 && calculateAge(colon.getDateNaissance()) < 15).count());
+        statistics.setAge15to18(colons.stream().filter(colon -> calculateAge(colon.getDateNaissance()) >= 15 && calculateAge(colon.getDateNaissance()) < 18).count());
+
+        return statistics;
+    }
+
+   private int calculateAge(Date birthDate) {
+    LocalDate localBirthDate = birthDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    return Period.between(localBirthDate, LocalDate.now()).getYears();
+}
+
 }

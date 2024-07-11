@@ -181,7 +181,7 @@ export class AddOrUpdateParticipantComponent implements OnInit {
             }
           },
           (err) => {
-            this.notificationService.warn(NotificationUtil.echec);
+            this.notificationService.warn(err);
           }
         );
       } else {

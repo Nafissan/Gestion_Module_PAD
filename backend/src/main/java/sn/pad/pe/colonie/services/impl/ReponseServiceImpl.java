@@ -42,6 +42,13 @@ public class ReponseServiceImpl implements ReponseService{
     }
 
     @Override
+    public List<ReponseDTO> getReponsesByFormulaireId(Long formulaireId) {
+        List<Reponse> reponses = reponseRepository.findByFormulaire(formulaireId);
+        return reponses.stream()
+                .map(reponse -> mapper.map(reponse, ReponseDTO.class))
+                .collect(Collectors.toList());
+    }
+    @Override
     public List<ReponseDTO> getReponses() {
         List<Reponse> reponses = reponseRepository.findAll(); 
         System.out.print("Contenu "+reponses.isEmpty());

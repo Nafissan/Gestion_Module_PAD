@@ -44,7 +44,12 @@ export class RapportProspectionService {
     };
     return this.httpClient.delete<any>(this.url, httpOptions);
   }
-
+  getRapportProspectionByEtat(): Observable<HttpResponse<any>> {
+    const url = `${this.url}/etat`;
+    return this.httpClient
+      .get<any>(url, { observe: 'response' })
+      .pipe(catchError(this.errorHandler));
+  }
   private errorHandler(error: any) {
     let errorMessage = '';
     if (error.error instanceof ErrorEvent) {

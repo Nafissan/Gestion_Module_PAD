@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -80,5 +81,18 @@ public class ParticipantColonieController {
     public ResponseEntity<ParticipantColonieDTO> createParticipant(@RequestBody ParticipantColonieDTO participantDTO) {
        ParticipantColonieDTO paDTO = participantServiceColonie.saveParticipant(participantDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(paDTO);
+    }
+
+    @ApiOperation(value = "Obtenir les participants par ID du dossier", response = List.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Liste récupérée avec succès"),
+        @ApiResponse(code = 401, message = "Vous n'êtes pas autorisé à voir la ressource"),
+        @ApiResponse(code = 403, message = "L'accès à la ressource que vous tentiez d'atteindre est interdit"),
+        @ApiResponse(code = 404, message = "La ressource que vous tentiez d'atteindre est introuvable.")
+    })
+    @GetMapping("/participants/dossier/{dossierId}")
+    public ResponseEntity<List<ParticipantColonieDTO>> getParticipantsByDossierId(@PathVariable Long dossierId) {
+        List<ParticipantColonieDTO> participants = participantServiceColonie.getParticipantsByDossierId(dossierId);
+        return ResponseEntity.status(HttpStatus.OK).body(participants);
     }
 }

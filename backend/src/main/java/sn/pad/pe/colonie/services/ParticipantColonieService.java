@@ -8,6 +8,7 @@ public interface ParticipantColonieService {
     ParticipantColonieDTO saveParticipant(ParticipantColonieDTO participantDTO);
 
     List<ParticipantColonieDTO> getAllParticipants();
+    List<ParticipantColonieDTO> getParticipantsByDossierId(Long dossierId); // Nouvelle méthode
 
     boolean deleteParticipant(ParticipantColonieDTO participantDTO);
     void deleteAllParticipants();  

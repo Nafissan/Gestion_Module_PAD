@@ -33,8 +33,12 @@ import { Reponse } from '../model/reponse.model';
         return this.httpClient.put<any>(this.url, JSON.stringify(reponse),{observe : 'response', headers: this.httpOptions.headers})
         .pipe(catchError(this.errorHandler));
       }
-      // Gérer les erreurs HTTP
-      private errorHandler(error: any) {
+      getReponsesByFormulaireId(formulaireId: number): Observable<HttpResponse<any>> {
+        const url = `${this.url}/formulaire/${formulaireId}`;
+        return this.httpClient.get<any>(url, { observe: 'response' })
+          .pipe(catchError(this.errorHandler));
+      }     
+       private errorHandler(error: any) {
         let errorMessage = '';
         if (error.error instanceof ErrorEvent) {
           // Erreur côté client

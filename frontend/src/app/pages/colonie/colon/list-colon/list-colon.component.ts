@@ -37,7 +37,6 @@ export class ListColonComponent implements OnInit {
   pageSize = 4;
   selection = new SelectionModel<Colon>(true, []);
   private sort: MatSort;
-  filteredColon: Colon[]=[];
   showProgressBar: boolean=false;
   @ViewChild(MatSort) set matSort(ms: MatSort) {
     this.sort = ms;
@@ -102,23 +101,14 @@ export class ListColonComponent implements OnInit {
     });
   }
   getColons() {
-    this.dossierColonieService.getDossier().subscribe(dossiers => {
-      this.dossierColonie = dossiers.body as DossierColonie;      
-      this.colonService.getAll().subscribe(response => {
+      this.colonService.getColonsByDossierEtat().subscribe(response => {
         this.colon = response.body;
-        
-        this.filteredColon = this.colon.filter(colon => this.dossierColonie &&
-          this.dossierColonie.id === colon.codeDossier.id)
-        ;     
-       
-        
       }, err => {
         console.error('Error loading participant colonies:', err);
       },()=>{
-        this.subject$.next(this.filteredColon);
+        this.subject$.next(this.colon);
         this.showProgressBar = true;
       });
-    });
   }
   ngAfterViewInit() {
   }

@@ -10,6 +10,7 @@ public interface RapportProspectionService {
     List<RapportProspectionDTO> getAllRapportsProspection();
 
     boolean updateRapportProspection(RapportProspectionDTO rapportProspectionDTO);
+    RapportProspectionDTO getRapportProspectionByEtat();
 
     boolean deleteRapportProspection(RapportProspectionDTO rapportProspectionDTO);
 

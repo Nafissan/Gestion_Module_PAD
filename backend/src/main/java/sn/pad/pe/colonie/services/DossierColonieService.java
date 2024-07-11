@@ -10,6 +10,7 @@ public interface DossierColonieService {
 	public DossierColonieDTO getDossierColonieByAnnee(String annee);
 
 	public DossierColonieDTO createDossierColonie(DossierColonieDTO dossierColonieDTODossierColonieDTO);
+    List<DossierColonieDTO> getDossiersColoniesFerme();
 
 	public DossierColonieDTO getDossierColonieByEtat();
 	public boolean updateDossierColonie(DossierColonieDTO dossierColonieDTODossierColonieDTO);

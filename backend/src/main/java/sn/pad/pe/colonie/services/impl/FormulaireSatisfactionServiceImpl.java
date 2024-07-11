@@ -1,5 +1,6 @@
 package sn.pad.pe.colonie.services.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -8,11 +9,14 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import sn.pad.pe.colonie.bo.FormulaireSatisfaction;
 import sn.pad.pe.colonie.bo.Reponse;
+import sn.pad.pe.colonie.dto.DossierColonieDTO;
 import sn.pad.pe.colonie.dto.FormulaireSatisfactionDTO;
 import sn.pad.pe.colonie.dto.ReponseDTO;
 import sn.pad.pe.colonie.repositories.FormulaireSatisfactionRepository;
+import sn.pad.pe.colonie.services.DossierColonieService;
 import sn.pad.pe.colonie.services.FormulaireSatisfactionService;
 import sn.pad.pe.colonie.services.ReponseService;
 
@@ -27,7 +31,8 @@ public class FormulaireSatisfactionServiceImpl implements FormulaireSatisfaction
     private ModelMapper modelMapper;
     @Autowired
     private ReponseService reponseService;
-
+   @Autowired
+    private DossierColonieService dossierColonieService;
 
     @Override
     public List<FormulaireSatisfactionDTO> getAllFormulaires() {
@@ -77,7 +82,17 @@ public class FormulaireSatisfactionServiceImpl implements FormulaireSatisfaction
         return modelMapper.map(savedFormulaire, FormulaireSatisfactionDTO.class);
     }
 
-
+ @Override
+    public FormulaireSatisfactionDTO getFormulaireByDossierEtat() {
+        DossierColonieDTO dossier = dossierColonieService.getDossierColonieByEtat();
+        if (dossier != null) {
+            Optional<FormulaireSatisfaction> formulaire = formulaireSatisfactionRepository.findByCodeDossier(dossier.getId());
+            if (formulaire.isPresent()) {
+                return modelMapper.map(formulaire.get(), FormulaireSatisfactionDTO.class);
+            }
+        }
+        return null;
+    }
 
 @Override
 public FormulaireSatisfactionDTO updateFormulaire(FormulaireSatisfactionDTO formulaireDTO) {
@@ -87,10 +102,20 @@ public FormulaireSatisfactionDTO updateFormulaire(FormulaireSatisfactionDTO form
     return modelMapper.map(savedFormulaire, FormulaireSatisfactionDTO.class);
 }
     
-    
-    
-    
-    
+@Override
+public List<FormulaireSatisfactionDTO> getFormulairesByAnnee(String annee) {
+    if (annee != null && !annee.isEmpty()) {
+        DossierColonieDTO dossier = dossierColonieService.getDossierColonieByAnnee(annee);
+        if (dossier != null) {
+            List<FormulaireSatisfaction> formulaires = new ArrayList<>();
+            formulaires.add(formulaireSatisfactionRepository.findByCodeDossier(dossier.getId()).get());
+            return formulaires.stream()
+                    .map(formulaire -> modelMapper.map(formulaire, FormulaireSatisfactionDTO.class))
+                    .collect(Collectors.toList());
+        }
+    } 
+    return getAllFormulaires();
 
+}
 
 }

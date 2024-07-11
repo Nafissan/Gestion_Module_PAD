@@ -71,6 +71,18 @@ public class DossierColonieController {
     }
 
 
+    @ApiOperation(value = "Liste des dossiers colonies fermés", response = List.class)
+    @ApiResponses(value = { 
+        @ApiResponse(code = 200, message = "Liste récupérée avec succès"),
+        @ApiResponse(code = 401, message = "Vous n'êtes pas autorisé à voir la ressource"),
+        @ApiResponse(code = 403, message = "L'accès à la ressource que vous tentez d'atteindre est interdit"),
+        @ApiResponse(code = 404, message = "La ressource que vous tentez d'atteindre est introuvable.")
+    })
+    @GetMapping("/dossiersColonies/fermes")
+    public ResponseEntity<List<DossierColonieDTO>> getDossiersColoniesFerme() {
+        List<DossierColonieDTO> liste = dossierColonieService.getDossiersColoniesFerme();
+        return ResponseEntity.status(HttpStatus.OK).body(liste);
+    }
 
     @ApiOperation(value = "Mise à jour d'un dossier colonie", response = ResponseEntity.class)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Objet modifié avec succès"),

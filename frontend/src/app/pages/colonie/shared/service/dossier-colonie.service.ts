@@ -65,7 +65,14 @@ export class DossierColonieService {
     };
     return this.httpClient.delete<any>(this.url, httpOptions);
   }
-
+  getDossiersColoniesFerme(): Observable<HttpResponse<any>> {
+    return this.httpClient
+      .get<any>(`${this.url}/fermes`, {
+        observe: 'response',
+      })
+      .pipe(catchError(this.errorHandler));
+  }
+  
   errorHandler(error: any) {
     let errorMessage = '';
     if (error.error instanceof ErrorEvent) {

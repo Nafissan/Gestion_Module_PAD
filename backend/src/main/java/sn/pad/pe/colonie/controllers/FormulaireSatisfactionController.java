@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -77,5 +78,31 @@ public class FormulaireSatisfactionController {
         }
         message = new Message(new Date(), "FormulaireSatisfaction with id " + formulaire.getId() + " nt found.", "uri=/formulairesSatisfaction/" + formulaire.getId());
         return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
+    }
+    @ApiOperation(value = "Récupération d'un formulaire de satisfaction par état du dossier", response = FormulaireSatisfactionDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Objet récupéré avec succès"),
+            @ApiResponse(code = 401, message = "Vous n'êtes pas autorisé à voir la ressource"),
+            @ApiResponse(code = 403, message = "L'accès à la ressource que vous tentiez d'atteindre est interdit"),
+            @ApiResponse(code = 404, message = "La ressource que vous tentiez d'atteindre est introuvable.")
+    })
+    @GetMapping("/formulairesSatisfaction/dossierEtat")
+    public ResponseEntity<FormulaireSatisfactionDTO> getFormulaireByDossierEtat() {
+        FormulaireSatisfactionDTO formulaire = formulaireSatisfactionService.getFormulaireByDossierEtat();
+        return ResponseEntity.status(HttpStatus.OK).body(formulaire);
+    }
+
+    // Nouveau point de terminaison pour obtenir un formulaire par année
+    @ApiOperation(value = "Récupération d'un formulaire de satisfaction par année", response = FormulaireSatisfactionDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Objet récupéré avec succès"),
+            @ApiResponse(code = 401, message = "Vous n'êtes pas autorisé à voir la ressource"),
+            @ApiResponse(code = 403, message = "L'accès à la ressource que vous tentiez d'atteindre est interdit"),
+            @ApiResponse(code = 404, message = "La ressource que vous tentiez d'atteindre est introuvable.")
+    })
+    @GetMapping("/formulairesSatisfaction/annee/{annee}")
+    public ResponseEntity<List<FormulaireSatisfactionDTO>> getFormulaireByAnnee(@PathVariable String annee) {
+        List<FormulaireSatisfactionDTO> formulaire = formulaireSatisfactionService.getFormulairesByAnnee(annee);
+        return ResponseEntity.status(HttpStatus.OK).body(formulaire);
     }
 }

@@ -49,7 +49,12 @@ export class ParticipantService {
     return this.httpClient.delete<any>(this.url, httpOptions);
 
   }
-
+  getParticipantsByDossierId(dossierId: number): Observable<HttpResponse<any[]>> {
+    const url = `${this.url}/dossier/${dossierId}`;
+    return this.httpClient
+      .get<any[]>(url, { observe: 'response' })
+      .pipe(catchError(this.errorHandler));
+  }
   // Gérer les erreurs HTTP
   private errorHandler(error: any) {
     let errorMessage = '';
