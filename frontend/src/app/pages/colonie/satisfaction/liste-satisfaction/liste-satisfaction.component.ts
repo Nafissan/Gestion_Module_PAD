@@ -41,7 +41,6 @@ export class ListeSatisfactionComponent implements OnInit {
   satisfactionSelected: Satisfaction;
   canAdd: boolean = false;
   dossierColonies: DossierColonie;
-  filteredSatisfaction: Satisfaction[] = [];
   questions: Question[] = [];
   private paginator: MatPaginator;
   private sort: MatSort;
@@ -102,25 +101,20 @@ export class ListeSatisfactionComponent implements OnInit {
   
 
   getSatisfactions() {
-    this.dossierColonieService.getDossier().subscribe(dossiers => {
-      this.dossierColonies = dossiers.body as DossierColonie;  
-      this.satisfactionService.getAllSatisfactions().subscribe(response => {
+   
+      this.satisfactionService.getFormulaireByDossierEtat().subscribe(response => {
         this.satisfactions = response.body;
   
-        this.filteredSatisfaction = this.satisfactions.filter(participant => this.dossierColonies &&
-           this.dossierColonies.id === participant.codeDossier.id)
-  
-        if (this.dossierColonies && this.filteredSatisfaction.length === 0) {
+        if ( this.satisfactions.length === 0) {
           this.canAdd = true;
         }
 
       }, err => {
         console.error('Error loading participant colonies:', err);
       }, () => {
-        this.subject$.next(this.filteredSatisfaction);
+        this.subject$.next(this.satisfactions);
         this.showProgressBar = true;
       });
-    });
   }
   
 

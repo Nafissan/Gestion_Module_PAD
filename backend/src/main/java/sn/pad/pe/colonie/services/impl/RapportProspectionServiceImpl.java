@@ -9,6 +9,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import sn.pad.pe.colonie.bo.DossierColonie;
 import sn.pad.pe.colonie.bo.RapportProspection;
 import sn.pad.pe.colonie.dto.DossierColonieDTO;
 import sn.pad.pe.colonie.dto.RapportProspectionDTO;
@@ -28,7 +29,8 @@ public class RapportProspectionServiceImpl implements RapportProspectionService 
     private DossierColonieService dossierColonieService;
     @Override
     public RapportProspectionDTO saveRapportProspection(RapportProspectionDTO rapportProspectionDTO) {
-        System.out.print(rapportProspectionDTO.getCodeDossierColonie());
+        DossierColonie dossierColonie =modelMapper.map(dossierColonieService.getDossierColonieByEtat(), DossierColonie.class);
+        rapportProspectionDTO.setCodeDossierColonie(dossierColonie);
         convertBase64FieldsToBytes(rapportProspectionDTO);
         RapportProspection rapportProspection = modelMapper.map(rapportProspectionDTO, RapportProspection.class);
         RapportProspection savedRapportProspection = rapportProspectionRepository.save(rapportProspection);

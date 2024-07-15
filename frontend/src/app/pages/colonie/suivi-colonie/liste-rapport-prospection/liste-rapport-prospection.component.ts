@@ -124,17 +124,11 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
   }
   refresh(){ this.getRapportProspections(); }
   getRapportProspections() {
-    this.dossierColonieService.getDossier().subscribe((response) => {
-      const dossiers = response.body as DossierColonie;
-      this.rapportService.getAllRapportsProspection().subscribe(
+      this.rapportService.getRapportProspectionByEtat().subscribe(
         (response) => {
-          this.rapports = response.body.filter(
-            (rapport) => 
-              rapport.codeDossierColonie.etat === EtatDossierColonie.ouvert || rapport.codeDossierColonie.etat === EtatDossierColonie.saisi
-          );
-          const existingReport = this.rapports.find((rapport) => dossiers && rapport.codeDossierColonie.id === dossiers.id);
+          this.rapports = response.body;
           this.currentRapport = this.rapports.find(e => e.etat === 'A VALIDER');
-          this.canAdd=!!dossiers && !existingReport;
+          this.canAdd= !this.rapports;
 
         },
         (err) => {        
@@ -145,7 +139,6 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
           this.showProgressBar = true;
         }
       );
-    });
   }
    
 

@@ -11,9 +11,6 @@ import { CompteService } from "src/app/pages/gestion-utilisateurs/shared/service
 import { AuthenticationService } from "src/app/shared/services/authentification.service";
 import { NotificationService } from "src/app/shared/services/notification.service";
 import { AgentService } from "src/app/shared/services/agent.service";
-import { DossierColonieService } from "../../shared/service/dossier-colonie.service";
-import { EtatDossierColonie } from "../../shared/util/util";
-import { DossierColonie } from "../../shared/model/dossier-colonie.model";
 
 @Component({
   selector: "app-add-update-participant-colonie",
@@ -30,7 +27,6 @@ export class AddOrUpdateParticipantComponent implements OnInit {
   compte: Compte;
   username: string;
   agents: any[] = [];
-  dossierColonie: DossierColonie;
   constructor(
     @Inject(MAT_DIALOG_DATA) public defaults: Participant,
     private dialogRef: MatDialogRef<AddOrUpdateParticipantComponent>,
@@ -41,7 +37,6 @@ export class AddOrUpdateParticipantComponent implements OnInit {
     private notificationService: NotificationService,
     private agentService: AgentService,
     private dialogConfirmationService: DialogConfirmationService,
-    private dossierColonieService: DossierColonieService
   ) {
     // Initialize form to avoid undefined issues
     this.form = this.fb.group({
@@ -65,7 +60,6 @@ export class AddOrUpdateParticipantComponent implements OnInit {
     });
 
     this.getAgents();
-    this.getDossierColonie();
     if (this.defaults) {
       this.mode = "update";
     } else {
@@ -143,14 +137,6 @@ export class AddOrUpdateParticipantComponent implements OnInit {
       }
     );
   }
-  getDossierColonie(){
-    this.dossierColonieService.getDossier().subscribe((dossiersResponse) => {
-      const dossiers = dossiersResponse.body as DossierColonie;
-      if (dossiers) {
-        this.dossierColonie = dossiers;
-      }
-    });
-  }
   createParticipant() {
     let formData: Participant = this.form.value;
     formData.ficheSocial = this.ficheSocial;
@@ -166,7 +152,6 @@ export class AddOrUpdateParticipantComponent implements OnInit {
       formData.nomParent = selectedAgent.nom;
       formData.prenomParent = selectedAgent.prenom;
     }
-    formData.codeDossier = this.dossierColonie;
     this.dialogConfirmationService.confirmationDialog().subscribe((action) => {
       if (action === DialogUtil.confirmer) {
         this.participantService.create(formData).subscribe(

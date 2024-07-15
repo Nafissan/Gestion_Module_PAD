@@ -6,7 +6,7 @@
     <fury-page-layout-content [@fadeInUp]>
       <fury-list *ngIf="participants.length !== 0 && showProgressBar === true" name="Participants" [columns]="columns" (filterChange)="onFilterChange($event)">
         <div class="actions">
-          <button class="create" (click)="createParticipant()" [disabled]="canAddParticipant()" type="button" mat-mini-fab color="primary">
+          <button class="create" (click)="createParticipant()" [disabled]="!participants" type="button" mat-mini-fab color="primary">
             <mat-icon>add</mat-icon>
           </button>
         </div>
@@ -99,7 +99,7 @@
         <div class="card-body">
           <h5 class="card-title">LISTE DES PARTICIPANTS VIDE</h5>
           <p class="card-text">Ajouter un nouveau participant à la colonie</p>
-          <button mat-mini-fab color="primary" (click)="createParticipant()"[disabled]="canAddParticipant()" >
+          <button mat-mini-fab color="primary" (click)="createParticipant()"[disabled]="!participants" >
             <mat-icon>add</mat-icon>
           </button>
         </div>

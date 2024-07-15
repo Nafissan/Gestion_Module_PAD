@@ -11,11 +11,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import sn.pad.pe.colonie.bo.DossierColonie;
 import sn.pad.pe.colonie.bo.ParticipantColonie;
 import sn.pad.pe.colonie.dto.ColonDTO;
+import sn.pad.pe.colonie.dto.DossierColonieDTO;
 import sn.pad.pe.colonie.dto.ParticipantColonieDTO;
 import sn.pad.pe.colonie.repositories.ParticipantColonieRepository;
 import sn.pad.pe.colonie.services.ColonService;
+import sn.pad.pe.colonie.services.DossierColonieService;
 import sn.pad.pe.colonie.services.ParticipantColonieService;
 @Service
 public class ParticipantColonieServiceImpl implements ParticipantColonieService {
@@ -25,8 +28,10 @@ public class ParticipantColonieServiceImpl implements ParticipantColonieService 
 
     @Autowired
     private ModelMapper modelMapper;
- @Autowired
+     @Autowired
     private ColonService colonService; 
+    @Autowired
+    private DossierColonieService dossierColonieService;
     @Override
     public ParticipantColonieDTO saveParticipant(ParticipantColonieDTO participantDTO) {
         convertBase64FieldsToBytes(participantDTO);
@@ -39,7 +44,8 @@ public class ParticipantColonieServiceImpl implements ParticipantColonieService 
                 throw new IllegalStateException("Ce colon existe déjà");
             }
         }
-    
+        DossierColonie dossier = modelMapper.map(dossierColonieService.getDossierColonieByEtat(),DossierColonie.class);
+        participantDTO.setCodeDossier(dossier);
         ParticipantColonie participant = modelMapper.map(participantDTO, ParticipantColonie.class);
         ParticipantColonie savedParticipant = participantColonieRepository.save(participant);
     
@@ -68,7 +74,15 @@ public List<ParticipantColonieDTO> getAllParticipants() {
         throw new RuntimeException("Failed to retrieve Participants", e);
     }
 }
-
+@Override
+public List<ParticipantColonieDTO> getParticipantsByDossierEtat() {
+    DossierColonieDTO dossierColonie =dossierColonieService.getDossierColonieByEtat(); 
+    if (dossierColonie != null) {
+        Long dossierId = dossierColonie.getId();
+        return getParticipantsByDossierId(dossierId);
+    }
+    return new ArrayList<>();
+}
 @Override
 public List<ParticipantColonieDTO> getParticipantsByDossierId(Long dossierId) {
     List<ParticipantColonie> participants = participantColonieRepository.findByCodeDossier(dossierId);

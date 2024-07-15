@@ -36,7 +36,6 @@ export class ListeParticipantComponent implements OnInit {
   showProgressBar: boolean = false;
   participantSelected: Participant;
   participants: Participant[]=[];
-  filteredParticipant: Participant[]=[];
   subject$: ReplaySubject<Participant[]> = new ReplaySubject<Participant[]>(1);
   data$: Observable<Participant[]> = this.subject$.asObservable();
   pageSize = 4;
@@ -126,23 +125,16 @@ export class ListeParticipantComponent implements OnInit {
     this.dataSource.filterPredicate = (data: any, value) => { const dataStr =JSON.stringify(data).toLowerCase(); return dataStr.indexOf(value) != -1; }
   }
   fetchDossiersAndParticipants() {
-    this.dossierColonieService.getDossier()
-    .subscribe(dossiers => {
-      this.dossierColonie = dossiers.body as DossierColonie;
-      
-      this.participantService.getAll().subscribe(response => {
+    this.participantService.getParticipantsByDossierEtat()
+    .subscribe(response => {
         this.participants = response.body;
-        
-        this.filteredParticipant = this.participants.filter(participant => this.dossierColonie &&
-           this.dossierColonie.id === participant.codeDossier.id)       
         
       }, err => {
         console.error('Error loading participant colonies:', err);
       },()=>{
-        this.subject$.next(this.filteredParticipant);
+        this.subject$.next(this.participants);
         this.showProgressBar = true;
       });
-    });
   }
   refreshListe(){ this.fetchDossiersAndParticipants();
   }
@@ -193,11 +185,6 @@ export class ListeParticipantComponent implements OnInit {
         this.refreshListe();
       }
     })
-  }
-  canAddParticipant(): boolean {
-    let add = false;
-    if(this.dossierColonie) add = true;
-    return !add;
   }
 
   hasAnyRole(roles: string[]) {

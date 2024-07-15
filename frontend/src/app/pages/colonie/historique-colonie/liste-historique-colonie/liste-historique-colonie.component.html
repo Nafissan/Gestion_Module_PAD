@@ -77,7 +77,11 @@
             <button mat-icon-button [matMenuTriggerFor]="actionsMenu" (click)="$event.stopPropagation()">
               <mat-icon>more_horiz</mat-icon>
             </button>
-            <mat-menu #actionsMenu="matMenu">
+            <mat-menu #actionsMenu="matMenu" >
+              <button mat-menu-item  [disabled]="" (click)="detailsColon(row)">
+                <mat-icon>visibility</mat-icon>
+                <span>AFFICHER LISTE COLONS</span>
+              </button>
             <button mat-menu-item [matMenuTriggerFor]="fileMenu">
               <mat-icon>visibility</mat-icon>
               <span>AFFICHER FICHIER</span>

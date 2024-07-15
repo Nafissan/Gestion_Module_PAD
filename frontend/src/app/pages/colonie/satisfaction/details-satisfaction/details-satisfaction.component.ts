@@ -33,9 +33,9 @@ export class DetailsSatisfactionComponent implements OnInit {
 
 
   getReponses(): void {
-    this.reponseService.getAllReponses().subscribe(
+    this.reponseService.getReponsesByFormulaireId(this.data.id).subscribe(
       response => {
-        this.reponses = response.body.filter(reponse => reponse.formulaire.id === this.satisfaction.id);
+        this.reponses = response.body;
         this.extractQuestionsFromReponses();
 
       },

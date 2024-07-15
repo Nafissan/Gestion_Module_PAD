@@ -9,7 +9,7 @@ public interface ParticipantColonieService {
 
     List<ParticipantColonieDTO> getAllParticipants();
     List<ParticipantColonieDTO> getParticipantsByDossierId(Long dossierId); // Nouvelle méthode
-
+    public List<ParticipantColonieDTO> getParticipantsByDossierEtat();
     boolean deleteParticipant(ParticipantColonieDTO participantDTO);
     void deleteAllParticipants();  
     boolean updateParticipant(ParticipantColonieDTO updatedParticipant);

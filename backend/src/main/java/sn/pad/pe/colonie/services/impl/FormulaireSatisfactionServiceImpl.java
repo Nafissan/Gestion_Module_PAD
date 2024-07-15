@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import sn.pad.pe.colonie.bo.DossierColonie;
 import sn.pad.pe.colonie.bo.FormulaireSatisfaction;
 import sn.pad.pe.colonie.bo.Reponse;
 import sn.pad.pe.colonie.dto.DossierColonieDTO;
@@ -76,6 +77,8 @@ public class FormulaireSatisfactionServiceImpl implements FormulaireSatisfaction
    @Override
     @Transactional
     public FormulaireSatisfactionDTO saveFormulaire(FormulaireSatisfactionDTO formulaireDTO) {
+        DossierColonie dossierColonie = modelMapper.map(dossierColonieService.getDossierColonieByEtat(), DossierColonie.class) ;
+        formulaireDTO.setCodeDossier(dossierColonie);
         FormulaireSatisfaction formulaire = modelMapper.map(formulaireDTO, FormulaireSatisfaction.class);
         FormulaireSatisfaction savedFormulaire = formulaireSatisfactionRepository.save(formulaire);
 

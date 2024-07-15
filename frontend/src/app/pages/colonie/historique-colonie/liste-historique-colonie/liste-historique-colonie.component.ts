@@ -186,11 +186,11 @@ export class ListeHistoriqueColonieComponent implements OnInit {
   hasAnyRole(roles: string[]) {
     return this.authentificationService.hasAnyRole(roles);
   }
-  detailsColon(colon: Colon){
+  detailsColon(dossier: DossierColonie){
     this.dialog
-    .open(DetailsColonComponent, {data: colon})
+    .open(DetailsColonComponent, {data: dossier})
     .afterClosed()
-    .subscribe((colon)=>{
+    .subscribe((dossier)=>{
       
     });
   }

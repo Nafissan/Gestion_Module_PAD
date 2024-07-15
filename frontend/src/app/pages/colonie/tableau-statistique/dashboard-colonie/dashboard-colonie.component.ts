@@ -7,7 +7,7 @@ import { fadeInRightAnimation } from 'src/@fury/animations/fade-in-right.animati
 import { fadeInUpAnimation } from 'src/@fury/animations/fade-in-up.animation';
 import { ColonService } from '../../shared/service/colon.service';
 import { DossierColonie } from '../../shared/model/dossier-colonie.model';
-import { Colon } from '../../shared/model/colon.model';
+import { ColonStat } from '../../shared/model/colonStat.model';
 import { DateAdapter } from '@angular/material/core';
 import * as moment from 'moment';
 import { MatDatepicker } from '@angular/material/datepicker';
@@ -39,6 +39,7 @@ export class DashboardColonieComponent implements OnInit {
   showProgressBar: boolean = false;
   selectedYear: number | null = null;
   startDate = new Date(this.selectedYear, 0, 1);
+  colonStat: DossierColonie[]=[];
   private paginator: MatPaginator;
   private sort: MatSort;  filteredSatisfaction: Satisfaction[] = [];
   @ViewChild(MatDatepicker) picker;
@@ -105,7 +106,7 @@ export class DashboardColonieComponent implements OnInit {
   public pieChartType: ChartType = 'pie';
   public pieChartLegend: boolean = true;
 
-  public pieChartLabelsAge: string[] = ['Âge 7-12', 'Âge 12-17', 'Âge 17-20'];
+  public pieChartLabelsAge: string[] = ['Âge 7-10', 'Âge 10-15', 'Âge 15-18'];
   public pieChartDataAge: number[] = [];
   totalColons: number = 0;
   femaleColons: number = 0;
@@ -128,7 +129,7 @@ export class DashboardColonieComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadData(this.selectedYear);
+    this.loadData();
     this.dataSource = new MatTableDataSource();
     this.data$.pipe(filter((data) => !!data)).subscribe((satisfaction) => {
       this.satisfactions = satisfaction;
@@ -148,86 +149,77 @@ export class DashboardColonieComponent implements OnInit {
     }
   }
 
-  loadData(year: number | null) {
-    this.dossierColonieService.getAll().subscribe(
+  loadData() {
+    this.dossierColonieService.getDossiersColoniesFerme().subscribe(
       (response) => {
-        let dossiersColonies = response.body as DossierColonie[];
-        const filteredDossierColonies = year
-          ? dossiersColonies.filter(dossier => dossier.etat === EtatDossierColonie.fermer && dossier.annee === year.toString())
-          : dossiersColonies.filter(dossier => dossier.etat === EtatDossierColonie.fermer);
-        this.loadColons(filteredDossierColonies);
+        this.colonStat = response.body ;
+        this.satisfactionService.getAllSatisfactions().subscribe(response => {
+          this.satisfactions = response.body;
+          this.processData();
+        }, err => {
+          console.error('Error loading participant colonies:', err);
+        }, () => {
+          this.subject$.next(this.filteredSatisfaction);
+          this.showProgressBar = true;
+        });
       },
       (error) => {
         console.error('Error fetching data:', error);
       }
     );
   }
+  GetDossier(){
 
-  getSatisfactions(dossiersColonies: any[], colons: any[]) {
-    this.satisfactionService.getAllSatisfactions().subscribe(response => {
-      this.satisfactions = response.body as Satisfaction[];
-      this.processData(dossiersColonies, colons);
-    }, err => {
-      console.error('Error loading participant colonies:', err);
-    }, () => {
-      this.subject$.next(this.filteredSatisfaction);
-      this.showProgressBar = true;
-    });
   }
-
-  loadColons(dossiersColonies: any[]) {
-    this.colonService.getAll().subscribe(
-      (response) => {
-        let colons = response.body;
-        this.getSatisfactions(dossiersColonies, colons);
-      },
-      (error) => {
-        console.error('Error fetching colons:', error);
-      }
-    );
-  }
-
   yearSelected(params: Date) {
     this.dateV.setValue(params);
     this.selectedYear = params.getFullYear(); 
     this.picker.close();
-    this.loadData(this.selectedYear);
+    this.loadData();
   }
 
-  processData(dossiersColonies: DossierColonie[], colons: Colon[]) {
+  processData() {
     const colonCountsMap = new Map<number, number>();
     let maleCount = 0;
     let femaleCount = 0;
-    let age7to12Count = 0;
-    let age12to17Count = 0;
-    let age17to20Count = 0;
+    let age7to10Count = 0;
+    let age10to15Count = 0;
+    let age15to18Count = 0;
+    if( this.selectedYear){
+      this.colonService.getColonStatisticsByAnnee(this.selectedYear.toString()).subscribe(
+        (response) => {
+          const stats = response.body as ColonStat;
+          maleCount += stats.maleCount;
+          femaleCount += stats.femaleCount;
+          age7to10Count += stats.age7to10;
+          age10to15Count += stats.age10to15;
+          age15to18Count += stats.age15to18;
+          this.filteredSatisfaction = this.satisfactions.filter(satisfaction => satisfaction.codeDossier.annee === this.selectedYear.toString());
+          this.updateMap(colonCountsMap, this.selectedYear, stats.totalColons);
 
-    dossiersColonies.forEach(dossier => {
-      let year = Number(dossier.annee);
-      const colonsInDossier = colons.filter(colon => colon.codeDossier.id === dossier.id);
-      this.filteredSatisfaction = this.satisfactions.filter(satisfaction => satisfaction.codeDossier.id === dossier.id);
-      console.log(this.filteredSatisfaction);
-      maleCount += colonsInDossier.filter(colon => colon.sexe === 'masculin').length;
-      femaleCount += colonsInDossier.filter(colon => colon.sexe === 'feminin').length;
-
-      age7to12Count += colonsInDossier.filter(colon => {
-        const age = this.calculateAge(colon.dateNaissance);
-        return age >= 7 && age < 12;
-      }).length;
-
-      age12to17Count += colonsInDossier.filter(colon => {
-        const age = this.calculateAge(colon.dateNaissance);
-        return age >= 12 && age < 17;
-      }).length;
-
-      age17to20Count += colonsInDossier.filter(colon => {
-        const age = this.calculateAge(colon.dateNaissance);
-        return age >= 17 && age <= 20;
-      }).length;
-
-      this.updateMap(colonCountsMap, year, colonsInDossier.length);
-    });
-
+        },(error) => {
+          console.error(`Error fetching colon stats for dossier of year ${this.selectedYear.toString()}:`, error);
+        }
+      );
+    }else{
+      this.colonStat.forEach(dossier => {
+        this.colonService.getColonStatisticsByAnnee(dossier.annee).subscribe(
+          (response) => {
+            const stats = response.body as ColonStat;
+            maleCount += stats.maleCount;
+            femaleCount += stats.femaleCount;
+            age7to10Count += stats.age7to10;
+            age10to15Count += stats.age10to15;
+            age15to18Count += stats.age15to18;
+            this.filteredSatisfaction = this.satisfactions;
+            this.updateMap(colonCountsMap, dossier.createdAt.getFullYear(), stats.totalColons);
+  
+          },(error) => {
+            console.error(`Error fetching colon stats for dossier ${dossier.id}:`, error);
+          }
+        );
+      });
+    }
     this.totalColons = maleCount + femaleCount;
     this.femaleColons = femaleCount;
     this.maleColons = maleCount;
@@ -238,7 +230,7 @@ export class DashboardColonieComponent implements OnInit {
     ];
 
     this.pieChartDataSex = [maleCount, femaleCount];
-    this.pieChartDataAge = [age7to12Count, age12to17Count, age17to20Count];
+    this.pieChartDataAge = [age7to10Count, age10to15Count, age15to18Count];
   }
 
   updateMap(map: Map<number, number>, year: number, count: number) {
@@ -262,16 +254,5 @@ export class DashboardColonieComponent implements OnInit {
           this.subject$.next(this.satisfactions);
         }
       });
-  }
-
-  calculateAge(dateNaissance: Date): number {
-    const birthDate = new Date(dateNaissance);
-    const today = new Date();
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const monthDifference = today.getMonth() - birthDate.getMonth();
-    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
-      age--;
-    }
-    return age;
   }
 }

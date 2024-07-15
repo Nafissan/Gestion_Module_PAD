@@ -126,13 +126,6 @@ defaults:RapportProspection;
       };
 
       try {
-        const dossiersResponse = await this.dossierColonieService.getDossier().toPromise();
-        const dossiers = dossiersResponse.body as DossierColonie;
-
-        if (dossiers) {
-          formData.codeDossierColonie = dossiers;
-          console.log(formData);
-
           this.dialogConfirmationService.confirmationDialog().subscribe(action => {
             if (action === DialogUtil.confirmer) {
               this.rapportProspectionService.saveRapportProspection(formData).subscribe(response => {
@@ -150,12 +143,8 @@ defaults:RapportProspection;
               this.dialogRef.close();
             }
           });
-        } else {
-          this.notificationService.warn("No open or saisie dossier found");
-          this.dialogRef.close();
-        }
       } catch (error) {
-        console.error('Failed to fetch dossiers', error);
+        console.error('Failed to fetch r&apport', error);
       }
     }
   }

@@ -8,13 +8,11 @@ import { AuthenticationService } from 'src/app/shared/services/authentification.
 import { DialogUtil, NotificationUtil } from "src/app/shared/util/util";
 import { DialogConfirmationService } from "src/app/shared/services/dialog-confirmation.service";
 import { NotificationService } from 'src/app/shared/services/notification.service';
-import { DossierColonieService } from '../../shared/service/dossier-colonie.service';
 import { QuestionService } from '../../shared/service/question.service';
 import { ReponseService } from '../../shared/service/reponse.service';
 import { Question } from '../../shared/model/question.model';
 import { Reponse } from '../../shared/model/reponse.model';
 import { Agent } from 'src/app/shared/model/agent.model';
-import { DossierColonie } from '../../shared/model/dossier-colonie.model';
 
 @Component({
   selector: 'fury-satisfaction-form',
@@ -39,7 +37,6 @@ export class AddOrUpdateSatisfactionComponent implements OnInit {
     private dialogConfirmationService: DialogConfirmationService,
     private notificationService: NotificationService,
     private questionService: QuestionService,
-    private dossierColonieService: DossierColonieService,
     private reponseService: ReponseService
   ) {
     this.form = this.fb.group({
@@ -110,9 +107,9 @@ export class AddOrUpdateSatisfactionComponent implements OnInit {
     });
   }
   loadExistingReponses(satisfactionId: Satisfaction): void {
-    this.reponseService.getAllReponses().subscribe(
+    this.reponseService.getReponsesByFormulaireId(satisfactionId.id).subscribe(
       response => {
-        const reponses = response.body.filter(reponse => reponse.formulaire.id === satisfactionId.id);
+        const reponses = response.body;
         this.questionsArray.controls.forEach((group, index) => {
           const questionId = group.get('id').value;
           const reponse = reponses.find(r => r.question.id === questionId);
@@ -152,11 +149,6 @@ export class AddOrUpdateSatisfactionComponent implements OnInit {
     formData.nom = this.agentConnecte.nom;
     formData.prenom = this.agentConnecte.prenom;
     formData.matricule = this.agentConnecte.matricule;
-    this.dossierColonieService.getDossier().subscribe(dossiersResponse => {
-      const dossiers = dossiersResponse.body as DossierColonie;
-      if (dossiers) {
-        formData.codeDossier = dossiers;
-  
         this.dialogConfirmationService.confirmationDialog().subscribe(action => {
           if (action === DialogUtil.confirmer) {
             this.satisfactionService.addSatisfaction(formData).subscribe((response) => {
@@ -176,11 +168,7 @@ export class AddOrUpdateSatisfactionComponent implements OnInit {
             this.dialogRef.close();
           }
         });
-      } else {
-        this.notificationService.warn("No open or saisie dossier found");
-        this.dialogRef.close();
-      }
-    });
+      
   }
 
   updateSatisfaction(formData: Satisfaction, reponses: Reponse[]) {
