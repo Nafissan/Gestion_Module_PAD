@@ -15,8 +15,6 @@
 
   <!-- Dossier Colonie Table -->
   <fury-page-layout-content [@fadeInUp]>
-    <div mat-dialog-title class="titre_modal_add" >Liste Dossiers Colonies</div>
-
     <fury-list *ngIf="dossierColonies.length !== 0 && showProgressBar" name="Dossier Colonie" [columns]="dossiercolumns" (filterChange)="onFilterChange($event)">
       <table [dataSource]="dataSource" mat-table  matSort>
         <!-- Checkbox Column -->
@@ -126,6 +124,4 @@
     </div>
     <mat-progress-bar *ngIf="!showProgressBar" mode="query" color="primary"></mat-progress-bar>
   </fury-page-layout-content>
-  <fury-page-layout-header>
-  </fury-page-layout-header>  <!-- Colon Table -->
 </fury-page-layout>

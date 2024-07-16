@@ -165,8 +165,7 @@ public class ColonServiceImpl implements ColonService {
         }
         return new ArrayList<>();
     }
-    
-   @Override
+    @Override
     public ColonStatisticsDTO getColonStatisticsByAnnee(String annee) {
         List<ColonDTO> colons;
         if (annee != null && !annee.isEmpty()) {
@@ -182,15 +181,19 @@ public class ColonServiceImpl implements ColonService {
         } else {
             colons = getColons();
         }
-
+    
         ColonStatisticsDTO statistics = new ColonStatisticsDTO();
         statistics.setTotalColons((long) colons.size());
         statistics.setAge7to10(colons.stream().filter(colon -> calculateAge(colon.getDateNaissance()) >= 7 && calculateAge(colon.getDateNaissance()) < 10).count());
         statistics.setAge10to15(colons.stream().filter(colon -> calculateAge(colon.getDateNaissance()) >= 10 && calculateAge(colon.getDateNaissance()) < 15).count());
         statistics.setAge15to18(colons.stream().filter(colon -> calculateAge(colon.getDateNaissance()) >= 15 && calculateAge(colon.getDateNaissance()) < 18).count());
-
+    
+        statistics.setMaleCount(colons.stream().filter(colon -> "masculin".equalsIgnoreCase(colon.getSexe().toString())).count());
+        statistics.setFemaleCount(colons.stream().filter(colon -> "feminin".equalsIgnoreCase(colon.getSexe().toString())).count());
+    
         return statistics;
     }
+    
 
    private int calculateAge(Date birthDate) {
     LocalDate localBirthDate = birthDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();

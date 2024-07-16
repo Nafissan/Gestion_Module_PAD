@@ -127,7 +127,8 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
       this.rapportService.getRapportProspectionByEtat().subscribe(
         (response) => {
           this.rapports = response.body;
-          this.currentRapport = this.rapports.find(e => e.etat === 'A VALIDER');
+          if(this.rapports) this.currentRapport = this.rapports.find(e => e.etat === 'A VALIDER');
+
           this.canAdd= !this.rapports;
 
         },

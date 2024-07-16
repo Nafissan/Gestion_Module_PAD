@@ -5,6 +5,8 @@ public class ColonStatisticsDTO {
     private Long age7to10;
     private Long age10to15;
     private Long age15to18;
+    private Long femaleCount;
+    private Long maleCount;
     public Long getTotalColons() {
         return totalColons;
     }
@@ -31,4 +33,20 @@ public class ColonStatisticsDTO {
     }
 
     // Getters and setters
+
+    public Long getFemaleCount() {
+        return femaleCount;
+    }
+
+    public void setFemaleCount(Long femaleCount) {
+        this.femaleCount = femaleCount;
+    }
+
+    public Long getMaleCount() {
+        return maleCount;
+    }
+
+    public void setMaleCount(Long maleCount) {
+        this.maleCount = maleCount;
+    }
 }
