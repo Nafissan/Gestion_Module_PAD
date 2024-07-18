@@ -31,19 +31,15 @@ import { columnSelectionBegin } from '@syncfusion/ej2-angular-grids';
   animations: [fadeInRightAnimation, fadeInUpAnimation]
 })
 export class ListeSatisfactionComponent implements OnInit {
-  satisfactions: Satisfaction[] = [];
-  subject$: ReplaySubject<Satisfaction[]> = new ReplaySubject<Satisfaction[]>(1);
-  data$: Observable<Satisfaction[]> = this.subject$.asObservable();
+  satisfactions: Satisfaction;
   pageSize = 10;
-  dataSource: MatTableDataSource<Satisfaction> | null;
   showProgressBar: boolean = false;
   selection = new SelectionModel<Satisfaction>(true, []);
   satisfactionSelected: Satisfaction;
-  canAdd: boolean = false;
-  dossierColonies: DossierColonie;
   questions: Question[] = [];
   private paginator: MatPaginator;
   private sort: MatSort;
+  dossierColonie: DossierColonie;
   @ViewChild(MatSort) set matSort(ms: MatSort) {
     this.sort = ms;
     this.setDataSourceAttributes();
@@ -75,12 +71,7 @@ export class ListeSatisfactionComponent implements OnInit {
 
   ngOnInit(): void {
     this.getSatisfactions();
-    this.getQuestions();
-    this.dataSource = new MatTableDataSource();
-    this.data$.pipe(filter((data) => !!data)).subscribe((satisfaction) => {
-      this.satisfactions = satisfaction;
-      this.dataSource.data = satisfaction;
-    });
+    this.getDossierColonie();
   }
 
   ngAfterViewInit() {
@@ -88,10 +79,7 @@ export class ListeSatisfactionComponent implements OnInit {
   }
 
   setDataSourceAttributes() {
-    if (this.dataSource) {
-      this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
-    }
+   
   }
 
   get visibleColumns() {
@@ -103,68 +91,37 @@ export class ListeSatisfactionComponent implements OnInit {
   getSatisfactions() {
    
       this.satisfactionService.getFormulaireByDossierEtat().subscribe(response => {
-        this.satisfactions = response.body;
-  
-        if ( this.satisfactions.length === 0) {
-          this.canAdd = true;
-        }
-
+        this.satisfactions = response.body as Satisfaction;
       }, err => {
         console.error('Error loading participant colonies:', err);
       }, () => {
-        this.subject$.next(this.satisfactions);
         this.showProgressBar = true;
       });
   }
   
-
-  getQuestions() {
-    this.questionService.getAllQuestions().subscribe(questions => {
-      this.questions = questions.body;
-    });
+  getDossierColonie(){
+    this.dossierColonieService.getDossier().subscribe(
+      (response) => {
+        if (response.body !== null) {
+          this.dossierColonie = response.body as DossierColonie;
+          console.log('Dossier Colonie:', this.dossierColonie);
+        }
+      },
+      (err) => {
+        console.error('Error loading dossier colonie:', err);
+      })
   }
-
   refresh() { this.getSatisfactions();
   }
 
-  onFilterChange(value) {
-    if (!this.dataSource) {
-      return;
-    }
-    value = value.trim().toLowerCase();
-    this.dataSource.filter = value;
-    this.dataSource.filterPredicate = (data: any, value) => {
-      const dataStr = JSON.stringify(data).toLowerCase();
-      return dataStr.indexOf(value) != -1;
-    }
-  }
-
-  isAllSelected() {
-    const numSelected = this.selection.selected.length;
-    const numRows = this.dataSource.data.length;
-    return numSelected === numRows;
-  }
-
-  masterToggle() {
-    this.isAllSelected() ?
-      this.selection.clear() :
-      this.dataSource.data.forEach(row => this.selection.select(row));
-  }
-
-  checkboxLabel(row?: Satisfaction): string {
-    if (!row) {
-      return `${this.isAllSelected() ? 'select' : 'deselect'} all`;
-    }
-    return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.id + 1}`;
-  }
+  
 
   createSatisfaction() {
     this.dialog
       .open(AddOrUpdateSatisfactionComponent)
       .afterClosed().subscribe((satisfaction: Satisfaction) => {
         if (satisfaction) {
-          this.satisfactions.unshift(satisfaction);
-          this.subject$.next(this.satisfactions);
+          this.satisfactions=satisfaction;
         }
       });
       this.refresh();
@@ -178,12 +135,7 @@ export class ListeSatisfactionComponent implements OnInit {
       .afterClosed()
       .subscribe((satisfaction: Satisfaction) => {
         if (satisfaction) {
-          const index = this.satisfactions.findIndex(
-            (existingsatisfaction) =>
-              existingsatisfaction.id === satisfaction.id
-          );
-          this.satisfactions[index] = new Satisfaction(satisfaction);
-          this.subject$.next(this.satisfactions);
+         this.satisfactions=satisfaction;
           this.refresh();
         }
       })
@@ -193,15 +145,9 @@ export class ListeSatisfactionComponent implements OnInit {
     this.dialogConfirmationService.confirmationDialog().subscribe(action => {
       if (action === DialogUtil.confirmer) {
         this.satisfactionService.deleteSatisfaction(satisfaction).subscribe((response) => {
-          this.satisfactions.splice(
-            this.satisfactions.findIndex(
-              (existingsatisfaction) => existingsatisfaction.id === satisfaction.id
-            ),
-            1
-          );
+          this.satisfactions=null;
           this.notificationService.success(NotificationUtil.suppression);
           this.refresh();
-          this.subject$.next(this.satisfactions);
         }
           , err => {
             this.notificationService.warn(NotificationUtil.echec);
@@ -216,11 +162,8 @@ export class ListeSatisfactionComponent implements OnInit {
       .afterClosed()
       .subscribe((satisfaction: Satisfaction) => {
         if (satisfaction) {
-          const index = this.satisfactions.findIndex(
-            (existing) => existing.id === satisfaction.id
-          );
-          this.satisfactions[index] = new Satisfaction(satisfaction);
-          this.subject$.next(this.satisfactions);
+         this.satisfactions=satisfaction;
+         this.refresh();
         }
       })
   }

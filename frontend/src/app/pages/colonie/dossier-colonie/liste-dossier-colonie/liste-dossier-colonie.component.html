@@ -6,7 +6,7 @@
   <fury-page-layout-content [@fadeInUp]>
     <fury-list *ngIf="dossierColonie && showProgressBar === true" name="Dossier Colonie" [columns]="columns" (filterChange)="onFilterChange($event)">
       <div class="actions">
-        <button class="create" (click)="createDossierColonie()" [disabled]="(dossierColonies && dossierColonies.etat !== 'fermer') || !hasAnyRole(['MENU_DOTATION'])" type="button" mat-mini-fab color="primary">
+        <button class="create" (click)="createDossierColonie()" [disabled]="dossierColonies!==null  || !hasAnyRole(['MENU_DOTATION'])" type="button" mat-mini-fab color="primary">
           <mat-icon>add</mat-icon>
         </button>
       </div>

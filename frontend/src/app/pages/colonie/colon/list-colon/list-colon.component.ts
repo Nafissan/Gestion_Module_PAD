@@ -28,7 +28,6 @@ import { EtatDossierColonie } from '../../shared/util/util';
 
 })
 export class ListColonComponent implements OnInit {
-  dossierColonie : DossierColonie;
   dataSource: MatTableDataSource<Colon> | null;
   private paginator: MatPaginator;
   colon: Colon[]=[];
@@ -84,25 +83,23 @@ export class ListColonComponent implements OnInit {
    ] as ListColumn[];
   constructor(
     private dialog: MatDialog,
-    private notificationService: NotificationService,
-    private dialogConfirmationService: DialogConfirmationService,
     private authentificationService: AuthenticationService,
     private colonService: ColonService,    
-    private dossierColonieService: DossierColonieService 
 
   ) { }
 
   ngOnInit() {
     this.getColons();
     this.dataSource = new MatTableDataSource();
-    this.data$.pipe(filter((data) => !!data)).subscribe((participant) => {
-      this.colon = participant;
-      this.dataSource.data = participant;
+    this.data$.pipe(filter((data) => !!data)).subscribe((colon) => {
+      this.colon = colon;
+      this.dataSource.data = colon;
     });
   }
   getColons() {
       this.colonService.getColonsByDossierEtat().subscribe(response => {
-        this.colon = response.body;
+        this.colon = response.body as Colon[];
+      console.log(this.colon.length);
       }, err => {
         console.error('Error loading participant colonies:', err);
       },()=>{

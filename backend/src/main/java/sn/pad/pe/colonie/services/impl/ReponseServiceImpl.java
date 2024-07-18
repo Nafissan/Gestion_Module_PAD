@@ -42,8 +42,8 @@ public class ReponseServiceImpl implements ReponseService{
     }
 
     @Override
-    public List<ReponseDTO> getReponsesByFormulaireId(Long formulaireId) {
-        List<Reponse> reponses = reponseRepository.findByFormulaire(formulaireId);
+    public List<ReponseDTO> getReponsesByFormulaireId(FormulaireSatisfactionDTO formulaireId) {
+        List<Reponse> reponses = reponseRepository.findByFormulaire( mapper.map(formulaireId, FormulaireSatisfaction.class));
         return reponses.stream()
                 .map(reponse -> mapper.map(reponse, ReponseDTO.class))
                 .collect(Collectors.toList());

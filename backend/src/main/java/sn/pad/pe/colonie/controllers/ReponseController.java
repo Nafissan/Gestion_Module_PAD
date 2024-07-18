@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,6 +15,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import sn.pad.pe.colonie.dto.FormulaireSatisfactionDTO;
 import sn.pad.pe.colonie.dto.ReponseDTO;
 import sn.pad.pe.colonie.services.ReponseService;
 
@@ -59,15 +59,15 @@ public ResponseEntity<List<ReponseDTO>> getAllReponse() {
         ReponseDTO reponses = reponseService.updateReponses(reponse);
         return ResponseEntity.status(HttpStatus.CREATED).body(reponses);
     }
-      @ApiOperation(value = "Obtenir les réponses par ID du formulaire", response = List.class)
+    @ApiOperation(value = "Obtenir les réponses par ID du formulaire", response = List.class)
     @ApiResponses(value = { 
         @ApiResponse(code = 200, message = "Liste récupérée avec succès"),
         @ApiResponse(code = 401, message = "Vous n'êtes pas autorisé à voir la ressource"),
         @ApiResponse(code = 403, message = "L'accès à la ressource que vous tentiez d'atteindre est interdit"),
         @ApiResponse(code = 404, message = "La ressource que vous tentiez d'atteindre est introuvable.") 
     })
-    @GetMapping("/reponses/formulaire/{formulaireId}")
-    public ResponseEntity<List<ReponseDTO>> getReponsesByFormulaireId(@PathVariable Long formulaireId) {
+    @PostMapping("/reponses/formulaire")
+    public ResponseEntity<List<ReponseDTO>> getReponsesByFormulaireId(@RequestBody FormulaireSatisfactionDTO formulaireId) {
         List<ReponseDTO> reponses = reponseService.getReponsesByFormulaireId(formulaireId);
         return ResponseEntity.status(HttpStatus.OK).body(reponses);
     }

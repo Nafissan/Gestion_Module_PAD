@@ -17,9 +17,9 @@
                     <span> Informations sur l'enfant</span>
                 </mat-panel-title>
             </mat-expansion-panel-header>
-            <mat-panel-description *ngIf="photoUrl">
+            <mat-panel-description *ngIf="fileDataUrl">
                 <span>Photo : </span>
-                <img [src]="photoUrl" alt="Photo de l'enfant" style="max-width: 100px; max-height: 100px;">
+                <img [src]="fileDataUrl" alt="Photo de l'enfant" style="max-width: 100px; max-height: 100px;">
             </mat-panel-description>
             <mat-panel-description>
                 <span>Nom : </span>{{ colon.nomEnfant }}

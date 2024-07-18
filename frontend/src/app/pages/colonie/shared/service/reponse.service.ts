@@ -33,9 +33,8 @@ import { Reponse } from '../model/reponse.model';
         return this.httpClient.put<any>(this.url, JSON.stringify(reponse),{observe : 'response', headers: this.httpOptions.headers})
         .pipe(catchError(this.errorHandler));
       }
-      getReponsesByFormulaireId(formulaireId: number): Observable<HttpResponse<any>> {
-        const url = `${this.url}/formulaire/${formulaireId}`;
-        return this.httpClient.get<any>(url, { observe: 'response' })
+      getReponsesByFormulaireId(formulaireId: Satisfaction): Observable<HttpResponse<any>> {
+        return this.httpClient.post<any>(`${this.url}/formulaire`, JSON.stringify(formulaireId), { observe: 'response' , headers: this.httpOptions.headers})
           .pipe(catchError(this.errorHandler));
       }     
        private errorHandler(error: any) {

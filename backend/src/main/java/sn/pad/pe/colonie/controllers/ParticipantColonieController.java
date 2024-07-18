@@ -89,7 +89,7 @@ public class ParticipantColonieController {
         @ApiResponse(code = 403, message = "L'accès à la ressource que vous tentiez d'atteindre est interdit"),
         @ApiResponse(code = 404, message = "La ressource que vous tentiez d'atteindre est introuvable.")
     })
-    @GetMapping("/participantsColonie/etat/")
+    @GetMapping("/participantsColonie/etat")
     public ResponseEntity<List<ParticipantColonieDTO>> getParticipantsByDossierEtat() {
         List<ParticipantColonieDTO> participants = participantServiceColonie.getParticipantsByDossierEtat();
         return ResponseEntity.status(HttpStatus.OK).body(participants);

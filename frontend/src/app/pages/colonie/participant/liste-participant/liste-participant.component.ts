@@ -103,6 +103,7 @@ export class ListeParticipantComponent implements OnInit {
 
   ngOnInit() {
     this.fetchDossiersAndParticipants();
+    this.getDossierColonie();
     this.dataSource = new MatTableDataSource();
     this.data$.pipe(filter((data) => !!data)).subscribe((participant) => {
       this.participants = participant;
@@ -141,7 +142,18 @@ export class ListeParticipantComponent implements OnInit {
   getProperty(row: any, property: string) {
     return property.split('.').reduce((acc, part) => acc && acc[part], row);
   }
-  
+  getDossierColonie(){
+    this.dossierColonieService.getDossier().subscribe(
+      (response) => {
+        if (response.body !== null) {
+          this.dossierColonie = response.body as DossierColonie;
+          console.log('Dossier Colonie:', this.dossierColonie);
+        }
+      },
+      (err) => {
+        console.error('Error loading dossier colonie:', err);
+      })
+  }
   isAllSelected() {
     const numSelected = this.selection.selected.length;
     const numRows = this.dataSource.data.length;

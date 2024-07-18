@@ -6,7 +6,7 @@
     <fury-page-layout-content [@fadeInUp]>
       <fury-list *ngIf="rapportProspection && showProgressBar === true" name="Prospection Reports" [columns]="columns" (filterChange)="onFilterChange($event)">
         <div class="actions">
-          <button class="create" (click)="createRapportProspection()" [disabled]="canAdd" type="button" mat-mini-fab color="primary">
+          <button class="create" (click)="createRapportProspection()" [disabled]="rapportProspection!==null " type="button" mat-mini-fab color="primary">
             <mat-icon>add</mat-icon>
           </button>
         </div>
@@ -32,7 +32,7 @@
                   {{ (row.matricule + ' | ' + row.prenom + ' ' + row.nom) | titlecase }}
                 </p>
                 <p *ngIf="column.name === 'État'">
-                    <span *ngIf="row?.etat === 'A VALIDER' " class="badge badge-primary">{{ 'A Valider'}}
+                    <span *ngIf="row?.etat === 'A VALIDER' " class="badge badge-warning">{{ 'A Valider'}}
                     </span>
                     <span *ngIf="row?.etat === 'VALIDER' " class="badge badge-success">{{ 'Validée' }}
                     </span>

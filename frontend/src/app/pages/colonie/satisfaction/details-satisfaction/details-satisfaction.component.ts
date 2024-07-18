@@ -33,9 +33,10 @@ export class DetailsSatisfactionComponent implements OnInit {
 
 
   getReponses(): void {
-    this.reponseService.getReponsesByFormulaireId(this.data.id).subscribe(
+    console.log(this.data);
+    this.reponseService.getReponsesByFormulaireId(this.data).subscribe(
       response => {
-        this.reponses = response.body;
+        this.reponses = response.body as Reponse[];
         this.extractQuestionsFromReponses();
 
       },

@@ -8,8 +8,10 @@
     <mat-dialog-content>
         <div fxLayout="column" fxLayout.gt-sm="column" fxLayoutGap.gt-sm="34px">
             <mat-label>Photo de l'enfant</mat-label>
-            <div class="file-upload">
-                <input type="file" (change)="handlePhoto($event.target.files)" required>
+            <div class="photo-upload" >
+                <input type="file" (change)="handlePhoto($event.target.files)" #fileInput required>
+                <img *ngIf="photoURL" [src]="photoURL" alt="Photo de l'enfant">
+                <mat-icon *ngIf="!photoURL">person</mat-icon>
             </div>
         </div>
         <!-- Parent Information -->

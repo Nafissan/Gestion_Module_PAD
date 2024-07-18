@@ -84,19 +84,21 @@ public class RapportProspectionServiceImpl implements RapportProspectionService 
         }
         return false;
     }
-      @Override
+    @Override
     public RapportProspectionDTO getRapportProspectionByEtat() {
         DossierColonieDTO dossierColonie = dossierColonieService.getDossierColonieByEtat();
         if (dossierColonie != null) {
-            Optional<RapportProspection> rapport = rapportProspectionRepository.findByCodeDossierColonie(dossierColonie.getId());
+            Optional<RapportProspection> rapport = rapportProspectionRepository.findByCodeDossierColonie(modelMapper.map(dossierColonie, DossierColonie.class));
             if (rapport.isPresent()) {
                 RapportProspectionDTO rapportDTO = mapToDto(rapport.get());
                 convertBytesFieldsToBase64(rapportDTO);
                 return rapportDTO;
+            } else {
+                System.out.print("No RapportProspection found for DossierColonie ID: " + dossierColonie.getId());
             }
         }
-        return null;
-    }
+    return null;
+}
     @Override
     public boolean deleteRapportProspection(RapportProspectionDTO rapportProspectionDTO) {
         Optional<RapportProspection> rapport = rapportProspectionRepository.findById(rapportProspectionDTO.getId());

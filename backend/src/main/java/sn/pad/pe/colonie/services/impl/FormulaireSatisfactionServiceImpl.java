@@ -89,7 +89,7 @@ public class FormulaireSatisfactionServiceImpl implements FormulaireSatisfaction
     public FormulaireSatisfactionDTO getFormulaireByDossierEtat() {
         DossierColonieDTO dossier = dossierColonieService.getDossierColonieByEtat();
         if (dossier != null) {
-            Optional<FormulaireSatisfaction> formulaire = formulaireSatisfactionRepository.findByCodeDossier(dossier.getId());
+            Optional<FormulaireSatisfaction> formulaire = formulaireSatisfactionRepository.findByCodeDossier(modelMapper.map(dossier, DossierColonie.class));
             if (formulaire.isPresent()) {
                 return modelMapper.map(formulaire.get(), FormulaireSatisfactionDTO.class);
             }
@@ -111,7 +111,7 @@ public List<FormulaireSatisfactionDTO> getFormulairesByAnnee(String annee) {
         DossierColonieDTO dossier = dossierColonieService.getDossierColonieByAnnee(annee);
         if (dossier != null) {
             List<FormulaireSatisfaction> formulaires = new ArrayList<>();
-            formulaires.add(formulaireSatisfactionRepository.findByCodeDossier(dossier.getId()).get());
+            formulaires.add(formulaireSatisfactionRepository.findByCodeDossier(modelMapper.map(dossier, DossierColonie.class)).get());
             return formulaires.stream()
                     .map(formulaire -> modelMapper.map(formulaire, FormulaireSatisfactionDTO.class))
                     .collect(Collectors.toList());

@@ -5,10 +5,11 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import sn.pad.pe.colonie.bo.DossierColonie;
 import sn.pad.pe.colonie.bo.RapportProspection;
 
 public interface RapportProspectionRepository extends JpaRepository<RapportProspection, Long>{
 
-    Optional<RapportProspection> findByCodeDossierColonie(Long id);
+    Optional<RapportProspection> findByCodeDossierColonie(DossierColonie dossier);
 
 }

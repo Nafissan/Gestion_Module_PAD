@@ -154,8 +154,8 @@ defaults: DossierColonie;
 
   createDossierColonie(): void {
     let formData: DossierColonie   = this.form.value;
-    formData.annee                = new Date(this.dateCreation.value).getFullYear().toString();
-    formData.code                 = 'DCLN' + '-' + 'PAD' + '-' + formData.annee;
+    formData.annee                = '2022';
+    formData.code                 = 'DCLN' + '-' + 'PAD' + '-' + '2022';
     formData.etat                 = EtatDossierColonie.ouvert; 
     formData.noteMinistere        = this.noteMinistere;
     formData.demandeProspection   = null; 

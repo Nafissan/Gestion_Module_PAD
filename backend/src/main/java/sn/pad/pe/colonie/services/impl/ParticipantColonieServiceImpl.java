@@ -78,14 +78,14 @@ public List<ParticipantColonieDTO> getAllParticipants() {
 public List<ParticipantColonieDTO> getParticipantsByDossierEtat() {
     DossierColonieDTO dossierColonie =dossierColonieService.getDossierColonieByEtat(); 
     if (dossierColonie!= null) {
-        Long dossierId = dossierColonie.getId();
-        return getParticipantsByDossierId(dossierId);
+        return getParticipantsByDossierId(modelMapper.map(dossierColonie, DossierColonie.class));
     }
     return new ArrayList<>();
 }
 @Override
-public List<ParticipantColonieDTO> getParticipantsByDossierId(Long dossierId) {
+public List<ParticipantColonieDTO> getParticipantsByDossierId(DossierColonie dossierId) {
     List<ParticipantColonie> participants = participantColonieRepository.findByCodeDossier(dossierId);
+    
     return participants.stream()
                        .map(participant -> {
                         ParticipantColonieDTO dto = mapToDto(participant);

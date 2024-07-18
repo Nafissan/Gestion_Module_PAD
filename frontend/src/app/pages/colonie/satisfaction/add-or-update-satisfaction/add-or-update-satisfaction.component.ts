@@ -107,7 +107,7 @@ export class AddOrUpdateSatisfactionComponent implements OnInit {
     });
   }
   loadExistingReponses(satisfactionId: Satisfaction): void {
-    this.reponseService.getReponsesByFormulaireId(satisfactionId.id).subscribe(
+    this.reponseService.getReponsesByFormulaireId(satisfactionId).subscribe(
       response => {
         const reponses = response.body;
         this.questionsArray.controls.forEach((group, index) => {

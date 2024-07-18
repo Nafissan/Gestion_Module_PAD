@@ -1,12 +1,12 @@
 package sn.pad.pe.colonie.services;
 
 import java.util.List;
-
 import sn.pad.pe.colonie.bo.Reponse;
+import sn.pad.pe.colonie.dto.FormulaireSatisfactionDTO;
 import sn.pad.pe.colonie.dto.ReponseDTO;
 
 public interface  ReponseService {
-    List<ReponseDTO> getReponsesByFormulaireId(Long formulaireId); // Nouvelle méthode
+    List<ReponseDTO> getReponsesByFormulaireId(FormulaireSatisfactionDTO formulaireId); // Nouvelle méthode
 
     public ReponseDTO saveReponse(ReponseDTO reponses);
 

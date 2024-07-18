@@ -4,12 +4,12 @@
     </fury-page-layout-header>
 
     <fury-page-layout-content [@fadeInUp]>
-        <fury-list *ngIf="satisfactions.length !== 0 && showProgressBar === true" name="Satisfactions" [columns]="columns" (filterChange)="onFilterChange($event)">
+        <fury-list *ngIf="satisfactions && showProgressBar === true" name="Satisfactions" [columns]="columns" (filterChange)="onFilterChange($event)">
             <div class="actions">
-                <button class="create" (click)="createSatisfaction()" [disabled]="!canAdd"  mat-mini-fab color="primary">
+                <button class="create" (click)="createSatisfaction()" [disabled]="satisfactions!==null"  mat-mini-fab color="primary">
                     <mat-icon>add</mat-icon>
                   </button>            </div>
-            <table [dataSource]="dataSource" mat-table matSort>
+            <table [dataSource]="[satisfactions]" mat-table matSort>
                 <!-- Checkbox Column -->
                 <ng-container matColumnDef="checkbox">
                     <th mat-header-cell *matHeaderCellDef class="actions-cell">
@@ -61,14 +61,14 @@
             <mat-paginator [pageSize]="pageSize" class="paginator"></mat-paginator>
         </fury-list>
 
-        <div *ngIf="satisfactions.length === 0 && showProgressBar === true" class="card text-center">
+        <div *ngIf="!satisfactions && showProgressBar === true" class="card text-center">
             <div class="card-header">
                 <span class="badge badge-info">INFORMATION</span>
             </div>
             <div class="card-body">
                 <h5 class="card-title">PAS DE FORMULAIRE SATISFACTION</h5>
                 <p class="card-text">Ajouter un nouveau formulaire satisfaction</p>
-                <button mat-mini-fab color="primary" (click)="createSatisfaction()" [disabled]="!canAdd">
+                <button mat-mini-fab color="primary" (click)="createSatisfaction()" [disabled]="dossierColonie===null">
                   <mat-icon>add</mat-icon>
                 </button>            </div>
             <div class="card-footer text-muted">

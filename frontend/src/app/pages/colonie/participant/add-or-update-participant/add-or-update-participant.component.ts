@@ -25,7 +25,8 @@ export class AddOrUpdateParticipantComponent implements OnInit {
   photo: string | null = null;
   agent: Agent;
   compte: Compte;
-  username: string;
+  username: string;  photoURL: string | ArrayBuffer | null = null;
+
   agents: any[] = [];
   constructor(
     @Inject(MAT_DIALOG_DATA) public defaults: Participant,
@@ -100,6 +101,11 @@ export class AddOrUpdateParticipantComponent implements OnInit {
   async handlePhoto(files: FileList): Promise<void> {
     if (files.length > 0) {
       this.photo = await this.convertFileToBase64(files[0]);
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.photoURL = e.target.result;
+      };
+      reader.readAsDataURL(files[0]);
     }
   }
 

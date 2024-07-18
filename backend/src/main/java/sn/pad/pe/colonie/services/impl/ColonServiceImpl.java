@@ -138,7 +138,7 @@ public class ColonServiceImpl implements ColonService {
     public List<ColonDTO> getColonsByAnnee(String annee) {
         DossierColonieDTO dossier = dossierService.getDossierColonieByAnnee(annee);
         if (dossier != null) {
-            List<Colon> colonList = colonRepository.findByCodeDossier(dossier.getId());
+            List<Colon> colonList = colonRepository.findByCodeDossier(modelMapper.map(dossier, DossierColonie.class));
             return colonList.stream()
                     .map(colon -> {
                         ColonDTO dto = mapToDto(colon);
@@ -154,11 +154,13 @@ public class ColonServiceImpl implements ColonService {
     public List<ColonDTO> getColonsByDossierEtat() {
         DossierColonieDTO dossiers = dossierService.getDossierColonieByEtat();
         if (dossiers != null ) {
-            List<Colon> colonList = colonRepository.findByCodeDossierIn(dossiers.getId());
+            List<Colon> colonList = colonRepository.findByCodeDossier(modelMapper.map(dossiers, DossierColonie.class));
             return colonList.stream()
                     .map(colon -> {
                         ColonDTO dto = mapToDto(colon);
                         convertBytesFieldsToBase64(dto);
+                        dto.setCodeDossier(modelMapper.map(dossiers, DossierColonie.class));
+                
                         return dto;
                     })
                     .collect(Collectors.toList());
@@ -171,7 +173,7 @@ public class ColonServiceImpl implements ColonService {
         if (annee != null && !annee.isEmpty()) {
             DossierColonieDTO dossier = dossierService.getDossierColonieByAnnee(annee);
             if (dossier != null) {
-                List<Colon> colonList = colonRepository.findByCodeDossier(dossier.getId());
+                List<Colon> colonList = colonRepository.findByCodeDossier(modelMapper.map(dossier, DossierColonie.class));
                 colons = colonList.stream()
                     .map(colon -> modelMapper.map(colon, ColonDTO.class))
                     .collect(Collectors.toList());

@@ -43,6 +43,7 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
   canAdd: boolean=false;
   private paginator: MatPaginator;
   private sort: MatSort;
+  dossierColonie: DossierColonie;
   @ViewChild(MatSort) set matSort(ms: MatSort) {
     this.sort = ms;
   }
@@ -96,8 +97,7 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
   getRapportProspections() {
       this.rapportService.getRapportProspectionByEtat().subscribe(
         (response) => {
-          this.rapportProspection = response.body ? response.body[0] : null;
-          this.canAdd = !this.rapportProspection;
+          this.rapportProspection = response.body as RapportProspection;
 
         },
         (err) => {        
@@ -109,7 +109,18 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
       );
   }
    
-
+  getDossierColonie(){
+    this.dossierColonieService.getDossier().subscribe(
+      (response) => {
+        if (response.body !== null) {
+          this.dossierColonie = response.body as DossierColonie;
+          this.canAdd= ! this.dossierColonie;
+        }
+      },
+      (err) => {
+        console.error('Error loading dossier colonie:', err);
+      })
+  }
   createRapportProspection() {
     this.dialog
       .open(AddOrUpdateRapportProspectionComponent)

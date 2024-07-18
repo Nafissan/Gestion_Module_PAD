@@ -23,17 +23,12 @@
       </div>
     </div>
   </div>
-  <div>
     <mat-form-field appearance="fill">
       <input matInput [matDatepicker]="picker" placeholder="Choisir une date" [formControl]="dateV">
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-datepicker #picker (yearSelected)="yearSelected($event)" startView="multi-year"></mat-datepicker>
     </mat-form-field>
-  </div>
-
-  <mat-form-field appearance="fill">
    
-   <div>
     <mat-card>
       <mat-card-header>
         <mat-card-title>Statistique colonie</mat-card-title>
@@ -55,9 +50,7 @@
           </mat-tab>
         </mat-tab-group>
       </mat-card-content>
-    </mat-card>
-   </div>
-  
+    </mat-card>  
 
   <div fxLayout="row" fxLayoutGap="gap">
     <mat-card fxFlex="50">
