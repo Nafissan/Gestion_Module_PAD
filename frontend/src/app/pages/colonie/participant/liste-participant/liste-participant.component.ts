@@ -127,7 +127,7 @@ export class ListeParticipantComponent implements OnInit {
   fetchDossiersAndParticipants() {
     this.participantService.getParticipantsByDossierEtat()
     .subscribe(response => {
-        this.participants = response.body;
+        this.participants = response.body as Participant[];
         
       }, err => {
         console.error('Error loading participant colonies:', err);

@@ -77,7 +77,7 @@ public List<ParticipantColonieDTO> getAllParticipants() {
 @Override
 public List<ParticipantColonieDTO> getParticipantsByDossierEtat() {
     DossierColonieDTO dossierColonie =dossierColonieService.getDossierColonieByEtat(); 
-    if (dossierColonie != null) {
+    if (dossierColonie!= null) {
         Long dossierId = dossierColonie.getId();
         return getParticipantsByDossierId(dossierId);
     }

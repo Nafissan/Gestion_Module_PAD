@@ -4,13 +4,13 @@
     </fury-page-layout-header>
   
     <fury-page-layout-content [@fadeInUp]>
-      <fury-list *ngIf="rapports && rapports.length !== 0 && showProgressBar === true" name="Prospection Reports" [columns]="columns" (filterChange)="onFilterChange($event)">
+      <fury-list *ngIf="rapportProspection && showProgressBar === true" name="Prospection Reports" [columns]="columns" (filterChange)="onFilterChange($event)">
         <div class="actions">
-          <button class="create" (click)="createRapportProspection()" [disabled]="!canAdd" type="button" mat-mini-fab color="primary">
+          <button class="create" (click)="createRapportProspection()" [disabled]="canAdd" type="button" mat-mini-fab color="primary">
             <mat-icon>add</mat-icon>
           </button>
         </div>
-        <table [dataSource]="dataSource" mat-table matSort>
+        <table [dataSource]="[rapportProspection]" mat-table matSort>
           <!-- Checkbox Column -->
           <ng-container matColumnDef="checkbox">
             <th *matHeaderCellDef class="actions-cell" mat-header-cell>
@@ -93,13 +93,13 @@
   
         <mat-paginator class="paginator" [pageSize]="pageSize"></mat-paginator>
       </fury-list>
-      <div *ngIf="rapports.length === 0 && showProgressBar === true" class="card text-center">
+      <div *ngIf="!rapportProspection && showProgressBar === true" class="card text-center">
         <div class="card-header">
           <span class="badge badge-info">INFORMATION</span>
         </div>
         <div class="card-body">
           <h5 class="card-title">PAS DE RAPPORT DISPONIBLE</h5>
-          <button mat-mini-fab color="primary" (click)="createRapportProspection()" [disabled]="!canAdd">
+          <button mat-mini-fab color="primary" (click)="createRapportProspection()" [disabled]="canAdd">
             <mat-icon>add</mat-icon>
           </button>
         </div>

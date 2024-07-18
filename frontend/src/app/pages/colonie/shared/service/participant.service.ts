@@ -49,10 +49,9 @@ export class ParticipantService {
     return this.httpClient.delete<any>(this.url, httpOptions);
 
   }
-  getParticipantsByDossierEtat(): Observable<HttpResponse<any[]>> {
-    const url = `${this.url}/dossier`;
+  getParticipantsByDossierEtat(): Observable<HttpResponse<any>> {
     return this.httpClient
-      .get<any[]>(url, { observe: 'response' })
+      .get<any>(`${this.url}/etat`, { observe: 'response' })
       .pipe(catchError(this.errorHandler));
   }
   // Gérer les erreurs HTTP

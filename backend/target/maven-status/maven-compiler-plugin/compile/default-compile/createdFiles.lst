@@ -47,6 +47,7 @@ sn\pad\pe\pss\dto\RessourceDTO.class
 sn\pad\pe\pss\services\impl\PlanningAbsenceServiceImpl.class
 sn\pad\pe\partenariat\dto\ParticipantDTO.class
 sn\pad\pe\configurations\security\UserDetailsServiceImpl.class
+sn\pad\pe\colonie\dto\ColonStatisticsDTO.class
 sn\pad\pe\partenariat\controllers\ContinentController.class
 sn\pad\pe\pss\dto\MailDTO.class
 sn\pad\pe\configurations\exception\ResourceNotFoundException.class

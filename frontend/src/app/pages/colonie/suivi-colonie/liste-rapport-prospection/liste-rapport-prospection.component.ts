@@ -35,13 +35,7 @@ import { property } from "lodash-es";
 export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, OnDestroy {
   showProgressBar: boolean = false;
   date: Date = new Date();
-  currentRapport: RapportProspection = undefined;
-  rapports: RapportProspection[] = [];
-  subject$: ReplaySubject<RapportProspection[]> = new ReplaySubject<RapportProspection[]>(1);
-  data$: Observable<RapportProspection[]> = this.subject$.asObservable();
-  pageSize = 4;
-  dataSource: MatTableDataSource<RapportProspection> | null;
-  rapportSelectionne: RapportProspection;
+  rapportProspection: RapportProspection;
   afficherRapport: boolean = false;
   username: string;
   compte: Compte;  
@@ -51,18 +45,11 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
   private sort: MatSort;
   @ViewChild(MatSort) set matSort(ms: MatSort) {
     this.sort = ms;
-    this.setDataSourceAttributes();
   }
   @ViewChild(MatPaginator) set matPaginator(mp: MatPaginator) {
     this.paginator = mp;
-    this.setDataSourceAttributes();
   }
-  setDataSourceAttributes() {
-    if (this.dataSource) {
-      this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
-    }
-  }
+  
   @Input()
   columns: ListColumn[] = [
     { name: "Checkbox", property: "checkbox", visible: false },
@@ -96,13 +83,6 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
       this.compte = response.body;
       this.agent = this.compte.agent;
     });
-    
-    this.dataSource = new MatTableDataSource();
-    this.data$.pipe(filter((data) => !!data)).subscribe((rapports) => {
-      this.rapports = rapports;
-      this.dataSource.data = rapports;
-
-    });
   }
 
   ngAfterViewInit() {
@@ -111,32 +91,19 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
     return this.columns.filter((column) => column.visible).map((column) => column.property);
   }
 
-  onFilterChange(value) {
-    if (!this.dataSource) {
-      return;
-    }
-    value = value.trim().toLowerCase();
-    this.dataSource.filter = value;
-    this.dataSource.filterPredicate = (data: any, value) => {
-      const dataStr = JSON.stringify(data).toLowerCase();
-      return dataStr.indexOf(value) != -1;
-    };
-  }
+  
   refresh(){ this.getRapportProspections(); }
   getRapportProspections() {
       this.rapportService.getRapportProspectionByEtat().subscribe(
         (response) => {
-          this.rapports = response.body;
-          if(this.rapports) this.currentRapport = this.rapports.find(e => e.etat === 'A VALIDER');
-
-          this.canAdd= !this.rapports;
+          this.rapportProspection = response.body ? response.body[0] : null;
+          this.canAdd = !this.rapportProspection;
 
         },
         (err) => {        
            console.error('Error loading rapport prospection colonies:', err); 
         },
         () => {
-          this.subject$.next(this.rapports);
           this.showProgressBar = true;
         }
       );
@@ -149,8 +116,7 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
       .afterClosed()
       .subscribe((rapport: RapportProspection) => {
         if (rapport) {
-          this.rapports.unshift(rapport);
-          this.subject$.next(this.rapports);
+          this.rapportProspection = rapport;
           this.refresh();
         }
       });
@@ -162,11 +128,8 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
       .afterClosed()
       .subscribe((rapport: RapportProspection) => {
         if (rapport) {
-          const index = this.rapports.findIndex(
-            (existingrapport) => existingrapport.id === rapport.id
-          );
-          this.rapports[index] = new RapportProspection(rapport);
-          this.subject$.next(this.rapports);
+          this.rapportProspection = rapport;
+
           this.refresh();
         }
       });
@@ -180,11 +143,8 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
       if (action === DialogUtil.confirmer) {
         this.rapportService.deleteRapportProspection(rapport).subscribe(
           () => {
-            this.rapports.splice(
-              this.rapports.findIndex((existingrapport) => existingrapport.id === rapport.id), 1
-            );
             this.notificationService.success(NotificationUtil.suppression);
-            this.subject$.next(this.rapports);
+            this.rapportProspection = null;
             this.refresh();
           },
           err => {
@@ -209,11 +169,7 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
     this.rapportService.updateRapportProspection(rapport).subscribe((response) => {
       this.notificationService.success('Rapport de prospection validé avec succès');
       if (response.body as RapportProspection) {
-        const index = this.rapports.findIndex(
-          (existingrapport) => existingrapport.id === response.body.id
-        );
-        this.rapports[index] = new RapportProspection(response.body);
-        this.subject$.next(this.rapports);
+        this.rapportProspection = response.body;
         this.refresh();
       }
     }, err => {
@@ -241,12 +197,9 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
       .afterClosed()
       .subscribe((rapport:RapportProspection) => {
         if (rapport) {
-          const index = this.rapports.findIndex(
-            (existingrapport) => existingrapport.id === rapport.id
-          );
-          this.rapports[index] = new RapportProspection(rapport);
-          this.subject$.next(this.rapports);
+          this.rapportProspection = rapport;
           this.refresh();
+
         }
       })
   }
@@ -259,11 +212,7 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
       maxHeight: '100vh', 
     });
     dialogRef.afterClosed().subscribe(result => {
-      const index = this.rapports.findIndex(
-        (existingDossierColonie) => existingDossierColonie.id === rapport.id
-      );
-      this.rapports[index] = new RapportProspection(rapport);
-      this.subject$.next(this.rapports);
+      this.rapportProspection = result;
     });
   }
   ngOnDestroy() { }
