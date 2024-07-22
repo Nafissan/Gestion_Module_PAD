@@ -91,6 +91,9 @@
               <button mat-menu-item (click)="onCellClick('demandeProspection', row)"[disabled]="!hasAnyRole(['MENU_DOTATION'])  || !row.demandeProspection">
                 <span>Demande Prospection</span>
               </button>
+              <button mat-menu-item (click)="onCellClick('rapportProspection', row)"[disabled]="!hasAnyRole(['MENU_DOTATION'])  || !row.demandeProspection">
+                <span>Rapport Prospection</span>
+              </button>
               <button mat-menu-item (click)="onCellClick('noteInformation', row)"[disabled]="!hasAnyRole(['MENU_DOTATION'])  || !row.noteInformation">
                 <span>Note Information</span>
               </button>

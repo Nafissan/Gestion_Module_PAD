@@ -159,14 +159,20 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
 
   fermerDossierColonie(dossierColonie: DossierColonie) {
     dossierColonie.etat = this.fermer;
-    this.dialog
+    if(dossierColonie.demandeProspection ===null || dossierColonie.rapportMission === null || dossierColonie.noteInformation === null || dossierColonie.noteInstruction=== null){
+      this.notificationService.warn("Le dossier n'est pas complet. Il manque des fichiers !");
+
+    }else{
+      this.dialog
       .open(AddDossierColonieComponent, { data: { dossier: dossierColonie, property: "fermer" } })
       .afterClosed()
       .subscribe((updatedDossierColonie: DossierColonie) => {
         if (updatedDossierColonie) {
-          this.dossierColonie = updatedDossierColonie;
+          this.dossierColonie = dossierColonie;
         }
       });
+    }
+    
     this.refreshDossierColonie();
   }
 

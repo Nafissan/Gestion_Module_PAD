@@ -13,13 +13,11 @@ import { NotificationService } from 'src/app/shared/services/notification.servic
 import { DossierColonie } from '../../shared/model/dossier-colonie.model';
 import { DossierColonieService } from '../../shared/service/dossier-colonie.service';
 import { EtatDossierColonie } from '../../shared/util/util';
-import { Colon } from '../../shared/model/colon.model';
 import { FormControl } from '@angular/forms';
 import moment from 'moment';
 import { MatDatepicker } from '@angular/material/datepicker';
 import { fadeInRightAnimation } from 'src/@fury/animations/fade-in-right.animation';
 import { fadeInUpAnimation } from 'src/@fury/animations/fade-in-up.animation';
-import { ColonService } from '../../shared/service/colon.service';
 import { ReadHistoriqueColonieComponent } from '../read-historique-colonie/read-historique-colonie.component';
 import { DetailsColonComponent } from '../details-colon/details-colon.component';
 
@@ -92,7 +90,6 @@ export class ListeHistoriqueColonieComponent implements OnInit {
     private notificationService: NotificationService,
     private mailService: MailService,
     private authentificationService: AuthenticationService,
-       private colonService: ColonService,
 
   ) { }
 
@@ -186,14 +183,28 @@ export class ListeHistoriqueColonieComponent implements OnInit {
   hasAnyRole(roles: string[]) {
     return this.authentificationService.hasAnyRole(roles);
   }
-  detailsColon(dossier: DossierColonie){
+  detailsColon(dossier: DossierColonie) {
     this.dialog
-    .open(DetailsColonComponent, {data: dossier})
-    .afterClosed()
-    .subscribe((dossier)=>{
-      
-    });
+      .open(DetailsColonComponent, {
+        data: dossier,
+        width: '80vw',  // Largeur du dialog
+        height: '80vh', // Hauteur du dialog
+        maxWidth: '90vw', // Largeur maximale
+        maxHeight: '90vh', // Hauteur maximale
+        panelClass: 'custom-dialog-container' // Classe personnalisée pour le style
+      })
+      .afterClosed()
+      .subscribe((dossier) => {
+        if (dossier) {
+          const index = this.dossierColonies.findIndex(
+            (existingParticipant) => existingParticipant.id === dossier.id
+          );
+          this.dossierColonies[index] = new DossierColonie(dossier);
+          this.subject$.next(this.dossierColonies);
+        }
+      });
   }
+  
   ngOnDestroy() { }
   
 }

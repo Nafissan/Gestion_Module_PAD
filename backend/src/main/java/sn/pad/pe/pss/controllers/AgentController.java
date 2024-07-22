@@ -1,5 +1,6 @@
 package sn.pad.pe.pss.controllers;
 
+
 import java.util.Date;
 import java.util.List;
 
@@ -242,4 +243,12 @@ public class AgentController {
 		List<AgentDTO> agentDTOs = agentService.getAgentsAssures();
 		return new ResponseEntity<List<AgentDTO>>(agentDTOs, HttpStatus.OK);
 	}
+
+
+    @GetMapping("/agents/matricule/{matricule}")
+    public ResponseEntity<AgentDTO> getAgentByMatricule(@PathVariable String matricule) {
+        AgentDTO agent = agentService.getAgentByMatricule(matricule);
+        return ResponseEntity.ok().body(agent);
+    }
+
 }

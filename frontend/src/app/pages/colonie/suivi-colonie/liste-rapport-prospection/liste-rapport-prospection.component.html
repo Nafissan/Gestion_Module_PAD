@@ -99,7 +99,7 @@
         </div>
         <div class="card-body">
           <h5 class="card-title">PAS DE RAPPORT DISPONIBLE</h5>
-          <button mat-mini-fab color="primary" (click)="createRapportProspection()" [disabled]="canAdd">
+          <button mat-mini-fab color="primary" (click)="createRapportProspection()" [disabled]="dossierColonie===null">
             <mat-icon>add</mat-icon>
           </button>
         </div>

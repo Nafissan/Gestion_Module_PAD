@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,6 +18,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import sn.pad.pe.colonie.dto.ColonStatisticsDTO;
 import sn.pad.pe.colonie.dto.ParticipantColonieDTO;
 import sn.pad.pe.colonie.services.ParticipantColonieService;
 import sn.pad.pe.configurations.exception.Message;
@@ -94,5 +96,42 @@ public class ParticipantColonieController {
         List<ParticipantColonieDTO> participants = participantServiceColonie.getParticipantsByDossierEtat();
         return ResponseEntity.status(HttpStatus.OK).body(participants);
     }
+ @ApiOperation(value = "Obtenir les participants par année", response = List.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Liste récupérée avec succès"),
+            @ApiResponse(code = 401, message = "Vous n'êtes pas autorisé à voir la ressource"),
+            @ApiResponse(code = 403, message = "L'accès à la ressource que vous tentiez d'atteindre est interdit"),
+            @ApiResponse(code = 404, message = "La ressource que vous tentiez d'atteindre est introuvable.")
+    })
+    @GetMapping("/participantsColonie/annee/{annee}")
+    public ResponseEntity<List<ParticipantColonieDTO>> getParticipantsByAnnee(@PathVariable String annee) {
+        List<ParticipantColonieDTO> participants = participantServiceColonie.getParticipantsByAnnee(annee);
+        return ResponseEntity.status(HttpStatus.OK).body(participants);
+    }
 
+    @ApiOperation(value = "Obtenir les participants validés", response = List.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Liste récupérée avec succès"),
+            @ApiResponse(code = 401, message = "Vous n'êtes pas autorisé à voir la ressource"),
+            @ApiResponse(code = 403, message = "L'accès à la ressource que vous tentiez d'atteindre est interdit"),
+            @ApiResponse(code = 404, message = "La ressource que vous tentiez d'atteindre est introuvable.")
+    })
+    @GetMapping("/participantsColonie/valider")
+    public ResponseEntity<List<ParticipantColonieDTO>> getParticipantsValider() {
+        List<ParticipantColonieDTO> participants = participantServiceColonie.getParticipantsValider();
+        return ResponseEntity.status(HttpStatus.OK).body(participants);
+    }
+
+    @ApiOperation(value = "Obtenir les statistiques des participants par année", response = ColonStatisticsDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Statistiques récupérées avec succès"),
+            @ApiResponse(code = 401, message = "Vous n'êtes pas autorisé à voir la ressource"),
+            @ApiResponse(code = 403, message = "L'accès à la ressource que vous tentiez d'atteindre est interdit"),
+            @ApiResponse(code = 404, message = "La ressource que vous tentiez d'atteindre est introuvable.")
+    })
+    @GetMapping("/participantsColonie/statistics/{annee}")
+    public ResponseEntity<ColonStatisticsDTO> getParticipantStatisticsByAnnee(@PathVariable String annee) {
+        ColonStatisticsDTO statistics = participantServiceColonie.getParticipantStatisticsByAnnee(annee);
+        return ResponseEntity.status(HttpStatus.OK).body(statistics);
+    }
 }

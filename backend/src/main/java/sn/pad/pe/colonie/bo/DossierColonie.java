@@ -69,9 +69,6 @@ public class DossierColonie implements Serializable {
     private RapportProspection rapportProspection;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "codeDossier", cascade = CascadeType.REMOVE, orphanRemoval = true)
     @JsonIgnore
-    private List<Colon> colons = new ArrayList<Colon>(0);
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "codeDossier", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    @JsonIgnore
     private List<ParticipantColonie> participants = new ArrayList<ParticipantColonie>(0);
 
     public Long getId() {
@@ -214,14 +211,6 @@ public class DossierColonie implements Serializable {
 
     public void setFormulaireSatisfaction(FormulaireSatisfaction formulaireSatisfaction) {
         this.formulaireSatisfaction = formulaireSatisfaction;
-    }
-
-    public List<Colon> getColons() {
-        return colons;
-    }
-
-    public void setColons(List<Colon> colons) {
-        this.colons = colons;
     }
 
     public String getCommentaire() {

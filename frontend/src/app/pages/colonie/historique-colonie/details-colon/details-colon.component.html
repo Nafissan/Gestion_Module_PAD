@@ -1,7 +1,7 @@
 <div mat-dialog-title class="h1-responsive text-align titre_modal_add">LISTE COLONS</div>
 <mat-dialog-content>
     <fury-list *ngIf="colons.length !== 0 && showProgressBar === false" name="Colons" [columns]="columns">
-        <table [dataSource]="colons" mat-table matSort>
+        <table [dataSource]="[colons]" mat-table matSort>
   
           <!-- Dynamic Columns -->
           <ng-container *ngFor="let column of columns">

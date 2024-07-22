@@ -116,7 +116,6 @@ sn\pad\pe\dotation\dto\MarqueDTO.class
 sn\pad\pe\pss\controllers\NiveauHierarchiqueController.class
 sn\pad\pe\pss\dto\PlanningDirectionDTO.class
 sn\pad\pe\partenariat\repositories\ConventionRepository.class
-sn\pad\pe\colonie\repositories\ColonRepository.class
 sn\pad\pe\dotation\dto\SousStockDTO.class
 sn\pad\pe\pss\services\impl\ParametreDaoImpl.class
 sn\pad\pe\pss\services\impl\EtatpePlanningDirectionServiceImpl.class
@@ -156,7 +155,6 @@ sn\pad\pe\partenariat\services\impl\ContinentServiceImpl.class
 sn\pad\pe\colonie\controllers\FormulaireSatisfactionController.class
 sn\pad\pe\partenariat\repositories\TypePartenariatRepository.class
 sn\pad\pe\colonie\dto\ReponseDTO.class
-sn\pad\pe\colonie\dto\ColonDTO.class
 sn\pad\pe\partenariat\repositories\ActiviteRepository.class
 sn\pad\pe\dotation\dto\ConjointDTO.class
 sn\pad\pe\partenariat\services\ConventionService.class
@@ -240,7 +238,6 @@ sn\pad\pe\partenariat\bo\DetailEvenement.class
 sn\pad\pe\colonie\repositories\QuestionRepository.class
 sn\pad\pe\dotation\services\impl\FounisseurServiceImpl.class
 sn\pad\pe\pss\services\impl\EtapeValidationServiceImpl.class
-sn\pad\pe\colonie\bo\Colon.class
 sn\pad\pe\dotation\bo\Fournisseur.class
 sn\pad\pe\partenariat\repositories\ProspectRepository.class
 sn\pad\pe\pss\repositories\InterimRepository.class
@@ -317,7 +314,6 @@ sn\pad\pe\dotation\services\impl\MarqueServiceImpl.class
 sn\pad\pe\pss\services\impl\NiveauHierarchiqueServiceImpl.class
 sn\pad\pe\pss\controllers\EtapeInterimController.class
 sn\pad\pe\dotation\bo\SuiviDotation.class
-sn\pad\pe\colonie\controllers\ColonController.class
 sn\pad\pe\partenariat\controllers\ActiviteController.class
 sn\pad\pe\pss\repositories\AbsenceRepository.class
 sn\pad\pe\pss\repositories\EtapeInterimRepository.class
@@ -327,7 +323,6 @@ sn\pad\pe\pss\dto\HistoriqueCongeDTO.class
 sn\pad\pe\pss\controllers\InterimController.class
 sn\pad\pe\pss\dto\RoleDTO.class
 sn\pad\pe\partenariat\services\impl\PlanprospectionServiceImpl.class
-sn\pad\pe\colonie\services\impl\ColonServiceImpl.class
 sn\pad\pe\dotation\dto\SuiviDotationDTO.class
 sn\pad\pe\pss\services\DossierAbsenceService.class
 sn\pad\pe\dotation\repositories\StockRepository.class
@@ -388,7 +383,6 @@ sn\pad\pe\partenariat\services\BesoinService.class
 sn\pad\pe\pss\services\impl\EtapeInterimServiceImpl.class
 sn\pad\pe\partenariat\controllers\ConventionController.class
 sn\pad\pe\partenariat\repositories\EvenementRepository.class
-sn\pad\pe\colonie\services\ColonService.class
 sn\pad\pe\partenariat\dto\BesoinDTO.class
 sn\pad\pe\partenariat\bo\Ville.class
 sn\pad\pe\dotation\controllers\ConjointController.class

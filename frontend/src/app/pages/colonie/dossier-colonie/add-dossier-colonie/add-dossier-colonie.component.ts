@@ -16,6 +16,7 @@ import * as moment from "moment";
 import { DossierColonieService } from "../../shared/service/dossier-colonie.service";
 import { MailService } from "src/app/shared/services/mail.service";
 import { Mail } from "src/app/shared/model/mail.model";
+import { AgentService } from "src/app/shared/services/agent.service";
 
 // See the Moment.js docs for the meaning of these formats:
 // https://momentjs.com/docs/#/displaying/format/
@@ -74,7 +75,9 @@ defaults: DossierColonie;
     private dialog: MatDialog,   
      private mailService: MailService,
     private dialogConfirmationService: DialogConfirmationService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private agentService: AgentService // Ajout du service AgentService
+
   ) {  
   }
 
@@ -109,7 +112,22 @@ defaults: DossierColonie;
     });
   }
 
- 
+  getAllAgentEmails(): Promise<string[]> {
+    return new Promise((resolve, reject) => {
+      this.agentService.getAll().subscribe(
+        response => {
+          const agents = response.body;
+          const emails = agents.map(agent => agent.email);
+          resolve(emails);
+        },
+        error => {
+          this.notificationService.warn('Failed to retrieve agent emails');
+          reject(error);
+        }
+      );
+    });
+  }
+  
  
   async handleNoteMinistereFileInput(files: FileList) {
     if (files.length > 0 ) {
@@ -216,7 +234,6 @@ defaults: DossierColonie;
             this.sendEmail(
               "Note d'information",
               "Ci-joint la note d'information sur les colonies de vacances",
-              ['aliounebada.ndoye@portdakar.sn'],
               this.notePersonnels
             );
           }
@@ -224,7 +241,6 @@ defaults: DossierColonie;
             this.sendEmail(
               'Note Instruction ',
               "Ci-joint la note d'instruction sur les colonies de vacances",
-              ['aliounebada.ndoye@portdakar.sn'],
               this.notePelerins
             );
           }
@@ -253,23 +269,30 @@ defaults: DossierColonie;
       reader.readAsDataURL(file);
     });
   }
-  sendEmail(subject: string, body: string, recipients: string[], file: string): void {
-    let mail = new Mail();
-    mail.objet = subject;
-    mail.contenu = body;
-    mail.destinataires = recipients;
-    mail.lien = "";
-    mail.emetteur = "";
-    mail.file = file;
-    this.mailService.sendMailByDirections(mail).subscribe(
-      response => {
-        this.notificationService.success('Email sent successfully');
-      },
-      error => {
-        this.notificationService.warn('Failed to send email');
-      }
-    );
+  async sendEmail(subject: string, body: string, file: string): Promise<void> {
+    const emails = await this.getAllAgentEmails();
+    if (emails && emails.length > 0) {
+      let mail = new Mail();
+      mail.objet = subject;
+      mail.contenu = body;
+      mail.destinataires = emails;
+      mail.lien = "";
+      mail.emetteur = ''; 
+      mail.file = file;
+  
+      this.mailService.sendMailByDirections(mail).subscribe(
+        response => {
+          this.notificationService.success('Email sent successfully');
+        },
+        error => {
+          this.notificationService.warn('Failed to send email');
+        }
+      );
+    } else {
+      this.notificationService.warn('No emails found to send the notification');
+    }
   }
+  
   fermerDossier(){
     const formData: DossierColonie = this.form.value ;
     formData.id                   = this.defaults.id;

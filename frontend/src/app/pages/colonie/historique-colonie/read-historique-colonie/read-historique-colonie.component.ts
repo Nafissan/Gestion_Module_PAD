@@ -1,5 +1,4 @@
 import { Component, Inject, Input, OnInit } from '@angular/core';
-import { Colon } from '../../shared/model/colon.model';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { DossierColonie } from '../../shared/model/dossier-colonie.model';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -10,15 +9,13 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
   styleUrls: ['./read-historique-colonie.component.scss']
 })
 export class ReadHistoriqueColonieComponent implements OnInit {
-    colon:Colon;
     dossier: DossierColonie;
     property: string;
     pdfDataUrl: SafeResourceUrl;
      showFrame: boolean = true; // Initially true
   
-    constructor(private sanitizer: DomSanitizer,    @Inject(MAT_DIALOG_DATA) public data: { dossier?: DossierColonie, colon?: Colon, property: string }) {
+    constructor(private sanitizer: DomSanitizer,    @Inject(MAT_DIALOG_DATA) public data: { dossier: DossierColonie, property: string }) {
       if(data.dossier) this.dossier = data.dossier;
-      if(data.colon) this.colon = data.colon;
       this.property = data.property;
     }
   
@@ -46,7 +43,6 @@ export class ReadHistoriqueColonieComponent implements OnInit {
       }
       getFileContent(property: string): string {
         if(this.dossier)  return this.dossier[property];
-        if(this.colon)  return this.colon[property];
 
       }
     

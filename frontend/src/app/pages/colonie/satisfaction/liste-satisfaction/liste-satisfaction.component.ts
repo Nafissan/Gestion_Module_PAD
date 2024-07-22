@@ -102,10 +102,7 @@ export class ListeSatisfactionComponent implements OnInit {
   getDossierColonie(){
     this.dossierColonieService.getDossier().subscribe(
       (response) => {
-        if (response.body !== null) {
           this.dossierColonie = response.body as DossierColonie;
-          console.log('Dossier Colonie:', this.dossierColonie);
-        }
       },
       (err) => {
         console.error('Error loading dossier colonie:', err);

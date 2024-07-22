@@ -1,24 +1,19 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { fadeInRightAnimation } from 'src/@fury/animations/fade-in-right.animation';
 import { fadeInUpAnimation } from 'src/@fury/animations/fade-in-up.animation';
-import { Colon } from '../../shared/model/colon.model';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ListColumn } from 'src/@fury/shared/list/list-column.model';
 import { MatDialog } from '@angular/material/dialog';
 import { AuthenticationService } from 'src/app/shared/services/authentification.service';
-import { DialogConfirmationService } from 'src/app/shared/services/dialog-confirmation.service';
-import { NotificationService } from 'src/app/shared/services/notification.service';
-import { ColonService } from '../../shared/service/colon.service';
-import { DossierColonieService } from '../../shared/service/dossier-colonie.service';
-import { filter, map } from 'rxjs/operators';
+import { filter } from 'rxjs/operators';
 import { ReplaySubject, Observable } from 'rxjs';
 import { SelectionModel } from '@angular/cdk/collections';
 import { DetailsColonComponent } from '../details-colon/details-colon.component';
 import { ReadFileColonComponent } from '../read-file-colon/read-file-colon.component';
-import { DossierColonie } from '../../shared/model/dossier-colonie.model';
-import { EtatDossierColonie } from '../../shared/util/util';
+import { Participant } from '../../shared/model/participant-colonie.model';
+import { ParticipantService } from '../../shared/service/participant.service';
 
 @Component({
   selector: 'fury-list-colon',
@@ -28,13 +23,13 @@ import { EtatDossierColonie } from '../../shared/util/util';
 
 })
 export class ListColonComponent implements OnInit {
-  dataSource: MatTableDataSource<Colon> | null;
+  dataSource: MatTableDataSource<Participant> | null;
   private paginator: MatPaginator;
-  colon: Colon[]=[];
-  subject$: ReplaySubject<Colon[]> = new ReplaySubject<Colon[]>(1);
-  data$: Observable<Colon[]> = this.subject$.asObservable();
+  colon: Participant[]=[];
+  subject$: ReplaySubject<Participant[]> = new ReplaySubject<Participant[]>(1);
+  data$: Observable<Participant[]> = this.subject$.asObservable();
   pageSize = 4;
-  selection = new SelectionModel<Colon>(true, []);
+  selection = new SelectionModel<Participant>(true, []);
   private sort: MatSort;
   showProgressBar: boolean=false;
   @ViewChild(MatSort) set matSort(ms: MatSort) {
@@ -84,7 +79,7 @@ export class ListColonComponent implements OnInit {
   constructor(
     private dialog: MatDialog,
     private authentificationService: AuthenticationService,
-    private colonService: ColonService,    
+    private participantService: ParticipantService,    
 
   ) { }
 
@@ -97,8 +92,8 @@ export class ListColonComponent implements OnInit {
     });
   }
   getColons() {
-      this.colonService.getColonsByDossierEtat().subscribe(response => {
-        this.colon = response.body as Colon[];
+      this.participantService.getParticipantsValide().subscribe(response => {
+        this.colon = response.body as Participant[];
       console.log(this.colon.length);
       }, err => {
         console.error('Error loading participant colonies:', err);
@@ -133,13 +128,13 @@ export class ListColonComponent implements OnInit {
         this.selection.clear() :
         this.dataSource.data.forEach(row => this.selection.select(row));
   }
-  checkboxLabel(row?: Colon): string {
+  checkboxLabel(row?: Participant): string {
     if (!row) {
       return `${this.isAllSelected() ? 'select' : 'deselect'} all`;
     }
     return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.id + 1}`;
   }
-  detailsColon(colon: Colon){
+  detailsColon(colon: Participant){
     this.dialog
     .open(DetailsColonComponent, {data: colon})
     .afterClosed()
@@ -148,12 +143,12 @@ export class ListColonComponent implements OnInit {
         const index = this.colon.findIndex(
           (existingcolon) => existingcolon.id === colon.id
           );
-          this.colon[index] = new Colon(colon);
+          this.colon[index] = new Participant(colon);
           this.subject$.next(this.colon);
       }
     });
   }
-  onCellClick(property: string, row: Colon) {
+  onCellClick(property: string, row: Participant) {
     const dialogRef = this.dialog.open(ReadFileColonComponent, {
       data: { colon: row, property: property },
       width: '80%',
@@ -166,7 +161,7 @@ export class ListColonComponent implements OnInit {
       const index = this.colon.findIndex(
         (existingParticipant) => existingParticipant.id === row.id
       );
-      this.colon[index] = new Colon(row);
+      this.colon[index] = new Participant(row);
       this.subject$.next(this.colon);
     }); 
   }

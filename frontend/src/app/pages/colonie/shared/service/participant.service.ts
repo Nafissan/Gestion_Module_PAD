@@ -54,6 +54,21 @@ export class ParticipantService {
       .get<any>(`${this.url}/etat`, { observe: 'response' })
       .pipe(catchError(this.errorHandler));
   }
+  getParticipantsValide(): Observable<HttpResponse<any>> {
+    return this.httpClient
+      .get<any>(`${this.url}/valider`, { observe: 'response' })
+      .pipe(catchError(this.errorHandler));
+  }
+  getParticipantsStatistics(annee: string): Observable<HttpResponse<any>> {
+    return this.httpClient
+      .get<any>(`${this.url}/statistics/${annee}`, { observe: 'response' })
+      .pipe(catchError(this.errorHandler));
+  } 
+  getParticipantsByAnnee(annee: string): Observable<HttpResponse<any>> {
+    return this.httpClient
+      .get<any>(`${this.url}/annee/${annee}`, { observe: 'response' })
+      .pipe(catchError(this.errorHandler));
+  }
   // Gérer les erreurs HTTP
   private errorHandler(error: any) {
     let errorMessage = '';

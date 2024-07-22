@@ -15,6 +15,7 @@ import { EtatDossierColonie } from "../../shared/util/util";
 import { Mail } from "src/app/shared/model/mail.model";
 import { MailService } from "src/app/shared/services/mail.service";
 import { DossierColonie } from "../../shared/model/dossier-colonie.model";
+import { AgentService } from "src/app/shared/services/agent.service";
 
 @Component({
   selector: "app-add-update-rapport-prospection",
@@ -40,7 +41,7 @@ defaults:RapportProspection;
     private rapportProspectionService: RapportProspectionService,
     private dialogConfirmationService: DialogConfirmationService,
     private notificationService: NotificationService,     private mailService: MailService,
-
+    private agentService: AgentService, // Injecter le service AgentService
     private dossierColonieService: DossierColonieService 
   ) {this.form = this.fb.group({
     codeDossierColonie: [null],
@@ -164,12 +165,15 @@ defaults:RapportProspection;
       dateCreation: this.defaults.dateCreation,
       etat: this.defaults.etat
     }; 
+    this.agentService.getAgentByMatricule(formData.matricule).subscribe(
+      (response) => {
+      const agent: Agent = response.body;
     let mail = new Mail();
     mail.objet = "Rapport prospection colonie";
     mail.contenu = "Le rapport de prospection a ete rejete. Voici les raisons : "+formData.commentaire;
     mail.lien = "";
     mail.emetteur = "";
-    mail.destinataires = ["aliounebada.ndoye@portdakar.sn"];
+    mail.destinataires = [agent.email];
     this.dialogConfirmationService.confirmationDialog().subscribe(action => {
       if (action === DialogUtil.confirmer) {
         this.rapportProspectionService.updateRapportProspection(formData).subscribe((response) => {
@@ -193,7 +197,12 @@ defaults:RapportProspection;
           this.dialogRef.close();});
       }
       });
-    
+    },
+    (error) => {
+      console.error('Erreur lors de la récupération de l\'agent:', error);
+      this.notificationService.warn('Échec de la récupération des informations de l\'agent');
+    }
+  );
    }
 
    updateRapportProspection() {

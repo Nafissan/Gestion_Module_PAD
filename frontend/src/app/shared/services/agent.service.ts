@@ -99,6 +99,14 @@ export class AgentService {
     return this.httpClient.delete<any>(this.url, httpOptions);
   }
 
+  getAgentByMatricule(matricule: string): Observable<HttpResponse<any>> {
+    return this.httpClient
+      .get<any>(`${this.url}/matricule/${matricule}`, {
+        observe: 'response',
+      })
+      .pipe(catchError(this.errorHandler));
+  }
+
   errorHandler(error) {
     let errorMessage = '';
     if (error.error instanceof ErrorEvent) {

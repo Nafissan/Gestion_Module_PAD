@@ -1,7 +1,7 @@
 import { Component, Inject, Input, OnInit } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { Colon } from '../../shared/model/colon.model';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Participant } from '../../shared/model/participant-colonie.model';
 
 @Component({
   selector: 'fury-read-file-colon',
@@ -9,12 +9,12 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
   styleUrls: ['./read-file-colon.component.scss']
 })
 export class ReadFileColonComponent implements OnInit {
-  colon: Colon;
- fileType: string; // New input to specify file typ
-  pdfDataUrl: SafeResourceUrl; // Safe URL for the PDF file
-  showFrame: boolean = true; // Boolean to control the frame display
+  colon: Participant;
+ fileType: string;
+  pdfDataUrl: SafeResourceUrl; 
+  showFrame: boolean = true;
 
-  constructor(private sanitizer: DomSanitizer , @Inject(MAT_DIALOG_DATA) public data: { colon: Colon, property: string }){this.colon= data.colon; this.fileType=data.property}
+  constructor(private sanitizer: DomSanitizer , @Inject(MAT_DIALOG_DATA) public data: { colon: Participant, property: string }){this.colon= data.colon; this.fileType=data.property}
 
 
   ngOnInit(): void {

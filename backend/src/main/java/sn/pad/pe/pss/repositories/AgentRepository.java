@@ -37,4 +37,5 @@ public interface AgentRepository extends JpaRepository<Agent, Long> {
 
 	@Query("Select distinct (a) from MembreFamille m join Agent a on a.id=m.agent.id")
 	public List<Agent> getAgentsAssures();
+	
 }

@@ -1,5 +1,6 @@
 package sn.pad.pe.colonie.services.impl;
 
+
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
@@ -12,13 +13,16 @@ import org.springframework.stereotype.Service;
 
 import sn.pad.pe.colonie.bo.DossierColonie;
 import sn.pad.pe.colonie.bo.FormulaireSatisfaction;
+import sn.pad.pe.colonie.bo.ParticipantColonie;
 import sn.pad.pe.colonie.bo.RapportProspection;
 import sn.pad.pe.colonie.dto.DossierColonieDTO;
 import sn.pad.pe.colonie.dto.FormulaireSatisfactionDTO;
+import sn.pad.pe.colonie.dto.ParticipantColonieDTO;
 import sn.pad.pe.colonie.dto.RapportProspectionDTO;
 import sn.pad.pe.colonie.repositories.DossierColonieRepository;
 import sn.pad.pe.colonie.services.DossierColonieService;
 import sn.pad.pe.colonie.services.FormulaireSatisfactionService;
+import sn.pad.pe.colonie.services.ParticipantColonieService;
 import sn.pad.pe.colonie.services.RapportProspectionService;
 import sn.pad.pe.configurations.exception.ResourceNotFoundException;
 
@@ -33,7 +37,8 @@ public class DossierColonieServiceImpl implements DossierColonieService {
     private FormulaireSatisfactionService formulaireSatisfactionService;
     @Autowired
     private ModelMapper modelMapper;
- 
+    @Autowired
+    private ParticipantColonieService participantColonieService;
   
     @Override
     public List<DossierColonieDTO> getDossierColonies() {
@@ -42,7 +47,7 @@ public class DossierColonieServiceImpl implements DossierColonieService {
     }
     @Override
     public List<DossierColonieDTO> getDossiersColoniesFerme() {
-        List<DossierColonie> dossiers = dossierColonieRepository.findByEtat("FERMER");
+        List<DossierColonie> dossiers = dossierColonieRepository.findByEtat("FERME");
         return mapAndConvertDossiers(dossiers);
     }
     @Override
@@ -74,20 +79,7 @@ public class DossierColonieServiceImpl implements DossierColonieService {
     }
 
     private DossierColonieDTO mapToDto(DossierColonie dossierColonie) {
-        DossierColonieDTO dto = new DossierColonieDTO();
-        
-        dto.setId(dossierColonie.getId());
-        dto.setCode(dossierColonie.getCode());
-        dto.setAnnee(dossierColonie.getAnnee());
-        dto.setDescription(dossierColonie.getDescription());
-        dto.setCommentaire(dossierColonie.getCommentaire());
-        dto.setEtat(dossierColonie.getEtat());
-        dto.setMatricule(dossierColonie.getMatricule());
-        dto.setPrenom(dossierColonie.getPrenom());
-        dto.setNom(dossierColonie.getNom());
-        dto.setFonction(dossierColonie.getFonction());
-        dto.setCreatedAt(dossierColonie.getCreatedAt());
-        dto.setUpdatedAt(dossierColonie.getUpdatedAt());
+        DossierColonieDTO dto = modelMapper.map(dossierColonie, DossierColonieDTO.class);
         if (dossierColonie.getNoteMinistere() != null) {
             dto.setNoteMinistereBytes(dossierColonie.getNoteMinistere());
         }
@@ -103,7 +95,6 @@ public class DossierColonieServiceImpl implements DossierColonieService {
         if (dossierColonie.getRapportMission() != null) {
             dto.setRapportMissionBytes(dossierColonie.getRapportMission());
         }
-        System.out.print(Arrays.toString(dto.getNoteMinistereBytes()));
         return dto;
     }
 
@@ -132,22 +123,24 @@ public class DossierColonieServiceImpl implements DossierColonieService {
             convertBase64FieldsToBytes(dossierColonieDTO);
             DossierColonie dossierColonie = modelMapper.map(dossierColonieDTO, DossierColonie.class);
 
-            List<RapportProspectionDTO> allRapports = rapportProspectionService.getAllRapportsProspection();
-            for (RapportProspectionDTO rapport : allRapports) {
-                if (rapport.getCodeDossierColonie().getId().equals(dossierColonie.getId())) {
-                    dossierColonie.setRapportProspection(modelMapper.map(rapport, RapportProspection.class));
-                    break;
-                }
+            RapportProspectionDTO allRapports = rapportProspectionService.getRapportProspectionByEtat();
+            if ( allRapports != null) {
+                dossierColonie.setRapportProspection(modelMapper.map(allRapports, RapportProspection.class));
             }
 
-            List<FormulaireSatisfactionDTO> allFormulaires = formulaireSatisfactionService.getAllFormulaires();
-            for (FormulaireSatisfactionDTO formulaire : allFormulaires) {
-                if (formulaire.getCodeDossier().getId().equals(dossierColonie.getId())) {
-                    dossierColonie.setFormulaireSatisfaction(modelMapper.map(formulaire, FormulaireSatisfaction.class));
-                    break;
-                }
+            FormulaireSatisfactionDTO allFormulaires = formulaireSatisfactionService.getFormulaireByDossierEtat();
+            if ( allFormulaires!= null) {
+                dossierColonie.setFormulaireSatisfaction(modelMapper.map(allFormulaires, FormulaireSatisfaction.class));
             }
-
+            List<ParticipantColonieDTO> listeColonieDTOs = participantColonieService.getParticipantsValider();
+            if (listeColonieDTOs != null) {
+                dossierColonie.setParticipants(listeColonieDTOs.stream()
+                .map(participantColonie -> modelMapper.map(participantColonie, ParticipantColonie.class))
+                .collect(Collectors.toList()));
+            }
+            if ("FERMER".equalsIgnoreCase(dossierColonie.getEtat())) {
+                participantColonieService.deleteAllParticipants();
+            }
             dossierColonieRepository.save(dossierColonie);
 
             return true;

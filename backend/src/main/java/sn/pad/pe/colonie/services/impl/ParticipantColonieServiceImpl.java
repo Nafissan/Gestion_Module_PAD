@@ -1,7 +1,11 @@
 package sn.pad.pe.colonie.services.impl;
 
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -9,15 +13,13 @@ import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import sn.pad.pe.colonie.bo.DossierColonie;
 import sn.pad.pe.colonie.bo.ParticipantColonie;
-import sn.pad.pe.colonie.dto.ColonDTO;
+import sn.pad.pe.colonie.dto.ColonStatisticsDTO;
 import sn.pad.pe.colonie.dto.DossierColonieDTO;
 import sn.pad.pe.colonie.dto.ParticipantColonieDTO;
 import sn.pad.pe.colonie.repositories.ParticipantColonieRepository;
-import sn.pad.pe.colonie.services.ColonService;
 import sn.pad.pe.colonie.services.DossierColonieService;
 import sn.pad.pe.colonie.services.ParticipantColonieService;
 @Service
@@ -28,8 +30,6 @@ public class ParticipantColonieServiceImpl implements ParticipantColonieService 
 
     @Autowired
     private ModelMapper modelMapper;
-     @Autowired
-    private ColonService colonService; 
     @Autowired
     private DossierColonieService dossierColonieService;
     @Override
@@ -95,25 +95,10 @@ public List<ParticipantColonieDTO> getParticipantsByDossierId(DossierColonie dos
                     .collect(Collectors.toList());
 }
         private ParticipantColonieDTO mapToDto(ParticipantColonie participant){
-            ParticipantColonieDTO dto =new ParticipantColonieDTO();
-            dto.setCodeDossier(participant.getCodeDossier());
-            dto.setDateNaissance(participant.getDateNaissance());
+            ParticipantColonieDTO dto = modelMapper.map(participant, ParticipantColonieDTO.class);
             dto.setDocumentBytes(participant.getDocument());
             dto.setFicheSocialBytes(participant.getFicheSocial());
             dto.setPhotoBytes(participant.getPhoto());
-            dto.setGroupeSanguin(participant.getGroupeSanguin());
-            dto.setId(participant.getId());
-            dto.setLieuNaissance(participant.getLieuNaissance());
-            dto.setMatriculeAgent(participant.getMatriculeAgent());
-            dto.setMatriculeParent(participant.getMatriculeParent());
-            dto.setNomAgent(participant.getNomAgent());
-            dto.setNomEnfant(participant.getNomEnfant());
-            dto.setNomParent(participant.getNomParent());
-            dto.setPrenomAgent(participant.getPrenomAgent());
-            dto.setPrenomEnfant(participant.getPrenomEnfant());
-            dto.setPrenomParent(participant.getPrenomParent());
-            dto.setSexe(participant.getSexe());
-            dto.setStatus(participant.getStatus());
             return dto;
         }
     @Override
@@ -126,18 +111,73 @@ public List<ParticipantColonieDTO> getParticipantsByDossierId(DossierColonie dos
         return false;
     }
     @Override
-    @Transactional
     public void deleteAllParticipants() {
         try {
-            participantColonieRepository.deleteAll();
-            System.out.println("Tous les participants ont été supprimés avec succès.");
+            List<ParticipantColonie> participants = participantColonieRepository.findByStatusIn(List.of("A VALIDER", "REJETER"));
+            
+            participantColonieRepository.deleteAll(participants);
+            
+            System.out.println("Tous les participants avec le statut 'A VALIDER' ou 'REJETER' ont été supprimés avec succès.");
         } catch (Exception e) {
-            System.err.println("Erreur lors de la suppression de tous les participants : " + e.getMessage());
-            throw e; // Assurez-vous que les exceptions sont propagées si nécessaire
+            System.err.println("Erreur lors de la suppression des participants : " + e.getMessage());
         }
     }
     
+    @Override
+public List<ParticipantColonieDTO> getParticipantsValider() {
+    DossierColonieDTO dossier = dossierColonieService.getDossierColonieByEtat();
+    if(dossier != null ){
+        List<ParticipantColonie> participants = participantColonieRepository.findByCodeDossierAndStatus(modelMapper.map(dossier, DossierColonie.class),"VALIDER");
+        return participants.stream()
+                .map(participant -> {
+                    ParticipantColonieDTO dto = mapToDto(participant);
+                    convertBytesFieldsToBase64(dto);
+                    return dto;
+                })
+                .collect(Collectors.toList());
+    }
+    return new ArrayList<>();
+}
+@Override
+public List<ParticipantColonieDTO> getParticipantsByAnnee(String annee) {
+    DossierColonieDTO dossier = dossierColonieService.getDossierColonieByAnnee(annee);
+    if (dossier != null) {
+        List<ParticipantColonie> participants = participantColonieRepository.findByCodeDossierAndStatus(modelMapper.map(dossier, DossierColonie.class),"VALIDER");
+        return participants.stream()
+                .map(participant -> {
+                    ParticipantColonieDTO dto = mapToDto(participant);
+                    convertBytesFieldsToBase64(dto);
+                    return dto;
+                })
+                .collect(Collectors.toList());
+    }
+    return new ArrayList<>();
+}
+@Override
+public ColonStatisticsDTO getParticipantStatisticsByAnnee(String annee) {
+    List<ParticipantColonieDTO> participants;
+    if (annee != null && !annee.isEmpty()) {
+       participants =getParticipantsByAnnee(annee);
+    } else {
+        participants = getAllParticipants();
+    }
 
+    ColonStatisticsDTO statistics = new ColonStatisticsDTO();
+    statistics.setTotalColons((long) participants.size());
+    statistics.setAge7to10(participants.stream().filter(participant -> calculateAge(participant.getDateNaissance()) >= 7 && calculateAge(participant.getDateNaissance()) < 10).count());
+    statistics.setAge10to15(participants.stream().filter(participant -> calculateAge(participant.getDateNaissance()) >= 10 && calculateAge(participant.getDateNaissance()) < 15).count());
+    statistics.setAge15to18(participants.stream().filter(participant -> calculateAge(participant.getDateNaissance()) >= 15 && calculateAge(participant.getDateNaissance()) < 18).count());
+
+    statistics.setMaleCount(participants.stream().filter(participant -> "masculin".equalsIgnoreCase(participant.getSexe().toString())).count());
+    statistics.setFemaleCount(participants.stream().filter(participant -> "feminin".equalsIgnoreCase(participant.getSexe().toString())).count());
+
+    return statistics;
+}
+
+private int calculateAge(Date birthDate) {
+    LocalDate localBirthDate = birthDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    return Period.between(localBirthDate, LocalDate.now()).getYears();
+}
   @Override
     public boolean updateParticipant(ParticipantColonieDTO updatedParticipant) {
         Optional<ParticipantColonie> parOptional = participantColonieRepository.findById(updatedParticipant.getId());
@@ -146,40 +186,12 @@ public List<ParticipantColonieDTO> getParticipantsByDossierId(DossierColonie dos
             ParticipantColonie participant = modelMapper.map(updatedParticipant, ParticipantColonie.class);
             participantColonieRepository.save(participant);
 
-            if ("VALIDER".equals(updatedParticipant.getStatus())) {
-                ColonDTO colonDTO = mapToColonDto(updatedParticipant);
-                colonService.saveColon(colonDTO);
-            }
-
             return true;
         } else {
             return false;
         }
     }
-    private ColonDTO mapToColonDto(ParticipantColonieDTO participantDTO) {
-        ColonDTO colonDTO = new ColonDTO();
-        colonDTO.setCodeDossier(participantDTO.getCodeDossier());
-        colonDTO.setNomEnfant(participantDTO.getNomEnfant());
-        colonDTO.setPrenomEnfant(participantDTO.getPrenomEnfant());
-        colonDTO.setDateNaissance(participantDTO.getDateNaissance());
-        colonDTO.setLieuNaissance(participantDTO.getLieuNaissance());
-        colonDTO.setGroupeSanguin(participantDTO.getGroupeSanguin());
-        colonDTO.setSexe(participantDTO.getSexe());
-        colonDTO.setMatriculeParent(participantDTO.getMatriculeParent());
-        colonDTO.setNomParent(participantDTO.getNomParent());
-        colonDTO.setPrenomParent(participantDTO.getPrenomParent());
-        colonDTO.setStatus(participantDTO.getStatus());
-        colonDTO.setMatriculeAgent(participantDTO.getMatriculeAgent());
-        colonDTO.setNomAgent(participantDTO.getNomAgent());
-        colonDTO.setPrenomAgent(participantDTO.getPrenomAgent());
-        colonDTO.setFicheSocial(participantDTO.getFicheSocial());
-        colonDTO.setDocument(participantDTO.getDocument());
-        colonDTO.setPhoto(participantDTO.getPhoto());
-        return colonDTO;
-    }
-
-
-  private void convertBase64FieldsToBytes(ParticipantColonieDTO participantDTO) {
+    private void convertBase64FieldsToBytes(ParticipantColonieDTO participantDTO) {
         if (participantDTO.getFicheSocial() != null) {
             if (isValidBase64(participantDTO.getFicheSocial())) {
             participantDTO.setFicheSocialBytes(Base64.getDecoder().decode(participantDTO.getFicheSocial()));

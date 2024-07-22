@@ -25,6 +25,7 @@ import { MailService } from "src/app/shared/services/mail.service";
 import { EtatDossierColonie } from "../../shared/util/util";
 import { DetailsRapportProspectionComponent } from "../details-rapport-prospection/details-rapport-prospection.component";
 import { property } from "lodash-es";
+import { AgentService } from "src/app/shared/services/agent.service";
 
 @Component({
   selector: "fury-liste-rapport-prospection",
@@ -40,7 +41,6 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
   username: string;
   compte: Compte;  
   agent: Agent;
-  canAdd: boolean=false;
   private paginator: MatPaginator;
   private sort: MatSort;
   dossierColonie: DossierColonie;
@@ -73,12 +73,14 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
     private notificationService: NotificationService,
     private dossierColonieService: DossierColonieService ,
     private mailService: MailService,
+    private agentService: AgentService, // Injecter le service AgentService
 
 
   ) { }
 
   ngOnInit() {
     this.getRapportProspections();
+    this.getDossierColonie();
     this.username = this.authService.getUsername();
     this.compteService.getByUsername(this.username).subscribe((response) => {
       this.compte = response.body;
@@ -112,10 +114,7 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
   getDossierColonie(){
     this.dossierColonieService.getDossier().subscribe(
       (response) => {
-        if (response.body !== null) {
           this.dossierColonie = response.body as DossierColonie;
-          this.canAdd= ! this.dossierColonie;
-        }
       },
       (err) => {
         console.error('Error loading dossier colonie:', err);
@@ -171,12 +170,15 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
     rapport.nomAgent = this.agent.nom;
     rapport.prenomAgent = this.agent.prenom;
     rapport.dateValidation = new Date();
+    this.agentService.getAgentByMatricule(rapport.matricule).subscribe(
+      (response) => {
+      const agent: Agent = response.body;
     let mail = new Mail();
     mail.objet = "Rapport_Prospection";
     mail.contenu ="Le rapport de Prospection du dossier colonie est validé";
     mail.lien = "";
     mail.emetteur = "";
-    mail.destinataires = ["aliounebada.ndoye@portdakar.sn"];
+    mail.destinataires = [agent.email];
     this.rapportService.updateRapportProspection(rapport).subscribe((response) => {
       this.notificationService.success('Rapport de prospection validé avec succès');
       if (response.body as RapportProspection) {
@@ -195,6 +197,11 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
           this.notificationService.success(NotificationUtil.envoyeDossier);
         });
     });
+  },
+  (error) => {
+    console.error('Erreur lors de la récupération de l\'agent:', error);
+  }
+);
 }
 
   rejeterRapportProspection(rapport: RapportProspection){

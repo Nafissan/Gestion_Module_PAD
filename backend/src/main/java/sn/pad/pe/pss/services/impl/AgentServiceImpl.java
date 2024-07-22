@@ -131,7 +131,14 @@ public class AgentServiceImpl implements AgentService {
 			throw new ResourceNotFoundException("Unité Organisationnelle not found");
 		}
 	}
-
+	@Override
+    public AgentDTO getAgentByMatricule(String matricule) {
+        Agent agent = agentRepository.findAgentByMatricule(matricule);
+        if (agent == null) {
+            throw new ResourceNotFoundException("Agent not found with matricule: " + matricule);
+        }
+        return modelMapper.map(agent,AgentDTO.class);
+    }
 	@Override
 	public List<AgentDTO> getAgentsByUniteOrganisationnelle(long idUniteOrganisationnelle) {
 		Optional<UniteOrganisationnelle> unite = uniteRepository.findById(idUniteOrganisationnelle);

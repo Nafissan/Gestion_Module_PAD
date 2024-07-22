@@ -57,20 +57,8 @@ public class RapportProspectionServiceImpl implements RapportProspectionService 
         }    
     }
         public RapportProspectionDTO mapToDto(RapportProspection rapport) {
-            RapportProspectionDTO dto = new RapportProspectionDTO();
-            dto.setId(rapport.getId());
+            RapportProspectionDTO dto = modelMapper.map(rapport,RapportProspectionDTO.class);
             dto.setRapportProspectionByte(rapport.getRapportProspection());
-            dto.setMatricule(rapport.getMatricule());
-            dto.setNom(rapport.getNom());
-            dto.setPrenom(rapport.getPrenom());
-            dto.setDateCreation(rapport.getDateCreation());
-            dto.setDateValidation(rapport.getDateValidation());
-            dto.setEtat(rapport.getEtat());
-            dto.setCodeDossierColonie(rapport.getCodeDossierColonie());
-            dto.setMatriculeAgent(rapport.getMatriculeAgent());
-            dto.setNomAgent(rapport.getNomAgent());
-            dto.setPrenomAgent(rapport.getPrenomAgent());
-            dto.setCommentaire(rapport.getCommentaire());
             return dto;
         }
     @Override

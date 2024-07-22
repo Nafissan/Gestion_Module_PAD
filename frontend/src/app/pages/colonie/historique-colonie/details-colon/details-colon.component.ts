@@ -1,12 +1,15 @@
 import { Component, Inject, Input, OnInit, ViewChild } from '@angular/core';
 import { MatAccordion } from '@angular/material/expansion';
-import { Colon } from '../../shared/model/colon.model';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DossierColonie } from '../../shared/model/dossier-colonie.model';
-import { ColonService } from '../../shared/service/colon.service';
 import { ListColumn } from 'src/@fury/shared/list/list-column.model';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
+import { Participant } from '../../shared/model/participant-colonie.model';
+import { ParticipantService } from '../../shared/service/participant.service';
+import { MatTableDataSource } from '@angular/material/table';
+import { ReplaySubject, Observable } from 'rxjs';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'fury-details-colon',
@@ -15,12 +18,18 @@ import { MatSort } from '@angular/material/sort';
 })
 export class DetailsColonComponent implements OnInit {
   setDataSourceAttributes() {
-    throw new Error('Method not implemented.');
-  }
-  colons: Colon[] = [];        
+    if (this.dataSource) {
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    }  }
+  subject$: ReplaySubject<Participant[]> = new ReplaySubject<Participant[]>(1);
+  data$: Observable<Participant[]> = this.subject$.asObservable();
+  colons: Participant[] = [];        
   showProgressBar = false;
   private sort: MatSort;
   private paginator: MatPaginator;
+  dataSource: MatTableDataSource<Participant> | null;
+
   @ViewChild(MatSort) set matSort(ms: MatSort) {
     this.sort = ms;
     this.setDataSourceAttributes();
@@ -32,11 +41,16 @@ export class DetailsColonComponent implements OnInit {
   @ViewChild(MatAccordion) accordion: MatAccordion;
   showIcon = true;
   constructor(@Inject(MAT_DIALOG_DATA) public defaults: DossierColonie ,
-   private colonService: ColonService
+   private participantService: ParticipantService
 ) { }
 
 ngOnInit(): void {
   this.loadColons();
+  this.dataSource = new MatTableDataSource();
+  this.data$.pipe(filter((data) => !!data)).subscribe((colon) => {
+    this.colons = colon;
+    this.dataSource.data = colon;
+  });
 }
 @Input()
 columns: ListColumn[] = [
@@ -67,13 +81,15 @@ get visibleColumns() {
 }
 loadColons(): void {
   const annee = this.defaults.annee;
-  this.colonService.getColonsByAnnee(annee).subscribe(
+  this.participantService.getParticipantsByAnnee(annee).subscribe(
     (response) => {
-      this.colons = response.body;
+      this.colons = response.body as Participant[];
+      console.log(this.colons);
     },
     error => {
       console.error('Erreur lors de la récupération des colons :', error);
     },()=>{
+      this.subject$.next(this.colons);
       this.showProgressBar = true;
     }
   );

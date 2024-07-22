@@ -12,13 +12,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { DialogConfirmationService } from 'src/app/shared/services/dialog-confirmation.service';
 import { NotificationService } from 'src/app/shared/services/notification.service';
 import { AuthenticationService } from 'src/app/shared/services/authentification.service';
-import { ColonService } from '../../shared/service/colon.service';
 import { AddOrUpdateParticipantComponent } from '../add-or-update-participant/add-or-update-participant.component';
 import { SelectionModel } from '@angular/cdk/collections';
 import { DialogUtil, NotificationUtil } from 'src/app/shared/util/util';
 import { filter, map } from 'rxjs/operators';
 import { Route, Router } from '@angular/router';
-import { Colon } from '../../shared/model/colon.model';
 import { DossierColonieService } from '../../shared/service/dossier-colonie.service';
 import { DetailsParticipantComponent } from '../details-participant/details-participant.component';
 import { EtatDossierColonie } from '../../shared/util/util';
@@ -96,7 +94,6 @@ export class ListeParticipantComponent implements OnInit {
     private notificationService: NotificationService,
     private dialogConfirmationService: DialogConfirmationService,
     private authentificationService: AuthenticationService,
-    private   colonService: ColonService,
     private dossierColonieService: DossierColonieService // Inject the service
 
   ) {}

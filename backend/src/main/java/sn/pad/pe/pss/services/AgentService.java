@@ -49,4 +49,6 @@ public interface AgentService {
 	public AgentDTO getAgentResponsableDCH();
 
 	public List<AgentDTO> getAgentsAssures();
+	public AgentDTO getAgentByMatricule(String matricule);
+
 }

@@ -1,8 +1,8 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { MatAccordion } from '@angular/material/expansion';
-import { Colon } from '../../shared/model/colon.model';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { SafeResourceUrl, DomSanitizer } from '@angular/platform-browser';
+import { Participant } from '../../shared/model/participant-colonie.model';
 
 @Component({
   selector: 'fury-details-colon',
@@ -10,12 +10,12 @@ import { SafeResourceUrl, DomSanitizer } from '@angular/platform-browser';
   styleUrls: ['./details-colon.component.scss']
 })
 export class DetailsColonComponent implements OnInit {
-  colon:Colon;
+  colon:Participant;
   @ViewChild(MatAccordion) accordion: MatAccordion;
   showIcon = true;  photoUrl: string | null = null;
   fileDataUrl: SafeResourceUrl | null = null;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public defaults: Colon,    private sanitizer: DomSanitizer,
+  constructor(@Inject(MAT_DIALOG_DATA) public defaults: Participant,    private sanitizer: DomSanitizer,
 ) { }
 
   ngOnInit(): void {
