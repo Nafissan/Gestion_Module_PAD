@@ -1,0 +1,53 @@
+.modal-body {
+    font-family: monospace;
+    color: darkblue;
+}
+
+.modal-title {
+    font-family: monospace;
+    color: white;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.modal-header {
+    background-color: darkblue;
+}
+
+.btn1 {
+    margin-right: 5px;
+}
+
+.btn2 {
+    margin-right: 60px;
+}
+
+.example-month-picker .mat-calendar-period-button {
+    pointer-events: none;
+}
+
+.example-month-picker .mat-calendar-arrow {
+    display: none;
+}
+
+.monIcon {
+    float: right;
+}
+
+.monIcon:hover {
+    cursor: pointer;
+    background-color: #808080;
+}
+/* CSS pour styliser le champ de téléchargement de fichier */
+
+  
+  /* Styles du bouton */
+  .file-upload input {
+    color: #4b2fc7; /* couleur du texte */
+    border: none; /* pas de bordure */
+    padding: 10px 20px; /* espace intérieur */
+    font-size: 16px; /* taille de la police */
+    cursor: pointer; /* curseur de la souris */
+    border-radius: 4px; /* coins arrondis */
+  }
+  

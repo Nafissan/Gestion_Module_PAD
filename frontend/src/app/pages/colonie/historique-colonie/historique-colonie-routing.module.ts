@@ -3,6 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { ListeHistoriqueColonieComponent } from './liste-historique-colonie/liste-historique-colonie.component';
 import { AuthGuard } from 'src/app/shared/services/authguard.service';
 import { ReadHistoriqueColonieComponent } from './read-historique-colonie/read-historique-colonie.component';
+import { DetailsColonComponent } from './details-colon/details-colon.component';
 
 
 const routes: Routes = [
@@ -13,7 +14,9 @@ const routes: Routes = [
     path: 'liste-historique-colonie', component: ListeHistoriqueColonieComponent, canActivate: [AuthGuard],
   },
   { path: 'read-historique-colonie', component: ReadHistoriqueColonieComponent , canActivate: [AuthGuard] }, 
-
+  {
+    path: 'details-historique-colonie', component: DetailsColonComponent, canActivate: [AuthGuard],
+  },
 
 
 ];

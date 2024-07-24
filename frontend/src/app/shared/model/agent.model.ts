@@ -26,7 +26,7 @@ export class Agent {
 	lieuNaissance: string;
 	profil: string;
 	fonction: Fonction;
-
+  	religion?:string
 	constructor(agent?) {
 		if (agent != null) {
 			this.id = agent.id;
@@ -45,8 +45,9 @@ export class Agent {
 			this.adresse = agent.adresse;
 			this.lieuNaissance = agent.lieuNaissance;
 			this.uniteOrganisationnelle = agent.uniteOrganisationelle;
-			this.fonction = agent.fonction
-			this.profil = agent.profil
+			this.fonction = agent.fonction;
+			this.profil = agent.profil;
+			this.religion=agent.religion;
 		}
 	}
 }

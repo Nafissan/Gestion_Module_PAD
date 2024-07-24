@@ -81,6 +81,8 @@ export class ListeHistoriqueColonieComponent implements OnInit {
     { name: "Rapport de mission", property: "rapportMission", visible: false, isModelProperty: true },
 
     { name: "Date creation", property: "createAt", visible: false, isModelProperty: true },
+    { name: "Commentaire", property: "commentaire", visible: false, isModelProperty: true },
+    { name: "Type colonie", property: "type", visible: false, isModelProperty: true },
 
     { name: "Actions", property: "actions", visible: true },
   ] as ListColumn[];

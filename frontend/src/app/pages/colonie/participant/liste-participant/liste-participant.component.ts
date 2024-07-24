@@ -291,7 +291,7 @@ export class ListeParticipantComponent implements OnInit {
         this.subject$.next(this.participants);
       this.refreshListe();
     }    }, () => {
-      this.notificationService.warn('Échec de rejection du participant');
+      this.notificationService.warn('Échec de reinitialisation du participant');
     });
   }
 

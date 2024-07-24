@@ -1,0 +1,110 @@
+<fury-page-layout mode="card">
+    <fury-page-layout-header>
+      <fury-breadcrumbs [@fadeInRight] [crumbs]="['gestion-pelerinage']" current="Historique Pelerinage"></fury-breadcrumbs>
+    </fury-page-layout-header>
+  
+    <!-- Date Picker -->
+    <div class="example-container">
+      <mat-form-field appearance="fill">
+        <input matInput [matDatepicker]="picker" placeholder="Choisir une date" [formControl]="dateV">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker (yearSelected)="yearSelected($event)" startView="multi-year"></mat-datepicker>
+      </mat-form-field>
+    </div>
+  
+  
+    <!-- Dossier Colonie Table -->
+    <fury-page-layout-content [@fadeInUp]>
+      <fury-list *ngIf="dossierPelerinages.length !== 0 && showProgressBar" name="Dossier Pelerinage" [columns]="dossiercolumns" (filterChange)="onFilterChange($event)">
+        <table [dataSource]="dataSource" mat-table  matSort>
+          <!-- Checkbox Column -->
+          <ng-container matColumnDef="checkbox">
+            <th mat-header-cell *matHeaderCellDef class="actions-cell">
+              <mat-checkbox color="primary" (click)="$event.stopPropagation()"></mat-checkbox>
+            </th>
+            <td mat-cell *matCellDef="let row" class="actions-cell">
+              <mat-checkbox color="primary" (click)="$event.stopPropagation()"></mat-checkbox>
+            </td>
+          </ng-container>
+  
+          <!-- Dynamic Columns for Dossier Pelerinage -->
+          <ng-container *ngFor="let column of dossiercolumns">
+            <ng-container *ngIf="dataSource && column.isModelProperty || column.property === 'ajoutePar'" [matColumnDef]="column.property">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ column.name }}</th>
+              <td mat-cell *matCellDef="let row">
+                <!-- Content based on column properties -->
+                <p *ngIf="column.property === 'etat' && row[column.property] === saisi">
+                  <span class="badge badge-warning">{{ row[column.property]}}</span>
+              </p>
+              <p *ngIf="column.property === 'etat' && row[column.property] === ouvert">
+                  <span class="badge badge-success">{{ row[column.property]}}</span>
+              </p>
+              <p *ngIf="column.property === 'etat' && row[column.property] === fermer">
+                  <span class="badge badge-danger">{{ row[column.property]}}</span>
+              </p>
+                <p *ngIf="column.property === 'ajoutePar'">
+                  {{ (row.matricule + ' | ' + row.prenom + ' ' + row.nom + ' - ' + row.fonction) | titlecase }}
+                </p>
+                <p *ngIf="column.property === 'noteInformation' && row.noteInformation" >
+                  <span>Disponible</span>
+                </p>
+                <p *ngIf="column.property === 'rapportPelerinage' && row.rapportPelerinage" >
+                  <span>Disponible</span>
+                </p>
+                <p *ngIf="column.property == 'createdAt'" > {{ row.createdAt | date: 'dd-MMM-yyyy' }}</p>
+                <p *ngIf="column.property !== 'etat' && column.property !== 'rapportPelerinage' && column.property !== 'createdAt'  && column.property !== 'noteInformation' ">
+                  <span>{{ row[column.property]}}</span>
+              </p>
+              </td>
+            </ng-container>
+          </ng-container>
+  
+          <!-- Actions Column for Dossier Pelerinage -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef class="actions-cell"></th>
+            <td mat-cell *matCellDef="let row" class="actions-cell">
+              <button mat-icon-button [matMenuTriggerFor]="actionsMenu" (click)="$event.stopPropagation()">
+                <mat-icon>more_horiz</mat-icon>
+              </button>
+              <mat-menu #actionsMenu="matMenu" >
+                <button mat-menu-item  [disabled]="" (click)="listPelerins(row)">
+                  <mat-icon>visibility</mat-icon>
+                  <span>AFFICHER LISTE PELERINS</span>
+                </button>
+              <button mat-menu-item [matMenuTriggerFor]="fileMenu">
+                <mat-icon>visibility</mat-icon>
+                <span>AFFICHER FICHIER</span>
+              </button>
+              <mat-menu #fileMenu="matMenu">
+                <button mat-menu-item (click)="onCellClick('noteInformation', row)"[disabled]="!hasAnyRole(['MENU_DOTATION'])  || !row.noteInformation">
+                  <span>Note Information</span>
+                </button>
+                <button mat-menu-item (click)="onCellClick('rapportPelerinage', row)"[disabled]="!hasAnyRole(['MENU_DOTATION'])  || !row.rapportPelerinage">
+                  <span>Rapport Pelerinage</span>
+                </button>
+              </mat-menu>
+            </mat-menu>
+            </td>
+          </ng-container>
+  
+          <!-- Table Header and Rows -->
+          <tr mat-header-row *matHeaderRowDef="visibleDossierColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: visibleDossierColumns" class="clickable" (click)="detailsDossier(row)"></tr>
+        </table>
+        <mat-paginator [pageSize]="pageSize" class="paginator"></mat-paginator>
+      </fury-list>
+      <div *ngIf="dossierPelerinages.length === 0 && showProgressBar" class="card text-center">
+        <div class="card-header">
+          <span class="badge badge-info">INFORMATION</span>
+        </div>
+        <div class="card-body">
+          <h5 class="card-title">PAS DE DOSSIERS PELERINAGE</h5>
+        </div>
+        <div class="card-footer text-muted">
+          {{ date | date: 'dd/MMM/yyyy HH:mm:ss' }}
+        </div>
+      </div>
+      <mat-progress-bar *ngIf="!showProgressBar" mode="query" color="primary"></mat-progress-bar>
+    </fury-page-layout-content>
+  </fury-page-layout>
+  

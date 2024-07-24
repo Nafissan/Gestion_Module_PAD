@@ -14,6 +14,7 @@ import { DetailsColonComponent } from '../details-colon/details-colon.component'
 import { ReadFileColonComponent } from '../read-file-colon/read-file-colon.component';
 import { Participant } from '../../shared/model/participant-colonie.model';
 import { ParticipantService } from '../../shared/service/participant.service';
+import { NotificationService } from 'src/app/shared/services/notification.service';
 
 @Component({
   selector: 'fury-list-colon',
@@ -80,6 +81,7 @@ export class ListColonComponent implements OnInit {
     private dialog: MatDialog,
     private authentificationService: AuthenticationService,
     private participantService: ParticipantService,    
+    private notificationService: NotificationService,
 
   ) { }
 
@@ -117,9 +119,20 @@ export class ListColonComponent implements OnInit {
     this.dataSource.filter = value;
     this.dataSource.filterPredicate = (data: any, value) => { const dataStr =JSON.stringify(data).toLowerCase(); return dataStr.indexOf(value) != -1; }
   }
-   sendMessages(){
-    
-   }
+  sendMessages() {
+    this.participantService.sendMessages().subscribe(
+      (response) => {
+        this.notificationService.success('Messages envoyés avec succès');
+      },
+      (error) => {
+        if (error.status === 500) {
+          this.notificationService.warn('Échec de l\'envoi des messages');
+        } else {
+          this.notificationService.warn('Une erreur s\'est produite: ' + error.message);
+        }
+      }
+    );
+  }
   isAllSelected() {
     const numSelected = this.selection.selected.length;
     const numRows = this.dataSource.data.length;

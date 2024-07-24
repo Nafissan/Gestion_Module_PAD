@@ -1,0 +1,77 @@
+<div mat-dialog-title class="h1-responsive text-align titre_modal_add">DETAILS SUBSTITUT</div>
+<mat-dialog-content>
+    <mat-accordion class="example-headers-align" multi>
+        <div class="example-action-buttons">
+            <button *ngIf="showIcon" mat-raised-button color="primary" (click)="accordion.openAll(); showIcon = !showIcon">
+                <mat-icon>expand_more</mat-icon> Afficher
+            </button>
+            <button *ngIf="!showIcon" mat-raised-button color="warn" (click)="accordion.closeAll(); showIcon = !showIcon">
+                <mat-icon>expand_less</mat-icon> Fermer
+            </button>
+        </div>
+
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon>folder_open</mat-icon>
+                    <span> Informations sur le substitut</span>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-panel-description>
+                <span>Nom : </span>{{ substitut.agent.nom }}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Prénom : </span>{{ substitut.agent.prenom }}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Date de Naissance : </span>{{ substitut.agent.dateNaissance | date }}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Date Engagement: </span>{{ substitut.agent.dateEngagement | date}}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Religion : </span>{{ substitut.agent.religion }}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Sexe : </span>{{ substitut.agent.sexe }}
+            </mat-panel-description>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon>supervisor_account</mat-icon>
+                    <span> Informations sur l'Agent</span>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-panel-description>
+                <span>Matricule : </span>{{ substitut.matriculeAgent }}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Nom : </span>{{ substitut.nomAgent }}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Prénom : </span>{{ substitut.prenomAgent }}
+            </mat-panel-description>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon>folder_open</mat-icon>
+                    <span> Dossier Colonie</span>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-panel-description>
+                <span>Code : </span>{{ substitut.dossierPelerinage?.code }}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Année : </span>{{ substitut.dossierPelerinage?.annee }}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Commentaire : </span>{{ substitut.dossierPelerinage?.description }}
+            </mat-panel-description>
+        </mat-expansion-panel>
+
+    </mat-accordion>
+</mat-dialog-content>

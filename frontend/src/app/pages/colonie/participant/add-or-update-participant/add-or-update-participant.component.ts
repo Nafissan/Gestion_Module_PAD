@@ -15,7 +15,7 @@ import { Observable } from "rxjs";
 import { map, startWith } from "rxjs/operators";
 
 @Component({
-  selector: "app-add-update-participant-colonie",
+  selector: "fury-add-update-participant-colonie",
   templateUrl: "./add-or-update-participant.component.html",
   styleUrls: ["./add-or-update-participant.component.scss"],
 })

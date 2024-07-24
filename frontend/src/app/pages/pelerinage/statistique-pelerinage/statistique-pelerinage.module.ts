@@ -1,0 +1,73 @@
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
+import { StatistiquePelerinageRoutingModule } from './statistique-pelerinage-routing.module';
+import { DashbordStatistiquePelerinageComponent } from './dashbord-statistique-pelerinage/dashbord-statistique-pelerinage.component';
+import { DetailSatisfactionStatistiquePelerinageComponent } from './detail-satisfaction-statistique-pelerinage/detail-satisfaction-statistique-pelerinage.component';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatTabsModule } from '@angular/material/tabs';
+import { ChartModule } from 'angular2-chartjs';
+import { MatTableExporterModule } from 'mat-table-exporter';
+import { ChartsModule } from 'ng2-charts';
+import { FurySharedModule } from 'src/@fury/fury-shared.module';
+import { BreadcrumbsModule } from 'src/@fury/shared/breadcrumbs/breadcrumbs.module';
+import { FuryCardModule } from 'src/@fury/shared/card/card.module';
+import { ListModule } from 'src/@fury/shared/list/list.module';
+import { MaterialModule } from 'src/@fury/shared/material-components.module';
+import { AdvancedPieChartWidgetModule } from '../../dashboard/widgets/advanced-pie-chart-widget/advanced-pie-chart-widget.module';
+import { AudienceOverviewWidgetModule } from '../../dashboard/widgets/audience-overview-widget/audience-overview-widget.module';
+import { BarChartWidgetModule } from '../../dashboard/widgets/bar-chart-widget/bar-chart-widget.module';
+import { DonutChartWidgetModule } from '../../dashboard/widgets/donut-chart-widget/donut-chart-widget.module';
+import { LineChartWidgetModule } from '../../dashboard/widgets/line-chart-widget/line-chart-widget.module';
+import { MapsWidgetModule } from '../../dashboard/widgets/maps-widget/maps-widget.module';
+import { MarketWidgetModule } from '../../dashboard/widgets/market-widget/market-widget.module';
+import { QuickInfoWidgetModule } from '../../dashboard/widgets/quick-info-widget/quick-info-widget.module';
+import { RealtimeUsersWidgetModule } from '../../dashboard/widgets/realtime-users-widget/realtime-users-widget.module';
+import { RecentSalesWidgetModule } from '../../dashboard/widgets/recent-sales-widget/recent-sales-widget.module';
+import { SalesSummaryWidgetModule } from '../../dashboard/widgets/sales-summary-widget/sales-summary-widget.module';
+import { PageLayoutDemoContentModule } from '../../page-layouts/components/page-layout-content/page-layout-demo-content.module';
+
+
+@NgModule({
+  declarations: [DashbordStatistiquePelerinageComponent, DetailSatisfactionStatistiquePelerinageComponent],
+  imports: [
+    CommonModule, ReactiveFormsModule,
+    MatDatepickerModule,
+
+    MaterialModule,
+    FurySharedModule,
+    ChartModule,
+    FuryCardModule,
+MatNativeDateModule,    
+BarChartWidgetModule,
+    LineChartWidgetModule,
+    DonutChartWidgetModule,
+    SalesSummaryWidgetModule,
+    AudienceOverviewWidgetModule,
+    RealtimeUsersWidgetModule,
+    QuickInfoWidgetModule,
+    RecentSalesWidgetModule,
+    AdvancedPieChartWidgetModule,
+    MapsWidgetModule,
+    MarketWidgetModule,
+    ChartsModule,
+    MatInputModule,
+    //Table
+    MatTabsModule,
+    PageLayoutDemoContentModule,
+    MatExpansionModule,
+    MatFormFieldModule,
+    ListModule,
+    BreadcrumbsModule,
+    CommonModule,
+    //export table
+    MatTableExporterModule,
+    StatistiquePelerinageRoutingModule
+  ]
+})
+export class StatistiquePelerinageModule { }

@@ -141,4 +141,13 @@ public class ParticipantColonieController {
         ColonStatisticsDTO statistics = participantServiceColonie.getParticipantStatisticsByAnnee(annee);
         return ResponseEntity.status(HttpStatus.OK).body(statistics);
     }
+    @GetMapping("participantsColonie/sendMessages")
+    public ResponseEntity<String> sendMessages() {
+        boolean success = participantServiceColonie.sendMessages();
+        if (success) {
+            return ResponseEntity.ok("Messages sent successfully.");
+        } else {
+            return ResponseEntity.status(500).body("Failed to send messages.");
+        }
+    }
 }

@@ -1,0 +1,106 @@
+<div mat-dialog-title class="h1-responsive text-align titre_modal_add">DETAILS PELERIN</div>
+<mat-dialog-content>
+    <mat-accordion class="example-headers-align" multi>
+        <div class="example-action-buttons">
+            <button *ngIf="showIcon" mat-raised-button color="primary" (click)="accordion.openAll(); showIcon = !showIcon">
+                <mat-icon>expand_more</mat-icon> Afficher
+            </button>
+            <button *ngIf="!showIcon" mat-raised-button color="warn" (click)="accordion.closeAll(); showIcon = !showIcon">
+                <mat-icon>expand_less</mat-icon> Fermer
+            </button>
+        </div>
+
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon>folder_open</mat-icon>
+                    <span> Informations sur le pelerin</span>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-panel-description>
+                <span>Nom : </span>{{ pelerin.agent.nom }}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Prénom : </span>{{ pelerin.agent.prenom }}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Date de Naissance : </span>{{ pelerin.agent.dateNaissance | date }}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Date Engagement: </span>{{ pelerin.agent.dateEngagement | date}}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Religion : </span>{{ pelerin.agent.religion }}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Sexe : </span>{{ pelerin.agent.sexe }}
+            </mat-panel-description>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon>supervisor_account</mat-icon>
+                    <span> Informations sur l'Agent</span>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-panel-description>
+                <span>Matricule : </span>{{ pelerin.matriculeAgent }}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Nom : </span>{{ pelerin.nomAgent }}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Prénom : </span>{{ pelerin.prenomAgent }}
+            </mat-panel-description>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon>folder_open</mat-icon>
+                    <span> Dossier Colonie</span>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-panel-description>
+                <span>Code : </span>{{ pelerin.dossierPelerinage?.code }}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Année : </span>{{ pelerin.dossierPelerinage?.annee }}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Commentaire : </span>{{ pelerin.dossierPelerinage?.description }}
+            </mat-panel-description>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon>insert_drive_file</mat-icon>
+                    <span> Documents</span>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-panel-description>
+                <span>Fiche Medicale : </span>{{ pelerin.ficheMedical ? 'Disponible' : 'Aucun fichier disponible' }}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Passport : </span>{{ pelerin.passport ? 'Disponible' : 'Aucun fichier disponible' }}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Document : </span>{{ pelerin.document ? 'Disponible' : 'Aucun fichier disponible' }}
+            </mat-panel-description>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon>info</mat-icon>
+                    <span>Status</span>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-panel-description>
+                <span>{{ pelerin.status }}</span>
+            </mat-panel-description>
+        </mat-expansion-panel>
+    </mat-accordion>
+</mat-dialog-content>

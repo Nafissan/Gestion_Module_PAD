@@ -39,7 +39,11 @@ export class ParticipantService {
     })
     .pipe(catchError(this.errorHandler));
   }
-
+  sendMessages(): Observable<HttpResponse<any>> {
+    return this.httpClient
+      .get<any>(`${this.url}/sendMessages`, { observe: 'response' })
+      .pipe(catchError(this.errorHandler));
+  }
   // Supprimer un participant
   deleteParticipant(participant: Participant): Observable<HttpResponse<any>> {
     const httpOptions = {

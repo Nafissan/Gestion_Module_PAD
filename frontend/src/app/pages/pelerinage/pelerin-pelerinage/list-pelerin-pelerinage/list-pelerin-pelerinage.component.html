@@ -1,0 +1,122 @@
+<fury-page-layout mode="card">
+    <fury-page-layout-header>
+      <fury-breadcrumbs [@fadeInRight] [crumbs]="['Pelerinage']" current="Liste Pelerins Pelerinage"></fury-breadcrumbs>
+    </fury-page-layout-header>
+  
+    <fury-page-layout-content [@fadeInUp]>
+      <fury-list *ngIf="pelerins.length !== 0 && showProgressBar === true" name="Pelerins" [columns]="columns" (filterChange)="onFilterChange($event)">
+        <div class="actions">
+          <button class="create" (click)="createPelerin()" [disabled]="pelerins.length===0 && !dossierPelerinage" type="button" mat-mini-fab color="primary">
+            <mat-icon>add</mat-icon>
+          </button>
+        </div>
+        <table [dataSource]="dataSource" mat-table matSort>
+          <!-- Checkbox Column -->
+          <ng-container matColumnDef="checkbox">
+            <th mat-header-cell *matHeaderCellDef class="actions-cell">
+              <mat-checkbox color="primary" (click)="$event.stopPropagation()" (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()" [indeterminate]="selection.hasValue() && !isAllSelected()"></mat-checkbox>
+            </th>
+            <td mat-cell *matCellDef="let row" class="actions-cell">
+              <mat-checkbox color="primary" (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(row) : null" [checked]="selection.isSelected(row)"></mat-checkbox>
+            </td>
+          </ng-container>
+  
+          <!-- Dynamic Columns -->
+          <ng-container *ngFor="let column of columns">
+            <ng-container *ngIf="column.isModelProperty || column.property === 'ajoutePar'|| column.property === 'pelerin' " [matColumnDef]="column.property">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ column.name }} </th>
+              <td mat-cell *matCellDef="let row" >
+                <p *ngIf="column.name === 'codeDossier'" > {{ row[column.property].code }}</p>
+                <p *ngIf="column.name === 'Aptitude'">
+                  <span *ngIf="row?.status === 'A VERIFIER' " class="badge badge-warning">{{ 'A Verifier'}}
+                  </span>
+                  <span *ngIf="row?.status === 'APTE' " class="badge badge-success">{{ 'Apte' }}
+                  </span>
+                  <span *ngIf="row?.status === 'NON APTE' " class="badge badge-danger">{{ 'Non Apte' }}
+                  </span>
+              </p>
+              <p *ngIf="column.property === 'ajoutePar'" > {{(row.matriculeAgent + ' | ' + row.prenomAgent + ' ' + row.nomAgent) | titlecase }}</p>
+              <p *ngIf="column.property === 'pelerin'" > {{( row.agent.matricule + ' | ' + row.agent.prenom + ' ' + row.agent.nom) | titlecase }}</p>
+              <p *ngIf="column.property === 'ficheMedical' && row[column.property]" > Disponible</p>
+              <p *ngIf="column.property === 'passport' && row[column.property]" > Disponible</p>
+              <p *ngIf="column.property === 'document' && row[column.property]">Disponible</p>
+              <p *ngIf="column.name !== 'Aptitude' && column.property !== 'ficheMedical'&& column.property !== 'document' && column.property !== 'ajoutePar'  && column.property !== 'codeDossier' && column.property !== 'passport' && column.property !== 'pelerin'">
+                    {{ row[column.property] }}
+                </p></td>
+            </ng-container>
+          </ng-container>
+  
+          <!-- Actions Column -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef class="actions-cell"></th>
+            <td mat-cell *matCellDef="let row" class="actions-cell">
+              <button mat-icon-button [matMenuTriggerFor]="actionsMenu" (click)="$event.stopPropagation()">
+                <mat-icon>more_horiz</mat-icon>
+              </button>
+              <mat-menu #actionsMenu="matMenu">
+                <button *ngIf="row.status !== 'VALIDER'" mat-menu-item (click)="updatePelerin(row)">
+                  <mat-icon>edit</mat-icon>
+                  <span>MODIFIER</span>
+                </button>
+                <button *ngIf="row.status !== 'VALIDER'" mat-menu-item (click)="deletePelerin(row)">
+                  <mat-icon>delete_sweep</mat-icon>
+                  <span>SUPPRIMER</span>
+                </button>
+                <button *ngIf="row.status === 'A VALIDER'" mat-menu-item (click)="validerPelerin(row)">
+                  <mat-icon>check_circle_outline</mat-icon>
+                  <span>VALIDER</span>
+                </button>
+                <button *ngIf="row.status === 'A VALIDER'" mat-menu-item (click)="rejeterPelerin(row)">
+                  <mat-icon>highlight_off</mat-icon>
+                  <span>REJETER</span>
+                </button>            
+                <button *ngIf="row.status === 'VALIDER'" mat-menu-item (click)="annulerValidationPelerin(row)">
+                  <mat-icon>highlight_off</mat-icon>
+                  <span>ANNULER VALIDATION</span>
+                </button>          
+                <button mat-menu-item [matMenuTriggerFor]="fileMenu">
+                  <mat-icon>visibility</mat-icon>
+                  <span>AFFICHER FICHIER</span>
+                </button>
+                <mat-menu #fileMenu="matMenu">
+                  <button mat-menu-item (click)="onCellClick('ficheMedical', row)"[disabled]="!hasAnyRole(['MENU_DOTATION'])  || !row.ficheMedical">
+                    <span>Fiche Medicale</span>
+                  </button>
+                  <button mat-menu-item (click)="onCellClick('passport', row)"[disabled]="!hasAnyRole(['MENU_DOTATION'])  || !row.passport">
+                    <span>Passport</span>
+                  </button>
+                  <button mat-menu-item (click)="onCellClick('document', row)"[disabled]="!hasAnyRole(['MENU_DOTATION']) || !row.document">
+                    <span>Autres documents</span>
+                  </button>
+                </mat-menu>
+              </mat-menu>
+            </td>
+          </ng-container>
+  
+          <!-- Table Header and Rows -->
+          <tr mat-header-row *matHeaderRowDef="visibleColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: visibleColumns" (click)="detailsPelerin(row)" class="clickable"></tr>
+        </table>
+  
+        <mat-paginator [pageSize]="pageSize" class="paginator"></mat-paginator>
+      </fury-list>
+      <div *ngIf="pelerins.length === 0 && showProgressBar === true" class="card text-center">
+        <div class="card-header">
+          <span class="badge badge-info">INFORMATION</span>
+        </div>
+        <div class="card-body">
+          <h5 class="card-title">LISTE DES PELERINS VIDE</h5>
+          <p class="card-text">Lancer triage Agent</p>
+          <button mat-mini-fab color="primary" (click)="trierAgent()"[disabled]="pelerins.length===0 && !dossierPelerinage" >
+            <span>triage</span>
+        </button>
+        </div>
+        <div class="card-footer text-muted">
+          {{date | date : 'dd/MMM/yyyy HH:mm:ss'}}
+        </div>
+      </div>
+  
+      <mat-progress-bar *ngIf="showProgressBar === false" mode="query" color="primary"></mat-progress-bar>
+    </fury-page-layout-content>
+  </fury-page-layout>
+  

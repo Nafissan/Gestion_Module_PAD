@@ -1,0 +1,95 @@
+<div mat-dialog-title class="h1-responsive text-align titre_modal_add">DETAILS DOSSIER COLONIE</div>
+<mat-dialog-content>
+    <mat-accordion class="example-headers-align" multi>
+        <div class="example-action-buttons">
+            <button *ngIf="showIcon" mat-raised-button color="primary" (click)="accordion.openAll(); showIcon = !showIcon">
+                <mat-icon>expand_more</mat-icon> Afficher
+            </button>
+            <button *ngIf="!showIcon" mat-raised-button color="warn" (click)="accordion.closeAll(); showIcon = !showIcon">
+                <mat-icon>expand_less</mat-icon> Fermer
+            </button>
+        </div>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon>folder_open</mat-icon>
+                    <span> Dossier Pelerinage</span>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-panel-description>
+                <span>Code: </span>{{dossierPelerinage.code}}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Année : </span>{{dossierPelerinage.annee}}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Commentaire : </span>{{dossierPelerinage.description}}
+            </mat-panel-description>
+            <mat-panel-description>
+                <div *ngIf="dossierPelerinage.etat === saisi">
+                    <span> Etat : </span> <span class="badge badge-warning">{{dossierPelerinage.etat}}</span>
+                </div>
+                <div *ngIf="dossierPelerinage.etat === ouvrir">
+                    <span>Etat : </span> <span class="badge badge-info">{{ dossierPelerinage.etat}}</span>
+                </div>
+                <div *ngIf="dossierPelerinage.etat === fermer">
+                    <span>Etat : </span> <span class="badge badge-success">{{dossierPelerinage.etat}}</span>
+                </div>
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Lieu pelerinage: </span>{{dossierPelerinage.lieuPelerinage}}
+            </mat-panel-description>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon>insert_drive_file</mat-icon>
+                    <span>Note d'information</span>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-panel-description>
+                <span>Note information pelerinage </span>{{ dossierPelerinage.noteInformation ? 'Disponible' : 'Aucun fichier disponible' }}
+            </mat-panel-description>
+    
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon>insert_drive_file</mat-icon>
+                    <span>Rapport de Pelerinage</span>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-panel-description>
+                <span>rapport : </span>{{ dossierPelerinage.rapportPelerinage ? 'Disponible' : 'Aucun fichier disponible'}}
+            </mat-panel-description>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon>supervisor_account</mat-icon>
+                    <span>Agent Responsable</span>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-panel-description>
+                <span>Matricule : </span>{{dossierPelerinage.matricule}}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Nom : </span>{{dossierPelerinage.nom.toUpperCase()}}
+            </mat-panel-description>
+            <mat-panel-description>
+                <span>Prénom : </span>{{dossierPelerinage.prenom.toUpperCase()}}
+            </mat-panel-description>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon>perm_identity</mat-icon>
+                    <span>Fonction</span>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-panel-description>
+                <span>Nom : </span>{{dossierPelerinage.fonction}}
+            </mat-panel-description>
+        </mat-expansion-panel>
+    </mat-accordion>
+</mat-dialog-content>

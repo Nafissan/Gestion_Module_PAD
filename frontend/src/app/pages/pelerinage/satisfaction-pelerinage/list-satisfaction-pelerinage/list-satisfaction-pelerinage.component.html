@@ -1,0 +1,81 @@
+<fury-page-layout mode="card">
+    <fury-page-layout-header>
+        <fury-breadcrumbs [@fadeInRight] [crumbs]="['Pelerinage']" current="Liste Formulaires Satisfactions Pelerinage"></fury-breadcrumbs>
+    </fury-page-layout-header>
+
+    <fury-page-layout-content [@fadeInUp]>
+        <fury-list *ngIf="satisfactions && showProgressBar === true" name="Satisfactions" [columns]="columns" (filterChange)="onFilterChange($event)">
+            <div class="actions">
+                <button class="create" (click)="createSatisfaction()" [disabled]="satisfactions!==null"  mat-mini-fab color="primary">
+                    <mat-icon>add</mat-icon>
+                  </button>            </div>
+            <table [dataSource]="[satisfactions]" mat-table matSort>
+                <!-- Checkbox Column -->
+                <ng-container matColumnDef="checkbox">
+                    <th mat-header-cell *matHeaderCellDef class="actions-cell">
+                        <mat-checkbox color="primary" (click)="$event.stopPropagation()" (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()" [indeterminate]="selection.hasValue() && !isAllSelected()"></mat-checkbox>
+                    </th>
+                    <td mat-cell *matCellDef="let row" class="actions-cell">
+                        <mat-checkbox color="primary" (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(row) : null" [checked]="selection.isSelected(row)"></mat-checkbox>
+                    </td>
+                </ng-container>
+
+                <!-- Dynamic Columns -->
+                <ng-container *ngFor="let column of columns">
+                    <ng-container *ngIf="column.isModelProperty || column.property ==='traitePar'" [matColumnDef]="column.property">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ column.name }} </th>
+                        <td mat-cell *matCellDef="let row">
+                            <p *ngIf="column.property === 'codeDossier' " > {{ row[column.property].code }} </p>
+                            <p *ngIf="column.property === 'dateCreation'" > {{ row[column.property] | date: 'dd-MMM-yyyy' }}</p>
+                            <p *ngIf="column.property === 'traitePar' " > {{ (row.matricule + ' | ' + row.prenom + ' ' + row.nom) | titlecase }} </p>
+                            <p *ngIf="column.property !== 'traitePar' && column.property !== 'codeDossier' && column.property !== 'dateCreation'" >  {{ row[column.property] }} </p>
+                           </td>
+                    </ng-container>
+                </ng-container>
+
+                <!-- Actions Column -->
+                <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef class="actions-cell"></th>
+                    <td mat-cell *matCellDef="let row" class="actions-cell">
+                        <button mat-icon-button [matMenuTriggerFor]="actionsMenu" (click)="$event.stopPropagation()">
+                            <mat-icon>more_horiz</mat-icon>
+                          </button>
+                          <mat-menu #actionsMenu="matMenu">
+                            <button mat-menu-item (click)="updateSatisfaction(row)">
+                              <mat-icon>edit</mat-icon>
+                              <span>MODIFIER</span>
+                            </button>
+                            <button mat-menu-item (click)="deleteSatisfaction(row)">
+                              <mat-icon>delete_sweep</mat-icon>
+                              <span>SUPPRIMER</span>
+                            </button>
+                          </mat-menu>                    
+                        </td>
+                </ng-container>
+
+                <!-- Table Header and Rows -->
+                <tr mat-header-row *matHeaderRowDef="visibleColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: visibleColumns" (click)="detailsSatisfaction(row)" class="clickable"></tr>
+            </table>
+
+            <mat-paginator [pageSize]="pageSize" class="paginator"></mat-paginator>
+        </fury-list>
+
+        <div *ngIf="!satisfactions && showProgressBar === true" class="card text-center">
+            <div class="card-header">
+                <span class="badge badge-info">INFORMATION</span>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">PAS DE FORMULAIRES SATISFACTIONS</h5>
+                <p class="card-text">Ajouter un nouveau formulaire satisfaction</p>
+                <button mat-mini-fab color="primary" (click)="createSatisfaction()" [disabled]="dossierColonie===null">
+                  <mat-icon>add</mat-icon>
+                </button>            </div>
+            <div class="card-footer text-muted">
+                {{ date | date : 'dd/MMM/yyyy HH:mm:ss' }}
+            </div>
+        </div>
+
+        <mat-progress-bar *ngIf="showProgressBar === false" mode="query" color="primary"></mat-progress-bar>
+    </fury-page-layout-content>
+</fury-page-layout>

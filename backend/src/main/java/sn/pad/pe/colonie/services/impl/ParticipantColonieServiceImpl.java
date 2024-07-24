@@ -16,7 +16,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import sn.pad.pe.pss.dto.AgentDTO;
+import sn.pad.pe.pss.services.AgentService;
+ 
 import sn.pad.pe.colonie.bo.DossierColonie;
 import sn.pad.pe.colonie.bo.ParticipantColonie;
 import sn.pad.pe.colonie.dto.ColonStatisticsDTO;
@@ -26,16 +28,23 @@ import sn.pad.pe.colonie.repositories.ParticipantColonieRepository;
 import sn.pad.pe.colonie.services.DossierColonieService;
 import sn.pad.pe.colonie.services.ParticipantColonieService;
 import sn.pad.pe.configurations.exception.ParticipantColonieException;
+import sn.pad.pe.configurations.sms.SmsService;
+import sn.pad.pe.dotation.bo.Notification;
+import sn.pad.pe.dotation.repositories.NotificationRepository;
 @Service
 public class ParticipantColonieServiceImpl implements ParticipantColonieService {
 
       @Autowired
     private ParticipantColonieRepository participantColonieRepository;
 
+   @Autowired
+    private NotificationRepository notificationRepository;
     @Autowired
     private ModelMapper modelMapper;
     @Autowired
     private DossierColonieService dossierColonieService;
+    @Autowired
+    private AgentService agentService;
     @Override
     public ParticipantColonieDTO saveParticipant(ParticipantColonieDTO participantDTO) {
         convertBase64FieldsToBytes(participantDTO);
@@ -272,6 +281,28 @@ public boolean updateParticipant(ParticipantColonieDTO updatedParticipant) {
         if (participantDTO.getPhotoBytes() != null) {
             participantDTO.setPhoto(Base64.getEncoder().encodeToString(participantDTO.getPhotoBytes()));
         }
+    }
+
+
+    @Override
+    public boolean sendMessages() {
+        Notification notificationColonie= notificationRepository.findByModule("COLONIE");
+        
+        if (notificationColonie.isActive()) {
+            DossierColonieDTO dossierColonie= dossierColonieService.getDossierColonieByEtat();
+            List<ParticipantColonie> participantColonies = participantColonieRepository.findByCodeDossierAndStatus(modelMapper.map(dossierColonie, DossierColonie.class),"VALIDER");
+            for (ParticipantColonie d : participantColonies) {
+                AgentDTO agent = agentService.getAgentByMatricule(d.getMatriculeParent()) ;
+
+                // Send sms
+                String sms = "Bonjour " + agent.getPrenom() + " " + agent.getNom()
+                        + ".Votre enfant repondant au nom de "+d.getPrenomEnfant()+" "+d.getNomEnfant()+" ne le "+d.getDateNaissance()+" est selectionne pour participe a la colonie de vacances de l'annee "+d.getCodeDossier().getAnnee()+ ". Vous recevrez dans les jours qui viennent le note d'instruction concernant la colonie.";
+
+             SmsService.send(agent.getMatricule(),"776844623", sms);
+            }
+            return true;
+        }
+        return false;
     }
     
 }

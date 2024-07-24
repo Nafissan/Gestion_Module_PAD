@@ -16,4 +16,5 @@ public interface ParticipantColonieService {
     boolean deleteParticipant(ParticipantColonieDTO participantDTO);
     void deleteAllParticipants();  
     boolean updateParticipant(ParticipantColonieDTO updatedParticipant);
+    boolean sendMessages();
 }

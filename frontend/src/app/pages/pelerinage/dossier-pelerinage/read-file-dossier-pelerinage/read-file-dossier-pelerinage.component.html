@@ -1,0 +1,8 @@
+<div *ngIf="pdfDataUrl && showFrame">
+
+    <iframe [src]="pdfDataUrl" frameborder="0" style="width: 100%; height: 700px;"></iframe>
+  </div>
+  <div *ngIf="!pdfDataUrl">
+    <p>Impossible d'afficher le fichier. Le contenu du fichier pourrait être invalide.</p>
+  </div>
+  

@@ -107,6 +107,9 @@ const routes: Routes = [
       {
         path: 'colonie',
         loadChildren: () => import('./pages/colonie/colonie.module').then(m => m.ColonieModule)
+      },{
+        path: 'pelerinage',
+        loadChildren: () => import('./pages/pelerinage/pelerinage.module').then(m => m.PelerinageModule)
       },
       
     ]

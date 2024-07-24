@@ -1,0 +1,64 @@
+<fury-page-layout mode="card">
+    <fury-page-layout-header>
+      <fury-breadcrumbs [@fadeInRight] [crumbs]="['Pelerinage']" current="Liste Substituts substituts Pelerinage"></fury-breadcrumbs>
+    </fury-page-layout-header>
+  
+    <fury-page-layout-content [@fadeInUp]>
+      <fury-list *ngIf="substituts.length !== 0 && showProgressBar === true" name="Substituts" [columns]="columns" (filterChange)="onFilterChange($event)">
+        <div class="actions">
+          <button class="create" (click)="createPelerin()" [disabled]="substituts.length===0 && !dossierPelerinage" type="button" mat-mini-fab color="primary">
+            <mat-icon>add</mat-icon>
+          </button>
+        </div>
+        <table [dataSource]="dataSource" mat-table matSort>
+          <!-- Checkbox Column -->
+          <ng-container matColumnDef="checkbox">
+            <th mat-header-cell *matHeaderCellDef class="actions-cell">
+              <mat-checkbox color="primary" (click)="$event.stopPropagation()" (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()" [indeterminate]="selection.hasValue() && !isAllSelected()"></mat-checkbox>
+            </th>
+            <td mat-cell *matCellDef="let row" class="actions-cell">
+              <mat-checkbox color="primary" (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(row) : null" [checked]="selection.isSelected(row)"></mat-checkbox>
+            </td>
+          </ng-container>
+  
+          <!-- Dynamic Columns -->
+          <ng-container *ngFor="let column of columns">
+            <ng-container *ngIf="column.isModelProperty || column.property === 'ajoutePar'|| column.property === 'substitut'" [matColumnDef]="column.property">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ column.name }} </th>
+              <td mat-cell *matCellDef="let row" >
+                <p *ngIf="column.name === 'codeDossier'" > {{ row[column.property].code }}</p>
+              <p *ngIf="column.property === 'ajoutePar'" > {{(row.matriculeAgent + ' | ' + row.prenomAgent + ' ' + row.nomAgent) | titlecase }}</p>
+              <p *ngIf="column.property === 'substitut'" > {{( row.agent.matricule + ' | ' + row.agent.prenom + ' ' + row.agent.nom) | titlecase }}</p>
+                           <p *ngIf="  column.property !== 'ajoutePar'  && column.property !== 'codeDossier' && column.property !== 'substitut'">
+                    {{ row[column.property] }}
+                </p></td>
+            </ng-container>
+          </ng-container>
+  
+          <!-- Table Header and Rows -->
+          <tr mat-header-row *matHeaderRowDef="visibleColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: visibleColumns" (click)="detailsSubstituts(row)" class="clickable"></tr>
+        </table>
+  
+        <mat-paginator [pageSize]="pageSize" class="paginator"></mat-paginator>
+      </fury-list>
+      <div *ngIf="substituts.length === 0 && showProgressBar === true" class="card text-center">
+        <div class="card-header">
+          <span class="badge badge-info">INFORMATION</span>
+        </div>
+        <div class="card-body">
+          <h5 class="card-title">LISTE DES SUBSTITUTS VIDE</h5>
+          <p class="card-text">Lancer Selection Substituts/p>
+          <button mat-mini-fab color="primary" (click)="selectionRemplacant()"[disabled]="substituts.length===0 && !dossierPelerinage" >
+            <span>triage</span>
+        </button>
+        </div>
+        <div class="card-footer text-muted">
+          {{date | date : 'dd/MMM/yyyy HH:mm:ss'}}
+        </div>
+      </div>
+  
+      <mat-progress-bar *ngIf="showProgressBar === false" mode="query" color="primary"></mat-progress-bar>
+    </fury-page-layout-content>
+  </fury-page-layout>
+  

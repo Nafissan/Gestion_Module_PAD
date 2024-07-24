@@ -1,0 +1,37 @@
+<div>
+    <mat-icon class="close" mat-button mat-dialog-close>close</mat-icon>
+</div>
+<div mat-dialog-title class="titre_modal_add" *ngIf="isCreateMode()">Nouveau Formulaire Satisfaction</div>
+<div mat-dialog-title class="titre_modal_add" *ngIf="isUpdateMode()">Mise à jour Formulaireisfaction</div>
+
+<form [formGroup]="form" (ngSubmit)="save()">
+    <mat-dialog-content>
+      <div formArrayName="questions">
+        <div *ngFor="let question of questionsArray.controls; let i = index" [formGroupName]="i">
+          <mat-form-field fxFlex>
+            <mat-label>{{ questions[i].texte }}</mat-label>
+            <mat-select formControlName="reponse" required>
+              <mat-option [value]="true">Oui</mat-option>
+              <mat-option [value]="false">Non</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+        <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
+            <mat-form-field fxFlex *ngIf="mode === 'update'">
+              <mat-label>Code Dossier Pelerinage</mat-label>
+              <input type="text" formControlName="codeDossier" matInput [disabled]="isUpdateMode()">
+            </mat-form-field>
+            <mat-form-field fxFlex>
+              <mat-label>Commentaire</mat-label>
+              <input type="text" formControlName="commentaire" matInput required>
+            </mat-form-field>
+          </div>
+      </mat-dialog-content>        
+    <mat-dialog-actions fxLayout="row" fxLayoutAlign="end center">
+        <button mat-button type="button" mat-dialog-close class="cancel">Annuler</button>
+        <button mat-button type="submit" [disabled]="form.invalid" class="save">
+            {{ isCreateMode() ? 'Ajouter' : 'Mettre à jour' }}
+        </button>
+    </mat-dialog-actions>
+</form>
