@@ -66,13 +66,13 @@ export class ListColonComponent implements OnInit {
        visible: true,   
        isModelProperty: true,
      },
-     { name: "Ajoute par", property: "ajoutePar", visible: true },
+     { name: "Ajoute par", property: "ajoutePar", visible: false },
       { name: "Date de Naissance", property: "dateNaissance", visible: true, isModelProperty: true,},
      { name: "Groupe Sanguin", property: "groupeSanguin", visible: false, isModelProperty: true, },
      { name: "Lieu de Naissance", property: "lieuNaissance", visible: false, isModelProperty: true,},
      { name: "Fiche Sociale", property: "ficheSocial", visible: true,  isModelProperty: true,},
      { name: "Document Supplementaire", property: "document", visible: false,  isModelProperty: true,},
-     { name: "Status", property: "status", visible: false,  isModelProperty: true,},
+     { name: "Status", property: "status", visible: true,  isModelProperty: true,},
      { name: "Actions", property: "actions", visible: true },
 
    ] as ListColumn[];
@@ -117,7 +117,9 @@ export class ListColonComponent implements OnInit {
     this.dataSource.filter = value;
     this.dataSource.filterPredicate = (data: any, value) => { const dataStr =JSON.stringify(data).toLowerCase(); return dataStr.indexOf(value) != -1; }
   }
-   
+   sendMessages(){
+    
+   }
   isAllSelected() {
     const numSelected = this.selection.selected.length;
     const numRows = this.dataSource.data.length;

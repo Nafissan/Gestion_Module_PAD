@@ -70,8 +70,8 @@ export class ListeSatisfactionComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.getSatisfactions();
     this.getDossierColonie();
+    this.getSatisfactions();
   }
 
   ngAfterViewInit() {

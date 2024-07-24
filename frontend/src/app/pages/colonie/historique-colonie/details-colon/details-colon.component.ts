@@ -14,7 +14,7 @@ import { filter } from 'rxjs/operators';
 @Component({
   selector: 'fury-details-colon',
   templateUrl: './details-colon.component.html',
-  styleUrls: ['./details-colon.component.scss']
+  styleUrls: ['./details-colon.component.scss', "../../../../shared/util/bootstrap4.css"]
 })
 export class DetailsColonComponent implements OnInit {
   setDataSourceAttributes() {
@@ -84,7 +84,6 @@ loadColons(): void {
   this.participantService.getParticipantsByAnnee(annee).subscribe(
     (response) => {
       this.colons = response.body as Participant[];
-      console.log(this.colons);
     },
     error => {
       console.error('Erreur lors de la récupération des colons :', error);

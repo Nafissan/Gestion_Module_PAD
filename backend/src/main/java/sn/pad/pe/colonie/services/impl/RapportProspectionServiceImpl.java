@@ -120,4 +120,11 @@ public class RapportProspectionServiceImpl implements RapportProspectionService 
         }
        
     }
+    @Override
+    public RapportProspectionDTO getRapportProspectionByDossier(DossierColonie dossierId) {
+        Optional<RapportProspection> rapport = rapportProspectionRepository.findByCodeDossierColonie(dossierId);
+        RapportProspectionDTO rapportDTO = mapToDto(rapport.get());
+        convertBytesFieldsToBase64(rapportDTO);        
+        return rapportDTO;
+    }
 }

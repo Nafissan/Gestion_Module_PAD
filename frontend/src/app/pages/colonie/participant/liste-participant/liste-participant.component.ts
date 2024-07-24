@@ -22,6 +22,7 @@ import { DetailsParticipantComponent } from '../details-participant/details-part
 import { EtatDossierColonie } from '../../shared/util/util';
 import { DossierColonie } from '../../shared/model/dossier-colonie.model';
 import { ReadFileParticipantComponent } from '../read-file-participant/read-file-participant.component';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'fury-liste-participant',
@@ -78,13 +79,13 @@ export class ListeParticipantComponent implements OnInit {
        visible: true,   
        isModelProperty: true,
      },
-     { name: "Ajoute par", property: "ajoutePar", visible: true },
+     { name: "Ajoute par", property: "ajoutePar", visible: false },
       { name: "Date de Naissance", property: "dateNaissance", visible: true, isModelProperty: true,},
      { name: "Groupe Sanguin", property: "groupeSanguin", visible: false, isModelProperty: true, },
      { name: "Lieu de Naissance", property: "lieuNaissance", visible: false, isModelProperty: true,},
      { name: "Fiche Sociale", property: "ficheSocial", visible: true,  isModelProperty: true,},
      { name: "Document Supplementaire", property: "document", visible: false,  isModelProperty: true,},
-     { name: "Status", property: "status", visible: false,  isModelProperty: true,},
+     { name: "Status", property: "status", visible: true,  isModelProperty: true,},
      { name: "Actions", property: "actions", visible: true },
 
    ] as ListColumn[];
@@ -236,22 +237,30 @@ export class ListeParticipantComponent implements OnInit {
   }
   validerParticipant(participant: Participant) {
     participant.status = 'VALIDER';
-    this.participantService.updateParticipant(participant).subscribe((response) => {
-      this.notificationService.success('Participant validé avec succès');
-      if(response.body as Participant){
-        const index = this.participants.findIndex(
-          (existingParticipant) =>
-            existingParticipant.id === response.body.id
-        );
-        this.participants[index] = new Participant(response.body);
-        this.subject$.next(this.participants);
-      this.refreshListe();}
-      
-    }, () => {
-      this.notificationService.warn('Échec de la validation du participant');
-    });
-  }
-  
+    this.participantService.updateParticipant(participant).subscribe(
+        (response) => {
+            this.notificationService.success('Participant validé avec succès');
+            if(response.body as Participant){
+                const index = this.participants.findIndex(
+                    (existingParticipant) =>
+                    existingParticipant.id === response.body.id
+                );
+                this.participants[index] = new Participant(response.body);
+                this.subject$.next(this.participants);
+                this.refreshListe();
+            }
+        },
+        (err:HttpErrorResponse ) => {
+            if (err.status === 409) {
+                this.notificationService.warn('Ce colon existe déjà');
+            } else {
+                this.notificationService.warn('Échec de la validation du participant' );
+            }
+            this.refreshListe();
+        }
+    );
+}
+
   rejeterParticipant(participant: Participant) {
     participant.status = 'REJETER';
     this.participantService.updateParticipant(participant).subscribe((response) => {
@@ -266,9 +275,25 @@ export class ListeParticipantComponent implements OnInit {
       this.refreshListe();
     }    }, () => {
       this.notificationService.warn('Échec de rejection du participant');
+      this.refreshListe()
     });
   }
-
+  annulerValidationParticipant(participant: Participant) {
+    participant.status = 'A VALIDER';
+    this.participantService.updateParticipant(participant).subscribe((response) => {
+      this.notificationService.success('Participant status réinitialisé avec succès');
+      if(response.body as Participant){
+        const index = this.participants.findIndex(
+          (existingParticipant) =>
+            existingParticipant.id === response.body.id
+        );
+        this.participants[index] = new Participant(response.body);
+        this.subject$.next(this.participants);
+      this.refreshListe();
+    }    }, () => {
+      this.notificationService.warn('Échec de rejection du participant');
+    });
+  }
 
 onCellClick(property: string, row: Participant) {
   const dialogRef = this.dialog.open(ReadFileParticipantComponent, {

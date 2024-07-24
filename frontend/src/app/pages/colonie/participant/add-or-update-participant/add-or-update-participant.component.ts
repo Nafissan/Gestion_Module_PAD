@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { Participant } from "../../shared/model/participant-colonie.model";
 import { ParticipantService } from "../../shared/service/participant.service";
@@ -11,6 +11,8 @@ import { CompteService } from "src/app/pages/gestion-utilisateurs/shared/service
 import { AuthenticationService } from "src/app/shared/services/authentification.service";
 import { NotificationService } from "src/app/shared/services/notification.service";
 import { AgentService } from "src/app/shared/services/agent.service";
+import { Observable } from "rxjs";
+import { map, startWith } from "rxjs/operators";
 
 @Component({
   selector: "app-add-update-participant-colonie",
@@ -26,8 +28,9 @@ export class AddOrUpdateParticipantComponent implements OnInit {
   agent: Agent;
   compte: Compte;
   username: string;  photoURL: string | ArrayBuffer | null = null;
-
-  agents: any[] = [];
+  agentParent: Agent;
+  agents: string[] = [];  filteredAgents: Observable<string[]>;
+  matriculeParentControl = new FormControl();
   constructor(
     @Inject(MAT_DIALOG_DATA) public defaults: Participant,
     private dialogRef: MatDialogRef<AddOrUpdateParticipantComponent>,
@@ -41,7 +44,7 @@ export class AddOrUpdateParticipantComponent implements OnInit {
   ) {
     // Initialize form to avoid undefined issues
     this.form = this.fb.group({
-      matriculeParent: ["", Validators.required],
+      matriculeParent: this.matriculeParentControl,
       nomEnfant: ["", Validators.required],
       prenomEnfant: ["", Validators.required],
       sexe: ["", Validators.required],
@@ -52,33 +55,50 @@ export class AddOrUpdateParticipantComponent implements OnInit {
     });
   }
 
-  ngOnInit() {
-    this.username = this.authService.getUsername();
+  async ngOnInit() {
+    try {
+      await this.getAgents();
 
-    this.compteService.getByUsername(this.username).subscribe((response) => {
-      this.compte = response.body;
-      this.agent = this.compte.agent;
-    });
-
-    this.getAgents();
-    if (this.defaults) {
-      this.mode = "update";
-    } else {
-      this.defaults = {} as Participant;
+      this.username = this.authService.getUsername();
+  
+      this.compteService.getByUsername(this.username).subscribe((response) => {
+        this.compte = response.body;
+        this.agent = this.compte.agent;
+      });
+  
+      if (this.defaults) {
+        this.mode = "update";
+      } else {
+        this.defaults = {} as Participant;
+      }
+  
+      this.form.patchValue({
+        matriculeParent: this.defaults.matriculeParent || "",
+        nomEnfant: this.defaults.nomEnfant || "",
+        prenomEnfant: this.defaults.prenomEnfant || "",
+        sexe: this.defaults.sexe || "",
+        dateNaissance: this.defaults.dateNaissance || "",
+        lieuNaissance: this.defaults.lieuNaissance || "",
+        groupeSanguin: this.defaults.groupeSanguin || "",
+        codeDossier: this.defaults.codeDossier?.code || null,
+      });
+  
+      // Assurez-vous que filteredAgents est défini après la récupération des agents
+      this.filteredAgents = this.matriculeParentControl.valueChanges.pipe(
+        startWith(''),
+        map(value => this._filter(value || ''))
+      );
+  
+    } catch (error) {
+      console.error("Erreur lors de l'initialisation", error);
+      this.notificationService.warn("Erreur lors de la récupération des données.");
     }
-
-    this.form.patchValue({
-      matriculeParent: this.defaults.matriculeParent || "",
-      nomEnfant: this.defaults.nomEnfant || "",
-      prenomEnfant: this.defaults.prenomEnfant || "",
-      sexe: this.defaults.sexe || "",
-      dateNaissance: this.defaults.dateNaissance || "",
-      lieuNaissance: this.defaults.lieuNaissance || "",
-      groupeSanguin: this.defaults.groupeSanguin || "",
-      codeDossier: this.defaults.codeDossier?.code || null,
-     });
   }
-
+  
+  private _filter(value: string): string[] {
+    const filterValue = value.toLowerCase();
+    return this.agents.filter(matricule => matricule.toLowerCase().includes(filterValue));
+  }
   isCreateMode() {
     return this.mode === "create";
   }
@@ -89,26 +109,55 @@ export class AddOrUpdateParticipantComponent implements OnInit {
 
   async handleFicheSociale(files: FileList): Promise<void> {
     if (files.length > 0) {
-      this.ficheSocial = await this.convertFileToBase64(files[0]);
+      const file = files[0];
+      
+      if (!this.isValidPdfType(file)) {
+        this.notificationService.warn('Le format de fichier doit être PDF.');
+        return;
+      }
+  
+      this.ficheSocial = await this.convertFileToBase64(file);
     }
   }
-
-  async handleDocument(files: FileList) {
+  
+  async handleDocument(files: FileList): Promise<void> {
     if (files.length > 0) {
-      this.document = await this.convertFileToBase64(files[0]);
+      const file = files[0];
+      
+      if (!this.isValidPdfType(file)) {
+        this.notificationService.warn('Le format de fichier doit être PDF.');
+        return;
+      }
+  
+      this.document = await this.convertFileToBase64(file);
     }
   }
+  
   async handlePhoto(files: FileList): Promise<void> {
     if (files.length > 0) {
-      this.photo = await this.convertFileToBase64(files[0]);
+      const file = files[0];
+      
+      if (!this.isValidFileType(file)) {
+        this.notificationService.warn('Le format de fichier doit être JPG, JPEG ou PNG.');
+        return;
+      }
+  
+      this.photo = await this.convertFileToBase64(file);
       const reader = new FileReader();
       reader.onload = (e: any) => {
         this.photoURL = e.target.result;
       };
-      reader.readAsDataURL(files[0]);
+      reader.readAsDataURL(file);
     }
   }
-
+  private isValidPdfType(file: File): boolean {
+    return file.type === 'application/pdf';
+  }
+  
+  private isValidFileType(file: File): boolean {
+    const validFileTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+    return validFileTypes.includes(file.type);
+  }
   save(): void {
     if (this.mode === "create") {
       this.createParticipant();
@@ -133,54 +182,82 @@ export class AddOrUpdateParticipantComponent implements OnInit {
     });
   }
 
-  getAgents(): void {
-    this.agentService.getAll().subscribe(
-      (response) => {
-        this.agents = response.body;
-      },
-      (error) => {
-        console.error("Erreur lors de la récupération des agents", error);
-      }
-    );
+  getAgents(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.agentService.getAgentsMatricules().subscribe(
+        (response) => {
+          this.agents = response.body as string[];
+          resolve();
+        },
+        (error) => {
+          console.error("Erreur lors de la récupération des matricules", error);
+          reject(error);
+        }
+      );
+    });
   }
-  createParticipant() {
+  
+  getAgent(matricule: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.agentService.getAgentByMatricule(matricule).subscribe(
+        (response) => {
+          this.agentParent = response.body as Agent;
+          console.log(this.agentParent);
+          resolve();
+        },
+        (error) => {
+          console.error("Erreur lors de la récupération de l'agent", error);
+          reject(error);
+        }
+      );
+    });
+  }
+  
+  async createParticipant() {
     let formData: Participant = this.form.value;
     formData.ficheSocial = this.ficheSocial;
     formData.status = "A VALIDER";
-    formData.document = this.document ?  this.document : null;
-    formData.photo = this.photo ?   this.photo : null;
+    formData.document = this.document ? this.document : null;
+    formData.photo = this.photo ? this.photo : null;
     formData.nomAgent = this.agent.nom;
     formData.prenomAgent = this.agent.prenom;
-    formData.matriculeAgent = this.agent.matricule;
-    const matriculeParent = formData.matriculeParent;
-    const selectedAgent = this.agents.find((agent) => agent.matricule === matriculeParent);
-    if (selectedAgent) {
-      formData.nomParent = selectedAgent.nom;
-      formData.prenomParent = selectedAgent.prenom;
-    }
-    this.dialogConfirmationService.confirmationDialog().subscribe((action) => {
-      if (action === DialogUtil.confirmer) {
-        this.participantService.create(formData).subscribe(
-          (response) => {
-            let participantTem = response.body as Participant;
-            if (participantTem.id != null) {
-              this.notificationService.success(NotificationUtil.ajout);
-              this.dialogRef.close(participantTem);
-            } else {
-              this.notificationService.warn("Erreur dans l'ajout du participant");
-              this.dialogRef.close();
-            }
-          },
-          (err) => {
-            this.notificationService.warn(err);
-          }
-        );
-      } else {
-        this.dialogRef.close();
+    formData.matriculeAgent = this.agent.matricule;  
+    try {
+      await this.getAgent(formData.matriculeParent);
+      console.log(this.agentParent);
+  
+      if (this.agentParent) {
+        formData.nomParent = this.agentParent.nom;
+        formData.prenomParent = this.agentParent.prenom;
       }
-    });
+  
+      this.dialogConfirmationService.confirmationDialog().subscribe((action) => {
+        if (action === DialogUtil.confirmer) {
+          this.participantService.create(formData).subscribe(
+            (response) => {
+              let participantTem = response.body as Participant;
+              if (participantTem.id != null) {
+                this.notificationService.success(NotificationUtil.ajout);
+                this.dialogRef.close(participantTem);
+              } else {
+                this.notificationService.warn("Erreur dans l'ajout du participant");
+                this.dialogRef.close();
+              }
+            },
+            (err) => {
+              this.notificationService.warn(err);
+            }
+          );
+        } else {
+          this.dialogRef.close();
+        }
+      });
+    } catch (error) {
+      console.error("Erreur lors de la création du participant", error);
+      this.notificationService.warn("Erreur lors de la récupération des informations du parent");
+    }
   }
-
+  
   updateParticipant() {
     let formData: Participant = this.form.value;
     formData.ficheSocial = this.defaults.ficheSocial;

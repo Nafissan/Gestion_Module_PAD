@@ -47,8 +47,10 @@ public interface AgentService {
 	public void createPasswordTokenForAgent(AgentDTO agentDTO, String token);
 
 	public AgentDTO getAgentResponsableDCH();
+    public List<String> getAllAgentsMatricules();
 
 	public List<AgentDTO> getAgentsAssures();
 	public AgentDTO getAgentByMatricule(String matricule);
+    public List<String> getAgentsEmails();
 
 }

@@ -22,6 +22,7 @@ import sn.pad.pe.colonie.dto.ColonStatisticsDTO;
 import sn.pad.pe.colonie.dto.ParticipantColonieDTO;
 import sn.pad.pe.colonie.services.ParticipantColonieService;
 import sn.pad.pe.configurations.exception.Message;
+import sn.pad.pe.configurations.exception.ParticipantColonieException;
 
 @RestController
 @Api(value = "API pour la gestion des participants")
@@ -63,15 +64,21 @@ public class ParticipantColonieController {
         return ResponseEntity.noContent().build();
     }
     @PutMapping("/participantsColonie")
-    public ResponseEntity<Message> updateParticipant( @RequestBody ParticipantColonieDTO updatedParticipant) {
-        boolean updated = participantServiceColonie.updateParticipant(updatedParticipant);
-        if(updated){
-           message = new Message(new Date(), "Participant with id " + updatedParticipant.getId() + " updated.", "uri=/participants/" + updatedParticipant.getId());
-            return ResponseEntity.ok().body(message);
+    public ResponseEntity<Message> updateParticipant(@RequestBody ParticipantColonieDTO updatedParticipant) {
+        try {
+            boolean updated = participantServiceColonie.updateParticipant(updatedParticipant);
+            if (updated) {
+                message = new Message(new Date(), "Participant with id " + updatedParticipant.getId() + " updated.", "uri=/participants/" + updatedParticipant.getId());
+                return ResponseEntity.ok().body(message);
+            }
+            message = new Message(new Date(), "Participant with id " + updatedParticipant.getId() + " not found.", "uri=/participants/" + updatedParticipant.getId());
+            return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
+        } catch (ParticipantColonieException ex) {
+            message = new Message(new Date(), ex.getMessage(), "uri=/participants/" + updatedParticipant.getId());
+            return new ResponseEntity<>(message, HttpStatus.CONFLICT);
         }
-        message = new Message(new Date(), "Participant with id " + updatedParticipant.getId() + " not found.", "uri=/participants/" + updatedParticipant.getId());
-        return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
     }
+    
      @ApiOperation(value = "Création d'un participant", response = ResponseEntity.class)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Objet créé avec succès"),
     @ApiResponse(code = 409, message = "La ressource existe déjà"),

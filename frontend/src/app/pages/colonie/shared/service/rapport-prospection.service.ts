@@ -3,6 +3,7 @@ import { HttpHeaders, HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { RapportProspection } from '../model/rapport-prospection.model';
+import { DossierColonie } from '../model/dossier-colonie.model';
 
 @Injectable({
   providedIn: 'root',
@@ -48,6 +49,12 @@ export class RapportProspectionService {
     const url = `${this.url}/etat`;
     return this.httpClient
       .get<any>(url, { observe: 'response' })
+      .pipe(catchError(this.errorHandler));
+  }
+  getRapportByDossier(dossier :DossierColonie): Observable<HttpResponse<any>>{
+    return this.httpClient.post<any>(`${this.url}/dossier`, JSON.stringify(dossier), { 
+      headers: this.httpOptions.headers,
+      observe: 'response' })
       .pipe(catchError(this.errorHandler));
   }
   private errorHandler(error: any) {

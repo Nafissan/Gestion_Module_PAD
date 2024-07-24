@@ -243,12 +243,27 @@ public class AgentController {
 		List<AgentDTO> agentDTOs = agentService.getAgentsAssures();
 		return new ResponseEntity<List<AgentDTO>>(agentDTOs, HttpStatus.OK);
 	}
-
+	@ApiOperation(value = "Liste des emails des agents", response = List.class)
+    @ApiResponses(value = { 
+        @ApiResponse(code = 200, message = "Liste récupérée avec succès"),
+        @ApiResponse(code = 401, message = "Vous n'êtes pas autorisé à voir la ressource"),
+        @ApiResponse(code = 403, message = "L'accès à la ressource que vous tentez d'atteindre est interdit"),
+        @ApiResponse(code = 404, message = "La ressource que vous tentez d'atteindre est introuvable.") 
+    })
+    @GetMapping("/agents/emails")
+    public ResponseEntity<List<String>> getAgentsEmails() {
+        List<String> emails = agentService.getAgentsEmails();
+        return ResponseEntity.ok().body(emails);
+    }
 
     @GetMapping("/agents/matricule/{matricule}")
     public ResponseEntity<AgentDTO> getAgentByMatricule(@PathVariable String matricule) {
         AgentDTO agent = agentService.getAgentByMatricule(matricule);
         return ResponseEntity.ok().body(agent);
     }
-
+	@GetMapping("/agents/matricules")
+    public ResponseEntity<List<String>> getAgentsMatricules() {
+        List<String> mList = agentService.getAllAgentsMatricules();
+        return ResponseEntity.ok().body(mList);
+    }
 }

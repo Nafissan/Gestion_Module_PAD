@@ -54,7 +54,16 @@ export class AgentService {
       })
       .pipe(catchError(this.errorHandler));
   }
-  
+  getAgentEmail(): Observable<HttpResponse<any>> {
+    return this.httpClient
+      .get<any>(`${this.url}/emails`, { observe: 'response' })
+      .pipe(catchError(this.errorHandler));
+  }
+  getAgentsMatricules(): Observable<HttpResponse<any>> {
+    return this.httpClient
+      .get<any>(`${this.url}/matricules`, { observe: 'response' })
+      .pipe(catchError(this.errorHandler));
+  }
   getAgentsAssures(): Observable<HttpResponse<any>> {
     return this.httpClient
       .get<any>(this.url + '/agents_assures',  {

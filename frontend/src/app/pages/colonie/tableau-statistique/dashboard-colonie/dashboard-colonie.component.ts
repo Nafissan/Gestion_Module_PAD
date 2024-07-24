@@ -150,18 +150,24 @@ export class DashboardColonieComponent implements OnInit {
   }
 
   loadData() {
-    forkJoin([
-      this.dossierColonieService.getDossiersColoniesFerme(),
-      this.satisfactionService.getAllSatisfactions()
-    ]).subscribe(([dossiersResponse, satisfactionsResponse]) => {
-      this.colonStat = dossiersResponse.body;
-      this.satisfactions = satisfactionsResponse.body;
-      this.processData();
-    }, err => {
-      console.error('Error loading data:', err);
-    });
+    this.dossierColonieService.getDossiersColoniesFerme().subscribe(
+      (response) => {
+        this.colonStat = response.body ;
+        this.satisfactionService.getAllSatisfactions().subscribe(response => {
+          this.satisfactions = response.body;
+          this.processData();
+        }, err => {
+          console.error('Error loading participant colonies:', err);
+        }, () => {
+          this.subject$.next(this.filteredSatisfaction);
+          this.showProgressBar = true;
+        });
+      },
+      (error) => {
+        console.error('Error fetching data:', error);
+      }
+    );
   }
-  
   yearSelected(params: Date) {
     this.dateV.setValue(params);
     this.selectedYear = params.getFullYear(); 
@@ -208,7 +214,6 @@ export class DashboardColonieComponent implements OnInit {
             age7to10Count += stats.age7to10;
             age10to15Count += stats.age10to15;
             age15to18Count += stats.age15to18;
-  
             const year = parseInt(dossier.annee, 10);
             this.updateMap(colonCountsMap, year, stats.totalColons);
   

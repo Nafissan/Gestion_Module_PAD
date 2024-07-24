@@ -10,8 +10,8 @@ import sn.pad.pe.colonie.bo.DossierColonie;
 import sn.pad.pe.colonie.bo.ParticipantColonie;
 
 public interface ParticipantColonieRepository extends JpaRepository<ParticipantColonie, Long>{
- Optional<ParticipantColonie> findByNomEnfantAndPrenomEnfantAndDateNaissanceAndMatriculeParent(
-        String nomEnfant, String prenomEnfant, Date dateNaissance, String matriculeParent);
+ Optional<ParticipantColonie> findByNomEnfantAndPrenomEnfantAndDateNaissanceAndMatriculeParentAndStatus(
+        String nomEnfant, String prenomEnfant, Date dateNaissance, String matriculeParent,String status);
         List<ParticipantColonie> findByStatusIn(List<String> statuses);
         List<ParticipantColonie> findByCodeDossier(DossierColonie dossier);
         List<ParticipantColonie> findByStatus(String status);

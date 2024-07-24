@@ -2,6 +2,8 @@ import { Component, Inject, Input, OnInit } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { DossierColonie } from '../../shared/model/dossier-colonie.model';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { RapportProspection } from '../../shared/model/rapport-prospection.model';
+import { RapportProspectionService } from '../../shared/service/rapport-prospection.service';
 
 @Component({
   selector: 'fury-read-historique-colonie',
@@ -11,10 +13,13 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 export class ReadHistoriqueColonieComponent implements OnInit {
     dossier: DossierColonie;
     property: string;
+    rapportProspection: string;
+
     pdfDataUrl: SafeResourceUrl;
      showFrame: boolean = true; // Initially true
   
-    constructor(private sanitizer: DomSanitizer,    @Inject(MAT_DIALOG_DATA) public data: { dossier: DossierColonie, property: string }) {
+    constructor(private sanitizer: DomSanitizer,    @Inject(MAT_DIALOG_DATA) public data: { dossier: DossierColonie, property: string },
+    private rapportService: RapportProspectionService) {
       if(data.dossier) this.dossier = data.dossier;
       this.property = data.property;
     }
@@ -24,9 +29,9 @@ export class ReadHistoriqueColonieComponent implements OnInit {
     }
   
 
-    loadFileContent(): void {
+    async loadFileContent(): Promise<void> {
       try {
-        const base64String = this.getFileContent(this.property);
+        const base64String = await this.getFileContent(this.property); // Utilisez await ici
         if (this.isValidBase64(base64String)) {
           const binaryString = atob(base64String);
           const byteNumbers = new Uint8Array(binaryString.length);
@@ -41,11 +46,32 @@ export class ReadHistoriqueColonieComponent implements OnInit {
         console.error('Error decoding base64 string:', error);
       }
       }
-      getFileContent(property: string): string {
-        if(this.dossier)  return this.dossier[property];
-
+      async getFileContent(property: string): Promise<string> {
+        if (property === "rapportProspection") {
+          await this.getRapportProspection();
+          return this.rapportProspection;
+        } else {
+          return this.dossier[property];
+        }
       }
-    
+      
+      getRapportProspection(): Promise<void> {
+        return new Promise((resolve, reject) => {
+          this.rapportService.getRapportByDossier(this.dossier).subscribe(
+            (data) => {
+              const dossier = data.body as RapportProspection;
+              this.rapportProspection = dossier.rapportProspection;
+              console.log(dossier);
+              resolve();
+            },
+            (error) => {
+              console.error('Error fetching rapport prospection', error);
+              reject(error);
+            }
+          );
+        });
+      }
+      
       isValidBase64(base64: string): boolean {
         try {
           atob(base64);

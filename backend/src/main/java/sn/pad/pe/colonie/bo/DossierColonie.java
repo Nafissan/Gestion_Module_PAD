@@ -36,7 +36,7 @@ public class DossierColonie implements Serializable {
     @Column( unique = true)
     private String annee;
     private String commentaire;
-
+    private String type;
     private String description;
     private String etat;
     @Lob
@@ -227,6 +227,14 @@ public class DossierColonie implements Serializable {
 
     public void setParticipants(List<ParticipantColonie> participants) {
         this.participants = participants;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
   

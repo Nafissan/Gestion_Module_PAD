@@ -83,8 +83,13 @@ defaults:RapportProspection;
 
   async handleRapportProspection(files: FileList): Promise<void> {
     if (files.length > 0) {
-      this.fileRapportProspection = await this.convertFileToBase64(files[0]);
-    }
+      const file = files[0];
+      if (file.type === 'application/pdf') {
+          this.fileRapportProspection = await this.convertFileToBase64(file);
+      } else {
+        this.notificationService.warn('Le format de fichier doit être PDF.');
+      }
+  }
   }
   async convertFileToBase64(file: File): Promise<string> {
     return new Promise((resolve, reject) => {
@@ -165,15 +170,6 @@ defaults:RapportProspection;
       dateCreation: this.defaults.dateCreation,
       etat: this.defaults.etat
     }; 
-    this.agentService.getAgentByMatricule(formData.matricule).subscribe(
-      (response) => {
-      const agent: Agent = response.body;
-    let mail = new Mail();
-    mail.objet = "Rapport prospection colonie";
-    mail.contenu = "Le rapport de prospection a ete rejete. Voici les raisons : "+formData.commentaire;
-    mail.lien = "";
-    mail.emetteur = "";
-    mail.destinataires = [agent.email];
     this.dialogConfirmationService.confirmationDialog().subscribe(action => {
       if (action === DialogUtil.confirmer) {
         this.rapportProspectionService.updateRapportProspection(formData).subscribe((response) => {
@@ -181,28 +177,9 @@ defaults:RapportProspection;
           this.dialogRef.close(formData);
         }, err => {
           this.notificationService.warn(NotificationUtil.echec);
-        },
-        () => {           
-          this.mailService.sendMailByDirections(mail).subscribe(
-            response => {
-              this.notificationService.success('Email sent successfully');
-              },
-              error => {
-                this.notificationService.warn('Failed to send email');
-                },
-                () => {
-                  this.notificationService.success(NotificationUtil.envoyeDossier);
-                }
-                );
-          this.dialogRef.close();});
+        });
       }
       });
-    },
-    (error) => {
-      console.error('Erreur lors de la récupération de l\'agent:', error);
-      this.notificationService.warn('Échec de la récupération des informations de l\'agent');
-    }
-  );
    }
 
    updateRapportProspection() {

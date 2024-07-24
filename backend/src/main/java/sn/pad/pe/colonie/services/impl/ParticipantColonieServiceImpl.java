@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
@@ -11,6 +12,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +25,7 @@ import sn.pad.pe.colonie.dto.ParticipantColonieDTO;
 import sn.pad.pe.colonie.repositories.ParticipantColonieRepository;
 import sn.pad.pe.colonie.services.DossierColonieService;
 import sn.pad.pe.colonie.services.ParticipantColonieService;
+import sn.pad.pe.configurations.exception.ParticipantColonieException;
 @Service
 public class ParticipantColonieServiceImpl implements ParticipantColonieService {
 
@@ -36,14 +40,7 @@ public class ParticipantColonieServiceImpl implements ParticipantColonieService 
     public ParticipantColonieDTO saveParticipant(ParticipantColonieDTO participantDTO) {
         convertBase64FieldsToBytes(participantDTO);
     
-        Optional<ParticipantColonie> existingParticipant = participantColonieRepository.findByNomEnfantAndPrenomEnfantAndDateNaissanceAndMatriculeParent(
-        participantDTO.getNomEnfant(), participantDTO.getPrenomEnfant(), participantDTO.getDateNaissance(), participantDTO.getMatriculeParent());
-
-        if (existingParticipant.isPresent()) {
-            if ("VALIDER".equalsIgnoreCase(existingParticipant.get().getStatus())) {
-                throw new IllegalStateException("Ce colon existe déjà");
-            }
-        }
+       
         DossierColonie dossier = modelMapper.map(dossierColonieService.getDossierColonieByEtat(),DossierColonie.class);
         participantDTO.setCodeDossier(dossier);
         ParticipantColonie participant = modelMapper.map(participantDTO, ParticipantColonie.class);
@@ -113,7 +110,7 @@ public List<ParticipantColonieDTO> getParticipantsByDossierId(DossierColonie dos
     @Override
     public void deleteAllParticipants() {
         try {
-            List<ParticipantColonie> participants = participantColonieRepository.findByStatusIn(List.of("A VALIDER", "REJETER"));
+            List<ParticipantColonie> participants = participantColonieRepository.findByStatusIn(Arrays.asList("A VALIDER", "REJETER"));
             
             participantColonieRepository.deleteAll(participants);
             
@@ -157,16 +154,38 @@ public List<ParticipantColonieDTO> getParticipantsByAnnee(String annee) {
 public ColonStatisticsDTO getParticipantStatisticsByAnnee(String annee) {
     List<ParticipantColonieDTO> participants;
     if (annee != null && !annee.isEmpty()) {
-       participants =getParticipantsByAnnee(annee);
+       participants = getParticipantsByAnnee(annee);
     } else {
         participants = getAllParticipants();
     }
 
     ColonStatisticsDTO statistics = new ColonStatisticsDTO();
     statistics.setTotalColons((long) participants.size());
-    statistics.setAge7to10(participants.stream().filter(participant -> calculateAge(participant.getDateNaissance()) >= 7 && calculateAge(participant.getDateNaissance()) < 10).count());
-    statistics.setAge10to15(participants.stream().filter(participant -> calculateAge(participant.getDateNaissance()) >= 10 && calculateAge(participant.getDateNaissance()) < 15).count());
-    statistics.setAge15to18(participants.stream().filter(participant -> calculateAge(participant.getDateNaissance()) >= 15 && calculateAge(participant.getDateNaissance()) < 18).count());
+
+    long age7to10Count = participants.stream()
+        .filter(participant -> {
+            int age = calculateAge(participant.getDateNaissance());
+            System.out.println("Participant: " + participant.getId() + ", Age: " + age); // Débogage
+            return age >= 7 && age < 10;
+        })
+        .count();
+    statistics.setAge7to10(age7to10Count);
+
+    long age10to15Count = participants.stream()
+        .filter(participant -> {
+            int age = calculateAge(participant.getDateNaissance());
+            return age >= 10 && age < 15;
+        })
+        .count();
+    statistics.setAge10to15(age10to15Count);
+
+    long age15to18Count = participants.stream()
+        .filter(participant -> {
+            int age = calculateAge(participant.getDateNaissance());
+            return age >= 15 && age <= 18;
+        })
+        .count();
+    statistics.setAge15to18(age15to18Count);
 
     statistics.setMaleCount(participants.stream().filter(participant -> "masculin".equalsIgnoreCase(participant.getSexe().toString())).count());
     statistics.setFemaleCount(participants.stream().filter(participant -> "feminin".equalsIgnoreCase(participant.getSexe().toString())).count());
@@ -175,22 +194,43 @@ public ColonStatisticsDTO getParticipantStatisticsByAnnee(String annee) {
 }
 
 private int calculateAge(Date birthDate) {
+    if (birthDate == null) {
+        return 0; // ou gérer le cas différemment selon les besoins
+    }
     LocalDate localBirthDate = birthDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     return Period.between(localBirthDate, LocalDate.now()).getYears();
 }
-  @Override
-    public boolean updateParticipant(ParticipantColonieDTO updatedParticipant) {
-        Optional<ParticipantColonie> parOptional = participantColonieRepository.findById(updatedParticipant.getId());
-        if (parOptional.isPresent()) {
-            convertBase64FieldsToBytes(updatedParticipant);
-            ParticipantColonie participant = modelMapper.map(updatedParticipant, ParticipantColonie.class);
-            participantColonieRepository.save(participant);
 
-            return true;
-        } else {
-            return false;
+@Override
+public boolean updateParticipant(ParticipantColonieDTO updatedParticipant) {
+    Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    logger.info("Début de la mise à jour du participant avec ID : {}", updatedParticipant.getId());
+
+    Optional<ParticipantColonie> parOptional = participantColonieRepository.findById(updatedParticipant.getId());
+    if (parOptional.isPresent()) {
+        logger.info("Participant trouvé avec ID : {}", updatedParticipant.getId());
+
+        convertBase64FieldsToBytes(updatedParticipant);
+
+        Optional<ParticipantColonie> existingParticipant = participantColonieRepository.findByNomEnfantAndPrenomEnfantAndDateNaissanceAndMatriculeParentAndStatus(
+            updatedParticipant.getNomEnfant(), updatedParticipant.getPrenomEnfant(), updatedParticipant.getDateNaissance(), updatedParticipant.getMatriculeParent(),updatedParticipant.getStatus());
+        
+        if (existingParticipant.isPresent()) {
+                logger.error("Ce colon existe déjà avec le statut VALIDER");
+                throw new ParticipantColonieException("Ce colon existe déjà");
         }
+
+        ParticipantColonie participant = modelMapper.map(updatedParticipant, ParticipantColonie.class);
+        participantColonieRepository.save(participant);
+
+        logger.info("Participant mis à jour et sauvegardé avec succès avec ID : {}", participant.getId());
+        return true;
+    } else {
+        logger.warn("Participant non trouvé avec ID : {}", updatedParticipant.getId());
+        return false;
     }
+}
     private void convertBase64FieldsToBytes(ParticipantColonieDTO participantDTO) {
         if (participantDTO.getFicheSocial() != null) {
             if (isValidBase64(participantDTO.getFicheSocial())) {

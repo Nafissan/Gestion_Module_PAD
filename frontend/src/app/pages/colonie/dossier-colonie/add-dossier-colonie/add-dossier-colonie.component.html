@@ -21,6 +21,16 @@
           <mat-label>Commentaire</mat-label>
           <input matInput formControlName="commentaire">
       </mat-form-field>
+      <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
+
+      <mat-form-field fxFlex *ngIf="mode !== 'fermer'">
+        <mat-label>Type</mat-label>
+        <mat-select formControlName="type" required>
+            <mat-option value="National">National</mat-option>
+            <mat-option value="Etranger">Étranger</mat-option>
+        </mat-select>
+    </mat-form-field>
+    </div>
         <div fxLayout="column" fxLayout.gt-sm="column" fxLayoutGap.gt-sm="34px">
         
 
@@ -33,18 +43,21 @@
                 <div class="file-upload"  *ngIf="mode === 'update'">
                   <input type="file" class="form-control-file border" id="fileInput" multiple="false"  (change)="handleDemandeProspectionFileInput($event.target.files)" >
                 </div>
-                <mat-label  *ngIf="mode === 'update' && !defaults.noteInformation">Note d'information </mat-label>
-                <div class="file-upload"  *ngIf="mode === 'update'&& !defaults.noteInformation ">
-                  <input type="file" class="form-control-file border" id="fileInput" multiple="false"  (change)="handleNotePersonels($event.target.files)" >
-                </div>
-                <mat-label  *ngIf="mode === 'update' && !defaults.noteInstruction">Note d'instruction colonie</mat-label>
-                <div class="file-upload"  *ngIf="mode === 'update' && !defaults.noteInstruction">
-                  <input type="file" class="form-control-file border" id="fileInput" multiple="false" (change)="handleNotePelerins($event.target.files)" >
-                </div>
-                <mat-label  *ngIf="mode === 'update'">Rapport de mission</mat-label>
-                <div class="file-upload"  *ngIf="mode === 'update'">
-                  <input type="file" class="form-control-file border" id="fileInput" multiple="false" (change)="handleRapport($event.target.files)" >
-                </div>
+               
+            <mat-label *ngIf="mode === 'update'  && rapportProspection !==null">Note d'information</mat-label>
+            <div class="file-upload" *ngIf="mode === 'update'  && rapportProspection!==null">
+                <input type="file" class="form-control-file border" id="fileInput" multiple="false" (change)="handleNotePersonels($event.target.files)">
+            </div>
+
+            <mat-label *ngIf="mode === 'update'  && colon.length > 0">Note d'instruction colonie</mat-label>
+            <div class="file-upload" *ngIf="mode === 'update'  && colon.length > 0">
+                <input type="file" class="form-control-file border" id="fileInput" multiple="false" (change)="handleNotePelerins($event.target.files)">
+            </div>
+
+            <mat-label *ngIf="mode === 'update' && satisfactions!==null">Rapport de mission</mat-label>
+            <div class="file-upload" *ngIf="mode === 'update' && satisfactions!==null">
+                <input type="file" class="form-control-file border" id="fileInput" multiple="false" (change)="handleRapport($event.target.files)">
+            </div>
     </div>
 
     </mat-dialog-content>

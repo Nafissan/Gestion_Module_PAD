@@ -41,6 +41,7 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
   username: string;
   compte: Compte;  
   agent: Agent;
+  agentParent: Agent;
   private paginator: MatPaginator;
   private sort: MatSort;
   dossierColonie: DossierColonie;
@@ -147,7 +148,21 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
   hasAnyRole(roles: string[]) {
     return this.authentificationService.hasAnyRole(roles);
   }
-
+  getAgent(matricule: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.agentService.getAgentByMatricule(matricule).subscribe(
+        (response) => {
+          this.agentParent = response.body as Agent;
+          resolve();
+        },
+        (error) => {
+          console.error("Erreur lors de la récupération de l'agent", error);
+          reject(error);
+        }
+      );
+    });
+  }
+  
   deleteDossierColonie(rapport: RapportProspection) {
     this.dialogConfirmationService.confirmationDialog().subscribe(action => {
       if (action === DialogUtil.confirmer) {
@@ -164,47 +179,47 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
       }
     });
   }
-  validerRapportProspection(rapport: RapportProspection) {
+  async validerRapportProspection(rapport: RapportProspection) {
     rapport.etat = 'VALIDER';
     rapport.matriculeAgent = this.agent.matricule;
     rapport.nomAgent = this.agent.nom;
     rapport.prenomAgent = this.agent.prenom;
     rapport.dateValidation = new Date();
-    this.agentService.getAgentByMatricule(rapport.matricule).subscribe(
-      (response) => {
-      const agent: Agent = response.body;
-    let mail = new Mail();
-    mail.objet = "Rapport_Prospection";
-    mail.contenu ="Le rapport de Prospection du dossier colonie est validé";
-    mail.lien = "";
-    mail.emetteur = "";
-    mail.destinataires = [agent.email];
-    this.rapportService.updateRapportProspection(rapport).subscribe((response) => {
-      this.notificationService.success('Rapport de prospection validé avec succès');
-      if (response.body as RapportProspection) {
-        this.rapportProspection = response.body;
-        this.refresh();
-      }
-    }, err => {
-      this.notificationService.warn('Échec de la validation du rapport'+err);
-    }, () => {
-      this.mailService.sendMailByDirections(mail).subscribe(
-        response => {
-        }, err => {
-          this.notificationService.warn(NotificationUtil.echec);
+    try {
+      await this.getAgent(rapport.matricule);
+      let mail = new Mail();
+      mail.objet = "Rapport_Prospection";
+      mail.contenu = "Le rapport de Prospection du dossier colonie est validé";
+      mail.lien = "";
+      mail.emetteur = "";
+      mail.destinataires = [this.agentParent.email];
+  
+      this.rapportService.updateRapportProspection(rapport).subscribe(
+        (response) => {
+          this.notificationService.success('Rapport de prospection validé avec succès');
+          if (response.body as RapportProspection) {
+            this.rapportProspection = rapport;
+            this.refresh();
+          }
         },
-        () => {
-          this.notificationService.success(NotificationUtil.envoyeDossier);
-        });
-    });
-  },
-  (error) => {
-    console.error('Erreur lors de la récupération de l\'agent:', error);
+        err => {
+          this.notificationService.warn('Échec de la validation du rapport: ' + err);
+        },
+        async () => {
+          try {
+            await this.mailService.sendMailByDirections(mail).toPromise();
+            this.notificationService.success(NotificationUtil.envoyeDossier);
+          } catch (error) {
+            this.notificationService.warn(NotificationUtil.echec);
+          }
+        }
+      );
+    } catch (error) {
+      this.notificationService.warn('Erreur lors de la récupération de l\'agent');
+    }
   }
-);
-}
 
-  rejeterRapportProspection(rapport: RapportProspection){
+  async rejeterRapportProspection(rapport: RapportProspection){
     rapport.etat = 'REJETER';
     rapport.matriculeAgent=this.agent.matricule;
     rapport.nomAgent=this.agent.nom;
@@ -220,7 +235,25 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
 
         }
       })
-  }
+      try {
+        await this.getAgent(rapport.matricule);
+        let mail = new Mail();
+        mail.objet = "Rapport_Prospection";
+        mail.contenu = "Le rapport de Prospection du dossier colonie est rejeté";
+        mail.lien = "";
+        mail.emetteur = "";
+        mail.destinataires = [this.agentParent.email];
+    
+        try {
+          await this.mailService.sendMailByDirections(mail).toPromise();
+          this.notificationService.success(NotificationUtil.envoyeDossier);
+        } catch (error) {
+          this.notificationService.warn(NotificationUtil.echec);
+        }
+      } catch (error) {
+        this.notificationService.warn('Erreur lors de la récupération de l\'agent');
+      }
+    }
   afficherRapportProspection(rapport:RapportProspection){
     const dialogRef = this.dialog.open(DetailsRapportProspectionComponent, {
       data: rapport,
@@ -230,7 +263,7 @@ export class ListeRapportProspectionComponent implements OnInit, AfterViewInit, 
       maxHeight: '100vh', 
     });
     dialogRef.afterClosed().subscribe(result => {
-      this.rapportProspection = result;
+      this.rapportProspection = rapport;
     });
   }
   ngOnDestroy() { }

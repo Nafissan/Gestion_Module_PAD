@@ -17,6 +17,12 @@ import { DossierColonieService } from "../../shared/service/dossier-colonie.serv
 import { MailService } from "src/app/shared/services/mail.service";
 import { Mail } from "src/app/shared/model/mail.model";
 import { AgentService } from "src/app/shared/services/agent.service";
+import { RapportProspectionService } from "../../shared/service/rapport-prospection.service";
+import { RapportProspection } from "../../shared/model/rapport-prospection.model";
+import { SatisfactionService } from "../../shared/service/satisfaction.service";
+import { Satisfaction } from "../../shared/model/satisfaction.model";
+import { Participant } from "../../shared/model/participant-colonie.model";
+import { ParticipantService } from "../../shared/service/participant.service";
 
 // See the Moment.js docs for the meaning of these formats:
 // https://momentjs.com/docs/#/displaying/format/
@@ -55,7 +61,7 @@ export const MY_FORMATS = {
   colonieDossier: DossierColonie;
   etatDossierColonie: EtatDossierColonie = new EtatDossierColonie();
   selectedFileName: string = '';
-  emailSentForNoteInformation: boolean = false;
+  emails: string[] = [];
   emailSentForNoteInstruction: boolean = false;
 defaults: DossierColonie;
   // Autres propriétés nécessaires
@@ -64,10 +70,14 @@ defaults: DossierColonie;
   notePersonnels: string | null = null;
   notePelerins: string | null = null;
   rapport: string | null = null;
+  rapportProspection: RapportProspection;
+  satisfactions: Satisfaction;
+  colon: Participant[]=[];
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data : { dossier: DossierColonie, property: string },
-    private fb: FormBuilder,
+    private fb: FormBuilder,    private rapportService: RapportProspectionService,
+
     private dialogRef: MatDialogRef<AddDossierColonieComponent>,
     private authService: AuthenticationService,
     private compteService: CompteService,
@@ -76,13 +86,19 @@ defaults: DossierColonie;
      private mailService: MailService,
     private dialogConfirmationService: DialogConfirmationService,
     private notificationService: NotificationService,
-    private agentService: AgentService // Ajout du service AgentService
+    private satisfactionService: SatisfactionService,
+    private agentService: AgentService ,
+    private   participantService: ParticipantService
+
 
   ) {  
   }
 
   ngOnInit(): void {
-    this.username = this.authService.getUsername();
+    this.getRapportProspections();
+    this.getSatisfactions();
+    this.getColons();
+        this.username = this.authService.getUsername();
 
     this.compteService.getByUsername(this.username).subscribe((response) => {
       this.compte = response.body;
@@ -100,67 +116,108 @@ defaults: DossierColonie;
       this.defaults = {} as DossierColonie;
     }
 
-    // FormControl for DatePicker
     this.dateCreation = new FormControl(this.defaults.annee ? new Date(this.defaults.annee) : moment());
-    // FormGroup
     this.form = this.fb.group({
       description: new FormControl(this.defaults.description || "", [
         Validators.required,
       ]),
       commentaire: new FormControl(this.defaults.commentaire || "", ),
       code: new FormControl({ value: this.defaults.code, disabled: true }),
+      type: new FormControl(this.defaults.type || "", ),
+
     });
   }
 
-  getAllAgentEmails(): Promise<string[]> {
-    return new Promise((resolve, reject) => {
-      this.agentService.getAll().subscribe(
-        response => {
-          const agents = response.body;
-          const emails = agents.map(agent => agent.email);
-          resolve(emails);
-        },
-        error => {
-          this.notificationService.warn('Failed to retrieve agent emails');
-          reject(error);
-        }
-      );
+  getAllAgentEmails(){
+     this.agentService.getAgentEmail().subscribe((response) => {
+      this.emails= response.body;
+    }, err => {
+      this.notificationService.warn(err);},);
+  }
+  getColons() {
+    this.participantService.getParticipantsValide().subscribe(response => {
+      this.colon = response.body as Participant[];
+    console.log(this.colon.length);
+    }, err => {
+      console.error('Error loading participant colonies:', err);
     });
+}
+  getSatisfactions() {
+   
+    this.satisfactionService.getFormulaireByDossierEtat().subscribe(response => {
+      this.satisfactions = response.body as Satisfaction;
+    }, err => {
+      console.error('Error loading participant colonies:', err);
+    });
+}
+async handleNoteMinistereFileInput(files: FileList) {
+  if (files.length > 0) {
+      const file = files[0];
+      if (this.isValidPdfType(file)) {
+          this.noteMinistere = await this.convertFileToBase64(file);
+          this.selectedFileName = file.name;
+      } else {
+          this.notificationService.warn('Le format de fichier doit être PDF.');
+      }
   }
-  
- 
-  async handleNoteMinistereFileInput(files: FileList) {
-    if (files.length > 0 ) {
-      this.noteMinistere = await this.convertFileToBase64(files[0]);
-      this.selectedFileName = files[0].name;
-    }
-  }
+}
 
-  async handleDemandeProspectionFileInput(files: FileList) {
-    if (files.length > 0 ) {
-      this.demandeProspection = await this.convertFileToBase64(files[0]);
-    }
+async handleDemandeProspectionFileInput(files: FileList) {
+  if (files.length > 0) {
+      const file = files[0];
+      if (this.isValidPdfType(file)) {
+          this.demandeProspection = await this.convertFileToBase64(file);
+      } else {
+          this.notificationService.warn('Le format de fichier doit être PDF.');
+      }
   }
+}
 
-  async handleNotePersonels(files: FileList) {
-    if (files.length > 0  ) {
-      this.notePersonnels = await this.convertFileToBase64(files[0]);
-    }
-    
+async handleNotePersonels(files: FileList) {
+  if (files.length > 0) {
+      const file = files[0];
+      if (this.isValidPdfType(file)) {
+          this.notePersonnels = await this.convertFileToBase64(file);
+      } else {
+          this.notificationService.warn('Le format de fichier doit être PDF.');
+      }
   }
+}
+  getRapportProspections() {
+    this.rapportService.getRapportProspectionByEtat().subscribe(
+      (response) => {
+        this.rapportProspection = response.body as RapportProspection;
 
-  async handleNotePelerins(files: FileList) {
-    if (files.length > 0  ) {
-      this.notePelerins = await this.convertFileToBase64(files[0]);
-    }
+      },
+      (err) => {        
+         console.error('Error loading rapport prospection colonies:', err); 
+      }
+    );
+}
+async handleNotePelerins(files: FileList) {
+  if (files.length > 0) {
+      const file = files[0];
+      if (this.isValidPdfType(file)) {
+          this.notePelerins = await this.convertFileToBase64(file);
+      } else {
+          this.notificationService.warn('Le format de fichier doit être PDF.');
+      }
   }
+}
 
-  async handleRapport(files: FileList) {
-    if (files.length > 0 ) {
-      this.rapport = await this.convertFileToBase64(files[0]);
-    }
+async handleRapport(files: FileList) {
+  if (files.length > 0) {
+      const file = files[0];
+      if (this.isValidPdfType(file)) {
+          this.rapport = await this.convertFileToBase64(file);
+      } else {
+          this.notificationService.warn('Le format de fichier doit être PDF.');
+      }
   }
-
+}
+private isValidPdfType(file: File): boolean {
+  return file.type === 'application/pdf';
+}
   save(): void {
     if (this.mode === "create") {
       this.createDossierColonie();
@@ -172,8 +229,8 @@ defaults: DossierColonie;
 
   createDossierColonie(): void {
     let formData: DossierColonie   = this.form.value;
-    formData.annee                = '2022';
-    formData.code                 = 'DCLN' + '-' + 'PAD' + '-' + '2022';
+    formData.annee                = '2023';
+    formData.code                 = 'DCLN' + '-' + 'PAD' + '-' +formData.annee;
     formData.etat                 = EtatDossierColonie.ouvert; 
     formData.noteMinistere        = this.noteMinistere;
     formData.demandeProspection   = null; 
@@ -230,7 +287,7 @@ defaults: DossierColonie;
       if (action === DialogUtil.confirmer) {
         this.dossierColonieService.update(formData).subscribe(reponse => {
           this.notificationService.success(NotificationUtil.modification);
-          if(this.notePersonnels){
+          /*if(this.notePersonnels){
             this.sendEmail(
               "Note d'information",
               "Ci-joint la note d'information sur les colonies de vacances",
@@ -243,7 +300,7 @@ defaults: DossierColonie;
               "Ci-joint la note d'instruction sur les colonies de vacances",
               this.notePelerins
             );
-          }
+          }*/
           this.dialogRef.close(formData);
 
         }, err => {
@@ -270,12 +327,12 @@ defaults: DossierColonie;
     });
   }
   async sendEmail(subject: string, body: string, file: string): Promise<void> {
-    const emails = await this.getAllAgentEmails();
-    if (emails && emails.length > 0) {
+    this.getAllAgentEmails();
+    if (this.emails && this.emails.length > 0) {
       let mail = new Mail();
       mail.objet = subject;
       mail.contenu = body;
-      mail.destinataires = emails;
+      mail.destinataires = this.emails;
       mail.lien = "";
       mail.emetteur = ''; 
       mail.file = file;
@@ -311,12 +368,6 @@ defaults: DossierColonie;
     formData.rapportMission = this.defaults.rapportMission;
     formData.createdAt = this.defaults.createdAt;
     formData.updatedAt = new Date();
-    let mail = new Mail();
-    mail.objet = MailDossierColonie.objet;
-    mail.contenu = MailDossierColonie.content;
-    mail.lien = "";
-    mail.emetteur = "";
-    mail.destinataires = ["aliounebada.ndoye@portdakar.sn"];
     this.dialogConfirmationService.confirmationDialog().subscribe(action => {
       if (action === DialogUtil.confirmer) {
         this.dossierColonieService.update(formData).subscribe(reponse => {
@@ -324,20 +375,7 @@ defaults: DossierColonie;
           this.dialogRef.close(reponse.body);
         }, err => {
           this.notificationService.warn(NotificationUtil.echec);},
-        () => {           
-          this.mailService.sendMailByDirections(mail).subscribe(
-            response => {
-              this.notificationService.success('Email sent successfully');
-              },
-              error => {
-                this.notificationService.warn('Failed to send email');
-                },
-                () => {
-                  this.notificationService.success(NotificationUtil.envoyeDossier);
-                }
-                );
-          this.dialogRef.close();
-        })
+       )
       }else {
         this.dialogRef.close();
       }

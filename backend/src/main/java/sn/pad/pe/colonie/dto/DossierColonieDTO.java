@@ -14,6 +14,7 @@ public class DossierColonieDTO  {
 
     private String description;
     private String etat;
+    private String type;
     //document
     private String noteMinistere;
     private String demandeProspection;
@@ -208,5 +209,13 @@ public class DossierColonieDTO  {
 
     public void setCommentaire(String commentaire) {
         this.commentaire = commentaire;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

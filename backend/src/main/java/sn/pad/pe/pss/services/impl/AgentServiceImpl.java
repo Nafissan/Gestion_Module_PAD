@@ -88,6 +88,13 @@ public class AgentServiceImpl implements AgentService {
 		return isDeleleted;
 	}
 
+    @Override
+    public List<String> getAgentsEmails() {
+        List<AgentDTO> agents = getAgents();
+        return agents.stream()
+                .map(AgentDTO::getEmail)
+                .collect(Collectors.toList());
+    }
 	@Override
 	public List<AgentDTO> getAgentsWithoutCompte() {
 		List<AgentDTO> agentDTO = agentRepository.getAgentsWithoutCompte().stream()
@@ -217,7 +224,7 @@ public class AgentServiceImpl implements AgentService {
 	@Override
 	public List<AgentDTO> getAllChefByUniteOrganisationnelleInferieures(List<Long> idUniteOrganisationnelles) {
 
-		List<Agent> agents = new ArrayList<Agent>();
+		List<Agent> agents = new ArrayList<>();
 
 		for (Long idUniteOrganisationnelle : idUniteOrganisationnelles) {
 			Optional<UniteOrganisationnelle> uniteOrganisationnelle = uniteRepository
@@ -269,5 +276,11 @@ public class AgentServiceImpl implements AgentService {
 				.map(agent -> modelMapper.map(agent, AgentDTO.class)).collect(Collectors.toList());
 		return agentDTO;
 	}
-
+	@Override
+    public List<String> getAllAgentsMatricules() {
+		List<AgentDTO> agents = getAgents();
+        return agents.stream()
+                              .map(AgentDTO::getMatricule)
+                              .collect(Collectors.toList());
+    }
 }

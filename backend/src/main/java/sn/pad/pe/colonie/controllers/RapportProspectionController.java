@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import io.swagger.annotations.*;
+import sn.pad.pe.colonie.bo.DossierColonie;
 import sn.pad.pe.colonie.dto.RapportProspectionDTO;
 import sn.pad.pe.colonie.services.RapportProspectionService;
 import sn.pad.pe.configurations.exception.Message;
@@ -86,6 +87,11 @@ public class RapportProspectionController {
     @GetMapping("/rapportsProspection/etat")
     public ResponseEntity<RapportProspectionDTO> getRapportProspectionByEtat() {
         RapportProspectionDTO rapport = rapportProspectionService.getRapportProspectionByEtat();
+        return ResponseEntity.status(HttpStatus.OK).body(rapport);
+    }
+    @PostMapping("/rapportsProspection/dossier")
+    public ResponseEntity<RapportProspectionDTO> getRapportProspectionDossier(@RequestBody DossierColonie dossierId) {
+        RapportProspectionDTO rapport = rapportProspectionService.getRapportProspectionByDossier(dossierId);
         return ResponseEntity.status(HttpStatus.OK).body(rapport);
     }
 }

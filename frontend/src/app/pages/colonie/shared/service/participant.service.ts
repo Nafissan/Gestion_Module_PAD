@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpHeaders, HttpClient, HttpResponse } from '@angular/common/http';
+import { HttpHeaders, HttpClient, HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Participant } from '../model/participant-colonie.model';
@@ -70,7 +70,7 @@ export class ParticipantService {
       .pipe(catchError(this.errorHandler));
   }
   // Gérer les erreurs HTTP
-  private errorHandler(error: any) {
+  private errorHandler(error: HttpErrorResponse) {
     let errorMessage = '';
     if (error.error instanceof ErrorEvent) {
       // Erreur côté client

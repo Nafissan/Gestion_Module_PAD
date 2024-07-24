@@ -12,11 +12,15 @@ import { MatDialog } from "@angular/material/dialog";
 import { AddDossierColonieComponent } from "../add-dossier-colonie/add-dossier-colonie.component";
 import { DetailsDossierColonieComponent } from "../details-dossier-colonie/details-dossier-colonie.component";
 import { DialogConfirmationService } from "../../../../shared/services/dialog-confirmation.service";
-import { DialogUtil, NotificationUtil } from "../../../../shared/util/util";
+import { DialogUtil, MailDossierColonie, NotificationUtil } from "../../../../shared/util/util";
 import { AuthenticationService } from "../../../../shared/services/authentification.service";
 import { EtatDossierColonie } from "../../shared/util/util";
 import { NotificationService } from "../../../../shared/services/notification.service";
 import { ReadFileDossierComponent } from "../read-file-dossier/read-file-dossier.component";
+import { Mail } from "src/app/shared/model/mail.model";
+import { MailService } from "src/app/shared/services/mail.service";
+import { AgentService } from "src/app/shared/services/agent.service";
+import { Agent } from "src/app/shared/model/agent.model";
 
 @Component({
   selector: "fury-liste-dossier-colonie",
@@ -32,7 +36,7 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
   date: Date = new Date();
   dossierColonie: DossierColonie | null = null;
   pageSize = 4;
-
+  agent: Agent;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
@@ -51,6 +55,7 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
     { name: "Note d'instruction", property: "noteInstruction", visible: false, isModelProperty: true },
     { name: "Rapport de mission", property: "rapportMission", visible: false, isModelProperty: true },
     { name: "Date creation", property: "createdAt", visible: false, isModelProperty: true },
+    { name: "Type colonie", property: "type", visible: false, isModelProperty: true },
     { name: "Actions", property: "actions", visible: true },
   ] as ListColumn[];
 
@@ -59,7 +64,10 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
     private dialog: MatDialog,
     private dialogConfirmationService: DialogConfirmationService,
     private authentificationService: AuthenticationService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private mailService: MailService,
+    private agentService: AgentService ,
+
   ) { }
 
   ngOnInit() {
@@ -77,7 +85,6 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
       return;
     }
     value = value.trim().toLowerCase();
-    // Ajouter la logique de filtrage ici si nécessaire
   }
 
   getDossierColonie() {
@@ -147,7 +154,6 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
         this.dossierColonieService.delete(dossierColonie).subscribe(
           () => {
             this.notificationService.success(NotificationUtil.suppression);
-            this.refreshDossierColonie();
           },
           err => {
             this.notificationService.warn(NotificationUtil.echec);
@@ -155,26 +161,63 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
         );
       }
     });
-  }
-
-  fermerDossierColonie(dossierColonie: DossierColonie) {
-    dossierColonie.etat = this.fermer;
-    if(dossierColonie.demandeProspection ===null || dossierColonie.rapportMission === null || dossierColonie.noteInformation === null || dossierColonie.noteInstruction=== null){
-      this.notificationService.warn("Le dossier n'est pas complet. Il manque des fichiers !");
-
-    }else{
-      this.dialog
-      .open(AddDossierColonieComponent, { data: { dossier: dossierColonie, property: "fermer" } })
-      .afterClosed()
-      .subscribe((updatedDossierColonie: DossierColonie) => {
-        if (updatedDossierColonie) {
-          this.dossierColonie = dossierColonie;
-        }
-      });
-    }
-    
     this.refreshDossierColonie();
   }
+  getAgent(matricule: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.agentService.getAgentByMatricule(matricule).subscribe(
+        (response) => {
+          this.agent = response.body as Agent;
+          console.log(this.agent);
+          resolve();
+        },
+        (error) => {
+          console.error("Erreur lors de la récupération de l'agent", error);
+          reject(error);
+        }
+      );
+    });
+  }
+  
+  async fermerDossierColonie(dossierColonie: DossierColonie) {
+    dossierColonie.etat = this.fermer;
+    if (dossierColonie.demandeProspection === null || dossierColonie.rapportMission === null || dossierColonie.noteInformation === null || dossierColonie.noteInstruction === null) {
+      this.notificationService.warn("Le dossier n'est pas complet. Il manque des fichiers !");
+      return; // Sortir de la fonction si le dossier n'est pas complet
+    }
+  
+    this.dialog
+      .open(AddDossierColonieComponent, { data: { dossier: dossierColonie, property: "fermer" } })
+      .afterClosed()
+      .subscribe(async (updatedDossierColonie: DossierColonie) => {
+        if (updatedDossierColonie) {
+          this.dossierColonie = updatedDossierColonie;
+          await this.sendEmail(dossierColonie);
+          this.refreshDossierColonie(); // Appeler refresh après l'envoi de l'email
+        }
+      });
+  }
+  
+  private async sendEmail(dossierColonie: DossierColonie) {
+    try {
+      await this.getAgent(dossierColonie.matricule);
+      let mail = new Mail();
+      mail.objet = MailDossierColonie.objet;
+      mail.contenu = MailDossierColonie.content;
+      mail.lien = "";
+      mail.emetteur = "";
+      mail.destinataires = [this.agent.email];
+      
+      await this.mailService.sendMailByDirections(mail).toPromise();
+      this.notificationService.success('Email sent successfully');
+    } catch (error) {
+      console.error('Failed to send email', error);
+      this.notificationService.warn('Failed to send email');
+    } finally {
+      this.notificationService.success(NotificationUtil.fermetureDossier);
+    }
+  }
+  
 
   onCellClick(property: string, row: DossierColonie): void {
     const dialogRef = this.dialog.open(ReadFileDossierComponent, {

@@ -187,11 +187,11 @@ export class ListeHistoriqueColonieComponent implements OnInit {
     this.dialog
       .open(DetailsColonComponent, {
         data: dossier,
-        width: '80vw',  // Largeur du dialog
-        height: '80vh', // Hauteur du dialog
-        maxWidth: '90vw', // Largeur maximale
-        maxHeight: '90vh', // Hauteur maximale
-        panelClass: 'custom-dialog-container' // Classe personnalisée pour le style
+        width: '80vw',  
+        height: '40vh', 
+        maxWidth: '90vw', 
+        maxHeight: '90vh', 
+        panelClass: 'custom-dialog-container' 
       })
       .afterClosed()
       .subscribe((dossier) => {

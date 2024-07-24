@@ -16,6 +16,7 @@ import sn.pad.pe.configurations.FileStorageProperties;
 @EnableConfigurationProperties({ FileStorageProperties.class })
 @EnableScheduling
 public class PEBackendApplication extends SpringBootServletInitializer {
+	
 	@Bean
 	public ModelMapper modelMapper() {
 		

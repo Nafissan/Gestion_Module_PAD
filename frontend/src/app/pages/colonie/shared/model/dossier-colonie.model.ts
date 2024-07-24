@@ -17,6 +17,7 @@ export class DossierColonie {
 	createdAt: Date;
 	updatedAt: Date;
 	commentaire: string;
+	type: string;
 	constructor(dossiercolonie: DossierColonie) {
 	  this.id = dossiercolonie.id;
 	  this.code = dossiercolonie.code;
@@ -35,6 +36,7 @@ export class DossierColonie {
 	  this.createdAt = dossiercolonie.createdAt;
 	  this.updatedAt = dossiercolonie.updatedAt;
 	  this.commentaire = dossiercolonie.commentaire;
+	  this.type = dossiercolonie.type;
 	}
 
   }

@@ -5,6 +5,13 @@
   
     <fury-page-layout-content [@fadeInUp]>
       <fury-list *ngIf="colon.length !== 0 && showProgressBar === true" name="Colons" [columns]="columns" (filterChange)="onFilterChange($event)">
+        <div class="actions">
+          <button style="margin: 2px;" class="create" (click)="sendMessages()" type="button" mat-button
+              color="primary" >
+              <span>Envoie Messages</span>
+          </button>
+          
+      </div>
         <table [dataSource]="dataSource" mat-table matSort>
           <!-- Checkbox Column -->
           <ng-container matColumnDef="checkbox">

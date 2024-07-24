@@ -66,9 +66,13 @@
                   <span>VALIDER</span>
                 </button>
                 <button *ngIf="row.status === 'A VALIDER'" mat-menu-item (click)="rejeterParticipant(row)">
-                  <mat-icon>check_circle_outline</mat-icon>
+                  <mat-icon>highlight_off</mat-icon>
                   <span>REJETER</span>
-                </button>
+                </button>            
+                <button *ngIf="row.status === 'VALIDER'" mat-menu-item (click)="annulerValidationParticipant(row)">
+                  <mat-icon>highlight_off</mat-icon>
+                  <span>ANNULER VALIDATION</span>
+                </button>          
                 <button mat-menu-item [matMenuTriggerFor]="fileMenu">
                   <mat-icon>visibility</mat-icon>
                   <span>AFFICHER FICHIER</span>
