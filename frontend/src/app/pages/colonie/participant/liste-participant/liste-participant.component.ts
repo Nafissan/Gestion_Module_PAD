@@ -250,13 +250,9 @@ export class ListeParticipantComponent implements OnInit {
                 this.refreshListe();
             }
         },
-        (err:HttpErrorResponse ) => {
-            if (err.status === 409) {
-                this.notificationService.warn('Ce colon existe déjà');
-            } else {
-                this.notificationService.warn('Échec de la validation du participant' );
-            }
-            this.refreshListe();
+        (err ) => {
+          this.notificationService.warn(err );
+           this.refreshListe();
         }
     );
 }

@@ -8,13 +8,16 @@ import sn.pad.pe.colonie.bo.Question;
 import sn.pad.pe.colonie.repositories.QuestionRepository;
 import sn.pad.pe.dotation.bo.Notification;
 import sn.pad.pe.dotation.repositories.NotificationRepository;
+import sn.pad.pe.pelerinage.bo.QuestionPelerinage;
+import sn.pad.pe.pelerinage.repositories.QuestionPelerinageRepository;
 
 @Component
 public class DataLoader implements CommandLineRunner {
 
     @Autowired
     private QuestionRepository questionRepository;
-
+    @Autowired
+    private QuestionPelerinageRepository questionPelerinageRepository;
     @Autowired
     private NotificationRepository notificationRepository;
     @Override
@@ -31,6 +34,21 @@ public class DataLoader implements CommandLineRunner {
             Notification notification = new Notification();
             notification.setLibelle("colonie");
             notification.setModule("COLONIE");
+            notification.setActive(true);
+            notificationRepository.save(notification);
+        }
+        if (questionPelerinageRepository.count() == 0) {
+            QuestionPelerinage q1 = new QuestionPelerinage("Avez-vous été bien logé ?");
+            QuestionPelerinage q2 = new QuestionPelerinage("Avez-vous été bien encadré ?");
+            QuestionPelerinage q3 = new QuestionPelerinage("Avez-vous bien mangé ?");
+            questionPelerinageRepository.save(q1);
+            questionPelerinageRepository.save(q2);
+            questionPelerinageRepository.save(q3);
+        }
+        if (notificationRepository.findByModule("PELERINAGE")==null) {
+            Notification notification = new Notification();
+            notification.setLibelle("pelerinage");
+            notification.setModule("PELERINAGE");
             notification.setActive(true);
             notificationRepository.save(notification);
         }

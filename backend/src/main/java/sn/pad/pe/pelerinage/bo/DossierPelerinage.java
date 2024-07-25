@@ -20,7 +20,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
-import scala.Serializable;
+import java.io.Serializable;
 @Entity
 public class DossierPelerinage  implements Serializable {
 

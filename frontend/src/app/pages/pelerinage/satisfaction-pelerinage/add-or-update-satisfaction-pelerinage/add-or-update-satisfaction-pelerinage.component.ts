@@ -39,7 +39,7 @@ export class AddOrUpdateSatisfactionPelerinageComponent implements OnInit {
     private reponseService: ReponsePelerinageService) {this.form = this.fb.group({
       questions: this.fb.array([]),
       commentaire: ['', Validators.required],
-      codeDossier: [null],
+      dossierPelerinage: [null],
     }); }
 
   ngOnInit(): void { this.questionService.getAllQuestions().subscribe(
@@ -71,7 +71,7 @@ export class AddOrUpdateSatisfactionPelerinageComponent implements OnInit {
 
     if (this.defaults) {
       this.form.patchValue({
-        codeDossier: this.defaults.codeDossier.code,
+        dossierPelerinage: this.defaults.dossierPelerinage.code,
         commentaire: this.defaults.commentaire,
       });
       this.loadExistingReponses(this.defaults);
@@ -124,7 +124,7 @@ export class AddOrUpdateSatisfactionPelerinageComponent implements OnInit {
 
     const satisfactionData: SatisfactionPelerinage = {
       ...this.defaults,
-      codeDossier: this.defaults ? this.defaults.codeDossier : null,
+      dossierPelerinage: this.defaults ? this.defaults.dossierPelerinage : null,
       commentaire: this.form.get('commentaire').value,
       dateCreation: this.isCreateMode() ? new Date() : this.defaults.dateCreation,
     };

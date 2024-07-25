@@ -167,12 +167,13 @@ export class AddOrUpdatePelerinPelerinageComponent implements OnInit {
   async createPelerin() {
     let formData: Pelerin = this.form.value;
     formData.ficheMedical = this.ficheSocial;
-    formData.status = "A VALIDER";
+    formData.status = "A VERIFIER";
     formData.document = this.document ? this.document : null;
     formData.passport = this.passpord ? this.passpord : null;
     formData.nomAgent = this.agent.nom;
     formData.prenomAgent = this.agent.prenom;
     formData.matriculeAgent = this.agent.matricule; 
+    formData.type = "emulation";
     try {
       await this.getAgent(this.form.value.matricule);  
       console.log(this.agentParent);
@@ -213,13 +214,13 @@ export class AddOrUpdatePelerinPelerinageComponent implements OnInit {
     formData.id = this.defaults.id;
     formData.document = this.document ?  this.document : this.defaults.document;
     formData.passport = this.passpord ?   this.passpord : this.defaults.passport;
-    formData.status = "A VALIDER";
+    formData.status =this.defaults.status;
     formData.nomAgent = this.defaults.nomAgent;
     formData.prenomAgent = this.defaults.prenomAgent;
     formData.matriculeAgent = this.defaults.matriculeAgent;
     formData.agent = this.defaults.agent;
     formData.dossierPelerinage = this.defaults.dossierPelerinage;
-
+    formData.type = this.defaults.type;
 
     this.dialogConfirmationService.confirmationDialog().subscribe((action) => {
       if (action === DialogUtil.confirmer) {

@@ -3,12 +3,13 @@ import { HttpHeaders, HttpClient, HttpResponse, HttpErrorResponse } from '@angul
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Pelerin } from '../model/pelerin-pelerinage.model';
+import { Agent } from 'src/app/shared/model/agent.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PelerinsService {
-  private url = '/pss-backend/pelerinsPelerinage';
+  private url = '/pss-backend/pelerins';
 
   private httpOptions = {
     headers: new HttpHeaders({
@@ -40,7 +41,7 @@ export class PelerinsService {
   }
   sendMessages(): Observable<HttpResponse<any>> {
     return this.httpClient
-      .get<any>(`${this.url}/sendMessages`, { observe: 'response' })
+      .get<any>(`${this.url}/send-messages`, { observe: 'response' })
       .pipe(catchError(this.errorHandler));
   }
   // Supprimer un pelerin
@@ -52,19 +53,27 @@ export class PelerinsService {
     return this.httpClient.delete<any>(this.url, httpOptions);
 
   }
+  assignedAgentsToPelerinage(agent: Agent): Observable<HttpResponse<any>> {
+    return this.httpClient
+    .post<any>(`${this.url}/assignAgents`, JSON.stringify(agent), {
+      headers: this.httpOptions.headers,
+      observe: 'response',
+    })
+    .pipe(catchError(this.errorHandler));
+  } 
   getPelerinsByDossierEtat(): Observable<HttpResponse<any>> {
     return this.httpClient
-      .get<any>(`${this.url}/etat`, { observe: 'response' })
+      .get<any>(`${this.url}/dossierEtat`, { observe: 'response' })
       .pipe(catchError(this.errorHandler));
   }
   getPelerinsApte(): Observable<HttpResponse<any>> {
     return this.httpClient
-      .get<any>(`${this.url}/valider`, { observe: 'response' })
+      .get<any>(`${this.url}/apte`, { observe: 'response' })
       .pipe(catchError(this.errorHandler));
   }
   getPelerinsStatistics(annee: string): Observable<HttpResponse<any>> {
     return this.httpClient
-      .get<any>(`${this.url}/statistics/${annee}`, { observe: 'response' })
+      .get<any>(`${this.url}/statistiques/annee/${annee}`, { observe: 'response' })
       .pipe(catchError(this.errorHandler));
   } 
   getPelerinsByAnnee(annee: string): Observable<HttpResponse<any>> {

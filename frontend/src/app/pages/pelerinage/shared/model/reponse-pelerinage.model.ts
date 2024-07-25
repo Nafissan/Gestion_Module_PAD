@@ -1,9 +1,9 @@
-import { Question} from './question-pelerinage.model';
+import { QuestionPelerinage} from './question-pelerinage.model';
 import{SatisfactionPelerinage} from './satisfaction-pelerinage.model';
 
 export class ReponsePelerinage{
     id: number;
-    question:Question;
+    question:QuestionPelerinage;
     formulaire:SatisfactionPelerinage;
     reponse: string;
 }

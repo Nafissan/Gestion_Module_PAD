@@ -15,11 +15,15 @@ import { AuthenticationService } from 'src/app/shared/services/authentification.
 import { DialogConfirmationService } from 'src/app/shared/services/dialog-confirmation.service';
 import { NotificationService } from 'src/app/shared/services/notification.service';
 import { DossierPelerinageService } from '../../shared/services/dossier-pelerinage.service';
+import { fadeInRightAnimation } from 'src/@fury/animations/fade-in-right.animation';
+import { fadeInUpAnimation } from 'src/@fury/animations/fade-in-up.animation';
 
 @Component({
   selector: 'fury-list-tirage-pelerinage',
   templateUrl: './list-tirage-pelerinage.component.html',
-  styleUrls: ['./list-tirage-pelerinage.component.scss', "../../../../shared/util/bootstrap4.css"]
+  styleUrls: ['./list-tirage-pelerinage.component.scss', "../../../../shared/util/bootstrap4.css"],
+  animations: [fadeInRightAnimation, fadeInUpAnimation]
+
 })
 export class ListTiragePelerinageComponent implements OnInit {
   showProgressBar: boolean = false;

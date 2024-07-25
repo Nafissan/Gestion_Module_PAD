@@ -19,11 +19,15 @@ import { AuthenticationService } from 'src/app/shared/services/authentification.
 import { DialogConfirmationService } from 'src/app/shared/services/dialog-confirmation.service';
 import { NotificationService } from 'src/app/shared/services/notification.service';
 import { filter } from 'rxjs/operators';
+import { fadeInRightAnimation } from 'src/@fury/animations/fade-in-right.animation';
+import { fadeInUpAnimation } from 'src/@fury/animations/fade-in-up.animation';
 
 @Component({
   selector: 'fury-list-satisfaction-pelerinage',
   templateUrl: './list-satisfaction-pelerinage.component.html',
-  styleUrls: ['./list-satisfaction-pelerinage.component.scss']
+  styleUrls: ['./list-satisfaction-pelerinage.component.scss', "../../../../shared/util/bootstrap4.css"],
+  animations: [fadeInRightAnimation, fadeInUpAnimation]
+
 })
 export class ListSatisfactionPelerinageComponent implements OnInit {
   satisfactions: SatisfactionPelerinage[];

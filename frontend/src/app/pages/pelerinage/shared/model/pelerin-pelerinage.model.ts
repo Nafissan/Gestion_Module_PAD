@@ -5,6 +5,7 @@ export class Pelerin {
     agent: Agent;
     dossierPelerinage: DossierPelerinage;
     status: string;
+    type:string;
     matriculeAgent: string;
     nomAgent: string;
     prenomAgent: string;
@@ -22,5 +23,6 @@ export class Pelerin {
         this.document=pelerin.document;
         this.passport=pelerin.passport;
         this.ficheMedical=pelerin.ficheMedical;
+        this.type=pelerin.type;
     }
 }

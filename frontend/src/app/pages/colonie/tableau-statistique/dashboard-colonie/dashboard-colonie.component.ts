@@ -193,7 +193,6 @@ export class DashboardColonieComponent implements OnInit {
           age10to15Count += stats.age10to15;
           age15to18Count += stats.age15to18;
   
-          this.filteredSatisfaction = this.satisfactions.filter(satisfaction => satisfaction.codeDossier.annee === this.selectedYear.toString());
           this.updateMap(colonCountsMap, this.selectedYear, stats.totalColons);
           
           // Mettre à jour les graphiques après avoir récupéré toutes les données
@@ -203,6 +202,7 @@ export class DashboardColonieComponent implements OnInit {
           console.error(`Error fetching colon stats for dossier of year ${this.selectedYear.toString()}:`, error);
         }
       );
+      this.filteredSatisfaction = this.satisfactions.filter(satisfaction => satisfaction.codeDossier.annee === this.selectedYear.toString());
     } else {
       // Traiter les dossiers pour toutes les années
       this.colonStat.forEach(dossier => {

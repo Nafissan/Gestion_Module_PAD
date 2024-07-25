@@ -295,9 +295,11 @@ public boolean updateParticipant(ParticipantColonieDTO updatedParticipant) {
                 AgentDTO agent = agentService.getAgentByMatricule(d.getMatriculeParent()) ;
 
                 // Send sms
-                String sms = "Bonjour " + agent.getPrenom() + " " + agent.getNom()
-                        + ".Votre enfant repondant au nom de "+d.getPrenomEnfant()+" "+d.getNomEnfant()+" ne le "+d.getDateNaissance()+" est selectionne pour participe a la colonie de vacances de l'annee "+d.getCodeDossier().getAnnee()+ ". Vous recevrez dans les jours qui viennent le note d'instruction concernant la colonie.";
-
+                String sms = "Bonjour " + agent.getPrenom() + " " + agent.getNom() + ". "
+                + "Votre enfant, " + d.getPrenomEnfant() + " " + d.getNomEnfant() + ", né(e) le " + d.getDateNaissance() + ", "
+                + "a été sélectionné(e) pour participer à la colonie de vacances de l'année " + d.getCodeDossier().getAnnee() + ". "
+                + "Vous recevrez bientôt une note d'instruction concernant la colonie.";
+    
              SmsService.send(agent.getMatricule(),"776844623", sms);
             }
             return true;

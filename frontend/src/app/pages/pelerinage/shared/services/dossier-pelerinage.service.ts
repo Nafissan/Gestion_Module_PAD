@@ -8,7 +8,7 @@ import { DossierPelerinage } from '../model/dossier-pelerinage.model';
   providedIn: 'root',
 })
 export class DossierPelerinageService {
-  private url = '/pss-backend/dossiersPelerinage';
+  private url = '/pss-backend/dossiersPelerinages';
 
   private httpOptions = {
     headers: new HttpHeaders({

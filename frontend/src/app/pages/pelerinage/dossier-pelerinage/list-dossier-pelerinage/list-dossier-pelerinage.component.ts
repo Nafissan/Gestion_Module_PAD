@@ -17,11 +17,15 @@ import { DetailsDossierPelerinageComponent } from '../details-dossier-pelerinage
 import { DialogUtil, MailDossierColonie, NotificationUtil } from 'src/app/shared/util/util';
 import { Mail } from 'src/app/shared/model/mail.model';
 import { ReadFileDossierPelerinageComponent } from '../read-file-dossier-pelerinage/read-file-dossier-pelerinage.component';
+import { fadeInRightAnimation } from 'src/@fury/animations/fade-in-right.animation';
+import { fadeInUpAnimation } from 'src/@fury/animations/fade-in-up.animation';
 
 @Component({
   selector: 'fury-list-dossier-pelerinage',
   templateUrl: './list-dossier-pelerinage.component.html',
-  styleUrls: ['./list-dossier-pelerinage.component.scss', "../../../../shared/util/bootstrap4.css"]
+  styleUrls: ['./list-dossier-pelerinage.component.scss', "../../../../shared/util/bootstrap4.css"],
+  animations: [fadeInRightAnimation, fadeInUpAnimation]
+
 })
 export class ListDossierPelerinageComponent implements OnInit {
   showProgressBar: boolean = false;

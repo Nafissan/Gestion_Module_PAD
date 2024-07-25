@@ -8,7 +8,7 @@ import { SatisfactionPelerinage } from '../model/satisfaction-pelerinage.model';
   providedIn: 'root',
 })
 export class SatisfactionPelerinageService {
-  private url = '/pss-backend/formulairesSatisfactionPelerinage';
+  private url = '/pss-backend/formulairesSatisfactionPelerinages';
   private httpOptions = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json',

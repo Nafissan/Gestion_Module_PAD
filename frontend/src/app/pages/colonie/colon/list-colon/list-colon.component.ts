@@ -15,6 +15,7 @@ import { ReadFileColonComponent } from '../read-file-colon/read-file-colon.compo
 import { Participant } from '../../shared/model/participant-colonie.model';
 import { ParticipantService } from '../../shared/service/participant.service';
 import { NotificationService } from 'src/app/shared/services/notification.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'fury-list-colon',
@@ -125,11 +126,6 @@ export class ListColonComponent implements OnInit {
         this.notificationService.success('Messages envoyés avec succès');
       },
       (error) => {
-        if (error.status === 500) {
-          this.notificationService.warn('Échec de l\'envoi des messages');
-        } else {
-          this.notificationService.warn('Une erreur s\'est produite: ' + error.message);
-        }
       }
     );
   }

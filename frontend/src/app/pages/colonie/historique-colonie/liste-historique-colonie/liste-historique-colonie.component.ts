@@ -99,6 +99,10 @@ export class ListeHistoriqueColonieComponent implements OnInit {
     this.getDossierColonies();
     this.dataSource = new MatTableDataSource();
     this.data$.pipe(filter((data) => !!data)).subscribe((dossierColonies) => {
+         // Vérifiez si le résultat est un tableau ou un objet unique et traitez-le en conséquence
+         if (!Array.isArray(dossierColonies)) {
+          dossierColonies = [dossierColonies];
+        }
       this.dossierColonies = dossierColonies;
       this.dataSource.data = dossierColonies;
       console.log('Dossier Colonies in ngOnInit:', this.dossierColonies); // Debugging output
@@ -138,8 +142,9 @@ export class ListeHistoriqueColonieComponent implements OnInit {
       this.dossierColonieService.getByAnnee(this.anneeSelected).subscribe(
       (response) => {
         this.dossierColonies = response.body;
-        console.log('Filtered Dossier Colonies:', this.dossierColonies); 
-      },
+        if (!Array.isArray(this.dossierColonies)) {
+          this.dossierColonies = [this.dossierColonies];
+        }      },
       (err) => {
         console.error('Error loading dossier colonies:', err); 
         this.showProgressBar = false;

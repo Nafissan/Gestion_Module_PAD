@@ -3,7 +3,7 @@ import { HttpHeaders, HttpClient, HttpResponse, HttpParams } from '@angular/comm
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { SatisfactionPelerinage } from '../model/satisfaction-pelerinage.model'
-import { Reponse } from '../model/reponse-pelerinage.model';
+import { ReponsePelerinage } from '../model/reponse-pelerinage.model';
 
 @Injectable({
     providedIn: 'root',
@@ -24,12 +24,12 @@ import { Reponse } from '../model/reponse-pelerinage.model';
         .pipe(catchError(this.errorHandler));
     }
     
-      addReponse(reponse: Reponse): Observable<HttpResponse<any>>{
+      addReponse(reponse: ReponsePelerinage): Observable<HttpResponse<any>>{
         return this.httpClient.post<any>(this.url, JSON.stringify(reponse),{observe : 'response', headers: this.httpOptions.headers})
         .pipe(catchError(this.errorHandler));
       }
 
-      updateReponse(reponse: Reponse): Observable<HttpResponse<any>>{
+      updateReponse(reponse: ReponsePelerinage): Observable<HttpResponse<any>>{
         return this.httpClient.put<any>(this.url, JSON.stringify(reponse),{observe : 'response', headers: this.httpOptions.headers})
         .pipe(catchError(this.errorHandler));
       }

@@ -53,4 +53,6 @@ public interface AgentService {
 	public AgentDTO getAgentByMatricule(String matricule);
     public List<String> getAgentsEmails();
 
+    public List<AgentDTO> getAgentsBySexe(String string);
+
 }

@@ -19,11 +19,15 @@ import { DialogConfirmationService } from 'src/app/shared/services/dialog-confir
 import { NotificationService } from 'src/app/shared/services/notification.service';
 import { DialogUtil, NotificationUtil } from 'src/app/shared/util/util';
 import { filter } from 'rxjs/operators';
+import { fadeInRightAnimation } from 'src/@fury/animations/fade-in-right.animation';
+import { fadeInUpAnimation } from 'src/@fury/animations/fade-in-up.animation';
 
 @Component({
   selector: 'fury-list-pelerin-pelerinage',
   templateUrl: './list-pelerin-pelerinage.component.html',
-  styleUrls: ['./list-pelerin-pelerinage.component.scss', "../../../../shared/util/bootstrap4.css"]
+  styleUrls: ['./list-pelerin-pelerinage.component.scss', "../../../../shared/util/bootstrap4.css"],
+  animations: [fadeInRightAnimation, fadeInUpAnimation]
+
 })
 export class ListPelerinPelerinageComponent implements OnInit {
   showProgressBar: boolean = false;

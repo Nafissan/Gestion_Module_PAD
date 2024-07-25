@@ -192,8 +192,8 @@ export class ListeDossierColonieComponent implements OnInit, AfterViewInit, OnDe
       .subscribe(async (updatedDossierColonie: DossierColonie) => {
         if (updatedDossierColonie) {
           this.dossierColonie = updatedDossierColonie;
-          await this.sendEmail(dossierColonie);
           this.refreshDossierColonie(); // Appeler refresh après l'envoi de l'email
+          await this.sendEmail(dossierColonie);
         }
       });
   }

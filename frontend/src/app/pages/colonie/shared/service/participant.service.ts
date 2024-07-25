@@ -80,8 +80,9 @@ export class ParticipantService {
       // Erreur côté client
       errorMessage = error.error.message;
     } else {
-      // Erreur côté serveur
-      errorMessage = `Code d'erreur: ${error.status}\nMessage: ${error.message}`;
+  if(error.status===409)  {
+  errorMessage = 'Le colon existe déjà !';
+  }   else errorMessage = `Code d'erreur: ${error.status}\nMessage: ${error.message}`;
     }
     console.error(errorMessage);
     return throwError(errorMessage);

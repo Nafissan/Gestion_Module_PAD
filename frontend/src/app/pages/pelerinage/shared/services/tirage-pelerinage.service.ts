@@ -7,7 +7,7 @@ import { catchError } from 'rxjs/operators';
   providedIn: 'root',
 })
 export class TirageService {
-  private url = '/pss-backend/tiragePelerinage';
+  private url = '/pss-backend/tirage-agents';
 
   private httpOptions = {
     headers: new HttpHeaders({
@@ -25,7 +25,7 @@ export class TirageService {
       .get<any>(`${this.url}/etat`, { observe: 'response' })
       .pipe(catchError(this.errorHandler));
   }
- 
+
   private errorHandler(error: HttpErrorResponse) {
     let errorMessage = '';
     if (error.error instanceof ErrorEvent) {

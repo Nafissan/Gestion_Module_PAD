@@ -283,4 +283,15 @@ public class AgentServiceImpl implements AgentService {
                               .map(AgentDTO::getMatricule)
                               .collect(Collectors.toList());
     }
-}
+
+	@Override
+	public List<AgentDTO> getAgentsBySexe(String sexe) {
+		List<Agent> agents = agentRepository.findBySexe(sexe);
+
+        // Convertir les agents en DTOs
+        return agents.stream()
+                .map(agent -> modelMapper.map(agent, AgentDTO.class))
+                .collect(Collectors.toList());
+    }
+	}
+

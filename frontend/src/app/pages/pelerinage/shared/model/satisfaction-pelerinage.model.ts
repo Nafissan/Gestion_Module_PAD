@@ -3,7 +3,7 @@ import { DossierPelerinage } from "./dossier-pelerinage.model";
 export class SatisfactionPelerinage {
 
 id: number;
-codeDossier: DossierPelerinage;
+dossierPelerinage: DossierPelerinage;
 dateCreation: Date;
 commentaire: string;
 matricule: string;
@@ -12,7 +12,7 @@ prenom: string;
 
 constructor(satisfaction: SatisfactionPelerinage) {
   this.id = satisfaction.id;
-  this.codeDossier = satisfaction.codeDossier;
+  this.dossierPelerinage = satisfaction.dossierPelerinage;
   this.dateCreation = satisfaction.dateCreation;
   this.commentaire = satisfaction.commentaire;
   this.matricule = satisfaction.matricule;

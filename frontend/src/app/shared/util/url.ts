@@ -1037,6 +1037,120 @@ export let menus = [
     privilege: "MENU_DOTATION"
   },
 },
+{
+  id: 73,
+  name: "Pelerinage",
+  routeOrFunction: "/pelerinage",
+  icon: "list",
+  position: 6,
+  parent: null,
+  privilege: "MENU_DOTATION"
+},
+{
+  id: 74,
+  name: "Dossier Pelerinage",
+  routeOrFunction: "/pelerinage/dossier-pelerinage",
+  position: 1,
+  privilege: "MENU_DOTATION",
+  parent: {
+    id: 73,
+  name: "Pelerinage",
+  routeOrFunction: "/pelerinage",
+  icon: "list",
+  position: 6,
+  privilege: "MENU_DOTATION"
+  },
+},
+{
+  id: 75,
+  name: "Tirage Agent ",
+  routeOrFunction: "/pelerinage/tirage-pelerinage",
+  position: 2,
+  privilege: "MENU_DOTATION",
+  parent: {
+    id: 73,
+  name: "Pelerinage",
+  routeOrFunction: "/pelerinage",
+  icon: "list",
+  position: 6,
+  privilege: "MENU_DOTATION"
+  },
+},
+{
+  id: 76,
+  name: "Pelerin Pelerinage ",
+  routeOrFunction: "/pelerinage/pelerin-pelerinage",
+  position: 3,
+  privilege: "MENU_DOTATION",
+  parent: {
+    id: 73,
+  name: "Pelerinage",
+  routeOrFunction: "/pelerinage",
+  icon: "list",
+  position: 6,
+  privilege: "MENU_DOTATION"
+  },
+},
+{
+  id: 77,
+  name: "Substitut Pelerin ",
+  routeOrFunction: "/pelerinage/substitut-pelerinage",
+  position: 4,
+  privilege: "MENU_DOTATION",
+  parent: {
+    id: 73,
+  name: "Pelerinage",
+  routeOrFunction: "/pelerinage",
+  icon: "list",
+  position: 6,
+  privilege: "MENU_DOTATION"
+  },
+},
+{
+  id: 78,
+  name: "Formulaires Satisfactions ",
+  routeOrFunction: "/pelerinage/satisfaction-pelerinage",
+  position: 5,
+  privilege: "MENU_DOTATION",
+  parent: {
+    id: 73,
+  name: "Pelerinage",
+  routeOrFunction: "/pelerinage",
+  icon: "list",
+  position: 6,
+  privilege: "MENU_DOTATION"
+  },
+},
+{
+  id: 79,
+  name: "Historique Pelerinage ",
+  routeOrFunction: "/pelerinage/historique-pelerinage",
+  position: 6,
+  privilege: "MENU_DOTATION",
+  parent: {
+    id: 73,
+  name: "Pelerinage",
+  routeOrFunction: "/pelerinage",
+  icon: "list",
+  position: 6,
+  privilege: "MENU_DOTATION"
+  },
+},
+{
+  id: 80,
+  name: "Statistique Pelerinage ",
+  routeOrFunction: "/pelerinage/statistique-pelerinage",
+  position: 7,
+  privilege: "MENU_DOTATION",
+  parent: {
+    id: 73,
+  name: "Pelerinage",
+  routeOrFunction: "/pelerinage",
+  icon: "list",
+  position: 6,
+  privilege: "MENU_DOTATION"
+  },
+},
 ];
 
 export let getMenu = function (privileges) {

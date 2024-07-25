@@ -17,11 +17,15 @@ import { NotificationService } from 'src/app/shared/services/notification.servic
 import { DialogUtil, NotificationUtil } from 'src/app/shared/util/util';
 import { filter } from 'rxjs/operators';
 import { DetailSubstitutPelerinageComponent } from '../detail-substitut-pelerinage/detail-substitut-pelerinage.component';
+import { fadeInUpAnimation } from 'src/@fury/animations/fade-in-up.animation';
+import { fadeInRightAnimation } from 'src/@fury/animations/fade-in-right.animation';
 
 @Component({
   selector: 'fury-list-substitut-pelerinage',
   templateUrl: './list-substitut-pelerinage.component.html',
-  styleUrls: ['./list-substitut-pelerinage.component.scss', "../../../../shared/util/bootstrap4.css"]
+  styleUrls: ['./list-substitut-pelerinage.component.scss', "../../../../shared/util/bootstrap4.css"],
+  animations: [fadeInRightAnimation, fadeInUpAnimation]
+
 })
 export class ListSubstitutPelerinageComponent implements OnInit {
   showProgressBar: boolean = false;

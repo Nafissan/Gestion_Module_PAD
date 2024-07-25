@@ -189,7 +189,7 @@ export class DashbordStatistiquePelerinageComponent implements OnInit {
           age50to60Count += stats.age50to60;
           age60to70Count += stats.age60to70;
   
-          this.filteredSatisfactionPelerinage = this.satisfactionPelerinages.filter(satisfaction => satisfaction.codeDossier.annee === this.selectedYear.toString());
+          this.filteredSatisfactionPelerinage = this.satisfactionPelerinages.filter(satisfaction => satisfaction.dossierPelerinage.annee === this.selectedYear.toString());
           this.updateMap(pelerinCountsMap, this.selectedYear, stats.totalPelerins);
           
           this.updateCharts(pelerinCountsMap, maleCount, femaleCount, age40to50Count, age50to60Count, age60to70Count);
