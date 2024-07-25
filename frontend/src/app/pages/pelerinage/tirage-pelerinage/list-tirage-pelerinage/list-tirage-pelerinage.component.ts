@@ -1,10 +1,10 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { Substitut } from '../../shared/model/substitut-pelerinage.model';
+import { TirageAgent } from '../../shared/model/tirage-pelerinage.model';
 import { DossierPelerinage } from '../../shared/model/dossier-pelerinage.model';
-import { SubstitutService } from '../../shared/services/substitut-pelerinage.service';
-import { DossierPelerinageService } from '../../shared/services/dossier-pelerinage.service';
+import { TirageService } from '../../shared/services/tirage-pelerinage.service';
+import { DetailsTiragePelerinageComponent } from '../details-tirage-pelerinage/details-tirage-pelerinage.component';
+import { filter } from 'rxjs/operators';
 import { SelectionModel } from '@angular/cdk/collections';
-import { HttpErrorResponse } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -14,25 +14,23 @@ import { ListColumn } from 'src/@fury/shared/list/list-column.model';
 import { AuthenticationService } from 'src/app/shared/services/authentification.service';
 import { DialogConfirmationService } from 'src/app/shared/services/dialog-confirmation.service';
 import { NotificationService } from 'src/app/shared/services/notification.service';
-import { DialogUtil, NotificationUtil } from 'src/app/shared/util/util';
-import { filter } from 'rxjs/operators';
-import { DetailSubstitutPelerinageComponent } from '../detail-substitut-pelerinage/detail-substitut-pelerinage.component';
+import { DossierPelerinageService } from '../../shared/services/dossier-pelerinage.service';
 
 @Component({
-  selector: 'fury-list-substitut-pelerinage',
-  templateUrl: './list-substitut-pelerinage.component.html',
-  styleUrls: ['./list-substitut-pelerinage.component.scss', "../../../../shared/util/bootstrap4.css"]
+  selector: 'fury-list-tirage-pelerinage',
+  templateUrl: './list-tirage-pelerinage.component.html',
+  styleUrls: ['./list-tirage-pelerinage.component.scss', "../../../../shared/util/bootstrap4.css"]
 })
-export class ListSubstitutPelerinageComponent implements OnInit {
+export class ListTiragePelerinageComponent implements OnInit {
   showProgressBar: boolean = false;
-  substitutSelected: Substitut;
-  substituts: Substitut[] = [];
-  subject$: ReplaySubject<Substitut[]> = new ReplaySubject<Substitut[]>(1);
-  data$: Observable<Substitut[]> = this.subject$.asObservable();
+  agentSelected: TirageAgent;
+  agents: TirageAgent[] = [];
+  subject$: ReplaySubject<TirageAgent[]> = new ReplaySubject<TirageAgent[]>(1);
+  data$: Observable<TirageAgent[]> = this.subject$.asObservable();
   pageSize = 4;
   openOrSaisiDossier:DossierPelerinage;
-  dataSource: MatTableDataSource<Substitut> | null;
-  selection = new SelectionModel<Substitut>(true, []);
+  dataSource: MatTableDataSource<TirageAgent> | null;
+  selection = new SelectionModel<TirageAgent>(true, []);
   dossierDossierPelerinage:DossierPelerinage;
   private paginator: MatPaginator;
   private sort: MatSort;
@@ -58,29 +56,27 @@ export class ListSubstitutPelerinageComponent implements OnInit {
   columns: ListColumn[] = [
     { name: "Checkbox", property: "checkbox", visible: false },
     { name: "Code Dossier", property: "dossierPelerinage", visible: true, isModelProperty: true },
-    { name: "Remplacant", property: "substitut", visible: true, },
     { name: "Ajoute par", property: "ajoutePar", visible: true },
-    { name: "Substitut de", property: "agent", visible: true },
+    { name: "Agent", property: "agent", visible: true },
 
     { name: "Actions", property: "actions", visible: true },
   ] as ListColumn[];
 
-  constructor(
-    private substitutService: SubstitutService,
+  constructor(private tirageService: TirageService,
     private dialog: MatDialog,
     private notificationService: NotificationService,
     private dialogConfirmationService: DialogConfirmationService,
     private authentificationService: AuthenticationService,
-    private dossierDossierPelerinageService:DossierPelerinageService
+    private dossierPelerinageService:DossierPelerinageService
   ) { }
 
   ngOnInit() {
-    this.fetchSubstituts();
-    this.getDossierDossierPelerinage();
+    this.fetchAgent();
+    this.getDossierPelerinage();
     this.dataSource = new MatTableDataSource();
-    this.data$.pipe(filter((data) => !!data)).subscribe((substitut) => {
-      this.substituts = substitut;
-      this.dataSource.data = substitut;
+    this.data$.pipe(filter((data) => !!data)).subscribe((agent) => {
+      this.agents = agent;
+      this.dataSource.data = agent;
     });
   }
   
@@ -102,21 +98,21 @@ export class ListSubstitutPelerinageComponent implements OnInit {
     }
   }
   
-  fetchSubstituts() {
-    this.substitutService.getSubstitutsByDossierEtat().subscribe(response => {
-      this.substituts = response.body as Substitut[];
+  fetchAgent() {
+    this.tirageService.getAgentsByDossierEtat().subscribe(response => {
+      this.agents = response.body as TirageAgent[];
     }, err => {
       console.error('Error loading substitut:', err);
     }, () => {
-      this.subject$.next(this.substituts);
+      this.subject$.next(this.agents);
       this.showProgressBar = true;
     });
   }
   
-  refreshListe() { this.fetchSubstituts(); }
+  refreshListe() { this.fetchAgent(); }
   
-  getDossierDossierPelerinage() {
-    this.dossierDossierPelerinageService.getDossier().subscribe(
+  getDossierPelerinage() {
+    this.dossierPelerinageService.getDossier().subscribe(
       (response) => {
         if (response.body !== null) {
           this.dossierDossierPelerinage = response.body as DossierPelerinage;
@@ -139,14 +135,14 @@ export class ListSubstitutPelerinageComponent implements OnInit {
     this.isAllSelected() ? this.selection.clear() : this.dataSource.data.forEach(row => this.selection.select(row));
   }
   
-  checkboxLabel(row?: Substitut): string {
+  checkboxLabel(row?: TirageAgent): string {
     if (!row) {
       return `${this.isAllSelected() ? 'select' : 'deselect'} all`;
     }
     return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.id + 1}`;
   }
   
-  generateSubstitut() {
+  generateAgent() {
     
   }
   
@@ -156,16 +152,16 @@ export class ListSubstitutPelerinageComponent implements OnInit {
     return this.authentificationService.hasAnyRole(roles);
   }
   
-  detailsSubstitut(substitut: Substitut) {
-    this.dialog.open(DetailSubstitutPelerinageComponent, { data: substitut })
+  detailsTirage(tirage: TirageAgent) {
+    this.dialog.open(DetailsTiragePelerinageComponent, { data: tirage })
       .afterClosed()
-      .subscribe((substitut: Substitut) => {
-        if (substitut) {
-          const index = this.substituts.findIndex(
-            (existingSubstitut) => existingSubstitut.id === substitut.id
+      .subscribe((tirage: TirageAgent) => {
+        if (tirage) {
+          const index = this.agents.findIndex(
+            (existingtirage) => existingtirage.id === tirage.id
           );
-          this.substituts[index] = new Substitut(substitut);
-          this.subject$.next(this.substituts);
+          this.agents[index] = new TirageAgent(tirage);
+          this.subject$.next(this.agents);
           this.refreshListe();
         }
       });

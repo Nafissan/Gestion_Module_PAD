@@ -1,5 +1,6 @@
 import { DossierPelerinage } from "./dossier-pelerinage.model";
 import {Agent} from '../../../../shared/model/agent.model'
+import { Pelerin } from "./pelerin-pelerinage.model";
 export class Substitut {
     id: number;
     agent: Agent;
@@ -7,6 +8,7 @@ export class Substitut {
     matriculeAgent: string;
     nomAgent: string;
     prenomAgent: string;
+    remplacantDe:Pelerin;
     constructor(substitut:Substitut){
         this.id=substitut.id;
         this.agent=substitut.agent;
@@ -14,5 +16,6 @@ export class Substitut {
         this.matriculeAgent=substitut.matriculeAgent;
         this.nomAgent=substitut.nomAgent;
         this.prenomAgent=substitut.prenomAgent;
+        this.remplacantDe=substitut.remplacantDe
     }
 }

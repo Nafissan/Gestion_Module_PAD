@@ -7,7 +7,7 @@ import { SatisfactionPelerinageModule} from './satisfaction-pelerinage/satisfact
 import { PelerinPelerinageModule} from './pelerin-pelerinage/pelerin-pelerinage.module'
 import { StatistiquePelerinageModule} from './statistique-pelerinage/statistique-pelerinage.module'
 import { SubstitutPelerinageModule} from './substitut-pelerinage/substitut-pelerinage.module'
-
+import { TiragePelerinageModule } from './tirage-pelerinage/tirage-pelerinage.module'
 
 @NgModule({
   declarations: [],
@@ -20,7 +20,7 @@ import { SubstitutPelerinageModule} from './substitut-pelerinage/substitut-peler
     SatisfactionPelerinageModule,
     StatistiquePelerinageModule,
     SubstitutPelerinageModule,
-
+    TiragePelerinageModule,
   ]
 })
 export class PelerinageModule { }

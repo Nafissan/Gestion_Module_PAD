@@ -20,7 +20,6 @@ import javax.persistence.TemporalType;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 
@@ -68,7 +67,7 @@ public class DossierColonie implements Serializable {
      @JsonManagedReference
     private RapportProspection rapportProspection;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "codeDossier", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    @JsonIgnore
+    @JsonManagedReference
     private List<ParticipantColonie> participants = new ArrayList<ParticipantColonie>(0);
 
     public Long getId() {

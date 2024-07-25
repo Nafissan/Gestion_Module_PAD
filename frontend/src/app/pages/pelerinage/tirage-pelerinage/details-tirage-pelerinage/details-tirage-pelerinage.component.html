@@ -1,4 +1,4 @@
-<div mat-dialog-title class="h1-responsive text-align titre_modal_add">DETAILS SUBSTITUT</div>
+<div mat-dialog-title class="h1-responsive text-align titre_modal_add">DETAILS AGENT</div>
 <mat-dialog-content>
     <mat-accordion class="example-headers-align" multi>
         <div class="example-action-buttons">
@@ -14,26 +14,26 @@
             <mat-expansion-panel-header>
                 <mat-panel-title>
                     <mat-icon>folder_open</mat-icon>
-                    <span> Informations sur le substitut</span>
+                    <span> Informations sur l'agent</span>
                 </mat-panel-title>
             </mat-expansion-panel-header>
             <mat-panel-description>
-                <span>Nom : </span>{{ substitut.agent.nom }}
+                <span>Nom : </span>{{ tirage.agent.nom }}
             </mat-panel-description>
             <mat-panel-description>
-                <span>Prénom : </span>{{ substitut.agent.prenom }}
+                <span>Prénom : </span>{{ tirage.agent.prenom }}
             </mat-panel-description>
             <mat-panel-description>
-                <span>Date de Naissance : </span>{{ substitut.agent.dateNaissance | date }}
+                <span>Date de Naissance : </span>{{ tirage.agent.dateNaissance | date }}
             </mat-panel-description>
             <mat-panel-description>
-                <span>Date Engagement: </span>{{ substitut.agent.dateEngagement | date}}
+                <span>Date Engagement: </span>{{ tirage.agent.dateEngagement | date}}
             </mat-panel-description>
             <mat-panel-description>
-                <span>Religion : </span>{{ substitut.agent.religion }}
+                <span>Religion : </span>{{ tirage.agent.religion }}
             </mat-panel-description>
             <mat-panel-description>
-                <span>Sexe : </span>{{ substitut.agent.sexe }}
+                <span>Sexe : </span>{{ tirage.agent.sexe }}
             </mat-panel-description>
         </mat-expansion-panel>
 
@@ -41,34 +41,17 @@
             <mat-expansion-panel-header>
                 <mat-panel-title>
                     <mat-icon>supervisor_account</mat-icon>
-                    <span> Informations sur l'Agent</span>
+                    <span> Informations sur l'Agent declencheur du tirage</span>
                 </mat-panel-title>
             </mat-expansion-panel-header>
             <mat-panel-description>
-                <span>Matricule : </span>{{ substitut.matriculeAgent }}
+                <span>Matricule : </span>{{ tirage.matriculeAgent }}
             </mat-panel-description>
             <mat-panel-description>
-                <span>Nom : </span>{{ substitut.nomAgent }}
+                <span>Nom : </span>{{ tirage.nomAgent }}
             </mat-panel-description>
             <mat-panel-description>
-                <span>Prénom : </span>{{ substitut.prenomAgent }}
-            </mat-panel-description>
-        </mat-expansion-panel>
-        <mat-expansion-panel>
-            <mat-expansion-panel-header>
-                <mat-panel-title>
-                    <mat-icon>person</mat-icon>
-                    <span> Informations sur le pelerin a remplacer</span>
-                </mat-panel-title>
-            </mat-expansion-panel-header>
-            <mat-panel-description>
-                <span>Matricule : </span>{{ substitut.remplacantDe.matricule }}
-            </mat-panel-description>
-            <mat-panel-description>
-                <span>Nom : </span>{{ substitut.remplacantDe.nom }}
-            </mat-panel-description>
-            <mat-panel-description>
-                <span>Prénom : </span>{{ substitut.remplacantDe.prenom }}
+                <span>Prénom : </span>{{ tirage.prenomAgent }}
             </mat-panel-description>
         </mat-expansion-panel>
         <mat-expansion-panel>
@@ -79,13 +62,13 @@
                 </mat-panel-title>
             </mat-expansion-panel-header>
             <mat-panel-description>
-                <span>Code : </span>{{ substitut.dossierPelerinage?.code }}
+                <span>Code : </span>{{ tirage.dossierPelerinage?.code }}
             </mat-panel-description>
             <mat-panel-description>
-                <span>Année : </span>{{ substitut.dossierPelerinage?.annee }}
+                <span>Année : </span>{{ tirage.dossierPelerinage?.annee }}
             </mat-panel-description>
             <mat-panel-description>
-                <span>Commentaire : </span>{{ substitut.dossierPelerinage?.description }}
+                <span>Description : </span>{{ tirage.dossierPelerinage?.description }}
             </mat-panel-description>
         </mat-expansion-panel>
 
