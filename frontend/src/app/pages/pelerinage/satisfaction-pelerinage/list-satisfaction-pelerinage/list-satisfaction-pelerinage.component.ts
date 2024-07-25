@@ -30,7 +30,7 @@ import { fadeInUpAnimation } from 'src/@fury/animations/fade-in-up.animation';
 
 })
 export class ListSatisfactionPelerinageComponent implements OnInit {
-  satisfactions: SatisfactionPelerinage[];
+  satisfactions: SatisfactionPelerinage[]=[];
   subject$: ReplaySubject<SatisfactionPelerinage[]> = new ReplaySubject<SatisfactionPelerinage[]>(1);
   data$: Observable<SatisfactionPelerinage[]> = this.subject$.asObservable();
   pageSize = 4;  showProgressBar: boolean = false;
@@ -55,7 +55,7 @@ export class ListSatisfactionPelerinageComponent implements OnInit {
   @Input()
   columns: ListColumn[] = [
     { name: "Checkbox", property: "checkbox", visible: true },
-    { name: "Code Dossier Pèlerinage", property: "codeDossier", visible: true, isModelProperty: true },
+    { name: "Code Dossier Pèlerinage", property: "dossierPelerinage", visible: true, isModelProperty: true },
     { name: "Date de creation", property: "dateCreation", visible: true, isModelProperty: true },
     { name: "Ajoute par", property: "traitePar", visible: true },
     { name: "Actions", property: "actions", visible: true }
