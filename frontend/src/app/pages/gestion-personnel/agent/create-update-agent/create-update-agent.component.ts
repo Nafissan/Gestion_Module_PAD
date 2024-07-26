@@ -91,7 +91,7 @@ export class CreateUpdateAgentComponent implements OnInit {
       telephone: [null],
       email: [null, Validators.required],
       sexe: [null, Validators.required],
-      
+      religion: [null, Validators.required],
     });
 
     this.informationsPersoFormGroup = this.fb.group({
@@ -100,7 +100,7 @@ export class CreateUpdateAgentComponent implements OnInit {
       uniteOrganisationnelle:[null, Validators.required],
       dateEngagement: [null],
       datePriseService: [null],
-      profil: [null, Validators.required],
+      profil: [null],
     });
 
     this.confirmationFormGroup = this.fb.group({
@@ -123,6 +123,7 @@ export class CreateUpdateAgentComponent implements OnInit {
         adresse: this.defaults.adresse,
         telephone: this.defaults.telephone,
         email: this.defaults.email,
+        religion: this.defaults.religion,
       });
 
       this.informationsPersoFormGroup.setValue({

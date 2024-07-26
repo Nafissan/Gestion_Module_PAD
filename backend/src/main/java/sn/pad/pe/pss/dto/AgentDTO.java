@@ -32,11 +32,11 @@ public class AgentDTO {
 	private Date datePriseService;
 	private boolean estChef;
 	private String profil;
+	private String religion;
 
 	private Date createdAt;
 	private Date updatedAt;
 	private ComiteDTO comite;
-
 	@JsonIgnore
 	@JsonProperty("fonction")
 	private FonctionDTO fonction;
@@ -333,6 +333,14 @@ public class AgentDTO {
 
 	public void setComite(ComiteDTO comite) {
 		this.comite = comite;
+	}
+
+	public String getReligion() {
+		return religion;
+	}
+
+	public void setReligion(String religion) {
+		this.religion = religion;
 	}
 
 }

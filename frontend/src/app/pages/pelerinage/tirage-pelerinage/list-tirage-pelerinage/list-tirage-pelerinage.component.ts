@@ -17,6 +17,9 @@ import { NotificationService } from 'src/app/shared/services/notification.servic
 import { DossierPelerinageService } from '../../shared/services/dossier-pelerinage.service';
 import { fadeInRightAnimation } from 'src/@fury/animations/fade-in-right.animation';
 import { fadeInUpAnimation } from 'src/@fury/animations/fade-in-up.animation';
+import { Compte } from 'src/app/pages/gestion-utilisateurs/shared/model/compte.model';
+import { CompteService } from 'src/app/pages/gestion-utilisateurs/shared/services/compte.service';
+import { Agent } from 'src/app/shared/model/agent.model';
 
 @Component({
   selector: 'fury-list-tirage-pelerinage',
@@ -35,10 +38,12 @@ export class ListTiragePelerinageComponent implements OnInit {
   openOrSaisiDossier:DossierPelerinage;
   dataSource: MatTableDataSource<TirageAgent> | null;
   selection = new SelectionModel<TirageAgent>(true, []);
-  dossierDossierPelerinage:DossierPelerinage;
+  dossierPelerinage:DossierPelerinage;
   private paginator: MatPaginator;
   private sort: MatSort;
-
+  username: string;
+  agent: Agent;
+  compte: Compte;
   @ViewChild(MatSort) set matSort(ms: MatSort) {
     this.sort = ms;
     this.setDataSourceAttributes();
@@ -71,12 +76,21 @@ export class ListTiragePelerinageComponent implements OnInit {
     private notificationService: NotificationService,
     private dialogConfirmationService: DialogConfirmationService,
     private authentificationService: AuthenticationService,
-    private dossierPelerinageService:DossierPelerinageService
+    private dossierPelerinageService:DossierPelerinageService,
+    private authService: AuthenticationService,
+    private compteService: CompteService,
   ) { }
 
   ngOnInit() {
     this.fetchAgent();
     this.getDossierPelerinage();
+    this.username = this.authService.getUsername();
+
+    this.compteService.getByUsername(this.username).subscribe((response) => {
+      this.compte = response.body;
+      this.agent = this.compte.agent;
+    });
+
     this.dataSource = new MatTableDataSource();
     this.data$.pipe(filter((data) => !!data)).subscribe((agent) => {
       this.agents = agent;
@@ -119,8 +133,8 @@ export class ListTiragePelerinageComponent implements OnInit {
     this.dossierPelerinageService.getDossier().subscribe(
       (response) => {
         if (response.body !== null) {
-          this.dossierDossierPelerinage = response.body as DossierPelerinage;
-          console.log('Dossier substitut:', this.dossierDossierPelerinage);
+          this.dossierPelerinage = response.body as DossierPelerinage;
+          console.log('Dossier substitut:', this.dossierPelerinage);
         }
       },
       (err) => {
@@ -146,8 +160,22 @@ export class ListTiragePelerinageComponent implements OnInit {
     return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.id + 1}`;
   }
   
+  
   generateAgent() {
-    
+    this.tirageService.assignedAgent(this.agent).subscribe(
+      (response) => {
+        if(response.body  ==true){
+          this.notificationService.success('Tirage agents reussi');
+        }else{
+          this.notificationService.warn("Pas d'agents elligibles !" );
+
+        }
+        this.refreshListe();
+      },
+      (error) => {
+        this.notificationService.warn(error );
+      }
+    );
   }
   
   

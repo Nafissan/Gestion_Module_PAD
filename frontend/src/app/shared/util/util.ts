@@ -42,9 +42,14 @@ export class MailDossierColonie{
     static objet: string = "DOSSIER COLONIE" + new Date().getFullYear() + " ";
     static content: string =
         "Le dossier colonie de l\'annee " + new Date().getFullYear() + " est ouvert.\n" +
+        " Veuillez comencer la plannification."
+}
+export class MailDossierPelerinage{
+    static objet: string = "DOSSIER PELERINAGE" + new Date().getFullYear() + " ";
+    static content: string =
+        "Le dossier pelerinage de l\'annee " + new Date().getFullYear() + " est ouvert.\n" +
         " Veuillez coomencer la plannification."
 }
-
 export class MailRejeterAttestation {
     static susbject: string = "Rejet de la demande d'attestation de travail ";
     static content: string = "Votre demande d'attestation de travail a été rejeter ";

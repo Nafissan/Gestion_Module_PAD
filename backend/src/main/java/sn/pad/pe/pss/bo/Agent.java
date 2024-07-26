@@ -52,7 +52,7 @@ public class Agent implements Serializable {
 	private Date datePriseService;
 	private boolean estChef;
 	private String profil;
-
+	private String religion;
 	@Temporal(TemporalType.TIMESTAMP)
 	@CreationTimestamp
 	private Date createdAt;
@@ -73,7 +73,6 @@ public class Agent implements Serializable {
 	@JsonIgnore
 	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "agents")
 	private List<EtapeValidation> etapeValidations;
-
 	public Agent() {
 	}
 
@@ -243,6 +242,18 @@ public class Agent implements Serializable {
 
 	public void setProfil(String profil) {
 		this.profil = profil;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
+	public String getReligion() {
+		return religion;
+	}
+
+	public void setReligion(String religion) {
+		this.religion = religion;
 	}
 
 }

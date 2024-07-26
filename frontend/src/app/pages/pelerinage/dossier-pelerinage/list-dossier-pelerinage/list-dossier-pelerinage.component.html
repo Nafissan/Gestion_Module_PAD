@@ -6,7 +6,7 @@
     <fury-page-layout-content [@fadeInUp]>
       <fury-list *ngIf="dossierPelerinage && showProgressBar === true" name="Dossier pelerinage" [columns]="columns" (filterChange)="onFilterChange($event)">
         <div class="actions">
-          <button class="create" (click)="createDossierColonie()" [disabled]="dossiersPelerinage!==null  || !hasAnyRole(['MENU_DOTATION'])" type="button" mat-mini-fab color="primary">
+          <button class="create" (click)="createDossierPelerinage()" [disabled]="dossiersPelerinage!==null  || !hasAnyRole(['MENU_DOTATION'])" type="button" mat-mini-fab color="primary">
             <mat-icon>add</mat-icon>
           </button>
         </div>
@@ -90,7 +90,7 @@
   
           <!-- Table Header and Rows -->
           <tr mat-header-row *matHeaderRowDef="visibleColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: visibleColumns" (click)="detailsDossierColonie(row)" class="clickable route-animations-elements "></tr>
+          <tr mat-row *matRowDef="let row; columns: visibleColumns" (click)="detailsDossierPelerinage(row)" class="clickable route-animations-elements "></tr>
         </table>
         <mat-paginator [pageSize]="pageSize" class="paginator"></mat-paginator>
       </fury-list>
@@ -101,7 +101,7 @@
         <div class="card-body">
           <h5 class="card-title">DOSSIER PELERINAGE VIDE</h5>
           <p class="card-text">Ajouter un nouveau dossier pelerinage</p>
-          <button mat-mini-fab color="primary" *ngIf="hasAnyRole(['MENU_DOTATION'])" (click)="createDossierColonie()" [disabled]="dossierColonies && dossierColonies.etat !== 'fermer'">
+          <button mat-mini-fab color="primary" *ngIf="hasAnyRole(['MENU_DOTATION'])" (click)="createDossierPelerinage()" [disabled]="dossierColonies && dossierColonies.etat !== 'fermer'">
             <mat-icon>add</mat-icon>
           </button>
         </div>

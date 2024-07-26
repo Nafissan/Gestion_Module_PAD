@@ -4,6 +4,7 @@ import java.util.List;
 
 import sn.pad.pe.pelerinage.bo.DossierPelerinage;
 import sn.pad.pe.pelerinage.dto.TirageAgentDTO;
+import sn.pad.pe.pss.dto.AgentDTO;
 
 public interface TirageAgentService {
 TirageAgentDTO saveTirageAgent(TirageAgentDTO tirageAgentDTO);
@@ -17,5 +18,7 @@ TirageAgentDTO saveTirageAgent(TirageAgentDTO tirageAgentDTO);
     boolean deleteTirageAgent(TirageAgentDTO tirageAgentDTO);
 
     void deleteAllTirageAgents();
+
+    boolean assignedAgent(AgentDTO agentDTO);
 
 }

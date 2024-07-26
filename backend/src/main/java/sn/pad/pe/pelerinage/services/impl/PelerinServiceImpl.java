@@ -60,10 +60,10 @@ public class PelerinServiceImpl implements PelerinService {
 
         DossierPelerinage dossier = modelMapper.map(dossierPelerinageService.getDossierPelerinageByEtat(), DossierPelerinage.class);
         pelerinDTO.setDossierPelerinage(dossier);
-        Pelerin pelerin = modelMapper.map(pelerinDTO, Pelerin.class);
+        Pelerin pelerin = mapToBo(pelerinDTO);
         Pelerin savedPelerin = pelerinRepository.save(pelerin);
 
-        return modelMapper.map(savedPelerin, PelerinDTO.class);
+        return mapToDto(savedPelerin);
     }
 
     @Override
@@ -86,7 +86,22 @@ public class PelerinServiceImpl implements PelerinService {
             throw new RuntimeException("Failed to retrieve Pelerins", e);
         }
     }
-
+ private Pelerin mapToBo(PelerinDTO pelerinDTO){
+        Pelerin pelerin = modelMapper.map(pelerinDTO, Pelerin.class);
+        pelerin.setNom(pelerinDTO.getAgent().getNom());
+        pelerin.setPrenom(pelerinDTO.getAgent().getPrenom());
+        pelerin.setReligion(pelerinDTO.getAgent().getReligion());
+        pelerin.setSexe(pelerinDTO.getAgent().getSexe());
+        pelerin.setDateNaissance(pelerinDTO.getAgent().getDateNaissance());
+        pelerin.setMatricule(pelerinDTO.getAgent().getMatricule());
+        return pelerin;
+    }
+    private PelerinDTO mapToDto(Pelerin pelerin){
+       AgentDTO agentDTO = agentService.getAgentByMatricule(pelerin.getMatricule());
+       PelerinDTO pelerinDTO= modelMapper.map(pelerin, PelerinDTO.class);
+       pelerinDTO.setAgent(modelMapper.map(agentDTO, Agent.class));
+        return pelerinDTO;
+    }
     @Override
     public List<PelerinDTO> getPelerinsByDossierEtat() {
         DossierPelerinageDTO dossierPelerinage = dossierPelerinageService.getDossierPelerinageByEtat(); 
@@ -211,6 +226,7 @@ public class PelerinServiceImpl implements PelerinService {
         LocalDate localBirthDate = birthDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         return Period.between(localBirthDate, LocalDate.now()).getYears();
     }
+    //amodifier
 @Override
 public boolean updatePelerin(PelerinDTO updatedPelerin) {
     Optional<Pelerin> pelerinOptional = pelerinRepository.findById(updatedPelerin.getId());
@@ -229,14 +245,13 @@ public boolean updatePelerin(PelerinDTO updatedPelerin) {
         } else {
             convertBase64FieldsToBytes(updatedPelerin);
 
-            Optional<Pelerin> existingPelerin = pelerinRepository.findByAgent(updatedPelerin.getAgent());
+            Optional<Pelerin> existingPelerin = pelerinRepository.findById(updatedPelerin.getId());
 
-            if (existingPelerin.isPresent() && !existingPelerin.get().getId().equals(updatedPelerin.getId())) {
+            if (existingPelerin.isPresent()) {
                 throw new ParticipantColonieException("Le pèlerin existe déjà ");
             }
 
             Pelerin pelerin = pelerinOptional.get();
-            modelMapper.map(updatedPelerin, pelerin);
             pelerinRepository.save(pelerin);
 
             return true;
@@ -246,10 +261,6 @@ public boolean updatePelerin(PelerinDTO updatedPelerin) {
     }
 }
 
-
-    private PelerinDTO mapToDto(Pelerin pelerin) {
-        return modelMapper.map(pelerin, PelerinDTO.class);
-    }
 
     private void convertBytesFieldsToBase64(PelerinDTO pelerinDTO) {
         if (pelerinDTO.getDocumentBytes() != null) {
@@ -270,7 +281,7 @@ public boolean updatePelerin(PelerinDTO updatedPelerin) {
             DossierPelerinageDTO dossierPelerinageDTO= dossierPelerinageService.getDossierPelerinageByEtat();
             List<Pelerin> pelerins = pelerinRepository.findByDossierPelerinageAndStatus(modelMapper.map(dossierPelerinageDTO, DossierPelerinage.class),"APTE");
             for (Pelerin d : pelerins) {
-                AgentDTO agent = agentService.getAgentByMatricule(d.getAgent().getMatricule()) ;
+                AgentDTO agent = agentService.getAgentByMatricule(d.getMatricule()) ;
 
                 // Send sms
                 String sms = "Bonjour " + agent.getPrenom() + " " + agent.getNom()
@@ -323,7 +334,13 @@ private List<Pelerin> createPelerins(List<AgentDTO> agentsHomme, List<AgentDTO> 
     List<Pelerin> pelerins = new ArrayList<>();
     pelerins.addAll(agentsHomme.stream().map(agent -> {
         Pelerin pelerin = new Pelerin();
-        pelerin.setAgent(modelMapper.map(agent, Agent.class));
+        pelerin.setSexe(agent.getSexe());
+        pelerin.setDateNaissance(agent.getDateNaissance());
+        pelerin.setNom(agent.getNom());
+        pelerin.setPrenom(agent.getPrenom());
+        pelerin.setMatricule(agent.getMatricule());
+        pelerin.setDateEngagement(agent.getDateEngagement());
+        pelerin.setReligion(agent.getReligion());
         pelerin.setStatus("A VERIFIER"); 
         pelerin.setMatriculeAgent(lAgent.getMatricule());
         pelerin.setNomAgent(lAgent.getNom());
@@ -334,11 +351,18 @@ private List<Pelerin> createPelerins(List<AgentDTO> agentsHomme, List<AgentDTO> 
 
     pelerins.addAll(agentsFemme.stream().map(agent -> {
         Pelerin pelerin = new Pelerin();
-        pelerin.setAgent(modelMapper.map(agent, Agent.class));
+        pelerin.setSexe(agent.getSexe());
+        pelerin.setDateNaissance(agent.getDateNaissance());
+        pelerin.setNom(agent.getNom());
+        pelerin.setPrenom(agent.getPrenom());
+        pelerin.setMatricule(agent.getMatricule());
+        pelerin.setDateEngagement(agent.getDateEngagement());
+        pelerin.setReligion(agent.getReligion());
         pelerin.setStatus("A VERIFIER"); 
         pelerin.setMatriculeAgent(lAgent.getMatricule());
         pelerin.setNomAgent(lAgent.getNom());
         pelerin.setPrenomAgent(lAgent.getPrenom());
+        pelerin.setType("triage");
         return pelerin;
     }).collect(Collectors.toList()));
 

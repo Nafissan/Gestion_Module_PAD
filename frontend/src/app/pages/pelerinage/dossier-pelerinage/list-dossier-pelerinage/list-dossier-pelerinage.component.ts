@@ -14,7 +14,7 @@ import { MailService } from 'src/app/shared/services/mail.service';
 import { NotificationService } from 'src/app/shared/services/notification.service';
 import { AddOrUpdateDossierPelerinageComponent } from '../add-or-update-dossier-pelerinage/add-or-update-dossier-pelerinage.component';
 import { DetailsDossierPelerinageComponent } from '../details-dossier-pelerinage/details-dossier-pelerinage.component';
-import { DialogUtil, MailDossierColonie, NotificationUtil } from 'src/app/shared/util/util';
+import { DialogUtil, MailDossierPelerinage, NotificationUtil } from 'src/app/shared/util/util';
 import { Mail } from 'src/app/shared/model/mail.model';
 import { ReadFileDossierPelerinageComponent } from '../read-file-dossier-pelerinage/read-file-dossier-pelerinage.component';
 import { fadeInRightAnimation } from 'src/@fury/animations/fade-in-right.animation';
@@ -145,6 +145,7 @@ export class ListDossierPelerinageComponent implements OnInit {
         this.dossierPelerinageService.delete(DossierPelerinage).subscribe(
           () => {
             this.notificationService.success(NotificationUtil.suppression);
+            this.refreshDossierPelerinage();
           },
           err => {
             this.notificationService.warn(NotificationUtil.echec);
@@ -152,7 +153,6 @@ export class ListDossierPelerinageComponent implements OnInit {
         );
       }
     });
-    this.refreshDossierPelerinage();
   }
   getAgent(matricule: string): Promise<void> {
     return new Promise((resolve, reject) => {
@@ -170,31 +170,30 @@ export class ListDossierPelerinageComponent implements OnInit {
     });
   }
   
-  async fermerDossierColonie(dossierColonie: DossierPelerinage) {
-    dossierColonie.etat = this.fermer;
-    if ( dossierColonie.rapportPelerinage === null || dossierColonie.noteInformation === null) {
+  async fermerDossierPelerinage(dossierPelerinage: DossierPelerinage) {
+    dossierPelerinage.etat = this.fermer;
+    if ( dossierPelerinage.rapportPelerinage === null || dossierPelerinage.noteInformation === null) {
       this.notificationService.warn("Le dossier n'est pas complet. Il manque des fichiers !");
       return; 
     }
   
     this.dialog
-      .open(AddOrUpdateDossierPelerinageComponent, { data: { dossier: dossierColonie, property: "fermer" } })
+      .open(AddOrUpdateDossierPelerinageComponent, { data: { dossier: dossierPelerinage, property: "fermer" } })
       .afterClosed()
-      .subscribe(async (updatedDossierColonie: DossierPelerinage) => {
-        if (updatedDossierColonie) {
-          this.dossierPelerinage = updatedDossierColonie;
-          await this.sendEmail(dossierColonie);
-          this.refreshDossierPelerinage(); // Appeler refresh après l'envoi de l'email
+      .subscribe(async (updatedDossierPelerinage: DossierPelerinage) => {
+        if (updatedDossierPelerinage) {
+          this.dossierPelerinage = null;
+          await this.sendEmail(dossierPelerinage);
         }
       });
   }
   
-  private async sendEmail(dossierColonie: DossierPelerinage) {
+  private async sendEmail(dossierPelerinage: DossierPelerinage) {
     try {
-      await this.getAgent(dossierColonie.matricule);
+      await this.getAgent(dossierPelerinage.matricule);
       let mail = new Mail();
-      mail.objet = MailDossierColonie.objet;
-      mail.contenu = MailDossierColonie.content;
+      mail.objet = MailDossierPelerinage.objet;
+      mail.contenu = MailDossierPelerinage.content;
       mail.lien = "";
       mail.emetteur = "";
       mail.destinataires = [this.agent.email];

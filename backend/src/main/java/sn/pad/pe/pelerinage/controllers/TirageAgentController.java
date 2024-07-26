@@ -20,6 +20,7 @@ import io.swagger.annotations.ApiResponses;
 import sn.pad.pe.configurations.exception.Message;
 import sn.pad.pe.pelerinage.dto.TirageAgentDTO;
 import sn.pad.pe.pelerinage.services.TirageAgentService;
+import sn.pad.pe.pss.dto.AgentDTO;
 
 @RestController
 @Api(value = "API pour l'entité tirage agent")
@@ -101,5 +102,13 @@ public class TirageAgentController {
         tirageAgentService.deleteAllTirageAgents();
         message = new Message(new Date(), "Tous les tirages agents ont été supprimés.", "uri=/tirage-agents/all");
         return ResponseEntity.ok().body(message);
+    }
+    @PostMapping("/assigned-agent")
+    public ResponseEntity<?> assignedAgents(@RequestBody AgentDTO agentDTO) {
+        boolean tirageAgent = tirageAgentService.assignedAgent(agentDTO);
+        if (!tirageAgent) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("No eligible agents found");
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body("Agents successfully assigned");
     }
 }

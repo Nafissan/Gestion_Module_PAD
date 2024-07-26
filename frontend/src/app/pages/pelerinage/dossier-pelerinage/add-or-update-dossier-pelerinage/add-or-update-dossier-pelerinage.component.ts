@@ -138,7 +138,7 @@ private isValidPdfType(file: File): boolean {
   createDossierPelerinage(): void {
     let formData: DossierPelerinage = this.form.value;
     formData.annee = '2023';
-    formData.code = 'DPLG' + '-' + 'PAD' + '-' + formData.annee;
+    formData.code = 'DPLG' + '-' + 'PAD' + '-' + formData.lieuPelerinage+ '-'+formData.annee;
     formData.etat = EtatDossierPelerinage.ouvert; 
     formData.matricule = this.agent.matricule;
     formData.prenom = this.agent.prenom;
@@ -177,8 +177,8 @@ private isValidPdfType(file: File): boolean {
     formData.prenom = this.defaults.prenom;
     formData.nom = this.defaults.nom;
     formData.fonction = this.defaults.fonction;
-    formData.noteInformation = this.defaults.noteInformation;
-    formData.rapportPelerinage = this.defaults.rapportPelerinage;
+    formData.noteInformation = this.noteInformation? this.noteInformation : this.defaults.noteInformation;
+    formData.rapportPelerinage = this.rapport? this.rapport : this.defaults.rapportPelerinage;
     formData.createdAt = this.defaults.createdAt;
     formData.updatedAt = new Date();
   

@@ -82,6 +82,17 @@
                                 <input type="text" formControlName="adresse" matInput />
                             </mat-form-field>
                         </div>
+                        <div fxLayout="column" xLayout.gt-xs="row" fxLayoutGap="8px" fxLayoutGap.gt-xs="24px">
+
+                            <mat-form-field fxFlex >
+                              <mat-label>Religion</mat-label>
+                              <mat-select formControlName="religion" required>
+                                  <mat-option value="Musulman">Musulman(e)</mat-option>
+                                  <mat-option value="Chretien">Chretien(ne)</mat-option>
+                                  <mat-option value="Atheiste">Atheiste</mat-option>
+                              </mat-select>
+                          </mat-form-field>
+                          </div>
                     </div>
 
                     <div class="actions" fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="8px">

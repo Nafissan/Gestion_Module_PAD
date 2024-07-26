@@ -113,6 +113,12 @@ export class ListAgentComponent implements OnInit, AfterViewInit, OnDestroy {
       visible: false,   // qui est un sous objet dans agent
       isModelProperty: true,
     },
+    {
+      name: "Religion",
+      property: "religion", // cette propriete se trouve dans l'objet agent
+      visible: true,   // qui est un sous objet dans agent
+      isModelProperty: true,
+    },
     { name: "Actions", property: "actions", visible: true },
   ] as ListColumn[];
 

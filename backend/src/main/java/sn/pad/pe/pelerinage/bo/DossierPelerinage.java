@@ -95,18 +95,7 @@ public class DossierPelerinage  implements Serializable {
     public void setEtat(String etat) {
         this.etat = etat;
     }
-    public byte[] getNoteInformation() {
-        return noteInformationBytes;
-    }
-    public void setNoteInformation(byte[] noteInformation) {
-        this.noteInformationBytes = noteInformation;
-    }
-    public byte[] getRapportPelerinage() {
-        return rapportPelerinageBytes;
-    }
-    public void setRapportPelerinage(byte[] rapportPelerinage) {
-        this.rapportPelerinageBytes = rapportPelerinage;
-    }
+  
     public String getMatricule() {
         return matricule;
     }
@@ -178,6 +167,18 @@ public class DossierPelerinage  implements Serializable {
     }
     public void setAgenList(List<TirageAgent> agenList) {
         this.agenList = agenList;
+    }
+    public byte[] getNoteInformationBytes() {
+        return noteInformationBytes;
+    }
+    public void setNoteInformationBytes(byte[] noteInformationBytes) {
+        this.noteInformationBytes = noteInformationBytes;
+    }
+    public byte[] getRapportPelerinageBytes() {
+        return rapportPelerinageBytes;
+    }
+    public void setRapportPelerinageBytes(byte[] rapportPelerinageBytes) {
+        this.rapportPelerinageBytes = rapportPelerinageBytes;
     }
 
     // Getters and Setters

@@ -44,7 +44,7 @@
         <div class="card-body">
           <h5 class="card-title">LISTE DES AGENTS VIDE</h5>
           <p class="card-text">Lancer Tirage Agents</p>
-          <button mat-mini-fab color="primary" (click)="generateAgent()"[disabled]="agents.length===0 && !dossierPelerinage" >
+          <button mat-mini-fab class="full-width-button" color="primary" (click)="generateAgent()"[disabled]="dossierPelerinage===null" >
             <span>Tirage</span>
         </button>
         </div>
