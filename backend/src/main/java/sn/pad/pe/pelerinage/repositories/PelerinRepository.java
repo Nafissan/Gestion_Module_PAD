@@ -18,4 +18,6 @@ public interface PelerinRepository extends JpaRepository<Pelerin, Long>{
     List<Pelerin> findByStatus(String status);
     List<Pelerin> findByDossierPelerinageAndStatus(DossierPelerinage dossierP,String status);
     Optional<Pelerin> findByAgent(Agent agent);
+    boolean existsByAgentId(Long agentId);
+
 }

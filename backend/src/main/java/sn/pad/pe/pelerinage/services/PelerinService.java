@@ -32,4 +32,6 @@ public interface PelerinService {
 
     boolean sendMessages();
     void assignedSubstitutToPelerins(SubstitutDTO substitutDTO,PelerinDTO pelerinDTO);
+
+    boolean existsByAgentId(Long id);
 }

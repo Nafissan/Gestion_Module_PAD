@@ -1,15 +1,18 @@
 package sn.pad.pe.pelerinage.bo;
 
 import java.io.Serializable;
-import java.util.Date;
-
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
+
+import sn.pad.pe.pss.bo.Agent;
 @Entity
 
 public class TirageAgent implements Serializable {
@@ -18,13 +21,10 @@ public class TirageAgent implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String nom;
-    private String prenom;
-    private String religion;
-    private String sexe;
-    private Date dateNaissance;
-    private Date dateEngagement;
-    private String matricule;
+    
+	@OneToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "agent_id", referencedColumnName = "id")
+	private Agent agent;
     @ManyToOne
     @JoinColumn(name = "DOSSIER_PELERINAGE_ID", referencedColumnName = "id", nullable = false)
     @JsonBackReference
@@ -65,46 +65,11 @@ public class TirageAgent implements Serializable {
     public void setPrenomAgent(String prenomAgent) {
         this.prenomAgent = prenomAgent;
     }
-    public String getNom() {
-        return nom;
+    public Agent getAgent() {
+        return agent;
     }
-    public void setNom(String nom) {
-        this.nom = nom;
+    public void setAgent(Agent agent) {
+        this.agent = agent;
     }
-    public String getPrenom() {
-        return prenom;
-    }
-    public void setPrenom(String prenom) {
-        this.prenom = prenom;
-    }
-    public String getReligion() {
-        return religion;
-    }
-    public void setReligion(String religion) {
-        this.religion = religion;
-    }
-    public String getSexe() {
-        return sexe;
-    }
-    public void setSexe(String sexe) {
-        this.sexe = sexe;
-    }
-    public Date getDateNaissance() {
-        return dateNaissance;
-    }
-    public void setDateNaissance(Date dateNaissance) {
-        this.dateNaissance = dateNaissance;
-    }
-    public Date getDateEngagement() {
-        return dateEngagement;
-    }
-    public void setDateEngagement(Date dateEngagement) {
-        this.dateEngagement = dateEngagement;
-    }
-    public String getMatricule() {
-        return matricule;
-    }
-    public void setMatricule(String matricule) {
-        this.matricule = matricule;
-    }
+   
 }

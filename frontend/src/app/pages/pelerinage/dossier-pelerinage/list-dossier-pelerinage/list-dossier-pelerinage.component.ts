@@ -145,6 +145,7 @@ export class ListDossierPelerinageComponent implements OnInit {
         this.dossierPelerinageService.delete(DossierPelerinage).subscribe(
           () => {
             this.notificationService.success(NotificationUtil.suppression);
+            this.dossierPelerinage = null;
             this.refreshDossierPelerinage();
           },
           err => {
@@ -171,12 +172,12 @@ export class ListDossierPelerinageComponent implements OnInit {
   }
   
   async fermerDossierPelerinage(dossierPelerinage: DossierPelerinage) {
-    dossierPelerinage.etat = this.fermer;
     if ( dossierPelerinage.rapportPelerinage === null || dossierPelerinage.noteInformation === null) {
       this.notificationService.warn("Le dossier n'est pas complet. Il manque des fichiers !");
       return; 
     }
-  
+    dossierPelerinage.etat = this.fermer;
+
     this.dialog
       .open(AddOrUpdateDossierPelerinageComponent, { data: { dossier: dossierPelerinage, property: "fermer" } })
       .afterClosed()

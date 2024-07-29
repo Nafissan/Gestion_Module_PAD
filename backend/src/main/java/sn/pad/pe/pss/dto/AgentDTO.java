@@ -33,7 +33,7 @@ public class AgentDTO {
 	private boolean estChef;
 	private String profil;
 	private String religion;
-
+	private String typeContrat;
 	private Date createdAt;
 	private Date updatedAt;
 	private ComiteDTO comite;
@@ -341,6 +341,14 @@ public class AgentDTO {
 
 	public void setReligion(String religion) {
 		this.religion = religion;
+	}
+
+	public String getTypeContrat() {
+		return typeContrat;
+	}
+
+	public void setTypeContrat(String typeContrat) {
+		this.typeContrat = typeContrat;
 	}
 
 }

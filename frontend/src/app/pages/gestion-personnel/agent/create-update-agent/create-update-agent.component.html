@@ -92,7 +92,15 @@
                                   <mat-option value="Atheiste">Atheiste</mat-option>
                               </mat-select>
                           </mat-form-field>
+                          <mat-form-field fxFlex >
+                            <mat-label>Type de contrat</mat-label>
+                            <mat-select formControlName="typeContrat" required>
+                                <mat-option value="CDD">CDD</mat-option>
+                                <mat-option value="CDI">CDI</mat-option>
+                            </mat-select>
+                        </mat-form-field>
                           </div>
+
                     </div>
 
                     <div class="actions" fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="8px">

@@ -33,10 +33,13 @@
                 <span>Religion : </span>{{ pelerin.agent.religion }}
             </mat-panel-description>
             <mat-panel-description>
-                <span>Sexe : </span>{{ pelerin.agent.sexe }}
+                <span>Sexe : </span>{{ pelerin.agent.sexe === 'm' ? 'Homme' : 'Femme' }}
+            </mat-panel-description>            
+            <mat-panel-description>
+                <span>Type de contrat : </span>{{ pelerin.agent.typeContrat }}
             </mat-panel-description>
             <mat-panel-description>
-                <span>Type choix : </span>{{ pelerin.type }}
+                <span>Type Selection : </span>{{ pelerin.type }}
             </mat-panel-description>
         </mat-expansion-panel>
 

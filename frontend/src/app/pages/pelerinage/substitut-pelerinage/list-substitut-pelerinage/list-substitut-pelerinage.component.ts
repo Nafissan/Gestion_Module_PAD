@@ -19,6 +19,8 @@ import { filter } from 'rxjs/operators';
 import { DetailSubstitutPelerinageComponent } from '../detail-substitut-pelerinage/detail-substitut-pelerinage.component';
 import { fadeInUpAnimation } from 'src/@fury/animations/fade-in-up.animation';
 import { fadeInRightAnimation } from 'src/@fury/animations/fade-in-right.animation';
+import { PelerinsService } from '../../shared/services/pelerin-pelerinage.service';
+import { Pelerin } from '../../shared/model/pelerin-pelerinage.model';
 
 @Component({
   selector: 'fury-list-substitut-pelerinage',
@@ -40,6 +42,7 @@ export class ListSubstitutPelerinageComponent implements OnInit {
   dossierDossierPelerinage:DossierPelerinage;
   private paginator: MatPaginator;
   private sort: MatSort;
+  pelerins: Pelerin[]=[];
 
   @ViewChild(MatSort) set matSort(ms: MatSort) {
     this.sort = ms;
@@ -66,7 +69,6 @@ export class ListSubstitutPelerinageComponent implements OnInit {
     { name: "Ajoute par", property: "ajoutePar", visible: true },
     { name: "Substitut de", property: "agent", visible: true },
 
-    { name: "Actions", property: "actions", visible: true },
   ] as ListColumn[];
 
   constructor(
@@ -75,12 +77,14 @@ export class ListSubstitutPelerinageComponent implements OnInit {
     private notificationService: NotificationService,
     private dialogConfirmationService: DialogConfirmationService,
     private authentificationService: AuthenticationService,
-    private dossierDossierPelerinageService:DossierPelerinageService
+    private dossierDossierPelerinageService:DossierPelerinageService,
+    private pelerinsService: PelerinsService,
   ) { }
 
   ngOnInit() {
     this.fetchSubstituts();
     this.getDossierDossierPelerinage();
+    this.getPelerins();
     this.dataSource = new MatTableDataSource();
     this.data$.pipe(filter((data) => !!data)).subscribe((substitut) => {
       this.substituts = substitut;
@@ -132,7 +136,16 @@ export class ListSubstitutPelerinageComponent implements OnInit {
       }
     );
   }
-  
+  getPelerins(){
+    this.pelerinsService.getPelerinsByDossierEtat().subscribe(
+      (response) => {
+          this.pelerins = response.body as Pelerin[];
+        },
+          (err) => {
+            console.error('Error loading pelerins:', err);
+            });
+          }
+
   isAllSelected() {
     const numSelected = this.selection.selected.length;
     const numRows = this.dataSource.data.length;
