@@ -53,9 +53,9 @@ public class EmailMessage {
         props.put("mail.smtp.auth", this.smtp_auth);
 
         Session session = Session.getDefaultInstance(props, authenticator);
+        Message emailMessage = new MimeMessage(session);
 
         try {
-            Message emailMessage = new MimeMessage(session);
             emailMessage.setFrom(new InternetAddress(this.getSender()));
             for (String email : mail.getDestinataires()) {
                 emailMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(email));
