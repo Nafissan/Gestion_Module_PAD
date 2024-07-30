@@ -33,7 +33,10 @@
                 <span>Religion : </span>{{ substitut.agent.religion }}
             </mat-panel-description>
             <mat-panel-description>
-                <span>Sexe : </span>{{ substitut.agent.sexe }}
+                <span>Sexe : </span>{{ substitut.agent.sexe === 'm' ? 'Homme' : 'Femme' }}
+            </mat-panel-description>            
+            <mat-panel-description>
+                <span>Type de contrat : </span>{{ substitut.agent.typeContrat }}
             </mat-panel-description>
         </mat-expansion-panel>
 

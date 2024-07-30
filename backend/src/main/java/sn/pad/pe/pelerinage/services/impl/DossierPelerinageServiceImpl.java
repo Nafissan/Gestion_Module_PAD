@@ -139,7 +139,7 @@ public boolean updateDossierPelerinage(DossierPelerinageDTO dossierPelerinageDTO
         }
 
         if ("FERMER".equalsIgnoreCase(dossierPelerinage.getEtat())) {
-            substitutService.deleteAllSubstituts();
+            agentService.deleteAllTirageAgents();
         }
         dossierPelerinageRepository.save(dossierPelerinage);
         return true;

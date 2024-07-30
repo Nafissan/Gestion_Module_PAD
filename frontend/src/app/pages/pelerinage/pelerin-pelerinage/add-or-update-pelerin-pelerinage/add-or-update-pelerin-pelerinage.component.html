@@ -39,7 +39,7 @@
 
     <mat-dialog-actions fxLayout="row" fxLayoutAlign="end center">
         <button mat-button type="button" mat-dialog-close class="cancel">Annuler</button>
-        <button mat-button type="submit" [disabled]="form.invalid && photo === null && ficheSocial===null" class="save">
+        <button mat-button type="submit" [disabled]="form.invalid" class="save">
             {{ isCreateMode() ? 'Ajouter' : 'Mettre à jour' }}
         </button>
     </mat-dialog-actions>

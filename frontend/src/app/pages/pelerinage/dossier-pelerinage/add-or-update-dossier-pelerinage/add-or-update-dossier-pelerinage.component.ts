@@ -17,6 +17,8 @@ import { DossierPelerinageService } from "../../shared/services/dossier-pelerina
 import { MailService } from "src/app/shared/services/mail.service";
 import { Mail } from "src/app/shared/model/mail.model";
 import { AgentService } from "src/app/shared/services/agent.service";
+import { SatisfactionPelerinageService } from "../../shared/services/satisfaction-pelerinage.service";
+import { SatisfactionPelerinage } from "../../shared/model/satisfaction-pelerinage.model";
 
 
 export const MY_FORMATS = {
@@ -57,7 +59,8 @@ export class AddOrUpdateDossierPelerinageComponent implements OnInit {
   defaults: DossierPelerinage;
   noteInformation: string | null = null;
   rapport: string | null = null;
-  
+  satisfactions: SatisfactionPelerinage[]=[];
+
 
   constructor(@Inject(MAT_DIALOG_DATA) public data : { dossier: DossierPelerinage, property: string },
   private fb: FormBuilder,   
@@ -69,10 +72,12 @@ export class AddOrUpdateDossierPelerinageComponent implements OnInit {
    private mailService: MailService,
   private dialogConfirmationService: DialogConfirmationService,
   private notificationService: NotificationService,
-  private agentService: AgentService ,
+  private agentService: AgentService ,    private satisfactionService: SatisfactionPelerinageService,
+
 ) { }
 
   ngOnInit(): void {
+    this.getSatisfactions();
     this.username = this.authService.getUsername();
 
     this.compteService.getByUsername(this.username).subscribe((response) => {
@@ -112,7 +117,13 @@ export class AddOrUpdateDossierPelerinageComponent implements OnInit {
         }
     }
   }
-  
+  getSatisfactions() {
+    this.satisfactionService.getFormulaireByDossierEtat().subscribe(response => {
+      this.satisfactions = response.body as SatisfactionPelerinage[];
+    }, err => {
+      console.error('Error loading satisfactions:', err);
+    });
+  }
 async handleRapport(files: FileList) {
   if (files.length > 0) {
       const file = files[0];
@@ -137,7 +148,7 @@ private isValidPdfType(file: File): boolean {
   }
   createDossierPelerinage(): void {
     let formData: DossierPelerinage = this.form.value;
-    formData.annee = '2023';
+    formData.annee = new Date(this.dateCreation.value).getFullYear().toString();
     formData.code = 'DPLG' + '-' + 'PAD' + '-' + formData.lieuPelerinage+ '-'+formData.annee;
     formData.etat = EtatDossierPelerinage.ouvert; 
     formData.matricule = this.agent.matricule;

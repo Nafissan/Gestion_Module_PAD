@@ -184,7 +184,7 @@ export class ListDossierPelerinageComponent implements OnInit {
       .subscribe(async (updatedDossierPelerinage: DossierPelerinage) => {
         if (updatedDossierPelerinage) {
           this.dossierPelerinage = null;
-          await this.sendEmail(dossierPelerinage);
+          //await this.sendEmail(dossierPelerinage);
         }
       });
   }

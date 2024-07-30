@@ -49,10 +49,10 @@ public class SubstitutDTO {
         this.prenomAgent = prenomAgent;
     }
    
-    public Pelerin getPelerin() {
+    public Pelerin getRemplacantDe() {
         return remplacantDe;
     }
-    public void setPelerin(Pelerin pelerin) {
+    public void setRemplacantDe(Pelerin pelerin) {
         this.remplacantDe = pelerin;
     }
 }

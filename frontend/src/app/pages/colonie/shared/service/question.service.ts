@@ -23,6 +23,10 @@ export class QuestionService {
     return this.httpClient.get<any>(this.url, { observe: 'response' })
       .pipe(catchError(this.errorHandler));
   }
+  getQuestionsPelerinage(): Observable<HttpResponse<any>> {
+    return this.httpClient.get<any>(`${this.url}/pelerinage`, { observe: 'response' })
+      .pipe(catchError(this.errorHandler));
+  }
 
 
   // Gérer les erreurs HTTP

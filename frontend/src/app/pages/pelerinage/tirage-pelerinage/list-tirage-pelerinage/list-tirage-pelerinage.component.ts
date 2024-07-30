@@ -168,8 +168,7 @@ export class ListTiragePelerinageComponent implements OnInit {
         this.refreshListe();
       },
       (error) => {
-        this.notificationService.success(error );
-        this.refreshListe();
+        this.notificationService.warn("Erreur lors du tirage d'agents" );
       }
     );
   }

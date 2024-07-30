@@ -52,9 +52,8 @@ export class ListColonComponent implements OnInit {
    columns: ListColumn[] = [
      { name: "Checkbox", property: "checkbox", visible: false },
      { name: "Code Dossier", property: "codeDossier", visible: true, isModelProperty: true },
-     { name: "Matricule Parent", property: "matriculeParent", visible: false, isModelProperty: true },
-     { name: "Nom Parent", property: "nomParent", visible: false, isModelProperty: true },
-     { name: "Prenom Parent", property: "prenomParent", visible: false, isModelProperty: true },
+     { name: "Parent", property: "agentParent", visible: false, isModelProperty: true },
+    
     
      {
        name: "Nom Enfant",

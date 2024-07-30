@@ -1,10 +1,11 @@
 package sn.pad.pe.pelerinage.services.impl;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -62,25 +63,30 @@ public class ReponsePelerinageServiceImpl implements ReponsePelerinageService {
         return reponses.stream()
                 .map(reponse -> mapper.map(reponse, ReponsePelerinageDTO.class))
                 .collect(Collectors.toList());
-    }
+    }    private static final Logger logger = LoggerFactory.getLogger(ReponsePelerinageServiceImpl.class);
 
     @Override
     public ReponsePelerinageDTO updateReponses(ReponsePelerinageDTO reponseDTO) {
-        Optional<ReponsePelerinage> existingReponseOpt = reponseRepository.findAll().stream()
-                .filter(existingReponse -> existingReponse.getFormulaire().getId().equals(reponseDTO.getFormulaire().getId())
-                        && existingReponse.getQuestion().getId().equals(reponseDTO.getQuestion().getId()))
-                .findFirst();
-
-        if (existingReponseOpt.isPresent()) {
-            ReponsePelerinage existingReponse = existingReponseOpt.get();
+        logger.info("Début de la méthode updateReponses avec reponseDTO: {}", reponseDTO);
+    
+        List<ReponsePelerinage> allReponses = reponseRepository.findAll();
+    
+        for (ReponsePelerinage existingReponse : allReponses) {
+            if (existingReponse.getFormulaire().getId().equals(reponseDTO.getFormulaire().getId()) &&
+                existingReponse.getQuestion().getId().equals(reponseDTO.getQuestion().getId())) {
+                
+            logger.info("Mise à jour de la réponse existante: {}", existingReponse);
             existingReponse.setReponse(reponseDTO.getReponse());
-
+    
             ReponsePelerinage savedReponse = reponseRepository.save(existingReponse);
-
+            logger.info("Réponse mise à jour sauvegardée: {}", savedReponse);
+    
             return mapper.map(savedReponse, ReponsePelerinageDTO.class);
-        } else {
-            throw new RuntimeException("La réponse avec le formulaire et la question spécifiés n'a pas été trouvée.");
+            }
         }
+    
+        logger.error("La réponse avec le formulaire et la question spécifiés n'a pas été trouvée.");
+        throw new RuntimeException("La réponse avec le formulaire et la question spécifiés n'a pas été trouvée.");
     }
 
 }

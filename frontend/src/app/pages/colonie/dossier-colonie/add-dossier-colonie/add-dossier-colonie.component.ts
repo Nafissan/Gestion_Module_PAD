@@ -229,7 +229,7 @@ private isValidPdfType(file: File): boolean {
 
   createDossierColonie(): void {
     let formData: DossierColonie   = this.form.value;
-    formData.annee                = '2023';
+    formData.annee                = new Date(this.dateCreation.value).getFullYear().toString();
     formData.code                 = 'DCLN' + '-' + 'PAD' + '-' +formData.annee;
     formData.etat                 = EtatDossierColonie.ouvert; 
     formData.noteMinistere        = this.noteMinistere;

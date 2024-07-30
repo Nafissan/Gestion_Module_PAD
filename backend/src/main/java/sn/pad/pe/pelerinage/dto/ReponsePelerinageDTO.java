@@ -1,12 +1,12 @@
 package sn.pad.pe.pelerinage.dto;
 
+import sn.pad.pe.colonie.bo.Question;
 import sn.pad.pe.pelerinage.bo.FormulaireSatisfactionPelerinage;
-import sn.pad.pe.pelerinage.bo.QuestionPelerinage;
 
 public class ReponsePelerinageDTO {
  private Long id;
     private FormulaireSatisfactionPelerinage formulaire;
-    private QuestionPelerinage question;
+    private Question question;
     private String reponse;
     public Long getId() {
         return id;
@@ -20,10 +20,10 @@ public class ReponsePelerinageDTO {
     public void setFormulaire(FormulaireSatisfactionPelerinage formulaire) {
         this.formulaire = formulaire;
     }
-    public QuestionPelerinage getQuestion() {
+    public Question getQuestion() {
         return question;
     }
-    public void setQuestion(QuestionPelerinage question) {
+    public void setQuestion(Question question) {
         this.question = question;
     }
     public String getReponse() {

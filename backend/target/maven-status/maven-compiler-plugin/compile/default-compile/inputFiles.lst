@@ -34,7 +34,6 @@ C:\Users\nafis\Documents\DIC3\stage\projet\projet\test\backend\src\main\java\sn\
 C:\Users\nafis\Documents\DIC3\stage\projet\projet\test\backend\src\main\java\sn\pad\pe\colonie\repositories\QuestionRepository.java
 C:\Users\nafis\Documents\DIC3\stage\projet\projet\test\backend\src\main\java\sn\pad\pe\dotation\bo\Enfant.java
 C:\Users\nafis\Documents\DIC3\stage\projet\projet\test\backend\src\main\java\sn\pad\pe\dotation\controllers\FournisseurController.java
-C:\Users\nafis\Documents\DIC3\stage\projet\projet\test\backend\src\main\java\sn\pad\pe\pelerinage\bo\QuestionPelerinage.java
 C:\Users\nafis\Documents\DIC3\stage\projet\projet\test\backend\src\main\java\sn\pad\pe\partenariat\dto\VilleDTO.java
 C:\Users\nafis\Documents\DIC3\stage\projet\projet\test\backend\src\main\java\sn\pad\pe\pelerinage\services\impl\SubstitutServiceImpl.java
 C:\Users\nafis\Documents\DIC3\stage\projet\projet\test\backend\src\main\java\sn\pad\pe\dotation\repositories\SuiviDotationRepository.java
@@ -66,11 +65,9 @@ C:\Users\nafis\Documents\DIC3\stage\projet\projet\test\backend\src\main\java\sn\
 C:\Users\nafis\Documents\DIC3\stage\projet\projet\test\backend\src\main\java\sn\pad\pe\pss\bo\Role.java
 C:\Users\nafis\Documents\DIC3\stage\projet\projet\test\backend\src\main\java\sn\pad\pe\colonie\controllers\QuestionController.java
 C:\Users\nafis\Documents\DIC3\stage\projet\projet\test\backend\src\main\java\sn\pad\pe\PEBackendApplication.java
-C:\Users\nafis\Documents\DIC3\stage\projet\projet\test\backend\src\main\java\sn\pad\pe\pelerinage\controllers\QuestionPelerinageController.java
 C:\Users\nafis\Documents\DIC3\stage\projet\projet\test\backend\src\main\java\sn\pad\pe\dotation\services\impl\NotificationServiceImpl.java
 C:\Users\nafis\Documents\DIC3\stage\projet\projet\test\backend\src\main\java\sn\pad\pe\pss\repositories\PlanningAbsenceRepository.java
 C:\Users\nafis\Documents\DIC3\stage\projet\projet\test\backend\src\main\java\sn\pad\pe\pss\repositories\DossierCongeRepository.java
-C:\Users\nafis\Documents\DIC3\stage\projet\projet\test\backend\src\main\java\sn\pad\pe\pelerinage\services\QuestionPelerinageService.java
 C:\Users\nafis\Documents\DIC3\stage\projet\projet\test\backend\src\main\java\sn\pad\pe\dotation\services\impl\EnfantServiceImpl.java
 C:\Users\nafis\Documents\DIC3\stage\projet\projet\test\backend\src\main\java\sn\pad\pe\configurations\mail\MailResponse.java
 C:\Users\nafis\Documents\DIC3\stage\projet\projet\test\backend\src\main\java\sn\pad\pe\partenariat\dto\SuiviProspectDTO.java
@@ -129,7 +126,6 @@ C:\Users\nafis\Documents\DIC3\stage\projet\projet\test\backend\src\main\java\sn\
 C:\Users\nafis\Documents\DIC3\stage\projet\projet\test\backend\src\main\java\sn\pad\pe\dotation\services\ConjointService.java
 C:\Users\nafis\Documents\DIC3\stage\projet\projet\test\backend\src\main\java\sn\pad\pe\partenariat\services\impl\DetailEvenementServiceImpl.java
 C:\Users\nafis\Documents\DIC3\stage\projet\projet\test\backend\src\main\java\sn\pad\pe\dotation\bo\SuiviDotation.java
-C:\Users\nafis\Documents\DIC3\stage\projet\projet\test\backend\src\main\java\sn\pad\pe\pelerinage\services\impl\QuestionPelerinageServiceImpl.java
 C:\Users\nafis\Documents\DIC3\stage\projet\projet\test\backend\src\main\java\sn\pad\pe\dotation\services\SuiviDotationService.java
 C:\Users\nafis\Documents\DIC3\stage\projet\projet\test\backend\src\main\java\sn\pad\pe\pss\services\CongeService.java
 C:\Users\nafis\Documents\DIC3\stage\projet\projet\test\backend\src\main\java\sn\pad\pe\pss\dto\UploadFileResponse.java
@@ -337,7 +333,6 @@ C:\Users\nafis\Documents\DIC3\stage\projet\projet\test\backend\src\main\java\sn\
 C:\Users\nafis\Documents\DIC3\stage\projet\projet\test\backend\src\main\java\sn\pad\pe\pss\services\impl\DossierAbsenceServiceImpl.java
 C:\Users\nafis\Documents\DIC3\stage\projet\projet\test\backend\src\main\java\sn\pad\pe\pss\services\impl\ProcessusValidationServiceImpl.java
 C:\Users\nafis\Documents\DIC3\stage\projet\projet\test\backend\src\main\java\sn\pad\pe\partenariat\services\impl\ContinentServiceImpl.java
-C:\Users\nafis\Documents\DIC3\stage\projet\projet\test\backend\src\main\java\sn\pad\pe\pelerinage\repositories\QuestionPelerinageRepository.java
 C:\Users\nafis\Documents\DIC3\stage\projet\projet\test\backend\src\main\java\sn\pad\pe\dotation\repositories\FournisseurRepository.java
 C:\Users\nafis\Documents\DIC3\stage\projet\projet\test\backend\src\main\java\sn\pad\pe\partenariat\bo\Besoin.java
 C:\Users\nafis\Documents\DIC3\stage\projet\projet\test\backend\src\main\java\sn\pad\pe\pss\bo\Conge.java
@@ -382,7 +377,6 @@ C:\Users\nafis\Documents\DIC3\stage\projet\projet\test\backend\src\main\java\sn\
 C:\Users\nafis\Documents\DIC3\stage\projet\projet\test\backend\src\main\java\sn\pad\pe\dotation\services\impl\Scheduler.java
 C:\Users\nafis\Documents\DIC3\stage\projet\projet\test\backend\src\main\java\sn\pad\pe\partenariat\repositories\ProspectRepository.java
 C:\Users\nafis\Documents\DIC3\stage\projet\projet\test\backend\src\main\java\sn\pad\pe\partenariat\repositories\ActiviteRepository.java
-C:\Users\nafis\Documents\DIC3\stage\projet\projet\test\backend\src\main\java\sn\pad\pe\pelerinage\dto\QuestionPelerinageDTO.java
 C:\Users\nafis\Documents\DIC3\stage\projet\projet\test\backend\src\main\java\sn\pad\pe\colonie\bo\DossierColonie.java
 C:\Users\nafis\Documents\DIC3\stage\projet\projet\test\backend\src\main\java\sn\pad\pe\dotation\services\DotationService.java
 C:\Users\nafis\Documents\DIC3\stage\projet\projet\test\backend\src\main\java\sn\pad\pe\pss\services\impl\DossierCongeServiceImpl.java

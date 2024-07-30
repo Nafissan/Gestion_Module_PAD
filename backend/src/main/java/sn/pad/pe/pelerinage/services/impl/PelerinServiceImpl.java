@@ -161,7 +161,7 @@ public class PelerinServiceImpl implements PelerinService {
     public List<PelerinDTO> getPelerinsByAnnee(String annee) {
         DossierPelerinageDTO dossier = dossierPelerinageService.getDossierPelerinageByAnnee(annee);
         if (dossier != null) {
-            List<Pelerin> pelerins = pelerinRepository.findByDossierPelerinageAndStatus(modelMapper.map(dossier, DossierPelerinage.class), "VALIDER");
+            List<Pelerin> pelerins = pelerinRepository.findByDossierPelerinageAndStatus(modelMapper.map(dossier, DossierPelerinage.class), "APTE");
             return pelerins.stream()
                     .map(pelerin -> {
                         PelerinDTO dto = mapToDto(pelerin);
@@ -209,8 +209,8 @@ public class PelerinServiceImpl implements PelerinService {
             .count();
         statistics.setAge60to70(age60to70Count);
 
-        statistics.setMaleCount(pelerins.stream().filter(pelerin -> "masculin".equalsIgnoreCase(pelerin.getAgent().getSexe().toString())).count());
-        statistics.setFemaleCount(pelerins.stream().filter(pelerin -> "feminin".equalsIgnoreCase(pelerin.getAgent().getSexe().toString())).count());
+        statistics.setMaleCount(pelerins.stream().filter(pelerin -> "m".equalsIgnoreCase(pelerin.getAgent().getSexe())).count());
+        statistics.setFemaleCount(pelerins.stream().filter(pelerin -> "f".equalsIgnoreCase(pelerin.getAgent().getSexe())).count());
 
         return statistics;
     }
@@ -222,41 +222,71 @@ public class PelerinServiceImpl implements PelerinService {
         LocalDate localBirthDate = birthDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         return Period.between(localBirthDate, LocalDate.now()).getYears();
     }
-    //amodifier
-@Override
+    @Override
 public boolean updatePelerin(PelerinDTO updatedPelerin) {
+
     Optional<Pelerin> pelerinOptional = pelerinRepository.findById(updatedPelerin.getId());
     if (pelerinOptional.isPresent()) {
-        if ("NON APTE".equalsIgnoreCase(updatedPelerin.getStatus()) && updatedPelerin.getType().equals("triage")) {
-            SubstitutDTO substitut = substitutService.generateSubstitutDTO(updatedPelerin.getAgent().getSexe());            
-            Substitut substitut2 = pelerinOptional.get().getSubstitut(); 
-            pelerinRepository.delete(pelerinOptional.get());
-            Pelerin newPelerin = new Pelerin();
-            modelMapper.map(substitut2, newPelerin);
-            newPelerin.setStatus("A VERIFIER");
-            newPelerin.setSubstitut(modelMapper.map(substitut,Substitut.class));
-            pelerinRepository.save(newPelerin);
+        Pelerin existingPelerin = pelerinOptional.get();
 
-            return true;
+        if ("NON APTE".equalsIgnoreCase(updatedPelerin.getStatus()) && "triage".equals(updatedPelerin.getType())) {
+            return handleNonAptePelerin(existingPelerin, updatedPelerin);
         } else {
-            convertBase64FieldsToBytes(updatedPelerin);
-
-            Optional<Pelerin> existingPelerin = pelerinRepository.findById(updatedPelerin.getId());
-
-            if (existingPelerin.isPresent()) {
-                throw new ParticipantColonieException("Le pèlerin existe déjà ");
-            }
-
-            Pelerin pelerin = pelerinOptional.get();
-            pelerinRepository.save(pelerin);
-
-            return true;
+            return handleGeneralPelerinUpdate(updatedPelerin);
         }
     } else {
         return false;
     }
 }
 
+private boolean handleNonAptePelerin(Pelerin existingPelerin, PelerinDTO updatedPelerin) {
+
+    SubstitutDTO substitut = substitutService.generateSubstitutDTO(updatedPelerin.getAgent().getSexe());
+
+    Substitut substitut2 = existingPelerin.getSubstitut();
+
+    pelerinRepository.delete(existingPelerin);
+    substitut.setDossierPelerinage(updatedPelerin.getDossierPelerinage());
+    substitut.setMatriculeAgent(updatedPelerin.getMatriculeAgent());
+    substitut.setNomAgent(updatedPelerin.getNomAgent());
+    substitut.setPrenomAgent(updatedPelerin.getPrenomAgent());
+
+    Pelerin newPelerin = new Pelerin();
+    newPelerin.setDossierPelerinage(substitut2.getDossierPelerinage());
+    newPelerin.setAgent(substitut2.getAgent());
+    newPelerin.setStatus("A VERIFIER");
+    newPelerin.setMatriculeAgent(updatedPelerin.getMatriculeAgent());
+    newPelerin.setNomAgent(updatedPelerin.getNomAgent());
+    newPelerin.setPrenomAgent(updatedPelerin.getPrenomAgent());
+    newPelerin.setType("triage");
+
+    Pelerin savedPelerin = pelerinRepository.save(newPelerin);
+
+    substitut.setRemplacantDe(savedPelerin);
+    SubstitutDTO savedSubstitut = substitutService.saveSubstitut(modelMapper.map(substitut, SubstitutDTO.class));
+
+    assignedSubstitutToPelerins(savedSubstitut, modelMapper.map(savedPelerin, PelerinDTO.class));
+
+    return true;
+}
+
+    
+    private boolean handleGeneralPelerinUpdate(PelerinDTO updatedPelerin) {
+        Optional<Pelerin> existingPelerin = pelerinRepository.findById(updatedPelerin.getId());
+        if (existingPelerin.isPresent()) {
+            convertBase64FieldsToBytes(updatedPelerin);
+            if("A VERIFIER".equalsIgnoreCase(updatedPelerin.getStatus())){
+                Pelerin pelerin = modelMapper.map(updatedPelerin, Pelerin.class);
+                pelerin.setSubstitut(existingPelerin.get().getSubstitut());
+                pelerinRepository.save(pelerin);
+                return true;
+            }
+            Pelerin pelerin = modelMapper.map(updatedPelerin, Pelerin.class);
+            pelerinRepository.save(pelerin);
+            return true;
+        }
+        return false;
+    }
 
     private void convertBytesFieldsToBase64(PelerinDTO pelerinDTO) {
         if (pelerinDTO.getDocumentBytes() != null) {
@@ -302,9 +332,10 @@ public boolean updatePelerin(PelerinDTO updatedPelerin) {
     }
 
     @Override
-public void assignAgentsToPelerinage(AgentDTO lAgent) {
+public boolean assignAgentsToPelerinage(AgentDTO lAgent) {
 
     List<TirageAgentDTO> tirageAgents = tirageAgentService.getTirageAgentsByDossierEtat();
+    if(tirageAgents.isEmpty()) return false;
 
     // Filtrer les agents par sexe
     List<TirageAgentDTO> agentsHomme = tirageAgents.stream()
@@ -325,6 +356,7 @@ public void assignAgentsToPelerinage(AgentDTO lAgent) {
     // Créer les pelerins et les enregistrer
     List<Pelerin> pelerins = createPelerins(agentsHommeSelectionnes, agentsFemmeSelectionnes, lAgent,agentsFemme.get(0).getDossierPelerinage());
     pelerinRepository.saveAll(pelerins);
+    return true;
 }
 
 // Méthode pour sélectionner des agents aléatoires parmi une liste
@@ -371,7 +403,8 @@ public void assignedSubstitutToPelerins(SubstitutDTO substitutDTO,PelerinDTO pel
     pelerin.setSubstitut(modelMapper.map(substitutDTO, Substitut.class));
     if(pelerinRepository.existsById(pelerin.getId())){
         pelerinRepository.save(pelerin);
+    }else{
+        throw new ParticipantColonieException("Le pèlerin n'existe pas ");
     }
-    throw new ParticipantColonieException("Le pèlerin n'existe pas ");
 }
 }

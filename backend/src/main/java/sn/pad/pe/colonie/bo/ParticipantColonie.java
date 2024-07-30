@@ -6,14 +6,18 @@ import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+
+import sn.pad.pe.pss.bo.Agent;
 
 @Entity
 public class ParticipantColonie implements Serializable{
@@ -33,9 +37,16 @@ public class ParticipantColonie implements Serializable{
     private GroupeSanguin groupeSanguin;
     @Enumerated(EnumType.STRING)
     private Sexe sexe;
-    private String matriculeParent;
-    private String nomParent;
-    private String prenomParent;
+     @OneToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "agent_id", referencedColumnName = "id")
+   private Agent agentParent;
+    public Agent getAgentParent() {
+    return agentParent;
+}
+public void setAgentParent(Agent agentParent) {
+    this.agentParent = agentParent;
+}
+
     private String status;
     private String matriculeAgent;
     private String nomAgent;
@@ -93,24 +104,6 @@ public class ParticipantColonie implements Serializable{
     }
     public void setSexe(Sexe sexe) {
         this.sexe = sexe;
-    }
-    public String getMatriculeParent() {
-        return matriculeParent;
-    }
-    public void setMatriculeParent(String matricule) {
-        this.matriculeParent = matricule;
-    }
-    public String getNomParent() {
-        return nomParent;
-    }
-    public void setNomParent(String nomParent) {
-        this.nomParent = nomParent;
-    }
-    public String getPrenomParent() {
-        return prenomParent;
-    }
-    public void setPrenomParent(String prenomParent) {
-        this.prenomParent = prenomParent;
     }
     public String getStatus() {
         return status;

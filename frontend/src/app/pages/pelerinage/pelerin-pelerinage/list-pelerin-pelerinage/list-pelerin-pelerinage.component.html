@@ -6,8 +6,12 @@
     <fury-page-layout-content [@fadeInUp]>
       <fury-list *ngIf="pelerins.length !== 0 && showProgressBar === true" name="Pelerins" [columns]="columns" (filterChange)="onFilterChange($event)">
         <div class="actions">
-          <button class="create" (click)="createPelerin()" [disabled]="pelerins.length===0 && !dossierPelerinage" type="button" mat-mini-fab color="primary">
+          <button class="create" (click)="createPelerin()" [disabled]="pelerins.length===0 " type="button" mat-mini-fab color="primary">
             <mat-icon>add</mat-icon>
+          </button>
+          <button style="margin: 2px;" class="create" (click)="sendMessages()" type="button" mat-button
+              color="primary" >
+              <span>Envoie Messages</span>
           </button>
         </div>
         <table [dataSource]="dataSource" mat-table matSort>
@@ -54,23 +58,23 @@
                 <mat-icon>more_horiz</mat-icon>
               </button>
               <mat-menu #actionsMenu="matMenu">
-                <button *ngIf="row.status !== 'VALIDER'" mat-menu-item (click)="updatePelerin(row)">
+                <button *ngIf="row.status !== 'APTE'" mat-menu-item (click)="updatePelerin(row)">
                   <mat-icon>edit</mat-icon>
                   <span>MODIFIER</span>
                 </button>
-                <button *ngIf="row.status !== 'VALIDER' && row.type !== 'triage'" mat-menu-item (click)="deletePelerin(row)">
+                <button *ngIf="row.status !== 'APTE' && row.type !== 'triage'" mat-menu-item (click)="deletePelerin(row)">
                   <mat-icon>delete_sweep</mat-icon>
                   <span>SUPPRIMER</span>
                 </button>
-                <button *ngIf="row.status === 'A VALIDER'" mat-menu-item (click)="validerPelerin(row)">
+                <button *ngIf="row.status === 'A VERIFIER'" mat-menu-item (click)="validerPelerin(row)">
                   <mat-icon>check_circle_outline</mat-icon>
                   <span>VALIDER</span>
                 </button>
-                <button *ngIf="row.status === 'A VALIDER'" mat-menu-item (click)="rejeterPelerin(row)">
+                <button *ngIf="row.status === 'A VERIFIER'" mat-menu-item (click)="rejeterPelerin(row)">
                   <mat-icon>highlight_off</mat-icon>
                   <span>REJETER</span>
                 </button>            
-                <button *ngIf="row.status === 'VALIDER'" mat-menu-item (click)="annulerValidationPelerin(row)">
+                <button *ngIf="row.status === 'APTE'" mat-menu-item (click)="annulerValidationPelerin(row)">
                   <mat-icon>highlight_off</mat-icon>
                   <span>ANNULER VALIDATION</span>
                 </button>          

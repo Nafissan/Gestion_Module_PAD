@@ -21,6 +21,9 @@ import { fadeInUpAnimation } from 'src/@fury/animations/fade-in-up.animation';
 import { fadeInRightAnimation } from 'src/@fury/animations/fade-in-right.animation';
 import { PelerinsService } from '../../shared/services/pelerin-pelerinage.service';
 import { Pelerin } from '../../shared/model/pelerin-pelerinage.model';
+import { Compte } from 'src/app/pages/gestion-utilisateurs/shared/model/compte.model';
+import { Agent } from 'src/app/shared/model/agent.model';
+import { CompteService } from 'src/app/pages/gestion-utilisateurs/shared/services/compte.service';
 
 @Component({
   selector: 'fury-list-substitut-pelerinage',
@@ -43,7 +46,9 @@ export class ListSubstitutPelerinageComponent implements OnInit {
   private paginator: MatPaginator;
   private sort: MatSort;
   pelerins: Pelerin[]=[];
-
+  username: string;
+  agent: Agent;
+  compte: Compte;
   @ViewChild(MatSort) set matSort(ms: MatSort) {
     this.sort = ms;
     this.setDataSourceAttributes();
@@ -66,7 +71,7 @@ export class ListSubstitutPelerinageComponent implements OnInit {
     { name: "Checkbox", property: "checkbox", visible: false },
     { name: "Code Dossier", property: "dossierPelerinage", visible: true, isModelProperty: true },
     { name: "Remplacant", property: "substitut", visible: true, },
-    { name: "Ajoute par", property: "ajoutePar", visible: true },
+    { name: "Lancer par", property: "ajoutePar", visible: true },
     { name: "Substitut de", property: "agent", visible: true },
 
   ] as ListColumn[];
@@ -78,13 +83,19 @@ export class ListSubstitutPelerinageComponent implements OnInit {
     private dialogConfirmationService: DialogConfirmationService,
     private authentificationService: AuthenticationService,
     private dossierDossierPelerinageService:DossierPelerinageService,
-    private pelerinsService: PelerinsService,
+    private pelerinsService: PelerinsService, private authService: AuthenticationService,
+    private compteService: CompteService,
   ) { }
 
   ngOnInit() {
     this.fetchSubstituts();
     this.getDossierDossierPelerinage();
-    this.getPelerins();
+    this.getPelerins(); this.username = this.authService.getUsername();
+
+    this.compteService.getByUsername(this.username).subscribe((response) => {
+      this.compte = response.body;
+      this.agent = this.compte.agent;
+    });
     this.dataSource = new MatTableDataSource();
     this.data$.pipe(filter((data) => !!data)).subscribe((substitut) => {
       this.substituts = substitut;
@@ -113,6 +124,7 @@ export class ListSubstitutPelerinageComponent implements OnInit {
   fetchSubstituts() {
     this.substitutService.getSubstitutsByDossierEtat().subscribe(response => {
       this.substituts = response.body as Substitut[];
+      console.log(this.substituts);
     }, err => {
       console.error('Error loading substitut:', err);
     }, () => {
@@ -164,7 +176,12 @@ export class ListSubstitutPelerinageComponent implements OnInit {
   }
   
   generateSubstitut() {
-    
+    this.substitutService.assignedSubToPelerins(this.agent).subscribe((response)=>{
+      this.notificationService.success("Assignation substitut a pelerin reussi");
+      this.refreshListe();
+    },err=>{
+      this.notificationService.warn("Assignation substitut a pelerin echoue");
+    })
   }
   
   

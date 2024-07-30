@@ -70,6 +70,7 @@ export class AddOrUpdateSatisfactionComponent implements OnInit {
       return this.fb.group({
         id: [question.id],
         texte: [question.texte],
+        type: [question.type],
         reponse: ['']
       });
     });
@@ -127,7 +128,7 @@ export class AddOrUpdateSatisfactionComponent implements OnInit {
   save(): void {
     const formValue = this.form.value;
     this.reponses = formValue.questions.map((q) => ({
-      question: new Question({ id: q.id, texte: q.texte }),
+      question: new Question({ id: q.id, texte: q.texte,type:q.type }),
       reponse: q.reponse
     }));
 

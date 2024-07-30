@@ -12,6 +12,8 @@ import javax.persistence.ManyToOne;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+import sn.pad.pe.colonie.bo.Question;
+
 @Entity
 
 public class ReponsePelerinage implements Serializable {
@@ -29,7 +31,7 @@ public class ReponsePelerinage implements Serializable {
     @ManyToOne
     @JoinColumn(name = "question_id", nullable = false)
     @JsonBackReference 
-    private QuestionPelerinage question;
+    private Question question;
 
     @Column(nullable = false)
     private String reponse;
@@ -54,11 +56,11 @@ public class ReponsePelerinage implements Serializable {
         this.formulaire = formulaire;
     }
 
-    public QuestionPelerinage getQuestion() {
+    public Question getQuestion() {
         return question;
     }
 
-    public void setQuestion(QuestionPelerinage question) {
+    public void setQuestion(Question question) {
         this.question = question;
     }
 

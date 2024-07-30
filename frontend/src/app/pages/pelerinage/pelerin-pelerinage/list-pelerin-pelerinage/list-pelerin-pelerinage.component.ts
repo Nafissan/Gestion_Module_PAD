@@ -253,12 +253,8 @@ export class ListPelerinPelerinageComponent implements OnInit {
               }
           },
           (err:HttpErrorResponse ) => {
-              if (err.status === 409) {
-                  this.notificationService.warn('Ce pelerin existe déjà');
-              } else {
-                  this.notificationService.warn('Échec de la validation du pelerin' );
-              }
-              this.refreshListe();
+              
+            this.notificationService.warn('Échec de la validation du pelerin' );
           }
       );
   }
@@ -268,6 +264,7 @@ export class ListPelerinPelerinageComponent implements OnInit {
       this.refreshListe();
     },err=>{
       this.notificationService.warn("Echec de la selection des pelerins");
+      console.log(err);
     })
   }
     rejeterPelerin(pelerin: Pelerin) {
@@ -282,7 +279,7 @@ export class ListPelerinPelerinageComponent implements OnInit {
           this.pelerins[index] = new Pelerin(response.body);
           this.subject$.next(this.pelerins);
         this.refreshListe();
-      }    }, () => {
+      }    },err => {
         this.notificationService.warn('Échec de rejection du pelerin');
         this.refreshListe()
       });
@@ -321,7 +318,15 @@ export class ListPelerinPelerinageComponent implements OnInit {
       this.subject$.next(this.pelerins);
     }); 
   }
-   
+   sendMessages(){
+    this.pelerinService.sendMessages().subscribe(
+      (response) => {
+        this.notificationService.success('Messages envoyés avec succès');
+      },
+      (error) => {
+      }
+    );
+   }
   }
   
 

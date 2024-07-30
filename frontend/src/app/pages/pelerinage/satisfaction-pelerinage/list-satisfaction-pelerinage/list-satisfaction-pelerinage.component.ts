@@ -1,8 +1,6 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { SatisfactionPelerinage } from '../../shared/model/satisfaction-pelerinage.model';
-import { QuestionPelerinage } from '../../shared/model/question-pelerinage.model';
 import { SatisfactionPelerinageService } from '../../shared/services/satisfaction-pelerinage.service';
-import { QuestionPelerinageService } from '../../shared/services/question.service';
 import { DossierPelerinageService } from '../../shared/services/dossier-pelerinage.service';
 import { DossierPelerinage } from '../../shared/model/dossier-pelerinage.model';
 import { AddOrUpdateSatisfactionPelerinageComponent } from '../add-or-update-satisfaction-pelerinage/add-or-update-satisfaction-pelerinage.component';
@@ -36,7 +34,6 @@ export class ListSatisfactionPelerinageComponent implements OnInit {
   pageSize = 4;  showProgressBar: boolean = false;
   selection = new SelectionModel<SatisfactionPelerinage>(true, []);
   satisfactionSelected: SatisfactionPelerinage;
-  questions: QuestionPelerinage[] = [];
   private paginator: MatPaginator;
   private sort: MatSort;
   dossiersPelerinage: DossierPelerinage;
@@ -63,7 +60,6 @@ export class ListSatisfactionPelerinageComponent implements OnInit {
 
   constructor(
     private satisfactionService: SatisfactionPelerinageService,
-    private questionService: QuestionPelerinageService,
     private dialog: MatDialog,
     private authentificationService: AuthenticationService,
     private notificationService: NotificationService,
@@ -143,9 +139,9 @@ export class ListSatisfactionPelerinageComponent implements OnInit {
         if (satisfaction) {
           this.satisfactions.unshift(new SatisfactionPelerinage(satisfaction));
           this.subject$.next(this.satisfactions);         
-           this.refresh();
         }
       });
+      this.refresh();
   }
 
   updateSatisfaction(satisfaction: SatisfactionPelerinage) {

@@ -64,7 +64,7 @@ export class AddOrUpdatePelerinPelerinageComponent implements OnInit {
       }
   
       this.form.patchValue({
-        matricule: this.defaults.agent.matricule || "",
+        matricule: this.defaults.agent?.matricule || "",
       });
   
       this.filteredAgents = this.matriculeAgentControl.valueChanges.pipe(
@@ -166,10 +166,10 @@ export class AddOrUpdatePelerinPelerinageComponent implements OnInit {
   
   async createPelerin() {
     let formData: Pelerin = this.form.value;
-    formData.ficheMedical = this.ficheSocial;
     formData.status = "A VERIFIER";
-    formData.document = this.document ? this.document : null;
-    formData.passport = this.passpord ? this.passpord : null;
+    formData.ficheMedical= this.ficheSocial? this.ficheSocial : this.defaults.ficheMedical;
+    formData.document = this.document ? this.document : this.defaults.document;
+    formData.passport = this.passpord ? this.passpord : this.defaults.passport;
     formData.nomAgent = this.agent.nom;
     formData.prenomAgent = this.agent.prenom;
     formData.matriculeAgent = this.agent.matricule; 
@@ -210,7 +210,6 @@ export class AddOrUpdatePelerinPelerinageComponent implements OnInit {
   
   updatePelerin() {
     let formData: Pelerin = this.form.value;
-    formData.ficheMedical = this.defaults.ficheMedical;
     formData.id = this.defaults.id;
     formData.document = this.document ?  this.document : this.defaults.document;
     formData.passport = this.passpord ?   this.passpord : this.defaults.passport;
@@ -221,6 +220,7 @@ export class AddOrUpdatePelerinPelerinageComponent implements OnInit {
     formData.agent = this.defaults.agent;
     formData.dossierPelerinage = this.defaults.dossierPelerinage;
     formData.type = this.defaults.type;
+    formData.ficheMedical= this.ficheSocial? this.ficheSocial : this.defaults.ficheMedical;
 
     this.dialogConfirmationService.confirmationDialog().subscribe((action) => {
       if (action === DialogUtil.confirmer) {
@@ -237,5 +237,12 @@ export class AddOrUpdatePelerinPelerinageComponent implements OnInit {
         this.dialogRef.close();
       }
     });
+  }
+  save(): void {
+    if (this.mode === "create") {
+      this.createPelerin();
+    } else if (this.mode === "update") {
+      this.updatePelerin();
+    }
   }
 }

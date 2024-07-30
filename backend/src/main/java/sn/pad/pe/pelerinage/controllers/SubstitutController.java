@@ -93,9 +93,15 @@ public class SubstitutController {
     })
     @PostMapping("/assign")
     public ResponseEntity<Message> assignSubstitutsToPelerin(@RequestBody AgentDTO agent) {
-        substitutService.assignedSubstitutToPelerin(agent);
-        message = new Message(new Date(), "Substituts assignés aux pèlerins.", "uri=/substituts/assign");
-        return ResponseEntity.ok().body(message);
+        boolean response=substitutService.assignedSubstitutToPelerin(agent);
+        if(response){
+            message = new Message(new Date(), "Substituts assignés aux pèlerins.", "uri=/substituts/assign");
+            return ResponseEntity.ok().body(message);
+        }else{
+            message = new Message(new Date(), "Assignement Substituts echoue.", "uri=/substituts/assign");
+            return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
+        }
+        
     }
 
     @ApiOperation(value = "Suppression d'un substitut", response = ResponseEntity.class)

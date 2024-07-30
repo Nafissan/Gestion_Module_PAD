@@ -29,5 +29,14 @@ public class QuestionController {
         List<QuestionDTO> liste = questionService.getAllQuestions();
         return ResponseEntity.status(HttpStatus.OK).body(liste);
     }
-
+    @ApiOperation(value = "Liste des questions pelerinage", response = List.class)
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "Liste récupérée avec succès"),
+            @ApiResponse(code = 401, message = "Vous n'êtes pas autorisé à voir la ressource"),
+            @ApiResponse(code = 403, message = "L'accès à la ressource que vous tentez d'atteindre est interdit"),
+            @ApiResponse(code = 404, message = "La ressource que vous tentez d'atteindre est introuvable.") })
+    @GetMapping("/questions/pelerinage")
+    public ResponseEntity<List<QuestionDTO>> getQuestionsPelerinage() {
+        List<QuestionDTO> liste = questionService.getQuestionPelerinage();
+        return ResponseEntity.status(HttpStatus.OK).body(liste);
+    }
 }

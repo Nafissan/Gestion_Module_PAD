@@ -54,18 +54,10 @@ export class ListPelerinPelerinageComponent implements OnInit {
   @Input()
 columns: ListColumn[] = [
   { name: "Code Dossier", property: "dossierPelerinage", visible: true, isModelProperty: true },
-  { name: "Matricule", property: "matricule", visible: true,  },
-  { name: "Nom ", property: "nom", visible: true,  },
-  { name: "Prenom ", property: "prenom", visible: true,  },
-  {
-    name: "Sexe",
-    property: "sexe", 
-    visible: true,   
-    isModelProperty: true,
-  },
- 
-   { name: "Date de Naissance", property: "dateNaissance", visible: true, },
-  { name: "Date Engagement", property: "dateEngagement", visible: true,  },
+  { name: "Pelerin ", property: "pelerin", visible: true,},
+   { name: "Ajoute par", property: "ajoutePar", visible: true },
+  { name: "Type Selection", property: "type", visible: true,  isModelProperty: true,},
+
 
 ] as ListColumn[];
 get visibleColumns() {
@@ -76,6 +68,7 @@ get visibleColumns() {
     this.pelerinService.getPelerinsByAnnee(annee).subscribe(
       (response) => {
         this.pelerins = response.body as Pelerin[];
+        console.log(this.pelerins);
       },
       error => {
         console.error('Erreur lors de la récupération des colons :', error);

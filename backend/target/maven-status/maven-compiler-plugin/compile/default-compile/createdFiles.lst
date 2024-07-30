@@ -23,7 +23,6 @@ sn\pad\pe\partenariat\services\EvenementService.class
 sn\pad\pe\configurations\exception\FileStorageException.class
 sn\pad\pe\partenariat\bo\Convention.class
 sn\pad\pe\pss\controllers\DossierInterimController.class
-sn\pad\pe\pelerinage\bo\QuestionPelerinage.class
 sn\pad\pe\pss\repositories\PasswordTokenRepository.class
 sn\pad\pe\colonie\services\impl\QuestionServiceImpl.class
 sn\pad\pe\pss\services\impl\RoleServiceImpl.class
@@ -45,7 +44,6 @@ sn\pad\pe\pss\bo\FileMetaData.class
 sn\pad\pe\pss\controllers\EtapePlanningDirectionController.class
 sn\pad\pe\colonie\services\impl\ParticipantColonieServiceImpl.class
 sn\pad\pe\colonie\services\ParticipantColonieService.class
-sn\pad\pe\pelerinage\dto\QuestionPelerinageDTO.class
 sn\pad\pe\pss\dto\RessourceDTO.class
 sn\pad\pe\pss\services\impl\PlanningAbsenceServiceImpl.class
 sn\pad\pe\partenariat\dto\ParticipantDTO.class
@@ -106,7 +104,6 @@ sn\pad\pe\dotation\services\NotificationService.class
 sn\pad\pe\pss\dto\HistoriqueAbsenceDTO.class
 sn\pad\pe\partenariat\repositories\SuiviProspectRepository.class
 sn\pad\pe\pss\bo\NiveauHierarchique.class
-sn\pad\pe\pelerinage\services\impl\QuestionPelerinageServiceImpl.class
 sn\pad\pe\pss\services\impl\DossierInterimServiceImpl.class
 sn\pad\pe\partenariat\repositories\BesoinRepository.class
 sn\pad\pe\dotation\controllers\MarqueController.class
@@ -175,7 +172,6 @@ sn\pad\pe\dotation\dto\EnfantDTO.class
 sn\pad\pe\dotation\controllers\StockController.class
 sn\pad\pe\pelerinage\services\PelerinService.class
 sn\pad\pe\dotation\services\DotationService.class
-sn\pad\pe\pelerinage\controllers\QuestionPelerinageController.class
 sn\pad\pe\dotation\repositories\MarqueRepository.class
 sn\pad\pe\partenariat\bo\Activite.class
 sn\pad\pe\partenariat\bo\Participant.class
@@ -325,7 +321,6 @@ sn\pad\pe\partenariat\controllers\EvenementController.class
 sn\pad\pe\pss\repositories\AgentRepository.class
 sn\pad\pe\partenariat\dto\PartenaireDTO.class
 sn\pad\pe\pss\services\EtatpePlanningDirectionService.class
-sn\pad\pe\pelerinage\repositories\QuestionPelerinageRepository.class
 sn\pad\pe\pss\bo\Attestation.class
 sn\pad\pe\configurations\sms\SmsService.class
 sn\pad\pe\pelerinage\repositories\SubstitutRepository.class
@@ -441,7 +436,6 @@ sn\pad\pe\pss\repositories\EtapePlanningRepository.class
 sn\pad\pe\pss\services\DossierCongeService.class
 sn\pad\pe\pss\repositories\RoleRepository.class
 sn\pad\pe\dotation\bo\Notification.class
-sn\pad\pe\pelerinage\services\QuestionPelerinageService.class
 sn\pad\pe\pss\repositories\ParametreRepository.class
 sn\pad\pe\pss\services\impl\FonctionServiceImpl.class
 sn\pad\pe\partenariat\controllers\ProspectController.class

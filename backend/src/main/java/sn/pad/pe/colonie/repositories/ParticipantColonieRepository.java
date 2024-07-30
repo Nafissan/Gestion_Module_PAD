@@ -8,10 +8,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import sn.pad.pe.colonie.bo.DossierColonie;
 import sn.pad.pe.colonie.bo.ParticipantColonie;
+import sn.pad.pe.pss.bo.Agent;
 
 public interface ParticipantColonieRepository extends JpaRepository<ParticipantColonie, Long>{
- Optional<ParticipantColonie> findByNomEnfantAndPrenomEnfantAndDateNaissanceAndMatriculeParentAndStatus(
-        String nomEnfant, String prenomEnfant, Date dateNaissance, String matriculeParent,String status);
+ Optional<ParticipantColonie> findByNomEnfantAndPrenomEnfantAndDateNaissanceAndAgentParentAndStatus(
+        String nomEnfant, String prenomEnfant, Date dateNaissance, Agent agent,String status);
         List<ParticipantColonie> findByStatusIn(List<String> statuses);
         List<ParticipantColonie> findByCodeDossier(DossierColonie dossier);
         List<ParticipantColonie> findByStatus(String status);
