@@ -23,7 +23,7 @@ public interface PelerinService {
     List<PelerinDTO> getPelerinsByDossier(DossierPelerinage dossierPelerinage); // Nouvelle méthode
 
     List<PelerinDTO> getPelerinsByDossierEtat();
-    public void assignAgentsToPelerinage(AgentDTO agent);
+    public boolean assignAgentsToPelerinage(AgentDTO agent);
     boolean deletePelerin(PelerinDTO pelerinDTO);
 
     void deleteAllPelerins();
@@ -32,4 +32,6 @@ public interface PelerinService {
 
     boolean sendMessages();
     void assignedSubstitutToPelerins(SubstitutDTO substitutDTO,PelerinDTO pelerinDTO);
+
+    boolean existsByAgentId(Long id);
 }

@@ -39,8 +39,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				"/send-mail/**", "/send-mail-attachment/**", "/fileMetaData/**", "/processusvalidations/**",
 				"/etapevalidations/**", "/continent", "/continents/**", "/pays/**", "/typesPartenariat/**",
 				"/villes/**", "/zones/**", "/partenaires/**", "/conventions/**", "/typesDotation/**", "/stocks/**",
-				"/suivi-stocks/**", "/typesDotation/**", "/dotations/**", "/colons/**", "/dossiersColonies/**","/formulairesSatisfaction/**","/questions",
-				"/participantsColonie/**","/dossiersPelerinages/**","/formulairesSatisfactionPelerinages/**","/pelerins/**", "/questionsPelerinage/**","/reponsesPelerinage/**"
+				"/suivi-stocks/**", "/typesDotation/**", "/dotations/**", "/colons/**", "/dossiersColonies/**","/formulairesSatisfaction/**","/questions/**",
+				"/participantsColonie/**","/dossiersPelerinages/**","/formulairesSatisfactionPelerinages/**","/pelerins/**","/reponsesPelerinage/**"
 				,"/substituts/**","/tirage-agents/**","/conjoints/**", "/enfants/**","/rapportsProspection/**","/reponses/**",
 				"/suivi-dotations/**", "/activites/**", "/evenements/**", "/fournisseurs/**", "/marques/**",
 				"/planprospection/**", "/prospects/**", "/suivis/**", "/participants/**", "/etats/**",

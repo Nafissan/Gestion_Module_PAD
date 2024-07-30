@@ -154,9 +154,15 @@ public class PelerinController {
     @ApiOperation(value = "Assignation d'agents au pèlerinage", response = ResponseEntity.class)
     @PostMapping("/assignAgents")
     public ResponseEntity<Message> assignAgentsToPelerinage(@RequestBody AgentDTO agent) {
-        pelerinService.assignAgentsToPelerinage(agent);
-        message = new Message(new Date(), "Agents assignés au pèlerinage.", "uri=/pelerins/assignAgents");
-        return ResponseEntity.status(HttpStatus.OK).body(message);
+        boolean response =pelerinService.assignAgentsToPelerinage(agent);
+        if(response){
+            message = new Message(new Date(), "Agents assignés au pèlerinage.", "uri=/pelerins/assignAgents");
+            return ResponseEntity.ok().body(message);
+        }else{
+            message = new Message(new Date(), "Assignement Agent failed.", "uri=/pelerins/assignAgents");
+            return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
+        }
+        
     }
     @ApiOperation(value = "Envoi des messages aux pèlerins")
     @ApiResponses(value = { 

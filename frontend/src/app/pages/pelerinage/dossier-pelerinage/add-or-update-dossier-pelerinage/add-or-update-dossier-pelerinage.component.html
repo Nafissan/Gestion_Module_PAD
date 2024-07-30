@@ -38,8 +38,8 @@
                 <div class="file-upload" >
                   <input type="file" class="form-control-file border" id="fileInput" multiple="false"  (change)="handlenoteInformationFileInput($event.target.files)">
                 </div>
-                <mat-label  >Rapport de pelerinage</mat-label>
-                <div class="file-upload" >
+                <mat-label *ngIf="satisfactions.length > 0" >Rapport de pelerinage</mat-label>
+                <div class="file-upload" *ngIf="satisfactions.length > 0">
                   <input type="file" class="form-control-file border" id="fileInput" multiple="false"  (change)="handleRapport($event.target.files)" >
                 </div>
     </div>

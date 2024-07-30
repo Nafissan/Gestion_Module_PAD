@@ -5,6 +5,7 @@ import java.util.Date;
 import sn.pad.pe.colonie.bo.DossierColonie;
 import sn.pad.pe.colonie.bo.GroupeSanguin;
 import sn.pad.pe.colonie.bo.Sexe;
+import sn.pad.pe.pss.bo.Agent;
 
 public class ParticipantColonieDTO {
     private Long id;
@@ -15,9 +16,13 @@ public class ParticipantColonieDTO {
     private String lieuNaissance;
     private GroupeSanguin groupeSanguin;
     private Sexe sexe;
-    private String matriculeParent;
-    private String nomParent;
-    private String prenomParent;
+   private Agent agentParent;
+    public Agent getAgentParent() {
+    return agentParent;
+}
+public void setAgentParent(Agent agentParent) {
+    this.agentParent = agentParent;
+}
     private String status;
     private String matriculeAgent;
     private String nomAgent;
@@ -77,24 +82,7 @@ public class ParticipantColonieDTO {
     public void setSexe(Sexe sexe2) {
         this.sexe = sexe2;
     }
-    public String getMatriculeParent() {
-        return matriculeParent;
-    }
-    public void setMatriculeParent(String matricule) {
-        this.matriculeParent = matricule;
-    }
-    public String getNomParent() {
-        return nomParent;
-    }
-    public void setNomParent(String nomParent) {
-        this.nomParent = nomParent;
-    }
-    public String getPrenomParent() {
-        return prenomParent;
-    }
-    public void setPrenomParent(String prenomParent) {
-        this.prenomParent = prenomParent;
-    }
+
     public String getStatus() {
         return status;
     }

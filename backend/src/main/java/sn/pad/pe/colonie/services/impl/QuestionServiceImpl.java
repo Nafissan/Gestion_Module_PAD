@@ -28,12 +28,16 @@ public class QuestionServiceImpl implements QuestionService {
         return question;
     }
 
-    @Override
     public List<QuestionDTO> getAllQuestions() {
-        return questionRepository.findAll().stream()
+        return questionRepository.findByType("colonie").stream()
                 .map(question -> modelMapper.map(question, QuestionDTO.class))
                 .collect(Collectors.toList());
     }
 
-   
+    @Override
+    public List<QuestionDTO> getQuestionPelerinage() {
+        return questionRepository.findByType("pelerinage").stream()
+        .map(question -> modelMapper.map(question, QuestionDTO.class))
+        .collect(Collectors.toList());
+}
 }

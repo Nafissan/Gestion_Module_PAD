@@ -1,6 +1,5 @@
 package sn.pad.pe.pelerinage.controllers;
 
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +16,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import sn.pad.pe.configurations.exception.Message;
 import sn.pad.pe.pelerinage.dto.FormulaireSatisfactionPelerinageDTO;
 import sn.pad.pe.pelerinage.dto.ReponsePelerinageDTO;
 import sn.pad.pe.pelerinage.services.ReponsePelerinageService;
@@ -29,8 +27,6 @@ public class ReponsePelerinageController {
 
     @Autowired
     private ReponsePelerinageService reponsePelerinageService;
-
-    private Message message;
 
     @ApiOperation(value = "Récupération des réponses par ID de formulaire", response = List.class)
     @ApiResponses(value = { 
@@ -79,14 +75,9 @@ public class ReponsePelerinageController {
         @ApiResponse(code = 404, message = "La ressource que vous tentez d'atteindre est introuvable.")
     })
     @PutMapping
-    public ResponseEntity<Message> updateReponse(@RequestBody ReponsePelerinageDTO reponseDTO) {
+    public ResponseEntity<ReponsePelerinageDTO> updateReponse(@RequestBody ReponsePelerinageDTO reponseDTO) {
         ReponsePelerinageDTO updatedReponse = reponsePelerinageService.updateReponses(reponseDTO);
-        if (updatedReponse != null) {
-            message = new Message(new Date(), "Réponse avec ID " + reponseDTO.getId() + " mise à jour.", "uri=/reponsesPelerinage/" + reponseDTO.getId());
-            return ResponseEntity.ok().body(message);
-        } else {
-            message = new Message(new Date(), "Réponse avec ID " + reponseDTO.getId() + " non trouvée.", "uri=/reponsesPelerinage/" + reponseDTO.getId());
-            return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
-        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(updatedReponse);
+
     }
 }

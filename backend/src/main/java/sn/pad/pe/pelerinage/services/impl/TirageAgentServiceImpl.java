@@ -1,5 +1,8 @@
 package sn.pad.pe.pelerinage.services.impl;
 
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -17,6 +20,7 @@ import sn.pad.pe.pelerinage.dto.DossierPelerinageDTO;
 import sn.pad.pe.pelerinage.dto.TirageAgentDTO;
 import sn.pad.pe.pelerinage.repositories.TirageAgentRepository;
 import sn.pad.pe.pelerinage.services.DossierPelerinageService;
+import sn.pad.pe.pelerinage.services.PelerinService;
 import sn.pad.pe.pelerinage.services.TirageAgentService;
 import sn.pad.pe.pss.bo.Agent;
 import sn.pad.pe.pss.dto.AgentDTO;
@@ -33,6 +37,8 @@ public class TirageAgentServiceImpl implements TirageAgentService {
     private ModelMapper modelMapper;
  @Autowired
     private DossierPelerinageService dossierPelerinageService;
+    @Autowired
+    private PelerinService pelerinService;
     @Override
     public TirageAgentDTO saveTirageAgent(TirageAgentDTO tirageAgentDTO) {
         TirageAgent tirageAgent = mapToBo(tirageAgentDTO);
@@ -41,19 +47,11 @@ public class TirageAgentServiceImpl implements TirageAgentService {
     }
     private TirageAgent mapToBo(TirageAgentDTO tirageAgentDTO){
         TirageAgent tirageAgent = modelMapper.map(tirageAgentDTO, TirageAgent.class);
-        tirageAgent.setNom(tirageAgentDTO.getAgent().getNom());
-        tirageAgent.setPrenom(tirageAgentDTO.getAgent().getPrenom());
-        tirageAgent.setReligion(tirageAgentDTO.getAgent().getReligion());
-        tirageAgent.setSexe(tirageAgentDTO.getAgent().getSexe());
-        tirageAgent.setDateNaissance(tirageAgentDTO.getAgent().getDateNaissance());
-        tirageAgent.setMatricule(tirageAgentDTO.getAgent().getMatricule());
         return tirageAgent;
     }
     private TirageAgentDTO mapToDto(TirageAgent tirageAgent){
-       AgentDTO agentDTO = agentService.getAgentByMatricule(tirageAgent.getMatricule());
-       TirageAgentDTO tirageAgentDTO= modelMapper.map(tirageAgent, TirageAgentDTO.class);
-       tirageAgentDTO.setAgent(modelMapper.map(agentDTO, Agent.class));
-        return tirageAgentDTO;
+        TirageAgentDTO agentDTO = modelMapper.map(tirageAgent, TirageAgentDTO.class);
+        return agentDTO;
     }
     @Override
     public List<TirageAgentDTO> getAllTirageAgents() {
@@ -114,11 +112,12 @@ public class TirageAgentServiceImpl implements TirageAgentService {
             logger.warn("No DossierPelerinage found for Etat");
             throw new IllegalArgumentException("No DossierPelerinage found for Etat");
         }
-
+    
         String lieu = dossierPelerinage.getLieuPelerinage();
         Date currentDate = new Date();
-
+    
         List<AgentDTO> eligibleAgents = agentService.getAgents().stream()
+            .filter(agent -> "CDI".equalsIgnoreCase(agent.getTypeContrat())) // Vérification du type de contrat
             .filter(agent -> calculateAge(agent.getDateNaissance(), currentDate) >= 40)
             .filter(agent -> calculateSeniority(agent.getDatePriseService(), currentDate) >= 10)
             .filter(agent -> {
@@ -128,48 +127,44 @@ public class TirageAgentServiceImpl implements TirageAgentService {
                     return "Chretien".equalsIgnoreCase(agent.getReligion());
                 }
             })
+            .filter(agent -> !pelerinService.existsByAgentId(agent.getId())) 
             .collect(Collectors.toList());
-            if (eligibleAgents.isEmpty()) {
-                logger.warn("No eligible agents found");
-                return false;
-            }
-            eligibleAgents.forEach(eligibleAgent -> {
-                TirageAgentDTO tirageAgent = new TirageAgentDTO();
-                tirageAgent.setAgent(modelMapper.map(eligibleAgent, Agent.class));
-                tirageAgent.setDossierPelerinage(modelMapper.map(dossierPelerinage, DossierPelerinage.class));
-                tirageAgent.setMatriculeAgent(agentDTO.getMatricule());
-                tirageAgent.setNomAgent(agentDTO.getNom());
-                tirageAgent.setPrenomAgent(agentDTO.getPrenom());
-        
-                saveTirageAgent(tirageAgent);
-            });
-        eligibleAgents.forEach(eligibleAgent -> logger.info("Eligible Agent: {}", eligibleAgent));
+    
+        if (eligibleAgents.isEmpty()) {
+            logger.warn("No eligible agents found");
+            return false;
+        }
+    
+        eligibleAgents.forEach(eligibleAgent -> {
+            TirageAgentDTO tirageAgent = new TirageAgentDTO();
+            tirageAgent.setAgent(modelMapper.map(eligibleAgent, Agent.class));
+            tirageAgent.setDossierPelerinage(modelMapper.map(dossierPelerinage, DossierPelerinage.class));
+            tirageAgent.setMatriculeAgent(agentDTO.getMatricule());
+            tirageAgent.setNomAgent(agentDTO.getNom());
+            tirageAgent.setPrenomAgent(agentDTO.getPrenom());
+    
+            saveTirageAgent(tirageAgent);
+        });
         return true;
-
     }
-
-    @SuppressWarnings("deprecation")
+    
+    
     private int calculateAge(Date birthDate, Date currentDate) {
         if (birthDate == null || currentDate == null) {
             return 0;
         }
-        int age = currentDate.getYear() - birthDate.getYear();
-        if (currentDate.getMonth() < birthDate.getMonth() ||
-            (currentDate.getMonth() == birthDate.getMonth() && currentDate.getDate() < birthDate.getDate())) {
-            age--;
-        }
-        return age;
+        LocalDate birthLocalDate = birthDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate currentLocalDate = currentDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        return Period.between(birthLocalDate, currentLocalDate).getYears();
     }
-    @SuppressWarnings("deprecation")
+    
     private int calculateSeniority(Date engagementDate, Date currentDate) {
         if (engagementDate == null || currentDate == null) {
             return 0;
         }
-        int seniority = currentDate.getYear() - engagementDate.getYear();
-        if (currentDate.getMonth() < engagementDate.getMonth() ||
-            (currentDate.getMonth() == engagementDate.getMonth() && currentDate.getDate() < engagementDate.getDate())) {
-            seniority--;
-        }
-        return seniority;
+        LocalDate engagementLocalDate = engagementDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate currentLocalDate = currentDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        return Period.between(engagementLocalDate, currentLocalDate).getYears();
     }
+    
 }

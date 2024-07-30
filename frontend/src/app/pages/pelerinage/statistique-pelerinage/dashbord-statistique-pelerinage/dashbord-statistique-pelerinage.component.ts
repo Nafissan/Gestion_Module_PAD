@@ -154,7 +154,7 @@ export class DashbordStatistiquePelerinageComponent implements OnInit {
           this.satisfactionPelerinages = response.body;
           this.processData();
         }, err => {
-          console.error('Error loading participant colonies:', err);
+          console.error('Error loading dossier pelerinage:', err);
         }, () => {
           this.subject$.next(this.filteredSatisfactionPelerinage);
           this.showProgressBar = true;
@@ -189,7 +189,6 @@ export class DashbordStatistiquePelerinageComponent implements OnInit {
           age50to60Count += stats.age50to60;
           age60to70Count += stats.age60to70;
   
-          this.filteredSatisfactionPelerinage = this.satisfactionPelerinages.filter(satisfaction => satisfaction.dossierPelerinage.annee === this.selectedYear.toString());
           this.updateMap(pelerinCountsMap, this.selectedYear, stats.totalPelerins);
           
           this.updateCharts(pelerinCountsMap, maleCount, femaleCount, age40to50Count, age50to60Count, age60to70Count);
@@ -198,6 +197,7 @@ export class DashbordStatistiquePelerinageComponent implements OnInit {
           console.error(`Error fetching colon stats for dossier of year ${this.selectedYear.toString()}:`, error);
         }
       );
+      this.filteredSatisfactionPelerinage = this.satisfactionPelerinages.filter(satisfaction => satisfaction.dossierPelerinage.annee === this.selectedYear.toString());
     } else {
       this.dossier.forEach(dossier => {
         this.pelerinService.getPelerinsStatistics(dossier.annee).subscribe(
@@ -211,11 +211,10 @@ export class DashbordStatistiquePelerinageComponent implements OnInit {
             const year = parseInt(dossier.annee, 10);
             this.updateMap(pelerinCountsMap, year, stats.totalPelerins);
   
-            // Mettre à jour les graphiques après avoir récupéré toutes les données
             this.updateCharts(pelerinCountsMap, maleCount, femaleCount, age40to50Count, age50to60Count, age60to70Count);
           },
           (error) => {
-            console.error(`Error fetching colon stats for dossier ${dossier.id}:`, error);
+            console.error(`Error fetching pelerin stats for dossier ${dossier.id}:`, error);
           }
         );
       });
@@ -229,7 +228,7 @@ export class DashbordStatistiquePelerinageComponent implements OnInit {
   
     this.barChartLabels = Array.from(pelerinCountsMap.keys()).map(year => year.toString()).sort();
     this.barChartData = [
-      { data: Array.from(pelerinCountsMap.values()), label: 'Nombre de colons' }
+      { data: Array.from(pelerinCountsMap.values()), label: 'Nombre de pelerins' }
     ];
   
     this.pieChartDataSex = [maleCount, femaleCount];

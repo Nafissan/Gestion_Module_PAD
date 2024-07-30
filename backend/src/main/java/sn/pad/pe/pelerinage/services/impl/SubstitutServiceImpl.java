@@ -98,46 +98,78 @@ public class SubstitutServiceImpl implements SubstitutService {
             logger.error("Error while deleting substituts: {}", e.getMessage());
         }
     }
-@Override
-public SubstitutDTO generateSubstitutDTO(String sexe) {
-    List<TirageAgentDTO> agents = tirageAgentService.getTirageAgentsByDossierEtat(); 
-
-    List<TirageAgentDTO> filteredAgents = agents.stream()
-        .filter(agent -> sexe.equalsIgnoreCase(agent.getAgent().getSexe()))
-        .collect(Collectors.toList());
-
-    if (filteredAgents.isEmpty()) {
-        throw new RuntimeException("Aucun agent disponible pour le sexe spécifié.");
+    @Override
+    public SubstitutDTO generateSubstitutDTO(String sexe) {
+        List<TirageAgentDTO> agents = tirageAgentService.getTirageAgentsByDossierEtat(); 
+    
+        List<TirageAgentDTO> filteredAgents = agents.stream()
+            .filter(agent -> sexe.equalsIgnoreCase(agent.getAgent().getSexe()))
+            .collect(Collectors.toList());
+    
+        if (filteredAgents.isEmpty()) {
+            throw new RuntimeException("Aucun agent disponible pour le sexe spécifié.");
+        }
+    
+        Collections.shuffle(filteredAgents);
+        
+        TirageAgentDTO chosenAgent = null;
+        for (TirageAgentDTO agent : filteredAgents) {
+            if (!pelerinService.existsByAgentId(agent.getAgent().getId())) {
+                chosenAgent = agent;
+                break;
+            }
+        }
+    
+        if (chosenAgent == null) {
+            throw new RuntimeException("Aucun agent disponible pour le sexe spécifié qui n'est pas déjà un pelerin.");
+        }
+    
+        SubstitutDTO substitutDTO = new SubstitutDTO();
+        substitutDTO.setAgent(chosenAgent.getAgent());
+    
+        return substitutDTO;
     }
-
-    Collections.shuffle(filteredAgents);
-    TirageAgentDTO chosenAgent = filteredAgents.get(0);
-
-    SubstitutDTO substitutDTO = new SubstitutDTO();
-    substitutDTO.setAgent(chosenAgent.getAgent());
-
-    return substitutDTO;
-}
-
 @Override
-public void assignedSubstitutToPelerin(AgentDTO agent) {
+public boolean assignedSubstitutToPelerin(AgentDTO agent) {
+    Logger logger = LoggerFactory.getLogger(this.getClass());
+    
+    logger.info("Starting assignment of substitutes to pelerins");
+
     List<PelerinDTO> pelerins = pelerinService.getPelerinsByDossierEtat();
 
     if (pelerins.isEmpty()) {
-        throw new RuntimeException("Aucun pèlerin disponible.");
+        logger.warn("No pelerins found for the current dossier state");
+        return false;
     }
 
     for (PelerinDTO pelerin : pelerins) {
         String sexePelerin = pelerin.getAgent().getSexe();
-        SubstitutDTO substitutDTO = generateSubstitutDTO(sexePelerin);
-        substitutDTO.setPelerin(modelMapper.map(pelerin,Pelerin.class));
+        logger.info("Generating substitute for pelerin with ID: {} and sexe: {}", pelerin.getId(), sexePelerin);
+        
+        SubstitutDTO substitutDTO;
+        try {
+            substitutDTO = generateSubstitutDTO(sexePelerin);
+        } catch (RuntimeException e) {
+            logger.error("Error generating substitute for pelerin with ID: {}", pelerin.getId(), e);
+            continue;
+        }
+        Pelerin pelerin2 = modelMapper.map(pelerin, Pelerin.class);
+        substitutDTO.setRemplacantDe(pelerin2);
+        substitutDTO.setDossierPelerinage(pelerin.getDossierPelerinage());
         substitutDTO.setMatriculeAgent(agent.getMatricule());
         substitutDTO.setPrenomAgent(agent.getPrenom());
         substitutDTO.setNomAgent(agent.getNom());
-        saveSubstitut(substitutDTO);
-        pelerinService.assignedSubstitutToPelerins(substitutDTO, pelerin);
-    }
-}
 
+        logger.info("Saving substitute for pelerin with ID: {}", pelerin.getId());
+        logger.info("Generating substitute for substitut with : {} ", substitutDTO.getRemplacantDe().getId());
+        SubstitutDTO savedSubstitut= saveSubstitut(substitutDTO);
+        
+        logger.info("Assigning substitute to pelerin with ID: {}", pelerin.getId());
+        pelerinService.assignedSubstitutToPelerins(savedSubstitut, pelerin);
+    }
+
+    logger.info("Completed assignment of substitutes to pelerins");
+    return true;
+}
 
 }

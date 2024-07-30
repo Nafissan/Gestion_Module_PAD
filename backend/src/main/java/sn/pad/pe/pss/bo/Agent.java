@@ -53,6 +53,7 @@ public class Agent implements Serializable {
 	private boolean estChef;
 	private String profil;
 	private String religion;
+	private String typeContrat;
 	@Temporal(TemporalType.TIMESTAMP)
 	@CreationTimestamp
 	private Date createdAt;
@@ -254,6 +255,14 @@ public class Agent implements Serializable {
 
 	public void setReligion(String religion) {
 		this.religion = religion;
+	}
+
+	public String getTypeContrat() {
+		return typeContrat;
+	}
+
+	public void setTypeContrat(String typeContrat) {
+		this.typeContrat = typeContrat;
 	}
 
 }

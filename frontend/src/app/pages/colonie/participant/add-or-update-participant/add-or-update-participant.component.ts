@@ -73,7 +73,7 @@ export class AddOrUpdateParticipantComponent implements OnInit {
       }
   
       this.form.patchValue({
-        matriculeParent: this.defaults.matriculeParent || "",
+        matriculeParent: this.defaults.agentParent?.matricule || "",
         nomEnfant: this.defaults.nomEnfant || "",
         prenomEnfant: this.defaults.prenomEnfant || "",
         sexe: this.defaults.sexe || "",
@@ -83,7 +83,6 @@ export class AddOrUpdateParticipantComponent implements OnInit {
         codeDossier: this.defaults.codeDossier?.code || null,
       });
   
-      // Assurez-vous que filteredAgents est défini après la récupération des agents
       this.filteredAgents = this.matriculeParentControl.valueChanges.pipe(
         startWith(''),
         map(value => this._filter(value || ''))
@@ -187,6 +186,7 @@ export class AddOrUpdateParticipantComponent implements OnInit {
       this.agentService.getAgentsMatricules().subscribe(
         (response) => {
           this.agents = response.body as string[];
+          console.log(this.agents.length);
           resolve();
         },
         (error) => {
@@ -223,12 +223,11 @@ export class AddOrUpdateParticipantComponent implements OnInit {
     formData.prenomAgent = this.agent.prenom;
     formData.matriculeAgent = this.agent.matricule;  
     try {
-      await this.getAgent(formData.matriculeParent);
+      await this.getAgent(this.form.value.matriculeParent);
       console.log(this.agentParent);
   
       if (this.agentParent) {
-        formData.nomParent = this.agentParent.nom;
-        formData.prenomParent = this.agentParent.prenom;
+        formData.agentParent = this.agentParent;
       }
   
       this.dialogConfirmationService.confirmationDialog().subscribe((action) => {
@@ -268,9 +267,7 @@ export class AddOrUpdateParticipantComponent implements OnInit {
     formData.nomAgent = this.defaults.nomAgent;
     formData.prenomAgent = this.defaults.prenomAgent;
     formData.matriculeAgent = this.defaults.matriculeAgent;
-    formData.matriculeParent = this.defaults.matriculeParent;
-    formData.nomParent = this.defaults.nomParent;
-    formData.prenomParent = this.defaults.prenomParent;
+    formData.agentParent = this.defaults.agentParent;
     formData.codeDossier = this.defaults.codeDossier;
 
 

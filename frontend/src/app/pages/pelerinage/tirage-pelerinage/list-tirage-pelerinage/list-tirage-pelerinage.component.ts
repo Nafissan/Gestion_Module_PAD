@@ -68,7 +68,6 @@ export class ListTiragePelerinageComponent implements OnInit {
     { name: "Ajoute par", property: "ajoutePar", visible: true },
     { name: "Agent", property: "agent", visible: true },
 
-    { name: "Actions", property: "actions", visible: true },
   ] as ListColumn[];
 
   constructor(private tirageService: TirageService,
@@ -82,8 +81,8 @@ export class ListTiragePelerinageComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.fetchAgent();
     this.getDossierPelerinage();
+    this.fetchAgent();
     this.username = this.authService.getUsername();
 
     this.compteService.getByUsername(this.username).subscribe((response) => {
@@ -119,6 +118,8 @@ export class ListTiragePelerinageComponent implements OnInit {
   fetchAgent() {
     this.tirageService.getAgentsByDossierEtat().subscribe(response => {
       this.agents = response.body as TirageAgent[];
+      console.log('Agents:', this.agents);
+
     }, err => {
       console.error('Error loading substitut:', err);
     }, () => {
@@ -132,10 +133,8 @@ export class ListTiragePelerinageComponent implements OnInit {
   getDossierPelerinage() {
     this.dossierPelerinageService.getDossier().subscribe(
       (response) => {
-        if (response.body !== null) {
           this.dossierPelerinage = response.body as DossierPelerinage;
           console.log('Dossier substitut:', this.dossierPelerinage);
-        }
       },
       (err) => {
         console.error('Error loading dossier substitut:', err);
@@ -164,16 +163,12 @@ export class ListTiragePelerinageComponent implements OnInit {
   generateAgent() {
     this.tirageService.assignedAgent(this.agent).subscribe(
       (response) => {
-        if(response.body  ==true){
-          this.notificationService.success('Tirage agents reussi');
-        }else{
-          this.notificationService.warn("Pas d'agents elligibles !" );
 
-        }
+        this.notificationService.success('Tirage agents reussi');
         this.refreshListe();
       },
       (error) => {
-        this.notificationService.warn(error );
+        this.notificationService.warn("Erreur lors du tirage d'agents" );
       }
     );
   }

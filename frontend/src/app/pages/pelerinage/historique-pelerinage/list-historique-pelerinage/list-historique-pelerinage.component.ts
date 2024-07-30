@@ -20,6 +20,7 @@ import { AuthenticationService } from 'src/app/shared/services/authentification.
 import { DialogConfirmationService } from 'src/app/shared/services/dialog-confirmation.service';
 import { MailService } from 'src/app/shared/services/mail.service';
 import { NotificationService } from 'src/app/shared/services/notification.service';
+import { ListPelerinPelerinageComponent } from '../list-pelerin-pelerinage/list-pelerin-pelerinage.component';
 
 @Component({
   selector: 'fury-list-historique-pelerinage',
@@ -89,6 +90,9 @@ export class ListHistoriquePelerinageComponent implements OnInit {
   ngOnInit(): void { this.getDossierPelerinages();
     this.dataSource = new MatTableDataSource();
     this.data$.pipe(filter((data) => !!data)).subscribe((dossierPelerinages) => {
+      if (!Array.isArray(dossierPelerinages)) {
+        dossierPelerinages = [dossierPelerinages];
+      }
       this.dossierPelerinages = dossierPelerinages;
       this.dataSource.data = dossierPelerinages;
       console.log('Dossier Pelerinages in ngOnInit:', this.dossierPelerinages); // Debugging output
@@ -99,6 +103,9 @@ export class ListHistoriquePelerinageComponent implements OnInit {
       this.dossierPelerinageService.getByAnnee(this.anneeSelected).subscribe(
       (response) => {
         this.dossierPelerinages = response.body;
+        if (!Array.isArray(this.dossierPelerinages)) {
+          this.dossierPelerinages = [this.dossierPelerinages];
+        }     
         console.log('Filtered Dossier Pelerinages:', this.dossierPelerinages); 
       },
       (err) => {
@@ -157,12 +164,7 @@ export class ListHistoriquePelerinageComponent implements OnInit {
   detailsDossier(dossier: DossierPelerinage) {
     this.dialog
       .open(DetailsHistoriquePelerinageComponent, {
-        data: dossier,
-        width: '80vw',  
-        height: '40vh', 
-        maxWidth: '90vw', 
-        maxHeight: '90vh', 
-        panelClass: 'custom-dialog-container' 
+        data: dossier
       })
       .afterClosed()
       .subscribe((dossier) => {
@@ -175,7 +177,25 @@ export class ListHistoriquePelerinageComponent implements OnInit {
         }
       });
   }
-  
+  listePelerins(dossier: DossierPelerinage){
+    this.dialog.open(ListPelerinPelerinageComponent,{
+      data: dossier,
+        width: '80vw',  
+        height: '40vh', 
+        maxWidth: '90vw', 
+        maxHeight: '90vh', 
+        panelClass: 'custom-dialog-container' 
+    }).afterClosed()
+    .subscribe((dossier)=>{
+      if (dossier) {
+        const index = this.dossierPelerinages.findIndex(
+          (existingDossierPelerinage) => existingDossierPelerinage.id === dossier.id
+        );
+        this.dossierPelerinages[index] = new DossierPelerinage(dossier);
+        this.subject$.next(this.dossierPelerinages);
+      }
+    })
+  }
   ngOnDestroy() { }
   onFilterChange(value) {
     if (!this.dataSource ) {

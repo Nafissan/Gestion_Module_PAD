@@ -106,9 +106,13 @@ public class TirageAgentController {
     @PostMapping("/assigned-agent")
     public ResponseEntity<?> assignedAgents(@RequestBody AgentDTO agentDTO) {
         boolean tirageAgent = tirageAgentService.assignedAgent(agentDTO);
-        if (!tirageAgent) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("No eligible agents found");
+        if (tirageAgent) {
+            message = new Message(new Date(), "Tirage agent a reussi avec succes.", "uri=/tirage-agents/assigned-agent" );
+            return ResponseEntity.ok().body(message);
+        }else{
+            message = new Message(new Date(), "Tirage agent echoue.", "uri=/tirage-agents/assigned-agent" );
+            return new ResponseEntity<>(message, HttpStatus.NO_CONTENT);
+
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body("Agents successfully assigned");
     }
 }

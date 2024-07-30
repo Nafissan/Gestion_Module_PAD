@@ -113,10 +113,10 @@
                     <ng-container *ngIf="column.isModelProperty || column.property ==='traitePar'" [matColumnDef]="column.property">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ column.name }} </th>
                         <td mat-cell *matCellDef="let row">
-                            <p *ngIf="column.property === 'codeDossier' " > {{ row[column.property].code }} </p>
+                            <p *ngIf="column.property === 'dossierPelerinage' " > {{ row[column.property].code }} </p>
                             <p *ngIf="column.property === 'dateCreation'" > {{ row[column.property] | date: 'dd-MMM-yyyy' }}</p>
                             <p *ngIf="column.property === 'traitePar' " > {{ (row.matricule + ' | ' + row.prenom + ' ' + row.nom) | titlecase }} </p>
-                            <p *ngIf="column.property !== 'traitePar' && column.property !== 'codeDossier' && column.property !== 'dateCreation'" >  {{ row[column.property] }} </p>
+                            <p *ngIf="column.property !== 'traitePar' && column.property !== 'dossierPelerinage' && column.property !== 'dateCreation'" >  {{ row[column.property] }} </p>
                            </td>
                     </ng-container>
                 </ng-container>

@@ -2,11 +2,11 @@
     <mat-icon class="close" mat-button mat-dialog-close>close</mat-icon>
 </div>
 <div mat-dialog-title class="titre_modal_add" *ngIf="isCreateMode()">Nouveau Pelerin Pelerinage</div>
-<div mat-dialog-title class="titre_modal_add" *ngIf="isUpdateMode()">Mise à jour Pelerin Pelerinagediv>
+<div mat-dialog-title class="titre_modal_add" *ngIf="isUpdateMode()">Mise à jour Pelerin Pelerinage</div>
 
 <form [formGroup]="form" (ngSubmit)="save()">
     <mat-dialog-content>
-<div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px">
+<div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="34px"*ngIf="mode === 'create'" >
     <mat-form-field fxFlex>
         <mat-label>Matricule Agent</mat-label>
         <input type="text" matInput [formControl]="matriculeAgentControl" [matAutocomplete]="auto">
@@ -22,11 +22,11 @@
         <!-- Fiche Sociale -->
         <div fxLayout="column" fxLayout.gt-sm="column" fxLayoutGap.gt-sm="34px"  *ngIf="mode === 'update'">
             <mat-label >Fiche Medicale</mat-label>
-            <div class="file-upload"  *ngIf="mode === 'create'">    
+            <div class="file-upload" >    
                 <input type="file" (change)="handleFicheSociale($event.target.files)"  required>
             </div>
             <mat-label >Passport</mat-label>
-            <div class="file-upload"  *ngIf="mode === 'create'">    
+            <div class="file-upload" >    
                 <input type="file" (change)="handlePassport($event.target.files)"  required>
             </div>
 
@@ -39,7 +39,7 @@
 
     <mat-dialog-actions fxLayout="row" fxLayoutAlign="end center">
         <button mat-button type="button" mat-dialog-close class="cancel">Annuler</button>
-        <button mat-button type="submit" [disabled]="form.invalid && photo === null && ficheSocial===null" class="save">
+        <button mat-button type="submit" [disabled]="form.invalid" class="save">
             {{ isCreateMode() ? 'Ajouter' : 'Mettre à jour' }}
         </button>
     </mat-dialog-actions>

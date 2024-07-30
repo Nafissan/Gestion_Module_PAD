@@ -53,13 +53,11 @@ public class FormulaireSatisfactionPelerinageServiceImpl implements FormulaireSa
             FormulaireSatisfactionPelerinage formulaire = formulaireOptional.get();
             System.out.println("Formulaire trouvé : " + formulaire);
 
-            List<ReponsePelerinageDTO> liste = reponsePelerinageService.getReponses();
+            List<ReponsePelerinageDTO> liste = reponsePelerinageService.getReponsesByFormulaireId(modelMapper.map(formulaireOptional.get(), FormulaireSatisfactionPelerinageDTO.class));
             for (ReponsePelerinageDTO reponse : liste) {
-                if (reponse.getFormulaire().getId().equals(formulaire.getId())) {
                     ReponsePelerinage reponse2 = modelMapper.map(reponse, ReponsePelerinage.class);
                     reponsePelerinageService.deleteReponse(reponse2);
                     System.out.println("Réponse supprimée : " + reponse);
-                }
             }
 
             formulaireSatisfactionPelerinageRepository.delete(formulaire);
@@ -67,7 +65,7 @@ public class FormulaireSatisfactionPelerinageServiceImpl implements FormulaireSa
 
             return true;
         } else {
-            System.out.println("Formulaire non trouvé pour l'ID : " + formulaireDTO.getId());
+            System.out.println("Formulaire non trouvé pour l'ID: " + formulaireDTO.getId());
         }
 
         return false;

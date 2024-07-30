@@ -21,6 +21,11 @@ import { DialogUtil, NotificationUtil } from 'src/app/shared/util/util';
 import { filter } from 'rxjs/operators';
 import { fadeInRightAnimation } from 'src/@fury/animations/fade-in-right.animation';
 import { fadeInUpAnimation } from 'src/@fury/animations/fade-in-up.animation';
+import { TirageService } from '../../shared/services/tirage-pelerinage.service';
+import { TirageAgent } from '../../shared/model/tirage-pelerinage.model';
+import { CompteService } from 'src/app/pages/gestion-utilisateurs/shared/services/compte.service';
+import { Compte } from 'src/app/pages/gestion-utilisateurs/shared/model/compte.model';
+import { Agent } from 'src/app/shared/model/agent.model';
 
 @Component({
   selector: 'fury-list-pelerin-pelerinage',
@@ -42,6 +47,10 @@ export class ListPelerinPelerinageComponent implements OnInit {
   dossierPelerinage : DossierPelerinage;
   private paginator: MatPaginator;
   private sort: MatSort;
+  tirageAgents: TirageAgent[]=[];
+  username: string;
+  agent: Agent;
+  compte: Compte;
   @ViewChild(MatSort) set matSort(ms: MatSort) {
     this.sort = ms;
     this.setDataSourceAttributes();
@@ -67,6 +76,7 @@ export class ListPelerinPelerinageComponent implements OnInit {
       { name: "Passport", property: "passport", visible: true,  isModelProperty: true,},
      { name: "Document Supplementaire", property: "document", visible: false,  isModelProperty: true,},
      { name: "Aptitude", property: "status", visible: true,  isModelProperty: true,},
+     { name: "Type Selection", property: "type", visible: true,  isModelProperty: true,},
      { name: "Actions", property: "actions", visible: true },
 
    ] as ListColumn[];
@@ -75,12 +85,22 @@ export class ListPelerinPelerinageComponent implements OnInit {
     private notificationService: NotificationService,
     private dialogConfirmationService: DialogConfirmationService,
     private authentificationService: AuthenticationService,
-    private dossierPelerinageService: DossierPelerinageService) { }
+    private dossierPelerinageService: DossierPelerinageService,
+    private tirageAgent : TirageService,
+    private authService: AuthenticationService,
+    private compteService: CompteService,) { }
 
 
     ngOnInit() {
       this.fetchPelerins();
       this.getDossierPelerinage();
+      this.getTirageAgents();
+      this.username = this.authService.getUsername();
+
+      this.compteService.getByUsername(this.username).subscribe((response) => {
+        this.compte = response.body;
+        this.agent = this.compte.agent;
+      });
       this.dataSource = new MatTableDataSource();
       this.data$.pipe(filter((data) => !!data)).subscribe((pelerin) => {
         this.pelerins = pelerin;
@@ -101,6 +121,13 @@ export class ListPelerinPelerinageComponent implements OnInit {
       value = value.trim().toLowerCase();
       this.dataSource.filter = value;
       this.dataSource.filterPredicate = (data: any, value) => { const dataStr =JSON.stringify(data).toLowerCase(); return dataStr.indexOf(value) != -1; }
+    }
+    getTirageAgents(){
+      this.tirageAgent.getAgentsByDossierEtat().subscribe((data) => {
+        this.tirageAgents = data.body as TirageAgent[];
+        },err => {
+          console.log(err);
+        });
     }
   fetchPelerins() {
     this.pelerinService.getPelerinsByDossierEtat()
@@ -226,16 +253,20 @@ export class ListPelerinPelerinageComponent implements OnInit {
               }
           },
           (err:HttpErrorResponse ) => {
-              if (err.status === 409) {
-                  this.notificationService.warn('Ce pelerin existe déjà');
-              } else {
-                  this.notificationService.warn('Échec de la validation du pelerin' );
-              }
-              this.refreshListe();
+              
+            this.notificationService.warn('Échec de la validation du pelerin' );
           }
       );
   }
-  
+  trierAgent(){
+    this.pelerinService.assignedAgentsToPelerinage(this.agent).subscribe((response)=>{
+      this.notificationService.success("Pelerins selectionnes avec succes");
+      this.refreshListe();
+    },err=>{
+      this.notificationService.warn("Echec de la selection des pelerins");
+      console.log(err);
+    })
+  }
     rejeterPelerin(pelerin: Pelerin) {
       pelerin.status = 'NON APTE';
       this.pelerinService.updatePelerin(pelerin).subscribe((response) => {
@@ -248,7 +279,7 @@ export class ListPelerinPelerinageComponent implements OnInit {
           this.pelerins[index] = new Pelerin(response.body);
           this.subject$.next(this.pelerins);
         this.refreshListe();
-      }    }, () => {
+      }    },err => {
         this.notificationService.warn('Échec de rejection du pelerin');
         this.refreshListe()
       });
@@ -287,7 +318,15 @@ export class ListPelerinPelerinageComponent implements OnInit {
       this.subject$.next(this.pelerins);
     }); 
   }
-   
+   sendMessages(){
+    this.pelerinService.sendMessages().subscribe(
+      (response) => {
+        this.notificationService.success('Messages envoyés avec succès');
+      },
+      (error) => {
+      }
+    );
+   }
   }
   
 

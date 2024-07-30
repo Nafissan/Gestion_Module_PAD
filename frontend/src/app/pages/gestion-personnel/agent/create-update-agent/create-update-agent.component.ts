@@ -92,6 +92,7 @@ export class CreateUpdateAgentComponent implements OnInit {
       email: [null, Validators.required],
       sexe: [null, Validators.required],
       religion: [null, Validators.required],
+      typeContrat:[null, Validators.required] ,
     });
 
     this.informationsPersoFormGroup = this.fb.group({
@@ -124,6 +125,7 @@ export class CreateUpdateAgentComponent implements OnInit {
         telephone: this.defaults.telephone,
         email: this.defaults.email,
         religion: this.defaults.religion,
+        typeContrat: this.defaults.typeContrat,
       });
 
       this.informationsPersoFormGroup.setValue({

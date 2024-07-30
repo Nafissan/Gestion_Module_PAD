@@ -1,18 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { SatisfactionPelerinage } from '../../shared/model/satisfaction-pelerinage.model';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Agent } from 'src/app/shared/model/agent.model';
-import { QuestionPelerinage } from '../../shared/model/question-pelerinage.model';
 import { ReponsePelerinage } from '../../shared/model/reponse-pelerinage.model';
 import { SatisfactionPelerinageService } from '../../shared/services/satisfaction-pelerinage.service';
-import { QuestionPelerinageService } from '../../shared/services/question.service';
-import { MatDialogRef } from '@angular/material/dialog';
-import { ReponsePelerinageService } from '../../shared/services/reponse.service';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { ReponsePelerinageService } from '../../shared/services/reponse-pelerinage.service';
 import { CompteService } from 'src/app/pages/gestion-utilisateurs/shared/services/compte.service';
 import { AuthenticationService } from 'src/app/shared/services/authentification.service';
 import { DialogConfirmationService } from 'src/app/shared/services/dialog-confirmation.service';
 import { NotificationService } from 'src/app/shared/services/notification.service';
 import { DialogUtil, NotificationUtil } from 'src/app/shared/util/util';
+import { Question } from 'src/app/pages/colonie/shared/model/question.model';
+import { QuestionService } from 'src/app/pages/colonie/shared/service/question.service';
 
 @Component({
   selector: 'fury-add-or-update-satisfaction-pelerinage',
@@ -23,11 +23,11 @@ export class AddOrUpdateSatisfactionPelerinageComponent implements OnInit {
   form: FormGroup;
   satisfaction: SatisfactionPelerinage;
   agentConnecte: Agent;
-  questions: QuestionPelerinage[] = [];
+  questions: Question[] = [];
   mode: "create" | "update" = "create";
   reponses: ReponsePelerinage[] = []; // Ajout de la variable reponses pour stocker les réponses fournies
 
-  constructor(public defaults: SatisfactionPelerinage,
+  constructor(@Inject(MAT_DIALOG_DATA) public defaults: SatisfactionPelerinage,
     private fb: FormBuilder,
     private satisfactionService: SatisfactionPelerinageService,
     private authService: AuthenticationService,
@@ -35,16 +35,18 @@ export class AddOrUpdateSatisfactionPelerinageComponent implements OnInit {
     private dialogRef: MatDialogRef<AddOrUpdateSatisfactionPelerinageComponent>,
     private dialogConfirmationService: DialogConfirmationService,
     private notificationService: NotificationService,
-    private questionService: QuestionPelerinageService,
+    private questionService: QuestionService,
     private reponseService: ReponsePelerinageService) {this.form = this.fb.group({
       questions: this.fb.array([]),
       commentaire: ['', Validators.required],
       dossierPelerinage: [null],
     }); }
 
-  ngOnInit(): void { this.questionService.getAllQuestions().subscribe(
+  ngOnInit(): void { 
+    this.questionService.getQuestionsPelerinage().subscribe(
     response => {
       const questionsFromBody = response.body; 
+      console.log(questionsFromBody);
       this.questions = questionsFromBody.map((q, index) => ({
         id: index + 1, 
         texte: q.texte, 
@@ -63,6 +65,7 @@ export class AddOrUpdateSatisfactionPelerinageComponent implements OnInit {
       return this.fb.group({
         id: [question.id],
         texte: [question.texte],
+        type: [question.type],
         reponse: ['']
       });
     });
@@ -118,7 +121,7 @@ export class AddOrUpdateSatisfactionPelerinageComponent implements OnInit {
   save(): void {
     const formValue = this.form.value;
     this.reponses = formValue.questions.map((q) => ({
-      question: new QuestionPelerinage({ id: q.id, texte: q.texte }),
+      question: new Question({ id: q.id, texte: q.texte ,type:q.type}),
       reponse: q.reponse
     }));
 
@@ -148,7 +151,7 @@ export class AddOrUpdateSatisfactionPelerinageComponent implements OnInit {
           this.updateReponses(response.body, reponses); 
           this.dialogRef.close(formData);
         }, err => {
-          this.notificationService.warn(NotificationUtil.echec);
+          this.notificationService.warn("Erreur lors de la mise a jour du formulaire");
         });
       } else {
         this.dialogRef.close();
@@ -161,7 +164,7 @@ export class AddOrUpdateSatisfactionPelerinageComponent implements OnInit {
       this.reponseService.updateReponse(reponse).subscribe(() => {
         this.dialogRef.close(satisfaction);
       }, err => {
-        this.notificationService.warn(NotificationUtil.echec);
+        this.notificationService.warn("Erreur lors de la mise a jour des reponses!");
       });
     });
   }

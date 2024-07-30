@@ -1,3 +1,4 @@
+import { Agent } from "src/app/shared/model/agent.model";
 import { DossierColonie } from "./dossier-colonie.model";
 
 export class Participant {
@@ -9,9 +10,7 @@ export class Participant {
     lieuNaissance: string;
     groupeSanguin: string;
     sexe: string;
-    matriculeParent: string;
-    nomParent: string;
-    prenomParent: string;
+    agentParent:Agent;
     ficheSocial: string;
     status: string;
     matriculeAgent: string;
@@ -29,9 +28,7 @@ export class Participant {
         this.lieuNaissance = participant.lieuNaissance ;
         this.groupeSanguin = participant.groupeSanguin;
         this.sexe = participant.sexe ;
-        this.nomParent = participant.nomParent;
-        this.prenomParent = participant.prenomParent;
-        this.matriculeParent = participant.matriculeParent;
+      this.agentParent = participant.agentParent ;
         this.matriculeAgent = participant.matriculeAgent;
         this.prenomAgent = participant.prenomAgent;
         this.nomAgent = participant.nomAgent;

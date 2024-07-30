@@ -17,11 +17,21 @@ public class Question implements Serializable{
 
     private String texte;
 
+    private String type;
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     // Constructor, getters and setters
     public Question() {}
 
-    public Question(String texte) {
+    public Question(String texte,String type) {
         this.texte = texte;
+        this.type=type;
     }
 
     public Long getId() {

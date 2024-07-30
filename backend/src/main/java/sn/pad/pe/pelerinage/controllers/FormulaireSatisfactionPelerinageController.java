@@ -92,14 +92,10 @@ public class FormulaireSatisfactionPelerinageController {
         @ApiResponse(code = 404, message = "La ressource que vous tentiez d'atteindre est introuvable.")
     })
     @PutMapping("/formulairesSatisfactionPelerinages")
-    public ResponseEntity<Message> updateFormulaire(@RequestBody FormulaireSatisfactionPelerinageDTO formulaireSatisfactionPelerinageDTO) {
+    public ResponseEntity<FormulaireSatisfactionPelerinageDTO> updateFormulaire(@RequestBody FormulaireSatisfactionPelerinageDTO formulaireSatisfactionPelerinageDTO) {
         FormulaireSatisfactionPelerinageDTO formulaire = formulaireSatisfactionPelerinageService.updateFormulaire(formulaireSatisfactionPelerinageDTO);
-        if (formulaire != null) {
-            message = new Message(new Date(), "FormulaireSatisfactionPelerinage with id " + formulaireSatisfactionPelerinageDTO.getId() + " updated.", "uri=/formulairesSatisfactionPelerinages/" + formulaireSatisfactionPelerinageDTO.getId());
-            return ResponseEntity.ok().body(message);
-        }
-        message = new Message(new Date(), "FormulaireSatisfactionPelerinage with id " + formulaireSatisfactionPelerinageDTO.getId() + " not found.", "uri=/formulairesSatisfactionPelerinages/" + formulaireSatisfactionPelerinageDTO.getId());
-        return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
+        return ResponseEntity.ok().body(formulaire);
+
     }
 
     @ApiOperation(value = "Suppression d'un formulaire de satisfaction", response = ResponseEntity.class)

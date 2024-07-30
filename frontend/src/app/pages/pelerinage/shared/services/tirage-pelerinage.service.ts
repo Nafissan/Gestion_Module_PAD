@@ -37,10 +37,7 @@ export class TirageService {
     if (error.error instanceof ErrorEvent) {
       // Erreur côté client
       errorMessage = error.error.message;
-    } else {
-      if(error.status===204)  {
-      errorMessage = "Pad d'agents elligibles!";
-      }   else errorMessage = `Code d'erreur: ${error.status}\nMessage: ${error.message}`;
+    } else{ errorMessage = `Code d'erreur: ${error.status}\nMessage: ${error.message}`;
     }
     console.error(errorMessage);
     return throwError(errorMessage);

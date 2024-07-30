@@ -222,8 +222,8 @@ public boolean updateParticipant(ParticipantColonieDTO updatedParticipant) {
 
         convertBase64FieldsToBytes(updatedParticipant);
 
-        Optional<ParticipantColonie> existingParticipant = participantColonieRepository.findByNomEnfantAndPrenomEnfantAndDateNaissanceAndMatriculeParentAndStatus(
-            updatedParticipant.getNomEnfant(), updatedParticipant.getPrenomEnfant(), updatedParticipant.getDateNaissance(), updatedParticipant.getMatriculeParent(),updatedParticipant.getStatus());
+        Optional<ParticipantColonie> existingParticipant = participantColonieRepository.findByNomEnfantAndPrenomEnfantAndDateNaissanceAndAgentParentAndStatus(
+            updatedParticipant.getNomEnfant(), updatedParticipant.getPrenomEnfant(), updatedParticipant.getDateNaissance(), updatedParticipant.getAgentParent(),updatedParticipant.getStatus());
         
         if (existingParticipant.isPresent()) {
                 logger.error("Ce colon existe déjà avec le statut VALIDER");
@@ -292,7 +292,7 @@ public boolean updateParticipant(ParticipantColonieDTO updatedParticipant) {
             DossierColonieDTO dossierColonie= dossierColonieService.getDossierColonieByEtat();
             List<ParticipantColonie> participantColonies = participantColonieRepository.findByCodeDossierAndStatus(modelMapper.map(dossierColonie, DossierColonie.class),"VALIDER");
             for (ParticipantColonie d : participantColonies) {
-                AgentDTO agent = agentService.getAgentByMatricule(d.getMatriculeParent()) ;
+                AgentDTO agent = agentService.getAgentByMatricule(d.getAgentParent().getMatricule()) ;
 
                 // Send sms
                 String sms = "Bonjour " + agent.getPrenom() + " " + agent.getNom() + ". "

@@ -33,7 +33,10 @@
                 <span>Religion : </span>{{ tirage.agent.religion }}
             </mat-panel-description>
             <mat-panel-description>
-                <span>Sexe : </span>{{ tirage.agent.sexe }}
+                <span>Sexe : </span>{{ tirage.agent.sexe === 'm' ? 'Homme' : 'Femme' }}
+            </mat-panel-description>            
+            <mat-panel-description>
+                <span>Type de contrat : </span>{{ tirage.agent.typeContrat }}
             </mat-panel-description>
         </mat-expansion-panel>
 

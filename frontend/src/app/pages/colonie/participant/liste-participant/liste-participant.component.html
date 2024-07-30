@@ -35,11 +35,12 @@
                   <span *ngIf="row?.status === 'REJETER' " class="badge badge-danger">{{ 'rejetée' }}
                   </span>
               </p>
+              <p *ngIf="column.property === 'agentParent'" > {{(row.agentParent.matricule + ' | ' + row.agentParent.prenom + ' ' + row.agentParent.nom) | titlecase }}</p>
               <p *ngIf="column.property === 'ajoutePar'" > {{(row.matriculeAgent + ' | ' + row.prenomAgent + ' ' + row.nomAgent) | titlecase }}</p>
               <p *ngIf="column.property === 'dateNaissance'" > {{ row.dateNaissance | date: 'dd-MMM-yyyy' }}</p>
               <p *ngIf="column.property === 'ficheSocial' && row[column.property]" > Disponible</p>
               <p *ngIf="column.property === 'document' && row[column.property]">Disponible</p>
-              <p *ngIf="column.name !== 'Status' && column.property !== 'ficheSocial'&& column.property !== 'document' && column.property !== 'ajoutePar'  && column.property !== 'codeDossier'  && column.property !== 'dateNaissance'">
+              <p *ngIf="column.name !== 'Status' && column.property !== 'ficheSocial'&& column.property !== 'document' && column.property !== 'ajoutePar' && column.property !== 'agentParent' && column.property !== 'codeDossier'  && column.property !== 'dateNaissance'">
                     {{ row[column.property] }}
                 </p></td>
             </ng-container>

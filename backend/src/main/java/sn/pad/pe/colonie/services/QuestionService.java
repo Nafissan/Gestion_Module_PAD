@@ -8,5 +8,6 @@ public interface QuestionService {
     
     public Question getQuestion(Long id);
     public List<QuestionDTO> getAllQuestions();
+    List<QuestionDTO> getQuestionPelerinage();
     
 }

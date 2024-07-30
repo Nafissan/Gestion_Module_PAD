@@ -20,5 +20,5 @@ public interface SubstitutService {
 
     void deleteAllSubstituts();
     SubstitutDTO generateSubstitutDTO(String sexe);
-    void assignedSubstitutToPelerin(AgentDTO agent);
+    boolean assignedSubstitutToPelerin(AgentDTO agent);
 }
